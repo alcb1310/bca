@@ -3,6 +3,7 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 )
@@ -15,7 +16,11 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 		var c types.Company
 		if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			resp["error"] = err.Error()
+			if err == io.EOF {
+				resp["error"] = err.Error()
+			} else {
+				resp["error"] = "employees must be a number"
+			}
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
 				log.Fatalf("error handling JSON marshal. Err: %v", err)
