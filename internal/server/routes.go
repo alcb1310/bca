@@ -16,7 +16,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/", s.HelloWorldHandler)
 	r.HandleFunc("/health", s.healthHandler)
 	r.HandleFunc("/login", login)
-	r.HandleFunc("/register", register)
+	r.HandleFunc("/register", s.Register)
 
 	return r
 }

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"bca-go-final/internal/types"
 	"context"
 	"database/sql"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 
 type Service interface {
 	Health() map[string]string
+	CreateCompany(company *types.Company) error
 }
 
 type service struct {
