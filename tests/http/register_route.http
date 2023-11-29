@@ -1,0 +1,7 @@
+POST http://0.0.0.0:8080/register
+
+{
+     "name": "Test company",
+     "ruc": "1234567890",
+     "employees": 1
+}
