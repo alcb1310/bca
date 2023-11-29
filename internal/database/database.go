@@ -35,6 +35,15 @@ func New() Service {
 		log.Fatal(err)
 	}
 	s := &service{db: db}
+
+	if err := createTables(db); err != nil {
+		log.Fatalf(fmt.Sprintf("error creating tables. Err: %v", err))
+	}
+
+	if err := loadRoles(db); err != nil {
+		log.Fatalf(fmt.Sprintf("error loading roles. Err: %v", err))
+	}
+
 	return s
 }
 
