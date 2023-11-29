@@ -78,8 +78,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func login(w http.ResponseWriter, r *http.Request) {
-	log.Printf("login request: %s %s\n", r.Method, r.URL)
+func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost, http.MethodOptions:
 		resp := make(map[string]string)
