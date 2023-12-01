@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
@@ -100,10 +101,28 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write(jsonResp)
 			return
 		}
+		if c.User == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "name of the user cannot be empty"
+			resp["field"] = "user"
+			jsonResp, err := json.Marshal(resp)
+			if err != nil {
+				log.Fatalf("error handling JSON marshal. Err: %v", err)
+			}
+			_, _ = w.Write(jsonResp)
+			return
+		}
 
 		if err := s.db.CreateCompany(c); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			resp["error"] = err.Error()
+			log.Println("Error creating company: ", err)
+			if strings.Contains(err.Error(), "SQLSTATE 23505") {
+				w.WriteHeader(http.StatusConflict)
+				resp["error"] = "company already exists"
+			} else {
+				w.WriteHeader(http.StatusInternalServerError)
+				resp["error"] = err.Error()
+			}
+
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
 				log.Fatalf("error handling JSON marshal. Err: %v", err)

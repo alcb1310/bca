@@ -171,4 +171,24 @@ func TestRegistrationRouteValidation(t *testing.T) {
 	if expected != string(body) {
 		t.Errorf("expected response body to be %v; got %v", expected, string(body))
 	}
+
+	c.Password = "test"
+	if err := json.NewEncoder(buf).Encode(&c); err != nil {
+		t.Fatalf("error marshaling. Err: %v", err)
+	}
+	resp, err = http.Post(server.URL, "application/json", buf)
+	if err != nil {
+		t.Fatalf("error making request to server. Err: %v", err.Error())
+	}
+	if resp.StatusCode != http.StatusBadRequest {
+		t.Errorf("expected status bad request; got %v", resp.Status)
+	}
+	body, err = io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("error reading response body. Err: %v", err)
+	}
+	expected = "{\"error\":\"name of the user cannot be empty\",\"field\":\"user\"}"
+	if expected != string(body) {
+		t.Errorf("expected response body to be %v; got %v", expected, string(body))
+	}
 }

@@ -16,4 +16,5 @@ type CompanyCreate struct {
 	Employees uint8  `json:"employees"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
+	User      string `json:"user"`
 }
