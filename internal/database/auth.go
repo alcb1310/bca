@@ -1,14 +1,47 @@
 package database
 
-import "bca-go-final/internal/types"
+import (
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"context"
+	"log"
 
-func (s *service) CreateCompany(company *types.Company) error {
-	sql := "insert into company (ruc, name, employees) values ($1, $2, $3)"
-	_, err := s.db.Exec(sql, company.Ruc, company.Name, company.Employees)
-	if err != nil {
+	"github.com/google/uuid"
+)
+
 func (s *service) CreateCompany(company *types.CompanyCreate) error {
+	type favContextKey string
+
+	var id uuid.UUID
+	var role string
+	k := favContextKey("company")
+	ctx := context.WithValue(context.Background(), k, &company)
+	tx, _ := s.db.Begin()
+	defer tx.Rollback()
+
+	sql := "insert into company (ruc, name, employees) values ($1, $2, $3) returning id"
+	if err := tx.QueryRowContext(ctx, sql, company.Ruc, company.Name, company.Employees).Scan(&id); err != nil {
 		return err
 	}
 
+	log.Println("Company id: ", id)
+
+	sql = "select id from role where name = 'admin'"
+	if err := tx.QueryRowContext(ctx, sql).Scan(&role); err != nil {
+		return err
+	}
+	log.Println("Role id: ", role)
+
+	sql = "insert into \"user\" (name, email, password, company_id, role_id) values ($1, $2, $3, $4, $5)"
+	pass, err := utils.EncryptPasssword(company.Password)
+	if err != nil {
+		return err
+	}
+
+	if _, err := tx.ExecContext(ctx, sql, company.Name, company.Email, pass, id, role); err != nil {
+		return err
+	}
+
+	tx.Commit()
 	return nil
 }
