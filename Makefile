@@ -32,6 +32,8 @@ docker-down:
 # Test the application
 test:
 	@echo "Testing..."
+	@go clean -testcache
+	@echo "Cache cleaned..."
 	@go test ./tests -v
 
 # Clean the binary
