@@ -9,3 +9,11 @@ type Company struct {
 	Employees uint8     `json:"employees"`
 	IsActive  bool      `json:"is_active"`
 }
+
+type CompanyCreate struct {
+	Name      string `json:"name"`
+	Ruc       string `json:"ruc"`
+	Employees uint8  `json:"employees"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
+}

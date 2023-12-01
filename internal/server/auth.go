@@ -2,6 +2,7 @@ package server
 
 import (
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 	"encoding/json"
 	"io"
 	"log"
@@ -13,13 +14,15 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost, http.MethodOptions:
 		resp := make(map[string]string)
 
-		var c types.Company
+		c := &types.CompanyCreate{}
+
 		if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			if err == io.EOF {
 				resp["error"] = err.Error()
 			} else {
 				resp["error"] = "employees must be a number"
+				resp["field"] = "employees"
 			}
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
@@ -32,6 +35,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 		if c.Name == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			resp["error"] = "name cannot be empty"
+			resp["field"] = "name"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
 				log.Fatalf("error handling JSON marshal. Err: %v", err)
@@ -42,6 +46,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 		if c.Ruc == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			resp["error"] = "ruc cannot be empty"
+			resp["field"] = "ruc"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
 				log.Fatalf("error handling JSON marshal. Err: %v", err)
@@ -52,6 +57,18 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 		if c.Employees <= 0 {
 			w.WriteHeader(http.StatusBadRequest)
 			resp["error"] = "should pass at least one employee"
+			resp["field"] = "employees"
+			jsonResp, err := json.Marshal(resp)
+			if err != nil {
+				log.Fatalf("error handling JSON marshal. Err: %v", err)
+			}
+			_, _ = w.Write(jsonResp)
+			return
+		}
+		if c.Email == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "email cannot be empty"
+			resp["field"] = "email"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
 				log.Fatalf("error handling JSON marshal. Err: %v", err)
@@ -60,12 +77,31 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		jsonResp, err := json.Marshal(resp)
-		if err != nil {
-			log.Fatalf("error handling JSON marshal. Err: %v", err)
+		if !utils.IsValidEmail(c.Email) {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "invalid email"
+			resp["field"] = "email"
+			jsonResp, err := json.Marshal(resp)
+			if err != nil {
+				log.Fatalf("error handling JSON marshal. Err: %v", err)
+			}
+			_, _ = w.Write(jsonResp)
+			return
 		}
 
-		if err := s.db.CreateCompany(&c); err != nil {
+		if c.Password == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "password cannot be empty"
+			resp["field"] = "password"
+			jsonResp, err := json.Marshal(resp)
+			if err != nil {
+				log.Fatalf("error handling JSON marshal. Err: %v", err)
+			}
+			_, _ = w.Write(jsonResp)
+			return
+		}
+
+		if err := s.db.CreateCompany(c); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			resp["error"] = err.Error()
 			jsonResp, err := json.Marshal(resp)
@@ -77,7 +113,6 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		_, _ = w.Write(jsonResp)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
