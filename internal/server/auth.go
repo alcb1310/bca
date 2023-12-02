@@ -141,7 +141,56 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost, http.MethodOptions:
 		resp := make(map[string]string)
-		resp["message"] = "Login"
+
+		l := &types.Login{}
+
+		if err := json.NewDecoder(r.Body).Decode(&l); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			if err == io.EOF {
+				resp["error"] = err.Error()
+			}
+			jsonResp, err := json.Marshal(resp)
+			if err != nil {
+				log.Fatalf("error handling JSON marshal. Err: %v", err)
+			}
+			_, _ = w.Write(jsonResp)
+			return
+		}
+		if l.Email == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "email cannot be empty"
+			resp["field"] = "email"
+			jsonResp, err := json.Marshal(resp)
+			if err != nil {
+				log.Fatalf("error handling JSON marshal. Err: %v", err)
+			}
+			_, _ = w.Write(jsonResp)
+			return
+		}
+
+		if !utils.IsValidEmail(l.Email) {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "invalid email"
+			resp["field"] = "email"
+			jsonResp, err := json.Marshal(resp)
+			if err != nil {
+				log.Fatalf("error handling JSON marshal. Err: %v", err)
+			}
+			_, _ = w.Write(jsonResp)
+			return
+		}
+
+		if l.Password == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "password cannot be empty"
+			resp["field"] = "password"
+			jsonResp, err := json.Marshal(resp)
+			if err != nil {
+				log.Fatalf("error handling JSON marshal. Err: %v", err)
+			}
+			_, _ = w.Write(jsonResp)
+			return
+		}
 
 		jsonResp, err := json.Marshal(resp)
 		if err != nil {
