@@ -1,6 +1,7 @@
 package database
 
 import (
+	"bca-go-final/internal/types"
 	"context"
 	"database/sql"
 	"fmt"
@@ -14,6 +15,8 @@ import (
 
 type Service interface {
 	Health() map[string]string
+	CreateCompany(company *types.CompanyCreate) error
+	Login(l *types.Login) (string, error)
 }
 
 type service struct {
@@ -35,6 +38,15 @@ func New() Service {
 		log.Fatal(err)
 	}
 	s := &service{db: db}
+
+	if err := createTables(db); err != nil {
+		log.Fatalf(fmt.Sprintf("error creating tables. Err: %v", err))
+	}
+
+	if err := loadRoles(db); err != nil {
+		log.Fatalf(fmt.Sprintf("error loading roles. Err: %v", err))
+	}
+
 	return s
 }
 
