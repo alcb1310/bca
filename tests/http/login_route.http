@@ -1,0 +1,6 @@
+POST 0.0.0.0:8080/login
+
+{
+     "email": "test@test.com",
+     "password": "password3"
+}

@@ -12,7 +12,9 @@ import (
 
 func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case http.MethodPost, http.MethodOptions:
+	case http.MethodOptions:
+		w.WriteHeader(http.StatusOK)
+	case http.MethodPost:
 		resp := make(map[string]string)
 
 		c := &types.CompanyCreate{}
@@ -139,7 +141,9 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case http.MethodPost, http.MethodOptions:
+	case http.MethodOptions:
+		w.WriteHeader(http.StatusOK)
+	case http.MethodPost:
 		resp := make(map[string]string)
 
 		l := &types.Login{}
@@ -191,6 +195,20 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write(jsonResp)
 			return
 		}
+
+		token, err := s.db.Login(l)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			resp["error"] = err.Error()
+			jsonResp, err := json.Marshal(resp)
+			if err != nil {
+				log.Fatalf("error handling JSON marshal. Err: %v", err)
+			}
+			_, _ = w.Write(jsonResp)
+			return
+		}
+
+		resp["token"] = token
 
 		jsonResp, err := json.Marshal(resp)
 		if err != nil {

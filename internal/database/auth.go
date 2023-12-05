@@ -4,6 +4,7 @@ import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 	"context"
+	"errors"
 	"log"
 
 	"github.com/google/uuid"
@@ -44,4 +45,25 @@ func (s *service) CreateCompany(company *types.CompanyCreate) error {
 
 	tx.Commit()
 	return nil
+}
+
+func (s *service) Login(l *types.Login) (string, error) {
+
+	sql := "select password, id, name, company_id, role_id from \"user\" where email = $1"
+	u := &types.User{}
+	var password string
+	if err := s.db.QueryRowContext(context.Background(), sql, l.Email).Scan(&password, &u.Id, &u.Name, &u.CompanyId, &u.RoleId); err != nil {
+		return "", errors.New("invalid credentials")
+	}
+
+	if _, err := utils.ComparePassword(password, l.Password); err != nil {
+		return "", errors.New("invalid credentials")
+	}
+
+	token, err := utils.GenerateToken(*u)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }

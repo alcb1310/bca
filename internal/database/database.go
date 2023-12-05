@@ -16,6 +16,7 @@ import (
 type Service interface {
 	Health() map[string]string
 	CreateCompany(company *types.CompanyCreate) error
+	Login(l *types.Login) (string, error)
 }
 
 type service struct {
