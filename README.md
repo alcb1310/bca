@@ -25,12 +25,12 @@ The objective of this application is to manage the budget of a construction comp
 
 ## Table of contents
 
-- [Screens](#screens)
+- [Routes](#routes)
     - [Login](#login)
 
 - [Deployment](#deployment)
 
-## Screens
+## Routes
 
 In order to achieve the project's description, the application will have both public and protected Endpoints
 
