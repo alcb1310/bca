@@ -25,8 +25,6 @@ func (s *service) CreateCompany(company *types.CompanyCreate) error {
 		return err
 	}
 
-	log.Println("Company id: ", id)
-
 	sql = "select id from role where name = 'admin'"
 	if err := tx.QueryRowContext(ctx, sql).Scan(&role); err != nil {
 		return err
@@ -48,7 +46,6 @@ func (s *service) CreateCompany(company *types.CompanyCreate) error {
 }
 
 func (s *service) Login(l *types.Login) (string, error) {
-
 	sql := "select password, id, name, company_id, role_id from \"user\" where email = $1"
 	u := &types.User{}
 	var password string
@@ -62,7 +59,12 @@ func (s *service) Login(l *types.Login) (string, error) {
 
 	token, err := utils.GenerateToken(*u)
 	if err != nil {
-		return "", err
+		return "", errors.New("server error")
+	}
+
+	sql = "insert into logged_in (user_id, token) values ($1, $2) on conflict (user_id) do update set token = $2"
+	if _, err := s.db.ExecContext(context.Background(), sql, u.Id, token); err != nil {
+		return "", errors.New("server error")
 	}
 
 	return token, nil

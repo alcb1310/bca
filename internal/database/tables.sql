@@ -31,4 +31,10 @@ create table if not exists "user" (
      unique (email)
 );
 
+create table if not exists logged_in (
+     user_id uuid PRIMARY KEY references "user"(id) on delete restrict,
+     token text not null,
+     created_at timestamp with time zone default now()
+);
+
 
