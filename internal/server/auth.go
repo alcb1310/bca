@@ -115,7 +115,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if err := s.db.CreateCompany(c); err != nil {
+		if err := s.DB.CreateCompany(c); err != nil {
 			log.Println("Error creating company: ", err)
 			if strings.Contains(err.Error(), "SQLSTATE 23505") {
 				w.WriteHeader(http.StatusConflict)
@@ -196,7 +196,7 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		token, err := s.db.Login(l)
+		token, err := s.DB.Login(l)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			resp["error"] = err.Error()
