@@ -12,11 +12,15 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r := mux.NewRouter()
 
 	r.Use(middleware)
+	r.Use(s.authVerify)
 
 	r.HandleFunc("/", s.HelloWorldHandler)
 	r.HandleFunc("/health", s.healthHandler)
 	r.HandleFunc("/login", s.Login)
 	r.HandleFunc("/register", s.Register)
+
+	// users routes
+	r.HandleFunc("/api/v1/users", s.GetAllUsers)
 
 	return r
 }

@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -17,6 +18,7 @@ type Service interface {
 	Health() map[string]string
 	CreateCompany(company *types.CompanyCreate) error
 	Login(l *types.Login) (string, error)
+	IsLoggedIn(token string, user uuid.UUID) bool
 }
 
 type service struct {
