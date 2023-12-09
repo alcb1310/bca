@@ -29,6 +29,22 @@ func (s *DBMock) IsLoggedIn(token string, user uuid.UUID) bool {
 func (s *DBMock) GetAllUsers(companyId uuid.UUID) ([]types.User, error) {
 	users := []types.User{}
 
+	users = append(users, types.User{
+		Id:        uuid.New(),
+		Email:     "test@test.com",
+		CompanyId: companyId,
+		Name:      "test",
+		RoleId:    "a",
+	})
+
+	users = append(users, types.User{
+		Id:        uuid.New(),
+		Email:     "test2@test.com",
+		CompanyId: companyId,
+		Name:      "test2",
+		RoleId:    "a",
+	})
+
 	return users, nil
 }
 
