@@ -20,6 +20,7 @@ type Service interface {
 	Login(l *types.Login) (string, error)
 	IsLoggedIn(token string, user uuid.UUID) bool
 	GetAllUsers(companyId uuid.UUID) ([]types.User, error)
+	CreateUser(u *types.UserCreate) (types.User, error)
 }
 
 type service struct {

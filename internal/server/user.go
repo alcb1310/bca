@@ -2,6 +2,7 @@ package server
 
 import (
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 	"encoding/json"
 	"net/http"
 )
@@ -22,6 +23,64 @@ func (s *Server) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(users)
+	case http.MethodPost:
+		resp := map[string]string{}
+		var u = &types.UserCreate{}
+
+		if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if u.Email == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "email cannot be empty"
+			resp["field"] = "email"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		if !utils.IsValidEmail(u.Email) {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "invalid email"
+			resp["field"] = "email"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		if u.Password == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "password cannot be empty"
+			resp["field"] = "password"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		if u.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "name cannot be empty"
+			resp["field"] = "name"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		if u.RoleId == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "role cannot be empty"
+			resp["field"] = "role"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		u.CompanyId = ctxPayload.CompanyId
+
+		ux, err := s.DB.CreateUser(u)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(ux)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}

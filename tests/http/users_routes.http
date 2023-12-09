@@ -1,4 +1,15 @@
 GET /api/v1/users
 Host: http://0.0.0.0:8080
-# Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZjZGNiYmFjLWZkMmYtNGNlNS04ZTIxLWY2YzBkMTE2MjJmOSIsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSIsImNvbXBhbnlfaWQiOiJiMWJhOGJlZS0wOGQzLTRkYWQtYmQ1ZS0yN2E2M2FkNTkxYjgiLCJuYW1lIjoiVGVzdCBjb21wYW55Iiwicm9sZSI6ImEgIiwiaXNfbG9nZ2VkX2luIjp0cnVlLCJpc3N1ZWRfYXQiOiIyMDIzLTEyLTA4VDExOjQzOjMxLjI1NTU0MzUtMDU6MDAiLCJleHBpcmVkX2F0IjoiMjAyMy0xMi0wOFQxMjo0MzozMS4yNTU1NDM2NDctMDU6MDAifQ.lscadAaFWUffTobCeqKjLSgEEu57lN31CiK0KdS8pD8
-x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZjZGNiYmFjLWZkMmYtNGNlNS04ZTIxLWY2YzBkMTE2MjJmOSIsImVtYWlsIjoidGVzdEB0ZXN0LmNvbSIsImNvbXBhbnlfaWQiOiJiMWJhOGJlZS0wOGQzLTRkYWQtYmQ1ZS0yN2E2M2FkNTkxYjgiLCJuYW1lIjoiVGVzdCBjb21wYW55Iiwicm9sZSI6ImEgIiwiaXNfbG9nZ2VkX2luIjp0cnVlLCJpc3N1ZWRfYXQiOiIyMDIzLTEyLTA4VDE3OjQyOjQ2LjY2MDk0MDU5Mi0wNTowMCIsImV4cGlyZWRfYXQiOiIyMDIzLTEyLTA4VDE4OjQyOjQ2LjY2MDk0MDcyLTA1OjAwIn0.r92VtyTjZuLWy0TYiyb81uIiGzFDNfHb5tmTfZnUiVs
+x-access-token: 
+
+
+POST /api/v1/users
+Host: http://0.0.0.0:8080
+x-access-token:
+
+{
+     "email": "test3@test.com",
+     "password": "password123",
+     "name": "test",
+     "role_id" : "a"
+}

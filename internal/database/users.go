@@ -30,3 +30,21 @@ func (s *service) GetAllUsers(companyId uuid.UUID) ([]types.User, error) {
 
 	return users, nil
 }
+
+func (s *service) CreateUser(u *types.UserCreate) (types.User, error) {
+	sql := "insert into \"user\" (name, email, password, company_id, role_id) values ($1, $2, $3, $4, $5) returning id"
+	err := s.db.QueryRow(sql, u.Name, u.Email, u.Password, u.CompanyId, u.RoleId).Scan(&u.Id)
+	if err != nil {
+		return types.User{}, err
+	}
+
+	us := types.User{
+		Id:        u.Id,
+		Name:      u.Name,
+		Email:     u.Email,
+		CompanyId: u.CompanyId,
+		RoleId:    u.RoleId,
+	}
+
+	return us, nil
+}
