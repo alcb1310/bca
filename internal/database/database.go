@@ -19,6 +19,7 @@ type Service interface {
 	CreateCompany(company *types.CompanyCreate) error
 	Login(l *types.Login) (string, error)
 	IsLoggedIn(token string, user uuid.UUID) bool
+	GetAllUsers(companyId uuid.UUID) ([]types.User, error)
 }
 
 type service struct {
