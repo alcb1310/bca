@@ -25,3 +25,13 @@ func (s *DBMock) Health() map[string]string {
 func (s *DBMock) IsLoggedIn(token string, user uuid.UUID) bool {
 	return true
 }
+
+func (s *DBMock) GetAllUsers(companyId uuid.UUID) ([]types.User, error) {
+	users := []types.User{}
+
+	return users, nil
+}
+
+func (s *DBMock) CreateUser(u *types.UserCreate) (types.User, error) {
+	return types.User{}, nil
+}
