@@ -14,6 +14,14 @@ x-access-token:
      "role_id" : "a"
 }
 
+PATCH /api/v1/users
+Host: http://0.0.0.0:8080
+x-access-token: 
+
+{
+     "password": "password123"
+}
+
 GET /api/v1/users/388c0480-1957-44f9-bc6d-20dad2994212
 Host: http://0.0.0.0:8080
 x-access-token:
