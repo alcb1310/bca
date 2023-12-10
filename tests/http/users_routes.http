@@ -13,3 +13,11 @@ x-access-token:
      "name": "test",
      "role_id" : "a"
 }
+
+GET /api/v1/users/fcdcbbac-fd2f-4ce5-8e21-f6c0d11622f8
+Host: http://0.0.0.0:8080
+x-access-token:
+
+GET /api/v1/users/me
+Host: http://0.0.0.0:8080
+x-access-token:
