@@ -2,7 +2,6 @@ package database
 
 import (
 	"bca-go-final/internal/types"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -25,8 +24,6 @@ func (s *service) GetAllUsers(companyId uuid.UUID) ([]types.User, error) {
 
 		users = append(users, u)
 	}
-
-	log.Println("GetAllUsers: ", users)
 
 	return users, nil
 }
