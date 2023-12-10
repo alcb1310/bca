@@ -56,6 +56,6 @@ func (s *DBMock) GetUser(id, companyId uuid.UUID) (types.User, error) {
 	return types.User{}, nil
 }
 
-func (s *DBMock) UpdateUser(u *types.User, id, companyId uuid.UUID) (types.User, error) {
+func (s *DBMock) UpdateUser(u types.User, id, companyId uuid.UUID) (types.User, error) {
 	return types.User{}, nil
 }
