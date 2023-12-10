@@ -16,7 +16,7 @@ func TestGetAllUsers(t *testing.T) {
 	s := &server.Server{}
 	s.DB = &DBMock{}
 
-	server := httptest.NewServer(http.HandlerFunc(s.GetAllUsers))
+	server := httptest.NewServer(http.HandlerFunc(s.AllUsers))
 	defer server.Close()
 
 	resp, err := http.Get(server.URL)
@@ -46,7 +46,7 @@ func TestCreateUser(t *testing.T) {
 	s := &server.Server{}
 	s.DB = &DBMock{}
 
-	server := httptest.NewServer(http.HandlerFunc(s.GetAllUsers))
+	server := httptest.NewServer(http.HandlerFunc(s.AllUsers))
 	defer server.Close()
 
 	c := &types.UserCreate{}

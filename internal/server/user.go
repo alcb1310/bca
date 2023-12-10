@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (s *Server) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+func (s *Server) AllUsers(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := getMyPaload(r)
 
 	switch r.Method {

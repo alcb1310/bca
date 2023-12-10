@@ -20,7 +20,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/register", s.Register)
 
 	// users routes
-	r.HandleFunc("/api/v1/users", s.GetAllUsers)
+	r.HandleFunc("/api/v1/users", s.AllUsers)
 
 	return r
 }
