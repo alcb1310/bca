@@ -1,6 +1,6 @@
 GET /api/v1/users
 Host: http://0.0.0.0:8080
-x-access-token: 
+x-access-token:
 
 
 POST /api/v1/users
@@ -14,10 +14,18 @@ x-access-token:
      "role_id" : "a"
 }
 
-GET /api/v1/users/fcdcbbac-fd2f-4ce5-8e21-f6c0d11622f8
+GET /api/v1/users/388c0480-1957-44f9-bc6d-20dad2994212
 Host: http://0.0.0.0:8080
 x-access-token:
 
 GET /api/v1/users/me
 Host: http://0.0.0.0:8080
 x-access-token:
+
+PUT /api/v1/users/388c0480-1957-44f9-bc6d-20dad2994212
+Host: http://0.0.0.0:8080
+x-access-token:
+
+{
+     "name": "updated test user"
+}
