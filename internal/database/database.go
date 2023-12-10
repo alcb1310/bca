@@ -24,6 +24,7 @@ type Service interface {
 	GetAllUsers(companyId uuid.UUID) ([]types.User, error)
 	CreateUser(u *types.UserCreate) (types.User, error)
 	GetUser(id, companyId uuid.UUID) (types.User, error)
+	UpdateUser(u types.User, id, companyId uuid.UUID) (types.User, error)
 }
 
 type service struct {

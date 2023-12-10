@@ -93,18 +93,36 @@ func (s *Server) AllUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) OneUser(w http.ResponseWriter, r *http.Request) {
-	response := make(map[string]string)
+	resp := make(map[string]string)
 	ctxPayload, _ := getMyPaload(r)
 	id := mux.Vars(r)["id"]
 	if strings.ToLower(id) == "me" {
+		if r.Method != http.MethodGet {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
 		id = ctxPayload.Id.String()
 	}
 
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
-		response["error"] = err.Error()
+		resp["error"] = err.Error()
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(response)
+		json.NewEncoder(w).Encode(resp)
+		return
+	}
+
+	user, err := s.DB.GetUser(parsedId, ctxPayload.CompanyId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusNotFound)
+			resp["error"] = fmt.Sprintf("User with ID: `%s` not found", id)
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		resp["error"] = err.Error()
+		json.NewEncoder(w).Encode(resp)
 		return
 	}
 
@@ -112,21 +130,45 @@ func (s *Server) OneUser(w http.ResponseWriter, r *http.Request) {
 	case http.MethodOptions:
 		w.WriteHeader(http.StatusOK)
 
-	case http.MethodGet:
-		user, err := s.DB.GetUser(parsedId, ctxPayload.CompanyId)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				w.WriteHeader(http.StatusNotFound)
-				response["error"] = fmt.Sprintf("User with ID: `%s` not found", id)
-				json.NewEncoder(w).Encode(response)
-				return
-			}
-			w.WriteHeader(http.StatusInternalServerError)
-			response["error"] = err.Error()
-			json.NewEncoder(w).Encode(response)
+	case http.MethodPut:
+		var u = &types.User{}
+
+		if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
 			return
 		}
 
+		if u.Email != "" && !utils.IsValidEmail(u.Email) {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "invalid email"
+			resp["field"] = "email"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if u.Email != "" {
+			user.Email = u.Email
+		}
+		if u.Name != "" {
+			user.Name = u.Name
+		}
+		if u.RoleId != "" {
+			user.RoleId = u.RoleId
+		}
+
+		ux, err := s.DB.UpdateUser(user, parsedId, ctxPayload.CompanyId)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(ux)
+	case http.MethodGet:
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(user)
 	default:

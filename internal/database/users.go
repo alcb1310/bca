@@ -59,3 +59,19 @@ func (s *service) GetUser(id, companyId uuid.UUID) (types.User, error) {
 
 	return u, nil
 }
+
+func (s *service) UpdateUser(u types.User, id, companyId uuid.UUID) (types.User, error) {
+	sql := "update \"user\" set name = $1, email = $2, company_id = $3, role_id = $4 where id = $5 and company_id = $6"
+	_, err := s.db.Exec(sql, u.Name, u.Email, u.CompanyId, u.RoleId, id, companyId)
+	if err != nil {
+		return types.User{}, err
+	}
+
+	return types.User{
+		Id:        id,
+		Name:      u.Name,
+		Email:     u.Email,
+		CompanyId: companyId,
+		RoleId:    u.RoleId,
+	}, nil
+}
