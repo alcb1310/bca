@@ -19,6 +19,44 @@ func (s *Server) AllUsers(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodOptions:
 		w.WriteHeader(http.StatusOK)
+	case http.MethodPatch:
+		resp := map[string]string{}
+		type expect struct {
+			Password string `json:"password"`
+		}
+		var u = &expect{}
+
+		if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if u.Password == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "password cannot be empty"
+			resp["field"] = "password"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		user, err := s.DB.UpdatePassword(u.Password, ctxPayload.Id, ctxPayload.CompanyId)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				w.WriteHeader(http.StatusNotFound)
+				resp["error"] = fmt.Sprintf("User with ID: `%s` not found", ctxPayload.Id)
+				json.NewEncoder(w).Encode(resp)
+				return
+			}
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(user)
 	case http.MethodGet:
 		users, err := s.DB.GetAllUsers(ctxPayload.CompanyId)
 		if err != nil {

@@ -2,6 +2,7 @@ package database
 
 import (
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 
 	"github.com/google/uuid"
 )
@@ -71,4 +72,20 @@ func (s *service) UpdateUser(u types.User, id, companyId uuid.UUID) (types.User,
 		CompanyId: companyId,
 		RoleId:    u.RoleId,
 	}, nil
+}
+
+func (s *service) UpdatePassword(pass string, id, companyId uuid.UUID) (types.User, error) {
+	u := types.User{}
+	hash, err := utils.EncryptPasssword(pass)
+	if err != nil {
+		return types.User{}, err
+	}
+
+	sql := "update \"user\" set password = $1 where id = $2 and company_id = $3 returning id, email, name, role_id"
+	if err := s.db.QueryRow(sql, hash, id, companyId).Scan(&u.Id, &u.Email, &u.Name, &u.RoleId); err != nil {
+		return types.User{}, err
+	}
+	u.CompanyId = companyId
+
+	return u, nil
 }
