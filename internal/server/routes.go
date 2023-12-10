@@ -21,6 +21,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// users routes
 	r.HandleFunc("/api/v1/users", s.AllUsers)
+	r.HandleFunc("/api/v1/users/{id}", s.OneUser)
 
 	return r
 }

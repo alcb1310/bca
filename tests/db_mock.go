@@ -51,3 +51,7 @@ func (s *DBMock) GetAllUsers(companyId uuid.UUID) ([]types.User, error) {
 func (s *DBMock) CreateUser(u *types.UserCreate) (types.User, error) {
 	return types.User{}, nil
 }
+
+func (s *DBMock) GetUser(id, companyId uuid.UUID) (types.User, error) {
+	return types.User{}, nil
+}

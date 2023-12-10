@@ -3,8 +3,14 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 func (s *Server) AllUsers(w http.ResponseWriter, r *http.Request) {
@@ -81,6 +87,48 @@ func (s *Server) AllUsers(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(ux)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) OneUser(w http.ResponseWriter, r *http.Request) {
+	response := make(map[string]string)
+	ctxPayload, _ := getMyPaload(r)
+	id := mux.Vars(r)["id"]
+	if strings.ToLower(id) == "me" {
+		id = ctxPayload.Id.String()
+	}
+
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		response["error"] = err.Error()
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(response)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodOptions:
+		w.WriteHeader(http.StatusOK)
+
+	case http.MethodGet:
+		user, err := s.DB.GetUser(parsedId, ctxPayload.CompanyId)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				w.WriteHeader(http.StatusNotFound)
+				response["error"] = fmt.Sprintf("User with ID: `%s` not found", id)
+				json.NewEncoder(w).Encode(response)
+				return
+			}
+			w.WriteHeader(http.StatusInternalServerError)
+			response["error"] = err.Error()
+			json.NewEncoder(w).Encode(response)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(user)
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}

@@ -48,3 +48,14 @@ func (s *service) CreateUser(u *types.UserCreate) (types.User, error) {
 
 	return us, nil
 }
+
+func (s *service) GetUser(id, companyId uuid.UUID) (types.User, error) {
+	u := types.User{}
+	sql := "select id, name, email, company_id, role_id from \"user\" where id = $1 and company_id = $2"
+	err := s.db.QueryRow(sql, id, companyId).Scan(&u.Id, &u.Name, &u.Email, &u.CompanyId, &u.RoleId)
+	if err != nil {
+		return types.User{}, err
+	}
+
+	return u, nil
+}
