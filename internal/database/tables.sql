@@ -37,4 +37,13 @@ create table if not exists logged_in (
      created_at timestamp with time zone default now()
 );
 
+create table if not exists project (
+     id uuid PRIMARY KEY default gen_random_uuid(),
+     name text not null,
+     is_active boolean  default true,
 
+     company_id uuid not null references company(id) on delete restrict,
+     created_at timestamp with time zone default now(),
+
+     unique (name, company_id)
+);
