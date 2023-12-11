@@ -26,6 +26,7 @@ type Service interface {
 	GetUser(id, companyId uuid.UUID) (types.User, error)
 	UpdateUser(u types.User, id, companyId uuid.UUID) (types.User, error)
 	UpdatePassword(pass string, id, companyId uuid.UUID) (types.User, error)
+	DeleteUser(id, companyId uuid.UUID) error
 }
 
 type service struct {

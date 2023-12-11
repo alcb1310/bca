@@ -89,3 +89,9 @@ func (s *service) UpdatePassword(pass string, id, companyId uuid.UUID) (types.Us
 
 	return u, nil
 }
+
+func (s *service) DeleteUser(id, companyId uuid.UUID) error {
+	sql := "delete from \"user\" where id = $1 and company_id = $2"
+	_, err := s.db.Exec(sql, id, companyId)
+	return err
+}

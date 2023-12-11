@@ -63,3 +63,7 @@ func (s *DBMock) UpdateUser(u types.User, id, companyId uuid.UUID) (types.User, 
 func (s *DBMock) UpdatePassword(pass string, id, companyId uuid.UUID) (types.User, error) {
 	return types.User{}, nil
 }
+
+func (s *DBMock) DeleteUser(id, companyId uuid.UUID) error {
+	return nil
+}

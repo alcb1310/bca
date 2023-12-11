@@ -135,7 +135,7 @@ func (s *Server) OneUser(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := getMyPaload(r)
 	id := mux.Vars(r)["id"]
 	if strings.ToLower(id) == "me" {
-		if r.Method != http.MethodGet {
+		if r.Method != http.MethodGet && r.Method != http.MethodOptions {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
@@ -168,6 +168,21 @@ func (s *Server) OneUser(w http.ResponseWriter, r *http.Request) {
 	case http.MethodOptions:
 		w.WriteHeader(http.StatusOK)
 
+	case http.MethodDelete:
+		if parsedId == ctxPayload.Id {
+			w.WriteHeader(http.StatusForbidden)
+			resp["error"] = "cannot delete yourself"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		if err := s.DB.DeleteUser(parsedId, ctxPayload.CompanyId); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
 	case http.MethodPut:
 		var u = &types.User{}
 
