@@ -37,3 +37,13 @@ x-access-token:
 {
      "name": "updated test user"
 }
+
+# Can not delete yourself
+DELETE /api/v1/users/fcdcbbac-fd2f-4ce5-8e21-f6c0d11622f9
+Host: http://0.0.0.0:8080
+x-access-token:
+
+# Deleted user
+DELETE /api/v1/users/810c225a-c7cd-4eee-9bf8-d4b816fda4f0
+Host: http://0.0.0.0:8080
+x-access-token:
