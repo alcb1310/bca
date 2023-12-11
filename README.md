@@ -27,6 +27,7 @@ The objective of this application is to manage the budget of a construction comp
 
 - [Routes](#routes)
     - [Login](#login)
+    - [Users](#users)
 
 - [Deployment](#deployment)
 
@@ -39,6 +40,9 @@ In order to achieve the project's description, the application will have both pu
 The application will start at the `/login` route which allows a user to login to it by providing their email and password, then the
 server will validate their credentials, and on success it will go to the protected routes and if it didn't succeed, it will display
 a message indicating `invalid credentials`
+
+### Users
+
 
 
 
