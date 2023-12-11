@@ -43,8 +43,17 @@ a message indicating `invalid credentials`
 
 ### Users
 
+The logged in user will be able to:
 
+- Change his/her password by making a `PATCH` request to the `/api/v1/users` route
 
+The admin users will be able to:
+
+- Create new users by making a `POST` request to the `/api/v1/users` route
+- Get all users by making a `GET` request to the `/api/v1/users` route
+- Get one user by making a `GET` request to the `/api/v1/users/:id` route
+- Update one user by making a `PUT` request to the `/api/v1/users/:id` route
+- Delete one user by making a `DELETE` request to the `/api/v1/users/:id` route
 
 ## Deployment
 
