@@ -1,6 +1,12 @@
 POST 0.0.0.0:8080/login
 
 {
-     "email": "test@test.com",
+     "email": "test@test.com",users
      "password": "password123"
 }
+{% 
+
+local body = context.json_decode(context.result.body)
+context.set_env("TOKEN", body.token)
+
+%}
