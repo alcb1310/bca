@@ -1,0 +1,3 @@
+GET /api/v1/projects
+Host: localhost:8080
+x-access-token: {{TOKEN}}

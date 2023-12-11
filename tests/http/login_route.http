@@ -1,7 +1,9 @@
-POST 0.0.0.0:8080/login
+POST /login
+Host: localhost:8080
+Content-Type: application/json
 
 {
-     "email": "test@test.com",users
+     "email": "test@test.com",
      "password": "password123"
 }
 {% 

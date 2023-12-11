@@ -27,6 +27,9 @@ type Service interface {
 	UpdateUser(u types.User, id, companyId uuid.UUID) (types.User, error)
 	UpdatePassword(pass string, id, companyId uuid.UUID) (types.User, error)
 	DeleteUser(id, companyId uuid.UUID) error
+
+	// database/projects.go
+	GetAllProjects(companyId uuid.UUID) ([]types.Project, error)
 }
 
 type service struct {
