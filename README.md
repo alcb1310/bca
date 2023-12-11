@@ -27,6 +27,7 @@ The objective of this application is to manage the budget of a construction comp
 
 - [Routes](#routes)
     - [Login](#login)
+    - [Users](#users)
 
 - [Deployment](#deployment)
 
@@ -40,7 +41,19 @@ The application will start at the `/login` route which allows a user to login to
 server will validate their credentials, and on success it will go to the protected routes and if it didn't succeed, it will display
 a message indicating `invalid credentials`
 
+### Users
 
+The logged in user will be able to:
+
+- Change his/her password by making a `PATCH` request to the `/api/v1/users` route
+
+The admin users will be able to:
+
+- Create new users by making a `POST` request to the `/api/v1/users` route
+- Get all users by making a `GET` request to the `/api/v1/users` route
+- Get one user by making a `GET` request to the `/api/v1/users/:id` route
+- Update one user by making a `PUT` request to the `/api/v1/users/:id` route
+- Delete one user by making a `DELETE` request to the `/api/v1/users/:id` route
 
 ## Deployment
 
