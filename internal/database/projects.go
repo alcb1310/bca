@@ -21,6 +21,7 @@ func (s *service) GetAllProjects(companyId uuid.UUID) ([]types.Project, error) {
 		if err := rows.Scan(&p.ID, &p.Name, &p.IsActive, &p.CompanyId); err != nil {
 			return projects, err
 		}
+		projects = append(projects, p)
 	}
 
 	return projects, nil
