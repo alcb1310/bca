@@ -71,3 +71,7 @@ func (s *DBMock) DeleteUser(id, companyId uuid.UUID) error {
 func (s *DBMock) GetAllProjects(companyId uuid.UUID) ([]types.Project, error) {
 	return []types.Project{}, nil
 }
+
+func (s *DBMock) CreateProject(p types.Project) (types.Project, error) {
+	return types.Project{}, nil
+}
