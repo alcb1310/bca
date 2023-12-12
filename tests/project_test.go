@@ -65,8 +65,8 @@ func TestCreateProject(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error making request to server. Err: %v", err)
 	}
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("expected status ok; got %v", resp.Status)
+	if resp.StatusCode != http.StatusCreated {
+		t.Errorf("expected status created; got %v", resp.Status)
 	}
 
 }
