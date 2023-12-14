@@ -36,3 +36,14 @@ func (s *service) CreateProject(p types.Project) (types.Project, error) {
 
 	return p, nil
 }
+
+func (s *service) GetProject(id, companyId uuid.UUID) (types.Project, error) {
+	p := types.Project{}
+	sql := "select id, name, is_active, company_id from project where id = $1 and company_id = $2"
+	err := s.db.QueryRow(sql, id, companyId).Scan(&p.ID, &p.Name, &p.IsActive, &p.CompanyId)
+	if err != nil {
+		return types.Project{}, err
+	}
+
+	return p, nil
+}

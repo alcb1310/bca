@@ -31,6 +31,7 @@ type Service interface {
 	// database/projects.go
 	GetAllProjects(companyId uuid.UUID) ([]types.Project, error)
 	CreateProject(p types.Project) (types.Project, error)
+	GetProject(id, companyId uuid.UUID) (types.Project, error)
 }
 
 type service struct {

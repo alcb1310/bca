@@ -25,6 +25,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// projects routes
 	r.HandleFunc("/api/v1/projects", s.AllProjects)
+	r.HandleFunc("/api/v1/projects/{id}", s.OneProject)
 
 	return r
 }
