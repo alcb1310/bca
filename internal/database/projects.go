@@ -47,3 +47,13 @@ func (s *service) GetProject(id, companyId uuid.UUID) (types.Project, error) {
 
 	return p, nil
 }
+
+func (s *service) UpdateProject(p types.Project, id, companyId uuid.UUID) error {
+	sql := "update project set name = $1, is_active = $2 where id = $3 and company_id = $4"
+	_, err := s.db.Exec(sql, p.Name, p.IsActive, id, companyId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

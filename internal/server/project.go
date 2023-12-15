@@ -33,7 +33,8 @@ func (s *Server) AllProjects(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(resp)
 			return
 		}
-		p.IsActive = true
+		x := true
+		p.IsActive = &x
 		p.CompanyId = ctxPayload.CompanyId
 
 		project, err := s.DB.CreateProject(p)
@@ -78,18 +79,36 @@ func (s *Server) OneProject(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(resp)
 		return
 	}
+	project, err := s.DB.GetProject(parsedId, ctxPayload.CompanyId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusNotFound)
+			resp["error"] = fmt.Sprintf("Project with ID: `%s` not found", id)
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+	}
 
 	switch r.Method {
-	case http.MethodGet:
-		project, err := s.DB.GetProject(parsedId, ctxPayload.CompanyId)
+	case http.MethodPut:
+		var p types.Project
 
-		if err != nil {
-			if err == sql.ErrNoRows {
-				w.WriteHeader(http.StatusNotFound)
-				resp["error"] = fmt.Sprintf("Project with ID: `%s` not found", id)
-				json.NewEncoder(w).Encode(resp)
-				return
-			}
+		if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if p.Name == "" {
+			p.Name = project.Name
+		}
+
+		if p.IsActive == nil {
+			p.IsActive = project.IsActive
+		}
+
+		if err := s.DB.UpdateProject(p, parsedId, ctxPayload.CompanyId); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			resp["error"] = err.Error()
 			json.NewEncoder(w).Encode(resp)
@@ -97,7 +116,11 @@ func (s *Server) OneProject(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(project)
+
+	case http.MethodGet:
+		w.WriteHeader(http.StatusInternalServerError)
+		resp["error"] = err.Error()
+		json.NewEncoder(w).Encode(resp)
 
 	case http.MethodOptions:
 		w.WriteHeader(http.StatusOK)

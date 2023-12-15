@@ -79,3 +79,7 @@ func (s *DBMock) CreateProject(p types.Project) (types.Project, error) {
 func (s *DBMock) GetProject(id, companyId uuid.UUID) (types.Project, error) {
 	return types.Project{}, nil
 }
+
+func (s *DBMock) UpdateProject(p types.Project, id, companyId uuid.UUID) error {
+	return nil
+}
