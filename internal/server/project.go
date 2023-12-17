@@ -118,9 +118,8 @@ func (s *Server) OneProject(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 
 	case http.MethodGet:
-		w.WriteHeader(http.StatusInternalServerError)
-		resp["error"] = err.Error()
-		json.NewEncoder(w).Encode(resp)
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(project)
 
 	case http.MethodOptions:
 		w.WriteHeader(http.StatusOK)
