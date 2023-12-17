@@ -29,6 +29,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	return r
 }
+	// suppliers routes
+	r.HandleFunc("/api/v1/suppliers", s.AllSuppliers)
 
 func middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

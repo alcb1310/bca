@@ -83,3 +83,8 @@ func (s *DBMock) GetProject(id, companyId uuid.UUID) (types.Project, error) {
 func (s *DBMock) UpdateProject(p types.Project, id, companyId uuid.UUID) error {
 	return nil
 }
+
+func (s *DBMock) GetAllSuppliers(companyId uuid.UUID) ([]types.Supplier, error) {
+	return []types.Supplier{}, nil
+}
+
