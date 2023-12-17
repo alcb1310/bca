@@ -3,6 +3,7 @@ package database
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
+	"bytes"
 	"context"
 	"errors"
 	"log"
@@ -46,10 +47,10 @@ func (s *service) CreateCompany(company *types.CompanyCreate) error {
 }
 
 func (s *service) Login(l *types.Login) (string, error) {
-	sql := "select password, id, name, company_id, role_id from \"user\" where email = $1"
+	sql := "select password, id, name, email, company_id, role_id from \"user\" where email = $1"
 	u := &types.User{}
 	var password string
-	if err := s.db.QueryRowContext(context.Background(), sql, l.Email).Scan(&password, &u.Id, &u.Name, &u.CompanyId, &u.RoleId); err != nil {
+	if err := s.db.QueryRowContext(context.Background(), sql, l.Email).Scan(&password, &u.Id, &u.Name, &u.Email, &u.CompanyId, &u.RoleId); err != nil {
 		return "", errors.New("invalid credentials")
 	}
 
@@ -68,4 +69,18 @@ func (s *service) Login(l *types.Login) (string, error) {
 	}
 
 	return token, nil
+}
+
+func (s *service) IsLoggedIn(token string, user uuid.UUID) bool {
+	sql := "select token from logged_in where user_id = $1"
+	var t string
+	if err := s.db.QueryRowContext(context.Background(), sql, user).Scan(&t); err != nil {
+		return false
+	}
+
+	if !bytes.Equal([]byte(token), []byte(t)) {
+		return false
+	}
+
+	return true
 }

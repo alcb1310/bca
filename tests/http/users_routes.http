@@ -1,0 +1,49 @@
+GET /api/v1/users
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
+
+
+POST /api/v1/users
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
+
+{
+     "email": "test3@testing.com",
+     "password": "password123",
+     "name": "test",
+     "role_id" : "a"
+}
+
+PATCH /api/v1/users
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
+
+{
+     "password": "password123"
+}
+
+GET /api/v1/users/388c0480-1957-44f9-bc6d-20dad2994212
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
+
+GET /api/v1/users/me
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
+
+PUT /api/v1/users/388c0480-1957-44f9-bc6d-20dad2994212
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
+
+{
+     "name": "updated test user"
+}
+
+# Can not delete yourself
+DELETE /api/v1/users/fcdcbbac-fd2f-4ce5-8e21-f6c0d11622f9
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
+
+# Deleted user
+DELETE /api/v1/users/5b53eeba-bf61-4347-90f1-14f2a0952a96
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
