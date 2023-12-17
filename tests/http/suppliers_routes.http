@@ -1,3 +1,15 @@
 GET /api/v1/suppliers
 Host: http://0.0.0.0:8080
 x-access-token: {{TOKEN}}
+
+POST /api/v1/suppliers
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
+
+{
+     "supplier_id": "124",
+     "name": "test 2",
+     "contact_name": "test contact",
+     "contact_email": "test@contact.com",
+     "contact_phone": "test contact phone"
+}
