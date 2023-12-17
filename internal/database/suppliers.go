@@ -26,3 +26,9 @@ func (s *service) GetAllSuppliers(companyId uuid.UUID) ([]types.Supplier, error)
 
 	return suppliers, nil
 }
+
+func (s *service) CreateSupplier(supplier *types.Supplier) error {
+	sql := "INSERT INTO supplier (supplier_id, name, contact_name, contact_email, contact_phone, company_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id"
+	err := s.db.QueryRow(sql, supplier.SupplierId, supplier.Name, supplier.ContactName, supplier.ContactEmail, supplier.ContactPhone, supplier.CompanyId).Scan(&supplier.ID)
+	return err
+}

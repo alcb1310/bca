@@ -36,6 +36,7 @@ type Service interface {
 
 	// database/suppliers.go
 	GetAllSuppliers(companyId uuid.UUID) ([]types.Supplier, error)
+	CreateSupplier(supplier *types.Supplier) error
 }
 
 type service struct {
