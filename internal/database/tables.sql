@@ -47,3 +47,19 @@ create table if not exists project (
 
      unique (name, company_id)
 );
+
+create table if not exists supplier (
+     id uuid PRIMARY KEY default gen_random_uuid(),
+     supplier_id text not null,
+     name text not null,
+
+     contact_name text,
+     contact_email text,
+     contact_phone text,
+
+     company_id uuid not null references company(id) on delete restrict,
+     created_at timestamp with time zone default now(),
+
+     unique (supplier_id, company_id),
+     unique (name, company_id)
+);
