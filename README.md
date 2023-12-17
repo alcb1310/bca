@@ -28,6 +28,8 @@ The objective of this application is to manage the budget of a construction comp
 - [Routes](#routes)
     - [Login](#login)
     - [Users](#users)
+    - [Settings](#settings)
+        - [Projects](#projects)
 
 - [Deployment](#deployment)
 
@@ -54,6 +56,19 @@ The admin users will be able to:
 - Get one user by making a `GET` request to the `/api/v1/users/:id` route
 - Update one user by making a `PUT` request to the `/api/v1/users/:id` route
 - Delete one user by making a `DELETE` request to the `/api/v1/users/:id` route
+
+### Settings
+
+The settings for this application will be divided into the following:
+
+#### Projects
+
+The projects will be able to:
+
+- Create new projects by making a `POST` request to the `/api/v1/projects` route
+- Get all projects by making a `GET` request to the `/api/v1/projects` route
+- Get one project by making a `GET` request to the `/api/v1/projects/:id` route
+- Update one project by making a `PUT` request to the `/api/v1/projects/:id` route
 
 ## Deployment
 
