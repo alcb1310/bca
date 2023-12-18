@@ -38,6 +38,7 @@ type Service interface {
 	GetAllSuppliers(companyId uuid.UUID) ([]types.Supplier, error)
 	CreateSupplier(supplier *types.Supplier) error
 	GetOneSupplier(id, companyId uuid.UUID) (types.Supplier, error)
+	UpdateSupplier(supplier *types.Supplier) error
 }
 
 type service struct {

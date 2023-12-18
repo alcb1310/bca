@@ -96,3 +96,7 @@ func (s *DBMock) CreateSupplier(supplier *types.Supplier) error {
 func (s *DBMock) GetOneSupplier(id, companyId uuid.UUID) (types.Supplier, error) {
 	return types.Supplier{}, nil
 }
+
+func (s *DBMock) UpdateSupplier(supplier *types.Supplier) error {
+	return nil
+}

@@ -39,3 +39,9 @@ func (s *service) GetOneSupplier(id, companyId uuid.UUID) (types.Supplier, error
 	err := s.db.QueryRow(sql, id, companyId).Scan(&supplier.ID, &supplier.SupplierId, &supplier.Name, &supplier.ContactName, &supplier.ContactEmail, &supplier.ContactPhone, &supplier.CompanyId)
 	return supplier, err
 }
+
+func (s *service) UpdateSupplier(supplier *types.Supplier) error {
+	sql := "UPDATE supplier SET name = $1, contact_name = $2, contact_email = $3, contact_phone = $4 WHERE id = $5 AND company_id = $6"
+	_, err := s.db.Exec(sql, supplier.Name, supplier.ContactName, supplier.ContactEmail, supplier.ContactPhone, supplier.ID, supplier.CompanyId)
+	return err
+}

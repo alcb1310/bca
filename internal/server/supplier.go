@@ -109,6 +109,40 @@ func (s *Server) OneSupplier(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.Method {
+	case http.MethodPut:
+		sup := &types.Supplier{}
+
+		if err := json.NewDecoder(r.Body).Decode(sup); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if sup.SupplierId == "" {
+			sup.SupplierId = supplier.SupplierId
+		}
+		if sup.Name == "" {
+			sup.Name = supplier.Name
+		}
+		if sup.ContactEmail == nil {
+			sup.ContactEmail = supplier.ContactEmail
+		} else if !utils.IsValidEmail(*sup.ContactEmail) {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "invalid email"
+			resp["field"] = "contact_email"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		if sup.ContactPhone == nil {
+			sup.ContactPhone = supplier.ContactPhone
+		}
+		if sup.ContactName == nil {
+			sup.ContactName = supplier.ContactName
+		}
+		sup.CompanyId = ctxPayload.CompanyId
+		sup.ID = parsedId
+
 	case http.MethodGet:
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(supplier)
