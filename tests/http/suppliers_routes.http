@@ -13,3 +13,7 @@ x-access-token: {{TOKEN}}
      "contact_email": "test@contact.com",
      "contact_phone": "test contact phone"
 }
+
+GET /api/v1/suppliers/4fc3e05f-c234-4665-9c70-dd80d36a188c
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
