@@ -29,6 +29,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// suppliers routes
 	r.HandleFunc("/api/v1/suppliers", s.AllSuppliers)
+	r.HandleFunc("/api/v1/suppliers/{id}", s.OneSupplier)
 
 	return r
 }

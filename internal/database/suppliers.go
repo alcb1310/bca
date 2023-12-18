@@ -32,3 +32,10 @@ func (s *service) CreateSupplier(supplier *types.Supplier) error {
 	err := s.db.QueryRow(sql, supplier.SupplierId, supplier.Name, supplier.ContactName, supplier.ContactEmail, supplier.ContactPhone, supplier.CompanyId).Scan(&supplier.ID)
 	return err
 }
+
+func (s *service) GetOneSupplier(id, companyId uuid.UUID) (types.Supplier, error) {
+	supplier := types.Supplier{}
+	sql := "SELECT id, supplier_id, name, contact_name, contact_email, contact_phone, company_id FROM supplier WHERE id = $1 AND company_id = $2"
+	err := s.db.QueryRow(sql, id, companyId).Scan(&supplier.ID, &supplier.SupplierId, &supplier.Name, &supplier.ContactName, &supplier.ContactEmail, &supplier.ContactPhone, &supplier.CompanyId)
+	return supplier, err
+}

@@ -92,3 +92,7 @@ func (s *DBMock) CreateSupplier(supplier *types.Supplier) error {
 	supplier.ID = uuid.New()
 	return nil
 }
+
+func (s *DBMock) GetOneSupplier(id, companyId uuid.UUID) (types.Supplier, error) {
+	return types.Supplier{}, nil
+}
