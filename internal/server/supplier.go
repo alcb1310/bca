@@ -143,6 +143,16 @@ func (s *Server) OneSupplier(w http.ResponseWriter, r *http.Request) {
 		sup.CompanyId = ctxPayload.CompanyId
 		sup.ID = parsedId
 
+		if err := s.DB.UpdateSupplier(sup); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(sup)
+
 	case http.MethodGet:
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(supplier)
