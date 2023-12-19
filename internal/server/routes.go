@@ -23,6 +23,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/api/v1/users", s.AllUsers)
 	r.HandleFunc("/api/v1/users/{id}", s.OneUser)
 
+	// projects routes
+	r.HandleFunc("/api/v1/projects", s.AllProjects)
+	r.HandleFunc("/api/v1/projects/{id}", s.OneProject)
+
 	return r
 }
 
