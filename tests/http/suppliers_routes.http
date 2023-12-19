@@ -17,3 +17,15 @@ x-access-token: {{TOKEN}}
 GET /api/v1/suppliers/4fc3e05f-c234-4665-9c70-dd80d36a188c
 Host: http://0.0.0.0:8080
 x-access-token: {{TOKEN}}
+
+PUT /api/v1/suppliers/4fc3e05f-c234-4665-9c70-dd80d36a188c
+Host: http://0.0.0.0:8080
+x-access-token: {{TOKEN}}
+
+{
+     "supplier_id": "125",
+     "name": "Updated name all",
+     "contact_name": "contact name updated",
+     "contact_email": "test@contact.com.ec",
+     "contact_phone": "123456789"
+}
