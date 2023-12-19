@@ -27,19 +27,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/api/v1/projects", s.AllProjects)
 	r.HandleFunc("/api/v1/projects/{id}", s.OneProject)
 
+	// suppliers routes
+	r.HandleFunc("/api/v1/suppliers", s.AllSuppliers)
+	r.HandleFunc("/api/v1/suppliers/{id}", s.OneSupplier)
+
 	return r
-}
-
-func middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
-
-		next.ServeHTTP(w, r)
-	})
 }
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
