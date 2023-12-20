@@ -1,3 +1,14 @@
 GET /api/v1/budget-items
 Host: localhost:8080
 x-access-token: {{TOKEN}}
+
+POST /api/v1/budget-items
+Host: localhost:8080
+x-access-token: {{TOKEN}}
+
+{
+     "code": "500.01.01",
+     "name": "WACHIMAN",
+     "accumulate": true,
+     "parent_id": "ca5e26a4-05a0-46be-9448-5043f8249290"
+}

@@ -104,3 +104,8 @@ func (s *DBMock) UpdateSupplier(supplier *types.Supplier) error {
 func (s *DBMock) GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItem, error) {
 	return []types.BudgetItem{}, nil
 }
+
+func (s *DBMock) CreateBudgetItem(bi *types.BudgetItem) error {
+	bi.ID = uuid.New()
+	return nil
+}
