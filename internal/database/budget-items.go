@@ -43,3 +43,11 @@ func (s *service) CreateBudgetItem(bi *types.BudgetItem) error {
 	err := s.db.QueryRow(sql, bi.Code, bi.Name, bi.Level, bi.Accumulate, bi.ParentId, bi.CompanyId).Scan(&bi.ID)
 	return err
 }
+
+func (s *service) GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.BudgetItem, error) {
+	bi := &types.BudgetItem{}
+	sql := "select id, code, name, level, accumulate, parent_id, company_id from vw_budget_item where id = $1 and company_id = $2"
+	err := s.db.QueryRow(sql, id, companyId).Scan(&bi.ID, &bi.Code, &bi.Name, &bi.Level, &bi.Accumulate, &bi.ParentId, &bi.CompanyId)
+
+	return bi, err
+}

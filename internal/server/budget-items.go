@@ -2,8 +2,12 @@ package server
 
 import (
 	"bca-go-final/internal/types"
+	"database/sql"
 	"encoding/json"
 	"net/http"
+
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 func (s *Server) AllBudgetItems(w http.ResponseWriter, r *http.Request) {
@@ -65,6 +69,44 @@ func (s *Server) AllBudgetItems(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(bi)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) OneBudgetItem(w http.ResponseWriter, r *http.Request) {
+	resp := make(map[string]string)
+	ctxPayload, _ := getMyPaload(r)
+	id := mux.Vars(r)["id"]
+
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		resp["error"] = err.Error()
+		json.NewEncoder(w).Encode(resp)
+		return
+	}
+
+	bi, err := s.DB.GetOneBudgetItem(parsedId, ctxPayload.CompanyId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusNotFound)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		resp["error"] = err.Error()
+		json.NewEncoder(w).Encode(resp)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(bi)
+
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}

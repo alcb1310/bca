@@ -33,6 +33,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// budget-items routes
 	r.HandleFunc("/api/v1/budget-items", s.AllBudgetItems)
+	r.HandleFunc("/api/v1/budget-items/{id}", s.OneBudgetItem)
 
 	return r
 }

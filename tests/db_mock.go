@@ -109,3 +109,7 @@ func (s *DBMock) CreateBudgetItem(bi *types.BudgetItem) error {
 	bi.ID = uuid.New()
 	return nil
 }
+
+func (s *DBMock) GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.BudgetItem, error) {
+	return &types.BudgetItem{}, nil
+}
