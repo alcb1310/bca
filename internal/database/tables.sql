@@ -79,3 +79,13 @@ create table if not exists budget_item(
      unique (code, company_id),
      unique (name, company_id)
 );
+
+
+-- VIEWS
+
+CREATE OR REPLACE VIEW vw_budget_item AS
+SELECT b.id id, b.code code, b.name name, b.level level, b.accumulate accumulate,
+p.id parent_id, p.code parent_code, p.name parent_name, b.company_id company_id
+FROM budget_item b
+LEFT JOIN budget_item p ON b.parent_id = p.id;
+

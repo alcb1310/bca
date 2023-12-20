@@ -39,6 +39,9 @@ type Service interface {
 	CreateSupplier(supplier *types.Supplier) error
 	GetOneSupplier(id, companyId uuid.UUID) (types.Supplier, error)
 	UpdateSupplier(supplier *types.Supplier) error
+
+	// database/budget-items.go
+	GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItem, error)
 }
 
 type service struct {
