@@ -51,3 +51,20 @@ func (s *service) GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.Bu
 
 	return bi, err
 }
+
+func (s *service) UpdateBudgetItem(bi *types.BudgetItem) error {
+	var level uint8 = 1
+	if bi.ParentId != nil {
+		sql := "select level from budget_item where id = $1 and company_id = $2"
+		err := s.db.QueryRow(sql, bi.ParentId, bi.CompanyId).Scan(&level)
+		if err != nil {
+			return err
+		}
+		level++
+	}
+	bi.Level = level
+
+	sql := "update budget_item set code = $1, name = $2, level = $3, accumulate = $4, parent_id = $5 where id = $6 and company_id = $7"
+	_, err := s.db.Exec(sql, bi.Code, bi.Name, level, bi.Accumulate, bi.ParentId, bi.ID, bi.CompanyId)
+	return err
+}

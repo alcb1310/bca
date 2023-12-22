@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -103,6 +104,50 @@ func (s *Server) OneBudgetItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.Method {
+	case http.MethodPut:
+		b := &types.BudgetItem{}
+
+		updated := false
+		if err := json.NewDecoder(r.Body).Decode(b); err != nil {
+			if strings.Contains(err.Error(), "invalid UUID length: 0") {
+				b.ParentId = nil
+				updated = true
+			} else {
+				w.WriteHeader(http.StatusBadRequest)
+				resp["error"] = err.Error()
+				json.NewEncoder(w).Encode(resp)
+				return
+			}
+
+		}
+
+		if b.Code == "" {
+			b.Code = bi.Code
+		}
+		if b.Name == "" {
+			b.Name = bi.Name
+		}
+		if b.Accumulate == nil {
+			b.Accumulate = bi.Accumulate
+		}
+
+		if !updated && b.ParentId == nil {
+			b.ParentId = bi.ParentId
+		}
+		b.CompanyId = ctxPayload.CompanyId
+		b.ID = parsedId
+
+		err := s.DB.UpdateBudgetItem(b)
+		if err != nil {
+			resp["error"] = err.Error()
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(b)
+
 	case http.MethodGet:
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(bi)
