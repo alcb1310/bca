@@ -30,6 +30,7 @@ The objective of this application is to manage the budget of a construction comp
     - [Users](#users)
     - [Settings](#settings)
         - [Projects](#projects)
+        - [Suppliers](#suppliers)
 
 - [Deployment](#deployment)
 
@@ -69,6 +70,15 @@ The projects will be able to:
 - Get all projects by making a `GET` request to the `/api/v1/projects` route
 - Get one project by making a `GET` request to the `/api/v1/projects/:id` route
 - Update one project by making a `PUT` request to the `/api/v1/projects/:id` route
+
+#### Suppliers
+
+The suppliers will be able to:
+
+- Create new suppliers by making a `POST` request to the `/api/v1/suppliers` route
+- Get all suppliers by making a `GET` request to the `/api/v1/suppliers` route
+- Get one supplier by making a `GET` request to the `/api/v1/suppliers/:id` route
+- Update one supplier by making a `PUT` request to the `/api/v1/suppliers/:id` route
 
 ## Deployment
 
