@@ -45,6 +45,9 @@ type Service interface {
 	CreateBudgetItem(bi *types.BudgetItem) error
 	GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.BudgetItem, error)
 	UpdateBudgetItem(bi *types.BudgetItem) error
+
+	// database/budget.go
+	GetBudgets(companyId uuid.UUID) ([]types.Budget, error)
 }
 
 type service struct {

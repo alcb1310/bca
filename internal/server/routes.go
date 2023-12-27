@@ -35,6 +35,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/api/v1/budget-items", s.AllBudgetItems)
 	r.HandleFunc("/api/v1/budget-items/{id}", s.OneBudgetItem)
 
+	// budget routes
+	r.HandleFunc("/api/v1/budgets", s.AllBudgets)
+
 	return r
 }
 
@@ -52,7 +55,6 @@ func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, err := json.Marshal(s.DB.Health())
-
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
 	}
