@@ -1,8 +1,11 @@
 package server
 
 import (
+	"bca-go-final/internal/types"
 	"encoding/json"
 	"net/http"
+
+	"github.com/google/uuid"
 )
 
 func (s *Server) AllBudgets(w http.ResponseWriter, r *http.Request) {
@@ -12,6 +15,58 @@ func (s *Server) AllBudgets(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodOptions:
 		w.WriteHeader(http.StatusOK)
+
+	case http.MethodPost:
+		budget := &types.CreateBudget{}
+		err := json.NewDecoder(r.Body).Decode(budget)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if budget.ProjectId == uuid.Nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "project_id cannot be empty"
+			resp["field"] = "project_id"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		if budget.BudgetItemId == uuid.Nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "budget_item_id cannot be empty"
+			resp["field"] = "budget_item_id"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		if budget.Quantity == nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "quantity cannot be empty"
+			resp["field"] = "quantity"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		if budget.Cost == nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "cost cannot be empty"
+			resp["field"] = "cost"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		budget.CompanyId = ctx.CompanyId
+		b, err := s.DB.CreateBudget(budget)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(b)
+
 	case http.MethodGet:
 		budgets, err := s.DB.GetBudgets(ctx.CompanyId)
 		if err != nil {

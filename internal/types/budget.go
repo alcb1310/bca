@@ -21,3 +21,14 @@ type Budget struct {
 
 	CompanyId uuid.UUID `json:"company_id"`
 }
+
+// Structure for creating budget
+type CreateBudget struct {
+	ProjectId    uuid.UUID `json:"project_id"`
+	BudgetItemId uuid.UUID `json:"budget_item_id"`
+
+	Quantity *float64 `json:"quantity"`
+	Cost     *float64 `json:"cost"`
+
+	CompanyId uuid.UUID `json:"company_id"`
+}
