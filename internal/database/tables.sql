@@ -82,7 +82,7 @@ create table if not exists budget_item (
 
 create table if not exists budget (
     project_id uuid not null references project (id) on delete restrict,
-    buget_item_id uuid not null references budget_item (id) on delete restrict,
+    budget_item_id uuid not null references budget_item (id) on delete restrict,
 
     initial_quantity numeric,
     initial_cost numeric,
@@ -100,8 +100,8 @@ create table if not exists budget (
     company_id uuid not null references company (id) on delete restrict,
     created_at timestamp with time zone default now(),
 
-    unique (project_id, buget_item_id, company_id),
-    primary key (project_id, buget_item_id, company_id)
+    unique (project_id, budget_item_id, company_id),
+    primary key (project_id, budget_item_id, company_id)
 );
 
 -- VIEWS
