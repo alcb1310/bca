@@ -47,7 +47,7 @@ type Service interface {
 	UpdateBudgetItem(bi *types.BudgetItem) error
 
 	// database/budget.go
-	GetBudgets(companyId uuid.UUID) ([]types.Budget, error)
+	GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error)
 	CreateBudget(b *types.CreateBudget) (types.Budget, error)
 }
 
