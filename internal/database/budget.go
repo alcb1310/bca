@@ -141,3 +141,41 @@ func saveBudget(b *types.CreateBudget, s *sql.Tx) error {
 
 	return saveBudget(b, s)
 }
+
+func (s *service) GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error) {
+	query := `
+        SELECT
+            project_id, project_name,
+            budget_item_id, budget_item_code, budget_item_name, budget_item_level, budget_item_accumulate,
+            initial_quantity, initial_cost, initial_total,
+            spent_quantity, spent_total,
+            remaining_quantity, remaining_cost, remaining_total,
+            updated_budget, company_id
+        FROM vw_budget
+        WHERE company_id = $1 and project_id = $2
+        ORDER BY budget_item_code
+    `
+	rows, err := s.db.Query(query, companyId, projectId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	budgets := []types.GetBudget{}
+
+	for rows.Next() {
+		b := types.GetBudget{}
+		if err := rows.Scan(
+			&b.Project.ID, &b.Project.Name,
+			&b.BudgetItem.ID, &b.BudgetItem.Code, &b.BudgetItem.Name, &b.BudgetItem.Level, &b.BudgetItem.Accumulate,
+			&b.InitialQuantity, &b.InitialCost, &b.InitialTotal,
+			&b.SpentQuantity, &b.SpentTotal,
+			&b.RemainingQuantity, &b.RemainingCost, &b.RemainingTotal,
+			&b.UpdatedBudget, &b.CompanyId,
+		); err != nil {
+			return nil, err
+		}
+		budgets = append(budgets, b)
+	}
+
+	return budgets, nil
+}

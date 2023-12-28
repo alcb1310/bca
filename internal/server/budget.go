@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 func (s *Server) AllBudgets(w http.ResponseWriter, r *http.Request) {
@@ -80,5 +81,34 @@ func (s *Server) AllBudgets(w http.ResponseWriter, r *http.Request) {
 
 	default:
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
+}
+
+func (s *Server) AllBudgetsByProject(w http.ResponseWriter, r *http.Request) {
+	resp := make(map[string]string)
+	ctx, _ := getMyPaload(r)
+	projectId := mux.Vars(r)["projectId"]
+	projectUuid, err := uuid.Parse(projectId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		resp["error"] = err.Error()
+		json.NewEncoder(w).Encode(resp)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		budgets, err := s.DB.GetBudgetsByProjectId(ctx.CompanyId, projectUuid)
+		if err != nil {
+			resp["error"] = err.Error()
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(budgets)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }

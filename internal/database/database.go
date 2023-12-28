@@ -49,6 +49,7 @@ type Service interface {
 	// database/budget.go
 	GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error)
 	CreateBudget(b *types.CreateBudget) (types.Budget, error)
+	GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error)
 }
 
 type service struct {
