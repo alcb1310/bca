@@ -13,3 +13,7 @@ Content-Type: application/json
     "quantity": 256,
     "cost": 5.3
 }
+
+GET /api/v1/budgets/0a91affc-7eb7-4973-8f80-e90f60c48cf0
+Host: localhost:8080
+x-access-token: {{TOKEN}}
