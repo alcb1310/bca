@@ -21,7 +21,6 @@ var (
 func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	log.Println("Loading dummy data")
 
-	// TODO: load dummy data
 	var count int
 	query := "select count(*) from budget_item where company_id = $1"
 	err := s.db.QueryRow(query, companyId).Scan(&count)

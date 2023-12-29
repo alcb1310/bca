@@ -121,6 +121,10 @@ func (s *Server) OneBudget(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.Method {
+	case http.MethodPut:
+		// TODO: implement update
+		w.WriteHeader(http.StatusNotImplemented)
+
 	case http.MethodOptions:
 		w.WriteHeader(http.StatusOK)
 
