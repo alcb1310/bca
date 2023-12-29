@@ -19,6 +19,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/login", s.Login)
 	r.HandleFunc("/register", s.Register)
 
+	// load dummy data
+	r.HandleFunc("/api/v1/load-dummy-data", s.loadDummyDataHandler)
+
 	// users routes
 	r.HandleFunc("/api/v1/users", s.AllUsers)
 	r.HandleFunc("/api/v1/users/{id}", s.OneUser)

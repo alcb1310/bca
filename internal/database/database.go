@@ -20,6 +20,9 @@ type Service interface {
 	Login(l *types.Login) (string, error)
 	IsLoggedIn(token string, user uuid.UUID) bool
 
+	// database/dummy.go
+	LoadDummyData(companyId uuid.UUID) error
+
 	// database/users.go
 	GetAllUsers(companyId uuid.UUID) ([]types.User, error)
 	CreateUser(u *types.UserCreate) (types.User, error)

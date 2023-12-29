@@ -8,6 +8,10 @@ import (
 
 type DBMock struct{}
 
+func (s *DBMock) LoadDummyData(companyId uuid.UUID) error {
+	return nil
+}
+
 func (s *DBMock) Login(l *types.Login) (string, error) {
 	return "", nil
 }
