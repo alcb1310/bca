@@ -129,3 +129,7 @@ func (s *DBMock) CreateBudget(b *types.CreateBudget) (types.Budget, error) {
 func (s *DBMock) GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error) {
 	return []types.GetBudget{}, nil
 }
+
+func (s *DBMock) GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*types.GetBudget, error) {
+	return &types.GetBudget{}, nil
+}

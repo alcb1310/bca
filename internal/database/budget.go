@@ -179,3 +179,32 @@ func (s *service) GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types
 
 	return budgets, nil
 }
+
+func (s *service) GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*types.GetBudget, error) {
+	b := &types.GetBudget{}
+	query := `
+        SELECT
+            project_id, project_name,
+            budget_item_id, budget_item_code, budget_item_name, budget_item_level, budget_item_accumulate,
+            initial_quantity, initial_cost, initial_total,
+            spent_quantity, spent_total,
+            remaining_quantity, remaining_cost, remaining_total,
+            updated_budget, company_id
+        FROM vw_budget
+        WHERE company_id = $1 and project_id = $2 and budget_item_id = $3
+    `
+
+	err := s.db.QueryRow(query, companyId, projectId, budgetItemId).Scan(
+		&b.Project.ID, &b.Project.Name,
+		&b.BudgetItem.ID, &b.BudgetItem.Code, &b.BudgetItem.Name, &b.BudgetItem.Level, &b.BudgetItem.Accumulate,
+		&b.InitialQuantity, &b.InitialCost, &b.InitialTotal,
+		&b.SpentQuantity, &b.SpentTotal,
+		&b.RemainingQuantity, &b.RemainingCost, &b.RemainingTotal,
+		&b.UpdatedBudget, &b.CompanyId,
+	)
+	if err != nil {
+		return b, err
+	}
+
+	return b, nil
+}
