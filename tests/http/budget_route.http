@@ -14,6 +14,10 @@ Content-Type: application/json
     "cost": 5.3
 }
 
-GET /api/v1/budgets/0a91affc-7eb7-4973-8f80-e90f60c48cf0
+GET /api/v1/budgets/0a91affc-7eb7-4973-8f80-e90f60c48cf0?budgetItem=cfb78774-c958-47fa-a760-2d6a7bce06cd
+Host: localhost:8080
+x-access-token: {{TOKEN}}
+
+GET /api/v1/budgets/0a91affc-7eb7-4973-8f80-e90f60c48cf0/cfb78774-c958-47fa-a760-2d6a7bce06cd
 Host: localhost:8080
 x-access-token: {{TOKEN}}
