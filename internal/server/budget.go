@@ -146,6 +146,9 @@ func (s *Server) AllBudgetsByProject(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.Method {
+	case http.MethodOptions:
+		w.WriteHeader(http.StatusOK)
+
 	case http.MethodGet:
 		budgets, err := s.DB.GetBudgetsByProjectId(ctx.CompanyId, projectUuid)
 		if err != nil {
