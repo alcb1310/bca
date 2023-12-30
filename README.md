@@ -102,8 +102,11 @@ The budgets will be able to:
 
 - Create new budgets by making a `POST` request to the `/api/v1/budgets` route
 - Get all budgets by making a `GET` request to the `/api/v1/budgets` route
-- Get one budget by making a `GET` request to the `/api/v1/budgets/:id` route
-- Update one budget by making a `PUT` request to the `/api/v1/budgets/:id` route
+
+- Get all budgets of a specific project by making a `GET` request to the `/api/v1/budgets/:projectId` route
+
+- Get one budget by making a `GET` request to the `/api/v1/budgets/:projectId/:budgetItemId` route
+- Update one budget by making a `PUT` request to the `/api/v1/budgets/:projectId/:budgetItemId` route
 
 ## Deployment
 
