@@ -21,3 +21,13 @@ x-access-token: {{TOKEN}}
 GET /api/v1/budgets/0a91affc-7eb7-4973-8f80-e90f60c48cf0/cfb78774-c958-47fa-a760-2d6a7bce06cd
 Host: localhost:8080
 x-access-token: {{TOKEN}}
+
+PUT /api/v1/budgets/0a91affc-7eb7-4973-8f80-e90f60c48cf0/c52e1ab1-2554-440f-a68a-c4d6633dc693
+Host: localhost:8080
+x-access-token: {{TOKEN}}
+Content-Type: application/json
+
+{
+    "quantity": 11,
+    "cost": 650
+}
