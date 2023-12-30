@@ -68,3 +68,31 @@ func (s *service) UpdateBudgetItem(bi *types.BudgetItem) error {
 	_, err := s.db.Exec(sql, bi.Code, bi.Name, level, bi.Accumulate, bi.ParentId, bi.ID, bi.CompanyId)
 	return err
 }
+
+func (s *service) getBudgetItem(id, companyId uuid.UUID) (*types.BudgetItem, error) {
+	if id == uuid.Nil {
+		return nil, nil
+	}
+
+	sql := `
+		  select id, code, name, level, accumulate, parent_id, company_id
+		  from vw_budget_item where id = $1 and company_id = $2
+	 `
+
+	bi := &types.BudgetItem{}
+	err := s.db.QueryRow(
+		sql,
+		id,
+		companyId,
+	).Scan(
+		&bi.ID,
+		&bi.Code,
+		&bi.Name,
+		&bi.Level,
+		&bi.Accumulate,
+		&bi.ParentId,
+		&bi.CompanyId,
+	)
+
+	return bi, err
+}

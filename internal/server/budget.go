@@ -122,8 +122,55 @@ func (s *Server) OneBudget(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodPut:
-		// TODO: implement update
-		w.WriteHeader(http.StatusNotImplemented)
+		b := &types.CreateBudget{}
+		if err := json.NewDecoder(r.Body).Decode(b); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if b.Quantity == nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "quantity cannot be empty"
+			resp["field"] = "quantity"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		if b.Cost == nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "cost cannot be empty"
+			resp["field"] = "cost"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		b.ProjectId = projectUuid
+		b.BudgetItemId = budgetItemUuid
+		b.CompanyId = ctx.CompanyId
+
+		err := s.DB.UpdateBudget(b, &types.Budget{
+			ProjectId:         projectUuid,
+			BudgetItemId:      budgetItemUuid,
+			InitialQuantity:   budget.InitialQuantity,
+			InitialCost:       budget.InitialCost,
+			InitialTotal:      budget.InitialTotal,
+			SpentQuantity:     budget.SpentQuantity,
+			SpentTotal:        budget.SpentTotal,
+			RemainingQuantity: budget.RemainingQuantity,
+			RemainingCost:     budget.RemainingCost,
+			RemainingTotal:    budget.RemainingTotal,
+			UpdatedBudget:     budget.UpdatedBudget,
+			CompanyId:         ctx.CompanyId,
+		})
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
 
 	case http.MethodOptions:
 		w.WriteHeader(http.StatusOK)

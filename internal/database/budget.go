@@ -208,3 +208,79 @@ func (s *service) GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*t
 
 	return b, nil
 }
+
+func (s *service) UpdateBudget(b *types.CreateBudget, budget *types.Budget) error {
+	total := *b.Quantity * *b.Cost
+	diff := total - budget.UpdatedBudget
+
+	toUpdate := types.Budget{
+		ProjectId:         budget.ProjectId,
+		BudgetItemId:      budget.BudgetItemId,
+		InitialQuantity:   budget.InitialQuantity,
+		InitialCost:       budget.InitialCost,
+		InitialTotal:      budget.InitialTotal,
+		SpentQuantity:     budget.SpentQuantity,
+		SpentTotal:        budget.SpentTotal,
+		RemainingQuantity: b.Quantity,
+		RemainingCost:     b.Cost,
+		RemainingTotal:    total,
+		UpdatedBudget:     diff,
+		CompanyId:         budget.CompanyId,
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Commit()
+
+	err = s.executeUpdateBudget(&toUpdate, tx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *service) executeUpdateBudget(budget *types.Budget, tx *sql.Tx) error {
+	bi, err := s.getBudgetItem(budget.BudgetItemId, budget.CompanyId)
+	if err != nil {
+		return err
+	}
+	if bi == nil {
+		return nil
+	}
+
+	if *bi.Accumulate {
+		query := `
+			 UPDATE budget
+			 SET remaining_total = budget.remaining_total + $1, updated_budget = budget.updated_budget + $1
+			 WHERE project_id = $2 and budget_item_id = $3 and company_id = $4
+		  `
+		_, err = tx.Exec(
+			query, budget.UpdatedBudget,
+			budget.ProjectId, budget.BudgetItemId, budget.CompanyId,
+		)
+	} else {
+		query := `
+			 UPDATE budget
+			 SET remaining_quantity = $1, remaining_cost = $2, remaining_total = $3, updated_budget = budget.updated_budget + $4
+			 WHERE project_id = $5 and budget_item_id = $6 and company_id = $7
+		  `
+		_, err = tx.Exec(
+			query, budget.RemainingQuantity, budget.RemainingCost, budget.RemainingTotal, budget.UpdatedBudget,
+			budget.ProjectId, budget.BudgetItemId, budget.CompanyId,
+		)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	if bi.ParentId == nil {
+		return nil
+	}
+	budget.BudgetItemId = *bi.ParentId
+
+	return s.executeUpdateBudget(budget, tx)
+}

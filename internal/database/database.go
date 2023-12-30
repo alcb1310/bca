@@ -54,6 +54,7 @@ type Service interface {
 	CreateBudget(b *types.CreateBudget) (types.Budget, error)
 	GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error)
 	GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*types.GetBudget, error)
+	UpdateBudget(b *types.CreateBudget, budget *types.Budget) error
 }
 
 type service struct {
