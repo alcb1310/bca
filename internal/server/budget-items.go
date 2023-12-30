@@ -71,6 +71,9 @@ func (s *Server) AllBudgetItems(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(bi)
 
+	case http.MethodOptions:
+		w.WriteHeader(http.StatusOK)
+
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
@@ -118,7 +121,6 @@ func (s *Server) OneBudgetItem(w http.ResponseWriter, r *http.Request) {
 				json.NewEncoder(w).Encode(resp)
 				return
 			}
-
 		}
 
 		if b.Code == "" {
@@ -151,6 +153,9 @@ func (s *Server) OneBudgetItem(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(bi)
+
+	case http.MethodOptions:
+		w.WriteHeader(http.StatusOK)
 
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)

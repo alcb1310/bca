@@ -8,6 +8,10 @@ import (
 
 type DBMock struct{}
 
+func (s *DBMock) LoadDummyData(companyId uuid.UUID) error {
+	return nil
+}
+
 func (s *DBMock) Login(l *types.Login) (string, error) {
 	return "", nil
 }
@@ -115,5 +119,25 @@ func (s *DBMock) GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.Bud
 }
 
 func (s *DBMock) UpdateBudgetItem(bi *types.BudgetItem) error {
+	return nil
+}
+
+func (s *DBMock) GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error) {
+	return []types.GetBudget{}, nil
+}
+
+func (s *DBMock) CreateBudget(b *types.CreateBudget) (types.Budget, error) {
+	return types.Budget{}, nil
+}
+
+func (s *DBMock) GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error) {
+	return []types.GetBudget{}, nil
+}
+
+func (s *DBMock) GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*types.GetBudget, error) {
+	return &types.GetBudget{}, nil
+}
+
+func (s *DBMock) UpdateBudget(b *types.CreateBudget, budget *types.Budget) error {
 	return nil
 }
