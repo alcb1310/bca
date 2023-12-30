@@ -5,14 +5,18 @@ import (
 	"bca-go-final/internal/types"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetAllUsers(t *testing.T) {
+	assert := assert.New(t)
 	s := &server.Server{}
 	s.DB = &DBMock{}
 
@@ -24,10 +28,7 @@ func TestGetAllUsers(t *testing.T) {
 		t.Fatalf("error making request to server. Err: %v", err)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("expected status ok; got %v", resp.Status)
-	}
+	assert.Equal(http.StatusOK, resp.StatusCode, fmt.Sprintf("expected status ok; got %v", resp.Status))
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -36,13 +37,11 @@ func TestGetAllUsers(t *testing.T) {
 
 	r := []types.User{}
 	json.NewDecoder(strings.NewReader(string(body))).Decode(&r)
-
-	if len(r) != 2 {
-		t.Errorf("expected response body to be 2; got %v", len(body))
-	}
+	assert.Equal(len(r), 2, fmt.Sprintf("expected response body to be 2; got %v", len(body)))
 }
 
 func TestCreateUser(t *testing.T) {
+	assert := assert.New(t)
 	s := &server.Server{}
 	s.DB = &DBMock{}
 
@@ -58,19 +57,13 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("error making request to server. Err: %v", err)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusBadRequest {
-		t.Errorf("expected status bad request; got %v", resp.Status)
-	}
-
+	assert.Equal(http.StatusBadRequest, resp.StatusCode, fmt.Sprintf("expected status bad request; got %v", resp.Status))
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("error reading response body. Err: %v", err)
 	}
 	expected := "{\"error\":\"EOF\"}"
-	if expected != strings.TrimRight(string(body), "\n") {
-		t.Errorf("expected response body to be %v; got %v", expected, string(body))
-	}
+	assert.Equal(expected, strings.Trim(string(body), "\n"), fmt.Sprintf("expected response body to be %v; got %v", expected, string(body)))
 
 	buf = new(bytes.Buffer)
 	err = json.NewEncoder(buf).Encode(c)
@@ -79,19 +72,13 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("error making request to server. Err: %v", err)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusBadRequest {
-		t.Errorf("expected status bad request; got %v", resp.Status)
-	}
-
+	assert.Equal(http.StatusBadRequest, resp.StatusCode, fmt.Sprintf("expected status bad request; got %v", resp.Status))
 	body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("error reading response body. Err: %v", err)
 	}
 	expected = "{\"error\":\"email cannot be empty\",\"field\":\"email\"}"
-	if expected != strings.TrimRight(string(body), "\n") {
-		t.Errorf("expected response body to be %v; got %v", expected, string(body))
-	}
+	assert.Equal(expected, strings.Trim(string(body), "\n"), fmt.Sprintf("expected response body to be %v; got %v", expected, string(body)))
 
 	c.Email = "test"
 	buf = new(bytes.Buffer)
@@ -101,19 +88,13 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("error making request to server. Err: %v", err)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusBadRequest {
-		t.Errorf("expected status bad request; got %v", resp.Status)
-	}
-
+	assert.Equal(http.StatusBadRequest, resp.StatusCode, fmt.Sprintf("expected status bad request; got %v", resp.Status))
 	body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("error reading response body. Err: %v", err)
 	}
 	expected = "{\"error\":\"invalid email\",\"field\":\"email\"}"
-	if expected != strings.TrimRight(string(body), "\n") {
-		t.Errorf("expected response body to be %v; got %v", expected, string(body))
-	}
+	assert.Equal(expected, strings.Trim(string(body), "\n"), fmt.Sprintf("expected response body to be %v; got %v", expected, string(body)))
 
 	c.Email = "test@test.com"
 	buf = new(bytes.Buffer)
@@ -123,19 +104,13 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("error making request to server. Err: %v", err)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusBadRequest {
-		t.Errorf("expected status bad request; got %v", resp.Status)
-	}
-
+	assert.Equal(http.StatusBadRequest, resp.StatusCode, fmt.Sprintf("expected status bad request; got %v", resp.Status))
 	body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("error reading response body. Err: %v", err)
 	}
 	expected = "{\"error\":\"password cannot be empty\",\"field\":\"password\"}"
-	if expected != strings.TrimRight(string(body), "\n") {
-		t.Errorf("expected response body to be %v; got %v", expected, string(body))
-	}
+	assert.Equal(expected, strings.Trim(string(body), "\n"), fmt.Sprintf("expected response body to be %v; got %v", expected, string(body)))
 
 	c.Password = "test"
 	buf = new(bytes.Buffer)
@@ -145,19 +120,13 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("error making request to server. Err: %v", err)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusBadRequest {
-		t.Errorf("expected status bad request; got %v", resp.Status)
-	}
-
+	assert.Equal(http.StatusBadRequest, resp.StatusCode, fmt.Sprintf("expected status bad request; got %v", resp.Status))
 	body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("error reading response body. Err: %v", err)
 	}
 	expected = "{\"error\":\"name cannot be empty\",\"field\":\"name\"}"
-	if expected != strings.TrimRight(string(body), "\n") {
-		t.Errorf("expected response body to be %v; got %v", expected, string(body))
-	}
+	assert.Equal(expected, strings.Trim(string(body), "\n"), fmt.Sprintf("expected response body to be %v; got %v", expected, string(body)))
 
 	c.Name = "test"
 	buf = new(bytes.Buffer)
@@ -167,19 +136,13 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("error making request to server. Err: %v", err)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusBadRequest {
-		t.Errorf("expected status bad request; got %v", resp.Status)
-	}
-
+	assert.Equal(http.StatusBadRequest, resp.StatusCode, fmt.Sprintf("expected status bad request; got %v", resp.Status))
 	body, err = io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("error reading response body. Err: %v", err)
 	}
 	expected = "{\"error\":\"role cannot be empty\",\"field\":\"role\"}"
-	if expected != strings.TrimRight(string(body), "\n") {
-		t.Errorf("expected response body to be %v; got %v", expected, string(body))
-	}
+	assert.Equal(expected, strings.Trim(string(body), "\n"), fmt.Sprintf("expected response body to be %v; got %v", expected, string(body)))
 
 	c.RoleId = "a"
 	buf = new(bytes.Buffer)
@@ -189,8 +152,5 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("error making request to server. Err: %v", err)
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusCreated {
-		t.Errorf("expected status created; got %v", resp.Status)
-	}
+	assert.Equal(http.StatusCreated, resp.StatusCode, fmt.Sprintf("expected status created; got %v", resp.Status))
 }
