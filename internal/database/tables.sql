@@ -104,6 +104,20 @@ create table if not exists budget (
     primary key (project_id, budget_item_id, company_id)
 );
 
+create table if not exists invoice (
+     id uuid primary key default gen_random_uuid(),
+     supplier_id uuid not null references supplier (id) on delete restrict,
+     project_id uuid not null references project (id) on delete restrict,
+     invoice_number text not null,
+     invoice_date date not null,
+     invoice_total numeric not null default 0,
+
+     company_id uuid not null references company (id) on delete restrict,
+     created_at timestamp with time zone default now(),
+
+     unique (supplier_id, project_id, invoice_number, company_id)
+);
+
 -- VIEWS
 
 create or replace view vw_budget_item as
