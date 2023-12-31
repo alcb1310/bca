@@ -58,7 +58,7 @@ type Service interface {
 
 	// database/invoice.go
 	GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, error)
-	CreateInvoice(invoice types.InvoiceCreate) error
+	CreateInvoice(invoice *types.InvoiceCreate) error
 	GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceResponse, error)
 	UpdateInvoice(invoice types.InvoiceCreate) error
 }

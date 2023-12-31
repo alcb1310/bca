@@ -11,9 +11,10 @@ func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, err
 	return []types.InvoiceResponse{}, nil
 }
 
-func (s *service) CreateInvoice(invoice types.InvoiceCreate) error {
-	// TODO: implement create invoice method
-	return nil
+func (s *service) CreateInvoice(invoice *types.InvoiceCreate) error {
+	query := "insert into invoice (company_id, supplier_id, project_id, invoice_number, invoice_date) values ($1, $2, $3, $4, $5) returning id"
+	err := s.db.QueryRow(query, invoice.CompanyId, invoice.SupplierId, invoice.ProjectId, invoice.InvoiceNumber, invoice.InvoiceDate).Scan(&invoice.Id)
+	return err
 }
 
 func (s *service) GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceResponse, error) {

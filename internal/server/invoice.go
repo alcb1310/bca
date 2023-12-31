@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bca-go-final/internal/types"
 	"encoding/json"
 	"net/http"
 
@@ -8,15 +9,65 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var resp = make(map[string]string)
-
 func (s *Server) AllInvoices(w http.ResponseWriter, r *http.Request) {
+	var resp = make(map[string]string)
 	ctx, _ := getMyPaload(r)
 
 	switch r.Method {
 	case http.MethodPost:
-		// TODO: implment MethodPost
-		w.WriteHeader(http.StatusNotImplemented)
+		i := &types.InvoiceCreate{
+			CompanyId: ctx.CompanyId,
+		}
+		err := json.NewDecoder(r.Body).Decode(i)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if i.SupplierId == nil || *i.SupplierId == uuid.Nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "supplier_id cannot be empty"
+			resp["field"] = "supplier_id"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if i.ProjectId == nil || *i.ProjectId == uuid.Nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "project_id cannot be empty"
+			resp["field"] = "project_id"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if i.InvoiceNumber == nil || *i.InvoiceNumber == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "invoice_number cannot be empty"
+			resp["field"] = "invoice_number"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if i.InvoiceDate == nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = "invoice_date cannot be empty"
+			resp["field"] = "invoice_date"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		err = s.DB.CreateInvoice(i)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(i)
 
 	case http.MethodGet:
 		// TODO: implement MethodGet
@@ -28,11 +79,10 @@ func (s *Server) AllInvoices(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
-
-	_ = ctx
 }
 
 func (s *Server) OneInvoice(w http.ResponseWriter, r *http.Request) {
+	var resp = make(map[string]string)
 	ctx, _ := getMyPaload(r)
 	id := mux.Vars(r)["id"]
 	invoiceId, err := uuid.Parse(id)

@@ -146,7 +146,7 @@ func (s *DBMock) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, erro
 	return []types.InvoiceResponse{}, nil
 }
 
-func (s *DBMock) CreateInvoice(invoice types.InvoiceCreate) error {
+func (s *DBMock) CreateInvoice(invoice *types.InvoiceCreate) error {
 	return nil
 }
 

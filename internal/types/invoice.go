@@ -7,6 +7,7 @@ import (
 )
 
 type InvoiceCreate struct {
+	Id            *uuid.UUID `json:"id"`
 	SupplierId    *uuid.UUID `json:"supplier_id"`
 	ProjectId     *uuid.UUID `json:"project_id"`
 	InvoiceNumber *string    `json:"invoice_number"`
