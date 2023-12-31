@@ -60,8 +60,27 @@ func (s *service) CreateInvoice(invoice *types.InvoiceCreate) error {
 }
 
 func (s *service) GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceResponse, error) {
-	// TODO: implement get one invoice method
-	return types.InvoiceResponse{}, nil
+	i := &types.InvoiceResponse{}
+	query := `
+		 select
+			  id, supplier_id, supplier_number, supplier_name, supplier_contact_name, supplier_contact_email, supplier_contact_phone,
+			  project_id, project_name, project_is_active,
+			  invoice_number, invoice_date, invoice_total
+		 from
+			   vw_invoice
+		 where
+			   company_id = $1 and id = $2
+	`
+	err := s.db.QueryRow(query, companyId, invoiceId).Scan(
+		&i.Id, &i.Supplier.ID, &i.Supplier.SupplierId, &i.Supplier.Name, &i.Supplier.ContactName, &i.Supplier.ContactEmail, &i.Supplier.ContactPhone,
+		&i.Project.ID, &i.Project.Name, &i.Project.IsActive,
+		&i.InvoiceNumber, &i.InvoiceDate, &i.InvoiceTotal,
+	)
+	i.CompanyId = companyId
+	i.Supplier.CompanyId = companyId
+	i.Project.CompanyId = companyId
+
+	return *i, err
 }
 
 func (s *service) UpdateInvoice(invoice types.InvoiceCreate) error {

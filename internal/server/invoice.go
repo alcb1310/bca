@@ -2,6 +2,7 @@ package server
 
 import (
 	"bca-go-final/internal/types"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 
@@ -101,7 +102,19 @@ func (s *Server) OneInvoice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_ = invoiceId
+	invoice, err := s.DB.GetOneInvoice(invoiceId, ctx.CompanyId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusNotFound)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		resp["error"] = err.Error()
+		json.NewEncoder(w).Encode(resp)
+		return
+	}
 
 	switch r.Method {
 	case http.MethodDelete:
@@ -113,8 +126,8 @@ func (s *Server) OneInvoice(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotImplemented)
 
 	case http.MethodGet:
-		// TODO: implement MethodGet
-		w.WriteHeader(http.StatusNotImplemented)
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(invoice)
 
 	case http.MethodOptions:
 		w.WriteHeader(http.StatusOK)
@@ -122,6 +135,4 @@ func (s *Server) OneInvoice(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
-
-	_ = ctx
 }
