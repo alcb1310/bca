@@ -12,3 +12,8 @@ x-access-token: {{TOKEN}}
      "invoice_number": "123456789",
      "invoice_date": "2022-12-31T12:00:00Z"
 }
+
+GET /api/v1/invoices/96e15cb8-8f3a-4199-b355-26198a87c155
+Host: localhost:8080
+x-access-token: {{TOKEN}}
+
