@@ -55,6 +55,12 @@ type Service interface {
 	GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error)
 	GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*types.GetBudget, error)
 	UpdateBudget(b *types.CreateBudget, budget *types.Budget) error
+
+	// database/invoice.go
+	GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, error)
+	CreateInvoice(invoice types.InvoiceCreate) error
+	GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceResponse, error)
+	UpdateInvoice(invoice types.InvoiceCreate) error
 }
 
 type service struct {

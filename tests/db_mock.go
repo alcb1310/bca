@@ -141,3 +141,19 @@ func (s *DBMock) GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*ty
 func (s *DBMock) UpdateBudget(b *types.CreateBudget, budget *types.Budget) error {
 	return nil
 }
+
+func (s *DBMock) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, error) {
+	return []types.InvoiceResponse{}, nil
+}
+
+func (s *DBMock) CreateInvoice(invoice types.InvoiceCreate) error {
+	return nil
+}
+
+func (s *DBMock) GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceResponse, error) {
+	return types.InvoiceResponse{}, nil
+}
+
+func (s *DBMock) UpdateInvoice(invoice types.InvoiceCreate) error {
+	return nil
+}
