@@ -165,7 +165,7 @@ select
      s.name as supplier_name,
      p.id as project_id,
      p.name as project_name,
-     p.is_active as projcet_is_active,
+     p.is_active as project_is_active,
      i.invoice_number,
      i.invoice_date,
      i.invoice_total,
