@@ -155,4 +155,21 @@ select
     b.company_id as company_id
 from budget as b
 join project as p on b.project_id = p.id
-join budget_item as bi on b.budget_item_id = bi.id
+join budget_item as bi on b.budget_item_id = bi.id;
+
+create or replace view vw_invoice as
+select
+     i.id,
+     s.id as supplier_id,
+     s.supplier_id as supplier_number,
+     s.name as supplier_name,
+     p.id as project_id,
+     p.name as project_name,
+     p.is_active as projcet_is_active,
+     i.invoice_number,
+     i.invoice_date,
+     i.invoice_total,
+     i.company_id as company_id
+from invoice i
+join supplier s on i.supplier_id = s.id
+join project p on i.project_id = p.id;
