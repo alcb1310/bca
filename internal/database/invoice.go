@@ -84,6 +84,22 @@ func (s *service) GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceRe
 }
 
 func (s *service) UpdateInvoice(invoice types.InvoiceCreate) error {
-	// TODO: implement update invoice method
-	return nil
+	query := `
+		update invoice
+		set supplier_id = $1, project_id = $2, invoice_number = $3, invoice_date = $4
+		where id = $5 and company_id = $6
+	`
+	_, err := s.db.Exec(query, invoice.SupplierId, invoice.ProjectId, invoice.InvoiceNumber, invoice.InvoiceDate, invoice.Id, invoice.CompanyId)
+
+	return err
+}
+
+func (s *service) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
+	// TODO: implement delete invoice method
+	query := `
+		delete from invoice
+		where id = $1 and company_id = $2
+	`
+	_, err := s.db.Exec(query, invoiceId, companyId)
+	return err
 }

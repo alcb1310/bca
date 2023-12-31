@@ -122,8 +122,39 @@ func (s *Server) OneInvoice(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotImplemented)
 
 	case http.MethodPut:
-		// TODO: implement MethodPut
-		w.WriteHeader(http.StatusNotImplemented)
+		i := types.InvoiceCreate{}
+
+		if err := json.NewDecoder(r.Body).Decode(&i); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		i.Id = &invoice.Id
+		i.CompanyId = ctx.CompanyId
+		if i.SupplierId == nil || *i.SupplierId == uuid.Nil {
+			i.SupplierId = &invoice.Supplier.ID
+		}
+		if i.ProjectId == nil || *i.ProjectId == uuid.Nil {
+			i.ProjectId = &invoice.Project.ID
+		}
+		if i.InvoiceNumber == nil || *i.InvoiceNumber == "" {
+			i.InvoiceNumber = &invoice.InvoiceNumber
+		}
+		if i.InvoiceDate == nil {
+			i.InvoiceDate = &invoice.InvoiceDate
+		}
+
+		err := s.DB.UpdateInvoice(i)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
 
 	case http.MethodGet:
 		w.WriteHeader(http.StatusOK)
