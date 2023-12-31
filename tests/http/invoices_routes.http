@@ -1,0 +1,10 @@
+POST /api/v1/invoices
+Host: localhost:8080
+x-access-token: {{TOKEN}}
+
+{
+     "supplier_id": "64bdc016-57bb-4ef5-84fe-0eb60a48b5a7",
+     "project_id": "37791b10-dae8-44e4-8b98-9722731f037a",
+     "invoice_number": "123456789",
+     "invoice_date": "2022-12-31T12:00:00Z"
+}
