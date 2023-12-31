@@ -16,6 +16,7 @@ type InvoiceCreate struct {
 }
 
 type InvoiceResponse struct {
+	Id            uuid.UUID `json:"id"`
 	Supplier      Supplier  `json:"supplier"`
 	Project       Project   `json:"project"`
 	InvoiceNumber string    `json:"invoice_number"`

@@ -70,8 +70,16 @@ func (s *Server) AllInvoices(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(i)
 
 	case http.MethodGet:
-		// TODO: implement MethodGet
-		w.WriteHeader(http.StatusNotImplemented)
+		invoices, err := s.DB.GetInvoices(ctx.CompanyId)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(invoices)
 
 	case http.MethodOptions:
 		w.WriteHeader(http.StatusOK)
