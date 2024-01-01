@@ -32,6 +32,8 @@ The objective of this application is to manage the budget of a construction comp
         - [Projects](#projects)
         - [Suppliers](#suppliers)
         - [Budget Items](#budget-items)
+    - [Transactions](#transactions)
+        - [Budgets](#budgets)
 
 - [Deployment](#deployment)
 
@@ -90,6 +92,22 @@ The budget items will be able to:
 - Get one budget item by making a `GET` request to the `/api/v1/budget-items/:id` route
 - Update one budget item by making a `PUT` request to the `/api/v1/budget-items/:id` route
 
+### Transactions
+
+The transactions will be able to:
+
+#### Budgets
+
+The budgets will be able to:
+
+- Create new budgets by making a `POST` request to the `/api/v1/budgets` route
+- Get all budgets by making a `GET` request to the `/api/v1/budgets` route
+
+- Get all budgets of a specific project by making a `GET` request to the `/api/v1/budgets/:projectId` route
+
+- Get one budget by making a `GET` request to the `/api/v1/budgets/:projectId/:budgetItemId` route
+- Update one budget by making a `PUT` request to the `/api/v1/budgets/:projectId/:budgetItemId` route
+
 ## Deployment
 
 
@@ -112,11 +130,11 @@ go mod tidy
 ```.env
 PORT=<Port number where the application will listen>
 
-PGDATABASE=<Name of the postgres database>
-PGHOST=<Host where the postgres database server is running>
-PGPASSWORD=<Password that the postgres server uses>
-PGPORT=<Port where the postgres server is listening>
-PGUSER=<Username of the postgres server>
+DB_DATABASE=<Name of the postgres database>
+DB_HOST=<Host where the postgres database server is running>
+DB_PASSWORD=<Password that the postgres server uses>
+DB_PORT=<Port where the postgres server is listening>
+DB_USERNAME=<Username of the postgres server>
 
 SECRET=<Secret used to generate the JWT Token>
 ```

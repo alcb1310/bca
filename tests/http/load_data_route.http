@@ -1,0 +1,4 @@
+POST /api/v1/load-dummy-data
+Host: localhost:8080
+Content-Type: application/json
+x-access-token: {{TOKEN}}

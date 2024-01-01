@@ -156,6 +156,10 @@ func (s *Server) OneSupplier(w http.ResponseWriter, r *http.Request) {
 	case http.MethodGet:
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(supplier)
+
+	case http.MethodOptions:
+		w.WriteHeader(http.StatusOK)
+
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}

@@ -20,6 +20,9 @@ type Service interface {
 	Login(l *types.Login) (string, error)
 	IsLoggedIn(token string, user uuid.UUID) bool
 
+	// database/dummy.go
+	LoadDummyData(companyId uuid.UUID) error
+
 	// database/users.go
 	GetAllUsers(companyId uuid.UUID) ([]types.User, error)
 	CreateUser(u *types.UserCreate) (types.User, error)
@@ -45,6 +48,13 @@ type Service interface {
 	CreateBudgetItem(bi *types.BudgetItem) error
 	GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.BudgetItem, error)
 	UpdateBudgetItem(bi *types.BudgetItem) error
+
+	// database/budget.go
+	GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error)
+	CreateBudget(b *types.CreateBudget) (types.Budget, error)
+	GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error)
+	GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*types.GetBudget, error)
+	UpdateBudget(b *types.CreateBudget, budget *types.Budget) error
 }
 
 type service struct {

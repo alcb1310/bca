@@ -19,6 +19,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/login", s.Login)
 	r.HandleFunc("/register", s.Register)
 
+	// load dummy data
+	r.HandleFunc("/api/v1/load-dummy-data", s.loadDummyDataHandler)
+
 	// users routes
 	r.HandleFunc("/api/v1/users", s.AllUsers)
 	r.HandleFunc("/api/v1/users/{id}", s.OneUser)
@@ -34,6 +37,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// budget-items routes
 	r.HandleFunc("/api/v1/budget-items", s.AllBudgetItems)
 	r.HandleFunc("/api/v1/budget-items/{id}", s.OneBudgetItem)
+
+	// budget routes
+	r.HandleFunc("/api/v1/budgets", s.AllBudgets)
+	r.HandleFunc("/api/v1/budgets/{projectId}", s.AllBudgetsByProject)
+	r.HandleFunc("/api/v1/budgets/{projectId}/{budgetItemId}", s.OneBudget)
 
 	return r
 }
@@ -52,7 +60,6 @@ func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, err := json.Marshal(s.DB.Health())
-
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
 	}
