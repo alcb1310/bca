@@ -47,6 +47,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/api/v1/invoices", s.AllInvoices)
 	r.HandleFunc("/api/v1/invoices/{id}", s.OneInvoice)
 
+	// invoice details
+	r.HandleFunc("/api/v1/invoices/{id}/details", s.AllInvoiceDetails)
+	r.HandleFunc("/api/v1/invoices/{id}/details/{detailId}", s.OneInvoiceDetails)
+
 	return r
 }
 

@@ -118,6 +118,8 @@ create table if not exists invoice (
      unique (supplier_id, project_id, invoice_number, company_id)
 );
 
+-- TODO: Create invoice-details table
+
 -- VIEWS
 
 create or replace view vw_budget_item as
@@ -176,3 +178,5 @@ select
 from invoice i
 join supplier s on i.supplier_id = s.id
 join project p on i.project_id = p.id;
+
+-- TODO: Create invoce-details related views

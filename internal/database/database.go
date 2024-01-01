@@ -62,6 +62,13 @@ type Service interface {
 	GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceResponse, error)
 	UpdateInvoice(invoice types.InvoiceCreate) error
 	DeleteInvoice(invoiceId, companyId uuid.UUID) error
+
+	// database/invoice-detail.go
+	GetInvoiceDetails(invoiceId, companyId uuid.UUID) ([]types.InvoiceDetailResponse, error)
+	CreateInvoiceDetail(detail *types.InvoiceDetail) (types.InvoiceDetail, error)
+	UpdateInvoiceDetail(detail *types.InvoiceDetail) error
+	DeleteInvoiceDetail(detailId, companyId uuid.UUID) error
+	GetOneInvoiceDetail(invoiceId, detailId, companyId uuid.UUID) (types.InvoiceDetailResponse, error)
 }
 
 type service struct {

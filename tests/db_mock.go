@@ -161,3 +161,23 @@ func (s *DBMock) UpdateInvoice(invoice types.InvoiceCreate) error {
 func (s *DBMock) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
 	return nil
 }
+
+func (s *DBMock) GetInvoiceDetails(invoiceId, companyId uuid.UUID) ([]types.InvoiceDetailResponse, error) {
+	return []types.InvoiceDetailResponse{}, nil
+}
+
+func (s *DBMock) CreateInvoiceDetail(detail *types.InvoiceDetail) (types.InvoiceDetail, error) {
+	return types.InvoiceDetail{}, nil
+}
+
+func (s *DBMock) UpdateInvoiceDetail(detail *types.InvoiceDetail) error {
+	return nil
+}
+
+func (s *DBMock) DeleteInvoiceDetail(detailId, companyId uuid.UUID) error {
+	return nil
+}
+
+func (s *DBMock) GetOneInvoiceDetail(invoiceId, detailId, companyId uuid.UUID) (types.InvoiceDetailResponse, error) {
+	return types.InvoiceDetailResponse{}, nil
+}
