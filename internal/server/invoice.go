@@ -118,8 +118,21 @@ func (s *Server) OneInvoice(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodDelete:
-		// TODO: implement MethodDelete
-		w.WriteHeader(http.StatusNotImplemented)
+		if invoice.InvoiceTotal != 0 {
+			w.WriteHeader(http.StatusNotAcceptable)
+			resp["error"] = "invoice is not empty"
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		if err := s.DB.DeleteInvoice(invoiceId, ctx.CompanyId); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			resp["error"] = err.Error()
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
 
 	case http.MethodPut:
 		i := types.InvoiceCreate{}

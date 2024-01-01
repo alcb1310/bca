@@ -157,3 +157,7 @@ func (s *DBMock) GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceRes
 func (s *DBMock) UpdateInvoice(invoice types.InvoiceCreate) error {
 	return nil
 }
+
+func (s *DBMock) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
+	return nil
+}
