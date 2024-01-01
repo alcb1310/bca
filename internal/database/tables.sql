@@ -104,6 +104,20 @@ create table if not exists budget (
     primary key (project_id, budget_item_id, company_id)
 );
 
+create table if not exists invoice (
+     id uuid primary key default gen_random_uuid(),
+     supplier_id uuid not null references supplier (id) on delete restrict,
+     project_id uuid not null references project (id) on delete restrict,
+     invoice_number text not null,
+     invoice_date date not null,
+     invoice_total numeric not null default 0,
+
+     company_id uuid not null references company (id) on delete restrict,
+     created_at timestamp with time zone default now(),
+
+     unique (supplier_id, project_id, invoice_number, company_id)
+);
+
 -- VIEWS
 
 create or replace view vw_budget_item as
@@ -141,4 +155,24 @@ select
     b.company_id as company_id
 from budget as b
 join project as p on b.project_id = p.id
-join budget_item as bi on b.budget_item_id = bi.id
+join budget_item as bi on b.budget_item_id = bi.id;
+
+create or replace view vw_invoice as
+select
+     i.id,
+     s.id as supplier_id,
+     s.supplier_id as supplier_number,
+     s.name as supplier_name,
+     s.contact_name as supplier_contact_name,
+     s.contact_email as supplier_contact_email,
+     s.contact_phone as supplier_contact_phone,
+     p.id as project_id,
+     p.name as project_name,
+     p.is_active as project_is_active,
+     i.invoice_number,
+     i.invoice_date,
+     i.invoice_total,
+     i.company_id as company_id
+from invoice i
+join supplier s on i.supplier_id = s.id
+join project p on i.project_id = p.id;
