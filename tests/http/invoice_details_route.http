@@ -1,0 +1,3 @@
+GET /api/v1/invoices/c1ed474e-6c00-424f-b708-b851522a75ef/details
+Host: localhost:8080
+x-access-token: {{TOKEN}}
