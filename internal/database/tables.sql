@@ -118,7 +118,19 @@ create table if not exists invoice (
      unique (supplier_id, project_id, invoice_number, company_id)
 );
 
--- TODO: Create invoice-details table
+create table if not exists invoice_details (
+     invoice_id uuid not null references invoice (id) on delete restrict,
+     budget_item_id uuid not null references budget_item (id) on delete restrict,
+     quantity numeric not null,
+     cost numeric not null,
+     total numeric not null,
+
+     company_id uuid not null references company (id) on delete restrict,
+     created_at timestamp with time zone default now(),
+
+     unique (invoice_id, budget_item_id, company_id),
+     primary key (invoice_id, budget_item_id, company_id)
+);
 
 -- VIEWS
 
@@ -179,4 +191,32 @@ from invoice i
 join supplier s on i.supplier_id = s.id
 join project p on i.project_id = p.id;
 
--- TODO: Create invoce-details related views
+create or replace view vw_invoice_details as 
+select
+vi.id as invoice_id,
+vi.supplier_id as supplier_id,
+vi.supplier_number as supplier_number,
+vi.supplier_name as supplier_name,
+vi.supplier_contact_name as supplier_contact_name,
+vi.supplier_contact_email as supplier_contact_email,
+vi.supplier_contact_phone as supplier_contact_phone,
+vi.project_id as project_id,
+vi.project_name as project_name,
+vi.project_is_active as project_is_active,
+vi.invoice_number,
+vi.invoice_date,
+vi.invoice_total,
+bi.id as budget_item_id,
+bi.code as budget_item_code,
+bi.name as budget_item_name,
+bi.level as budget_item_level,
+bi.accumulate as budget_item_accumulate,
+bi.parent_id as budget_item_parent_id,
+id.quantity,
+id.cost,
+id.total,
+id.company_id as company_id
+from invoice_details id
+join vw_invoice vi on id.invoice_id = vi.id
+join budget_item bi on id.budget_item_id = bi.id;
+
