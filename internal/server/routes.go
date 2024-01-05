@@ -5,13 +5,13 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := mux.NewRouter()
 
-	r.Use(middleware)
 	r.Use(s.authVerify)
 
 	r.HandleFunc("/", s.HelloWorldHandler)
@@ -51,7 +51,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/api/v1/invoices/{id}/details", s.AllInvoiceDetails)
 	r.HandleFunc("/api/v1/invoices/{id}/details/{detailId}", s.OneInvoiceDetails)
 
-	return r
+	return handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "x-access-token"}),
+		handlers.AllowCredentials(),
+	)(r)
 }
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
