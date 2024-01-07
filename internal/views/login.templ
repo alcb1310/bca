@@ -1,5 +1,7 @@
 package views
 
+import "bca-go-final/internal/views/base"
+
 css title() {
 	display: block;
 	text-align: center;
@@ -15,19 +17,21 @@ css container() {
 }
 
 templ LoginView(err map[string]string) {
-	if len(err) > 0 {
-		for k, v := range err {
-			<p>{ k }: { v }</p>
+	@base.Layout() {
+		if len(err) > 0 {
+			for k, v := range err {
+				<p>{ k }: { v }</p>
+			}
+		} else {
+			<p>No errors</p>
 		}
-	} else {
-		<p>No errors</p>
+		<div class={ container() }>
+			<h3 class={ title() }>Login</h3>
+			<form method="POST" action="/login">
+				<input type="email" name="email" placeholder="Email"/>
+				<input type="password" name="password" placeholder="Password"/>
+				<button class="btn" type="submit">Login</button>
+			</form>
+		</div>
 	}
-	<div class={ container() }>
-		<h3 class={ title() }>Login</h3>
-		<form method="POST" action="/login">
-			<input type="email" name="email" placeholder="Email"/>
-			<input type="password" name="password" placeholder="Password"/>
-			<button class="btn" type="submit">Login</button>
-		</form>
-	</div>
 }

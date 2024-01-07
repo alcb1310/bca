@@ -2,7 +2,6 @@ package server
 
 import (
 	"bca-go-final/internal/views"
-	"bca-go-final/internal/views/base"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -51,6 +50,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// views
 
 	r.HandleFunc("/login", s.LoginView)
+	r.HandleFunc("/bca", s.BcaView)
 
 	// This should be the last route for static files
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
@@ -59,8 +59,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	component := views.WelcomeView()
-	base := base.Layout(component)
-	base.Render(r.Context(), w)
+	component.Render(r.Context(), w)
 }
 
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {

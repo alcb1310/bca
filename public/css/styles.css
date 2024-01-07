@@ -67,6 +67,46 @@ input {
      border-radius: 0.5rem;
 }
 
+a,
+a:visited {
+     color: var(--blue-gray-50);
+     text-decoration: none;
+}
+
+/*****************
+ * Maain Header
+ ****************/
+
+#main-header {
+     background-color: var(--blue-gray-800);
+     padding: 1rem 1.5rem;
+}
+
+#main-header,
+#main-header nav,
+#main-header ul {
+     display: flex;
+     align-items: center;
+}
+
+#main-header nav {
+     justify-content: space-between;
+     width: 100%;
+}
+
+#main-header nav ul {
+     list-style: none;
+     margin: 0;
+     padding: 0;
+     gap: 2rem;
+}
+
+#main-header .title {
+     font-size: 1.5rem;
+     font-weight: bold;
+}
+
+
 .btn {
      display: block;
      width: 100%;

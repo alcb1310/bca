@@ -1,7 +1,11 @@
 package views
 
+import "bca-go-final/internal/views/base"
+
 templ WelcomeView() {
-	<div>
-		<h1>Welcome</h1>
-	</div>
+	@base.Layout() {
+		<div>
+			<h1>Welcome</h1>
+		</div>
+	}
 }
