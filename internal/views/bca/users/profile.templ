@@ -1,11 +1,11 @@
-package bca
+package users
 
 import "bca-go-final/internal/views/base"
 
-templ LandingPage() {
+templ ProfileView() {
 	@base.AuthenticatedLayout("") {
 		<div>
-			Landing Page
+			<h1>Profile</h1>
 		</div>
 	}
 }
