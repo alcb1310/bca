@@ -1,6 +1,8 @@
 package server
 
 import (
+	"bca-go-final/internal/views"
+	"bca-go-final/internal/views/base"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -15,8 +17,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.HandleFunc("/", s.HelloWorldHandler)
 	r.HandleFunc("/health", s.healthHandler)
-	r.HandleFunc("/login", s.Login)
-	r.HandleFunc("/register", s.Register)
+	r.HandleFunc("/api/login", s.Login)
+	r.HandleFunc("/api/register", s.Register)
 
 	// load dummy data
 	r.HandleFunc("/api/v1/load-dummy-data", s.loadDummyDataHandler)
@@ -46,19 +48,19 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/api/v1/invoices", s.AllInvoices)
 	r.HandleFunc("/api/v1/invoices/{id}", s.OneInvoice)
 
+	// views
+
+	r.HandleFunc("/login", s.LoginView)
+
+	// This should be the last route for static files
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
 	return r
 }
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
-	resp := make(map[string]string)
-	resp["message"] = "Hello World"
-
-	jsonResp, err := json.Marshal(resp)
-	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
-	}
-
-	_, _ = w.Write(jsonResp)
+	component := views.WelcomeView()
+	base := base.Layout(component)
+	base.Render(r.Context(), w)
 }
 
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
