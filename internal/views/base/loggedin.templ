@@ -1,0 +1,50 @@
+package base
+
+templ AuthenticatedLayout() {
+	@Layout() {
+		<header id="main-header">
+			<nav>
+				<a href="/bca" class="title">Sistema Control Presupuestario</a>
+				<ul>
+					<li>
+						<a href="#"><i class="fa-regular fa-user"></i></a>
+					</li>
+					<li>
+						<a href="#"><i class="fa-regular fa-circle-question"></i></a>
+					</li>
+					<li>
+						<a href="#">
+							<i class="fa-solid fa-arrow-right-from-bracket"></i>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</header>
+		<section id="main">
+			<div id="sidebar">
+				<nav id="sidebar_nav">
+					<ul>
+						<li class="menu-heading"><span>Transacciones</span></li>
+						<li><i class="fa-solid fa-sack-dollar"></i><span>Presupuesto</span></li>
+						<li><i class="fa-regular fa-file-lines"></i><span>Facturas</span></li>
+						<li><i class="fa-solid fa-landmark"></i><span>Cierre Mensual</span></li>
+						<li class="menu-heading"><span>Reportes</span></li>
+						<li><i class="fa-regular fa-chart-bar"></i><span>Actual</span></li>
+						<li><i class="fa-solid fa-scale-balanced"></i><span>Cuadre</span></li>
+						<li><i class="fa-solid fa-clock-rotate-left"></i><span>Hist&oacuterico</span></li>
+						<li><i class="fa-solid fa-comments-dollar"></i><span>Gastado por Partida</span></li>
+						<li class="menu-heading"><span>Par&aacute;metros</span></li>
+						<li><i class="fa-solid fa-timeline"></i><span>Partidas</span></li>
+						<li><i class="fa-solid fa-users-line"></i><span>Proveedores</span></li>
+						<li><i class="fa-solid fa-people-roof"></i><span>Proyectos</span></li>
+					</ul>
+				</nav>
+			</div>
+			<div id="main-content">
+				<div id="main-content_container">
+					{ children... }
+				</div>
+			</div>
+		</section>
+	}
+}
