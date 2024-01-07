@@ -3,10 +3,6 @@
 
 /* To try to avoid conflicts with the css we will manage it in a per file basis */
 :root {
-     /* This is added for no side effects */
-     margin: 0;
-     padding: 0;
-
      /* color palette */
      /* This color palette is taken from the Material UI color palette */
      /* https://mui.com/material-ui/customization/color/ */
@@ -46,11 +42,15 @@
 
 /* I am going to be using a dark theme throughout the app. */
 body {
-     background-color: var(--blue-gray-900);
+     background-color: var(--blue-gray-800);
      color: var(--blue-gray-50);
      font-family: 'Roboto', sans-serif;
      font-size: 1rem;
      font-weight: 400;
+     /* This is added for no side effects */
+     margin: 0;
+     padding: 0;
+
 }
 
 input {
@@ -74,38 +74,79 @@ a:visited {
 }
 
 /*****************
- * Maain Header
+ * Sidebar
  ****************/
 
-#main-header {
-     background-color: var(--blue-gray-800);
-     padding: 1rem 1.5rem;
+#main {
+     position: relative;
 }
 
-#main-header,
-#main-header nav,
-#main-header ul {
+/*****************
+ * Sidebar
+ ****************/
+
+#sidebar {
+     background-color: var(--blue-gray-900);
+     padding: 1.5rem 3rem 1.5rem 1.5rem;
+     position: relative;
+     top: 0;
+     /* min-height: 100%; */
+     min-height: calc(100vh - 7rem);
      display: flex;
-     align-items: center;
+     flex-direction: column;
+     gap: 4rem;
 }
 
-#main-header nav {
-     justify-content: space-between;
-     width: 100%;
-}
-
-#main-header nav ul {
+#sidebar_nav ul {
      list-style: none;
      margin: 0;
      padding: 0;
-     gap: 2rem;
+     font-size: 0.875rem;
 }
 
-#main-header .title {
-     font-size: 1.5rem;
+#sidebar_nav ul a {
+     display: flex;
+     padding: 0.75rem 0;
+     gap: 0.75rem;
+     color: var(--blue-gray-300);
+     align-items: center;
+}
+
+#sidebar_nav ul a.active,
+#sidebar_nav ul a:hover {
+     color: var(--blue-gray-100);
+}
+
+#sidebar_nav .menu-heading {
+     color: var(--blue-gray-50);
+     font-size: 0.8125rem;
+     text-transform: uppercase;
      font-weight: bold;
+     letter-spacing: 1px;
+     padding: 0.75rem 0;
 }
 
+/* ================================================= */
+/* Main content */
+/* ================================================= */
+
+#main {
+     display: grid;
+     grid-template-columns: auto 1fr;
+}
+
+#main-content {
+     padding: 1.5rem;
+}
+
+/* #main-content_container { */
+/* border: var(--blue-gray-50) 1px dashed; */
+/* border-radius: 8px; */
+/* height: calc(100vh - 7rem); */
+/* display: grid; */
+/* place-content: center; */
+
+/* } */
 
 .btn {
      display: block;

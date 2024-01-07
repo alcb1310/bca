@@ -1,0 +1,50 @@
+package components
+
+css mainheader() {
+	background-color: var(--blue-gray-900);
+	padding: 1rem 1.5rem;
+	display: flex;
+	align-items: center;
+}
+
+css navbar() {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+}
+
+css iconlist() {
+	display: flex;
+	align-items: center;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	gap: 2rem;
+}
+
+css title() {
+	font-size: 1.5rem;
+	font-weight: bold;
+}
+
+templ Header() {
+	<header class={ mainheader() }>
+		<nav class={ navbar() }>
+			<a href="/bca" class={ title() }>Sistema Control Presupuestario</a>
+			<ul class={ iconlist() }>
+				<li>
+					<a href="#"><i class="fa-regular fa-user"></i></a>
+				</li>
+				<li>
+					<a href="#"><i class="fa-regular fa-circle-question"></i></a>
+				</li>
+				<li>
+					<a href="#">
+						<i class="fa-solid fa-arrow-right-from-bracket"></i>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</header>
+}
