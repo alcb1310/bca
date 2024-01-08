@@ -6,10 +6,23 @@ import (
 	"bca-go-final/internal/views"
 	"bca-go-final/internal/views/bca"
 	"bca-go-final/internal/views/derrors"
+	"log"
 	"net/http"
+
+	"github.com/gorilla/sessions"
+)
+
+var (
+	key   = []byte("super-secret-key")
+	store = sessions.NewCookieStore(key)
 )
 
 func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
+	store.Options.HttpOnly = true
+	store.Options.Secure = true
+	store.Options.SameSite = http.SameSiteStrictMode
+
+	session, _ := store.Get(r, "bca")
 	resp := make(map[string]string)
 	switch r.Method {
 	case http.MethodPost:
@@ -40,6 +53,8 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				resp["error"] = "credenciales inválidas"
 			} else {
+				session.Values["bca"] = token
+				session.Save(r, w)
 				resp["token"] = token
 				http.Redirect(w, r, "/bca", http.StatusSeeOther)
 			}
@@ -66,6 +81,8 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) BcaView(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := getMyPaload(r)
+	log.Println("Name", ctx.Name)
 	component := bca.LandingPage()
 	component.Render(r.Context(), w)
 }
