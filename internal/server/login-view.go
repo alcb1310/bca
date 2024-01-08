@@ -80,6 +80,14 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 	component.Render(r.Context(), w)
 }
 
+func (s *Server) Logout(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "bca")
+	session.Values["bca"] = nil
+	session.Save(r, w)
+	w.Header().Set("HX-Redirect", "/")
+	w.WriteHeader(http.StatusOK)
+}
+
 func (s *Server) BcaView(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := getMyPaload(r)
 	log.Println("Name", ctx.Name)

@@ -70,7 +70,7 @@ templ Header() {
 					<a href="#" class={ icon() }><i class="fa-regular fa-circle-question"></i></a>
 				</li>
 				<li>
-					<a href="#" class={ icon() }>
+					<a href="#" class={ icon() } hx-post="/bca/logout" hx-trigger="click" hx-push-url="true" hx-trget="body">
 						<i class="fa-solid fa-arrow-right-from-bracket"></i>
 					</a>
 				</li>

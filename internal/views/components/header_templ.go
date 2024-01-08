@@ -248,7 +248,7 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><i class=\"fa-solid fa-arrow-right-from-bracket\"></i></a></li></ul></nav></header>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-post=\"/bca/logout\" hx-trigger=\"click\" hx-push-url=\"true\" hx-trget=\"body\"><i class=\"fa-solid fa-arrow-right-from-bracket\"></i></a></li></ul></nav></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
