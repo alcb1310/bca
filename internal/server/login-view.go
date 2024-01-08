@@ -6,7 +6,6 @@ import (
 	"bca-go-final/internal/views"
 	"bca-go-final/internal/views/bca"
 	"bca-go-final/internal/views/derrors"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -90,7 +89,6 @@ func (s *Server) Logout(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) BcaView(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := getMyPaload(r)
-	log.Println("Name", ctx.Name)
 	component := bca.LandingPage(ctx.Name)
 	component.Render(r.Context(), w)
 }
