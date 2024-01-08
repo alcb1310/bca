@@ -1,11 +1,30 @@
 package users
 
 import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
 
-templ ProfileView() {
+css note() {
+	font-size: 0.8rem;
+	margin-top: 3rem;
+}
+
+css profiletitle() {
+	color: var(--green-300);
+	font-weight: bold;
+}
+
+templ ProfileView(user types.User) {
 	@base.AuthenticatedLayout("") {
 		<div>
-			<h1>Profile</h1>
+			@components.PageTitle("Mi Perfil")
+			<div>
+				<p><span class={ profiletitle() }>Nombre: </span>{ user.Name }</p>
+				<p><span class={ profiletitle() }>Email: </span>{ user.Email }</p>
+			</div>
+			<div>
+				<p class={ note() }>Para modificar el perfil, por favor, contactarse con el administrador.</p>
+			</div>
 		</div>
 	}
 }

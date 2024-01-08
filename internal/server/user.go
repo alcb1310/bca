@@ -231,7 +231,11 @@ func (s *Server) OneUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Profile(w http.ResponseWriter, r *http.Request) {
-	component := users.ProfileView()
+	ctx, _ := getMyPaload(r)
+
+	user, _ := s.DB.GetUser(ctx.Id, ctx.CompanyId)
+
+	component := users.ProfileView(user)
 	component.Render(r.Context(), w)
 }
 
