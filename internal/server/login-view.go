@@ -91,6 +91,6 @@ func (s *Server) Logout(w http.ResponseWriter, r *http.Request) {
 func (s *Server) BcaView(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := getMyPaload(r)
 	log.Println("Name", ctx.Name)
-	component := bca.LandingPage()
+	component := bca.LandingPage(ctx.Name)
 	component.Render(r.Context(), w)
 }
