@@ -1,0 +1,91 @@
+package components
+
+css mainheader() {
+	background-color: var(--blue-gray-900);
+	padding: 1rem 1.5rem;
+	display: flex;
+	align-items: center;
+}
+
+css navbar() {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+}
+
+css iconlist() {
+	display: flex;
+	align-items: center;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	gap: 2rem;
+}
+
+css title() {
+	font-size: 1.5rem;
+	font-weight: bold;
+	text-decoration: none;
+	color: var(--blue-gray-100);
+}
+
+css icon() {
+	color: var(--blue-gray-100);
+}
+
+css contextmenu() {
+	display: none;
+	position: absolute;
+	z-index: 10;
+	background-color: var(--blue-gray-100);
+	color: var(--blue-gray-900);
+	width: fit-content;
+	padding: 1rem;
+	border: 1px solid var(--blue-gray-900);
+	border-radius: 0.5rem;
+	font-size: 0.7rem;
+	right: 3rem;
+	top: 3rem;
+}
+
+css contextmenulink() {
+	display: flex;
+	flex-direction: column;
+	gap: 0.8rem;
+	text-decoration: none;
+	color: var(--blue-gray-900);
+	padding: 0.8rem;
+}
+
+templ Header() {
+	<header class={ mainheader() }>
+		<nav class={ navbar() }>
+			<a href="/bca" class={ title() }>Sistema Control Presupuestario</a>
+			<ul class={ iconlist() }>
+				<li id="user">
+					<a href="#" class={ icon() }><i class="fa-regular fa-user"></i></a>
+				</li>
+				<li>
+					<a href="#" class={ icon() }><i class="fa-regular fa-circle-question"></i></a>
+				</li>
+				<li>
+					<a href="#" class={ icon() } hx-post="/bca/logout" hx-trigger="click" hx-push-url="true" hx-trget="body">
+						<i class="fa-solid fa-arrow-right-from-bracket"></i>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</header>
+	<div id="user-context" class={ contextmenu() }>
+		<div class="contextmenu-item">
+			<a href="/bca/user/perfil" class={ contextmenulink() }>Mi Perfil</a>
+		</div>
+		<div class="contextmenu-item">
+			<a href="/bca/user/admin" class={ contextmenulink() }>Administrar</a>
+		</div>
+		<div class="contextmenu-item">
+			<a href="/bca/user/cambio" class={ contextmenulink() }>Cambiar Contrase&ntilde;a</a>
+		</div>
+	</div>
+}

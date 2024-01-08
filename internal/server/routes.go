@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bca-go-final/internal/views"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -11,13 +12,12 @@ import (
 func (s *Server) RegisterRoutes() http.Handler {
 	r := mux.NewRouter()
 
-	r.Use(middleware)
 	r.Use(s.authVerify)
 
 	r.HandleFunc("/", s.HelloWorldHandler)
 	r.HandleFunc("/health", s.healthHandler)
-	r.HandleFunc("/login", s.Login)
-	r.HandleFunc("/register", s.Register)
+	r.HandleFunc("/api/login", s.Login)
+	r.HandleFunc("/api/register", s.Register)
 
 	// load dummy data
 	r.HandleFunc("/api/v1/load-dummy-data", s.loadDummyDataHandler)
@@ -47,19 +47,36 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/api/v1/invoices", s.AllInvoices)
 	r.HandleFunc("/api/v1/invoices/{id}", s.OneInvoice)
 
+	// views
+
+	r.HandleFunc("/login", s.LoginView)
+	r.HandleFunc("/bca", s.BcaView)
+	r.HandleFunc("/bca/logout", s.Logout)
+	r.HandleFunc("/bca/transacciones/presupuesto", s.Budget)
+	r.HandleFunc("/bca/transacciones/facturas", s.Invoice)
+	r.HandleFunc("/bca/transacciones/cierre", s.Closure)
+
+	r.HandleFunc("/bca/reportes/actual", s.Actual)
+	r.HandleFunc("/bca/reportes/cuadre", s.Balance)
+	r.HandleFunc("/bca/reportes/historico", s.Historic)
+	r.HandleFunc("/bca/reportes/gastado", s.Spent)
+
+	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems)
+	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers)
+	r.HandleFunc("/bca/configuracion/proyectos", s.Projects)
+
+	r.HandleFunc("/bca/user/perfil", s.Profile)
+	r.HandleFunc("/bca/user/admin", s.Admin)
+	r.HandleFunc("/bca/user/cambio", s.ChangePassword)
+
+	// This should be the last route for static files
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
 	return r
 }
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
-	resp := make(map[string]string)
-	resp["message"] = "Hello World"
-
-	jsonResp, err := json.Marshal(resp)
-	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
-	}
-
-	_, _ = w.Write(jsonResp)
+	component := views.WelcomeView()
+	component.Render(r.Context(), w)
 }
 
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {

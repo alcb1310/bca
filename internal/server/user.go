@@ -3,6 +3,7 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/users"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -227,4 +228,23 @@ func (s *Server) OneUser(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
+}
+
+func (s *Server) Profile(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := getMyPaload(r)
+
+	user, _ := s.DB.GetUser(ctx.Id, ctx.CompanyId)
+
+	component := users.ProfileView(user)
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) Admin(w http.ResponseWriter, r *http.Request) {
+	component := users.AdminView()
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) ChangePassword(w http.ResponseWriter, r *http.Request) {
+	component := users.ChangePasswordView()
+	component.Render(r.Context(), w)
 }
