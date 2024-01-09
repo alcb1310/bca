@@ -1,0 +1,21 @@
+package components
+
+css titlebar() {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid var(--blue-gray-800);
+}
+
+css titletext() {
+	font-size: 1.15rem;
+	font-weight: bold;
+}
+
+templ DrawerTitle(title string) {
+	<div class={ titlebar() }>
+		<h4 class={ titletext() }>{ title }</h4>
+		<p><i class="fa-solid fa-xmark" onclick="closeDrawer()"></i></p>
+	</div>
+}
