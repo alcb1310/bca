@@ -70,6 +70,15 @@ input {
      border-radius: 0.5rem;
 }
 
+thead {
+     background-color: var(--blue-gray-600);
+     font-weight: 700;
+}
+
+i:disabled {
+     opacity: 0.5;
+}
+
 .menulink:hover {
      color: var(--blue-gray-0);
 }

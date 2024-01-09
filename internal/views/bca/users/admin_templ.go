@@ -69,7 +69,7 @@ func AdminView() templ.Component {
 					templ_7745c5c3_Buffer = templ.GetBuffer()
 					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form autocomplete=\"off\" hx-post=\"/bca/partials/users\" hx-target=\"#users-table\" hx-swap=\"innerHTML\" hx-trigger=\"submit\" _=\"on submit toggle @disabled on &lt;button /&gt; until htmx:afterOnLoad then close()\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form autocomplete=\"off\" hx-post=\"/bca/partials/users\" hx-target=\"#users-table\" hx-swap=\"innerHTML\" hx-trigger=\"submit\" _=\"on submit toggle @disabled on &lt;button /&gt; until htmx:afterOnLoad then resetClose()\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -8,7 +8,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
@@ -251,11 +250,33 @@ func (s *Server) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	component.Render(r.Context(), w)
 }
 
+func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := getMyPaload(r)
+	id := mux.Vars(r)["id"]
+	parsedId, _ := uuid.Parse(id)
+
+	if ctx.Id == parsedId {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	if r.Method == http.MethodDelete {
+		if err := s.DB.DeleteUser(parsedId, ctx.CompanyId); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+	}
+
+	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
+	component := partials.UsersTable(users, ctx.Id)
+	component.Render(r.Context(), w)
+}
+
 func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := getMyPaload(r)
 
 	if r.Method == http.MethodPost {
-		log.Println("POST")
 		u := &types.UserCreate{}
 		err := r.ParseForm()
 		if err != nil {
@@ -293,6 +314,6 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 	}
 
 	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
-	component := partials.UsersTable(users)
+	component := partials.UsersTable(users, ctx.Id)
 	component.Render(r.Context(), w)
 }

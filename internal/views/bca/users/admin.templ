@@ -19,13 +19,13 @@ templ AdminView() {
 		<div id="users-table" hx-target="this" hx-swap="innerHTML" hx-trigger="load" hx-get="/bca/partials/users"></div>
 		@components.DrawerComponent() {
 			<form
-                 autocomplete="off"
-                 hx-post="/bca/partials/users"
-                 hx-target="#users-table"
-                 hx-swap="innerHTML"
-                 hx-trigger="submit"
-                 _="on submit toggle @disabled on <button /> until htmx:afterOnLoad then close()"
-          >
+				autocomplete="off"
+				hx-post="/bca/partials/users"
+				hx-target="#users-table"
+				hx-swap="innerHTML"
+				hx-trigger="submit"
+				_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
+			>
 				<div class={ buttondown() }>
 					<div>
 						@components.DrawerTitle("Agregar usuario")
@@ -36,7 +36,7 @@ templ AdminView() {
 						</div>
 					</div>
 					<div class="btn-group">
-						<button type="submit" class="btn" id="save-button" >Grabar</button>
+						<button type="submit" class="btn" id="save-button">Grabar</button>
 						<button type="button" class="btn" id="close-button" onclick="resetClose()">Cancelar</button>
 					</div>
 				</div>

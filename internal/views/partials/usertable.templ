@@ -1,13 +1,46 @@
 package partials
 
 import "bca-go-final/internal/types"
+import "github.com/google/uuid"
 
-templ UsersTable(users []types.User) {
+func concat(s1, s2 string) string {
+	return s1 + s2
+}
+
+css redText() {
+	color: var(--red-500);
+}
+
+templ UsersTable(users []types.User, currentUser uuid.UUID) {
 	if len(users) == 0 {
 		<p>No hay usuarios</p>
 	}
-	for _, user := range users {
-		<p>User: {  user.Name  }</p>
-		<p>Email: {  user.Email  }</p>
-	}
+	<table>
+		<thead>
+			<tr>
+				<th width="300px">Email</th>
+				<th width="300px">Nombre</th>
+				<th width="50px">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, user := range users {
+				<tr id={ concat("user-", user.Id.String()) }>
+					<td>{ user.Email }</td>
+					<td>{ user.Name }</td>
+					<td align="center">
+						if user.Id != currentUser {
+							<i
+								class={ "fa-regular fa-trash-can", redText() }
+								hx-delete={ concat("/bca/partials/users/", user.Id.String()) }
+								hx-target="#users-table"
+								hx-swap="innerHTML"
+								_="on click toggle @disabled to me until htmx:afterOnLoad"
+							></i>
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
