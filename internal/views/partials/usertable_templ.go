@@ -28,6 +28,16 @@ func redText() templ.CSSClass {
 	}
 }
 
+func yellowText() templ.CSSClass {
+	var templ_7745c5c3_CSSBuilder strings.Builder
+	templ_7745c5c3_CSSBuilder.WriteString(`color:var(--yellow-700);`)
+	templ_7745c5c3_CSSID := templ.CSSID(`yellowText`, templ_7745c5c3_CSSBuilder.String())
+	return templ.ComponentCSSClass{
+		ID:    templ_7745c5c3_CSSID,
+		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
+	}
+}
+
 func UsersTable(users []types.User, currentUser uuid.UUID) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -103,7 +113,7 @@ func UsersTable(users []types.User, currentUser uuid.UUID) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(user.Email)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/partials/usertable.templ`, Line: 28, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/partials/usertable.templ`, Line: 32, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -116,19 +126,36 @@ func UsersTable(users []types.User, currentUser uuid.UUID) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(user.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/partials/usertable.templ`, Line: 29, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/partials/usertable.templ`, Line: 33, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"center\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"left\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 = []any{"fa-solid fa-pencil", yellowText()}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var8).String()))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></i> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if user.Id != currentUser {
-				var templ_7745c5c3_Var8 = []any{"fa-regular fa-trash-can", redText()}
-				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
+				var templ_7745c5c3_Var9 = []any{"fa-regular fa-trash-can", redText()}
+				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -136,7 +163,7 @@ func UsersTable(users []types.User, currentUser uuid.UUID) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var8).String()))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var9).String()))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

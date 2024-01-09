@@ -11,6 +11,10 @@ css redText() {
 	color: var(--red-500);
 }
 
+css yellowText() {
+	color: var(--yellow-700);
+}
+
 templ UsersTable(users []types.User, currentUser uuid.UUID) {
 	if len(users) == 0 {
 		<p>No hay usuarios</p>
@@ -28,7 +32,8 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
 				<tr id={ concat("user-", user.Id.String()) }>
 					<td>{ user.Email }</td>
 					<td>{ user.Name }</td>
-					<td align="center">
+					<td align="left">
+						<i class={ "fa-solid fa-pencil", yellowText() }></i>
 						if user.Id != currentUser {
 							<i
 								class={ "fa-regular fa-trash-can", redText() }
