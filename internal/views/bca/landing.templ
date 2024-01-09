@@ -1,0 +1,17 @@
+package bca
+
+import "bca-go-final/internal/views/base"
+
+css highlight() {
+	color: var(--green-300);
+	font-weight: bold;
+	letter-spacing: 0.5px;
+}
+
+templ LandingPage(user string) {
+	@base.AuthenticatedLayout("") {
+		<div>
+			<p>Bienvenido <span class={ highlight() }>{ user }</span></p>
+		</div>
+	}
+}
