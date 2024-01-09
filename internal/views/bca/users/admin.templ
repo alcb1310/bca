@@ -1,11 +1,60 @@
 package users
 
 import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+
+css buttondown() {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	gap: 2rem;
+}
 
 templ AdminView() {
 	@base.AuthenticatedLayout("") {
-		<div>
-			<h1>Admin</h1>
+		@components.PageTitle("Administrar usuarios")
+		<div class="page-header">
+			<button type="button" class="btn" id="add-button" style="cursor:pointer">Agregar</button>
 		</div>
+		<div id="users-table" hx-target="this" hx-swap="innerHTML" hx-trigger="load" hx-get="/bca/partials/users"></div>
+		@components.DrawerComponent() {
+			<form
+                 autocomplete="off"
+                 hx-post="/bca/partials/users"
+                 hx-target="#users-table"
+                 hx-swap="innerHTML"
+                 hx-trigger="submit"
+                 _="on submit toggle @disabled on <button /> until htmx:afterOnLoad then close()"
+          >
+				<div class={ buttondown() }>
+					<div>
+						@components.DrawerTitle("Agregar usuario")
+						<div>
+							@components.Input("email", "Email", "email", "email", "")
+							@components.Input("text", "Nombre", "name", "name", "")
+							@components.Input("password", "Contraseña", "password", "password", "")
+						</div>
+					</div>
+					<div class="btn-group">
+						<button type="submit" class="btn" id="save-button" >Grabar</button>
+						<button type="button" class="btn" id="close-button" onclick="resetClose()">Cancelar</button>
+					</div>
+				</div>
+			</form>
+		}
+		<script>
+             function resetClose(){
+                  console.log("Closing")
+                  const email = document.getElementById("email")
+                  const name = document.getElementById("name")
+                  const password = document.getElementById("password")
+
+                  email.value = ""
+                  name.value = ""
+                  password.value = ""
+
+                  closeDrawer()
+             }
+        </script>
 	}
 }

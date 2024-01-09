@@ -30,8 +30,12 @@ func (s *service) GetAllUsers(companyId uuid.UUID) ([]types.User, error) {
 }
 
 func (s *service) CreateUser(u *types.UserCreate) (types.User, error) {
+	hash, err := utils.EncryptPasssword(u.Password)
+	if err != nil {
+		return types.User{}, err
+	}
 	sql := "insert into \"user\" (name, email, password, company_id, role_id) values ($1, $2, $3, $4, $5) returning id"
-	err := s.db.QueryRow(sql, u.Name, u.Email, u.Password, u.CompanyId, u.RoleId).Scan(&u.Id)
+	err = s.db.QueryRow(sql, u.Name, u.Email, hash, u.CompanyId, u.RoleId).Scan(&u.Id)
 	if err != nil {
 		return types.User{}, err
 	}

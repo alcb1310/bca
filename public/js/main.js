@@ -1,5 +1,8 @@
 const userEl = document.getElementById("user");
 const contextEl = document.getElementById("user-context");
+const opaqueEl = document.getElementById("opaque");
+const drawerEl = document.getElementById("drawer");
+const addButtonEl = document.getElementById("add-button");
 
 let isContextMenuOpen = false;
 
@@ -18,3 +21,19 @@ window.onkeyup = function(e) {
 }
 
 
+
+if (opaqueEl) {
+     opaqueEl.addEventListener("click", closeDrawer);
+}
+
+if (addButtonEl) {
+     addButtonEl.addEventListener("click", () => {
+          opaqueEl.style.display = "block";
+          drawerEl.style.display = "flex";
+     });
+}
+
+function closeDrawer() {
+     opaqueEl.style.display = "none";
+     drawerEl.style.display = "none";
+}

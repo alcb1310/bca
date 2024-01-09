@@ -35,7 +35,6 @@ func maincontent() templ.CSSClass {
 
 func maincontentcontainer() templ.CSSClass {
 	var templ_7745c5c3_CSSBuilder strings.Builder
-	templ_7745c5c3_CSSBuilder.WriteString(`min-height:calc(100vh - 7rem);`)
 	templ_7745c5c3_CSSBuilder.WriteString(`border-radius:8px;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`maincontentcontainer`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{

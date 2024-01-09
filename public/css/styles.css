@@ -38,7 +38,10 @@
      --red-200: #ef9a9a;
      --red-100: #ffcdd2;
      --red-50: #ffebee;
+
+     --blue-gray-opaque: rgba(38, 50, 56, 0.7)
 }
+
 
 /* I am going to be using a dark theme throughout the app. */
 body {
@@ -80,9 +83,13 @@ input {
      display: block !important;
 }
 
+.page-header {
+     display: flex;
+     justify-content: end;
+}
+
 .btn {
      display: block;
-     width: 100%;
      padding: 0.5rem 1rem;
      background-color: var(--green-700);
      color: var(--green-50);
@@ -93,6 +100,15 @@ input {
      font-size: 0.8rem;
      font-weight: 900;
      letter-spacing: 0.05rem;
+}
+
+.btn-group {
+     display: flex;
+     justify-content: space-between;
+}
+
+.btn:disabled {
+     opacity: 0.5;
 }
 
 .error-border {

@@ -4,9 +4,11 @@ import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/users"
+	"bca-go-final/internal/views/partials"
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -246,5 +248,51 @@ func (s *Server) Admin(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	component := users.ChangePasswordView()
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := getMyPaload(r)
+
+	if r.Method == http.MethodPost {
+		log.Println("POST")
+		u := &types.UserCreate{}
+		err := r.ParseForm()
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		u.Name = r.Form.Get("name")
+		u.Email = r.Form.Get("email")
+		u.Password = r.Form.Get("password")
+		u.RoleId = r.Form.Get("role")
+		u.CompanyId = ctx.CompanyId
+
+		if u.Email != "" && !utils.IsValidEmail(u.Email) {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		if u.Password == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		if u.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		if u.RoleId == "" {
+			u.RoleId = "a"
+		}
+
+		_, err = s.DB.CreateUser(u)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
+	component := partials.UsersTable(users)
 	component.Render(r.Context(), w)
 }

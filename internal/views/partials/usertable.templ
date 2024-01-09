@@ -1,0 +1,13 @@
+package partials
+
+import "bca-go-final/internal/types"
+
+templ UsersTable(users []types.User) {
+	if len(users) == 0 {
+		<p>No hay usuarios</p>
+	}
+	for _, user := range users {
+		<p>User: {  user.Name  }</p>
+		<p>Email: {  user.Email  }</p>
+	}
+}

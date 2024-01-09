@@ -56,6 +56,7 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 				session.Save(r, w)
 				resp["token"] = token
 				http.Redirect(w, r, "/bca", http.StatusSeeOther)
+				return
 			}
 		}
 
