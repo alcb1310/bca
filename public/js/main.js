@@ -26,11 +26,9 @@ if (opaqueEl) {
      opaqueEl.addEventListener("click", closeDrawer);
 }
 
-if (addButtonEl) {
-     addButtonEl.addEventListener("click", () => {
-          opaqueEl.style.display = "block";
-          drawerEl.style.display = "flex";
-     });
+function openDrawer() {
+     opaqueEl.style.display = "block";
+     drawerEl.style.display = "flex";
 }
 
 function closeDrawer() {

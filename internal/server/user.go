@@ -260,12 +260,26 @@ func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Method == http.MethodDelete {
+	switch r.Method {
+	case http.MethodDelete:
 		if err := s.DB.DeleteUser(parsedId, ctx.CompanyId); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+	case http.MethodPut:
+		u, _ := s.DB.GetUser(parsedId, ctx.CompanyId)
 
+		r.ParseForm()
+		if r.Form.Get("name") != "" {
+			u.Name = r.Form.Get("name")
+		}
+		if r.Form.Get("email") != "" {
+			u.Email = r.Form.Get("email")
+		}
+		if _, err := s.DB.UpdateUser(u, parsedId, ctx.CompanyId); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 
 	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
@@ -315,5 +329,20 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 
 	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
 	component := partials.UsersTable(users, ctx.Id)
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) UserAdd(w http.ResponseWriter, r *http.Request) {
+	component := partials.EditUser(nil)
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) UserEdit(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := getMyPaload(r)
+	id := mux.Vars(r)["id"]
+	parsedId, _ := uuid.Parse(id)
+	u, _ := s.DB.GetUser(parsedId, ctx.CompanyId)
+
+	component := partials.EditUser(&u)
 	component.Render(r.Context(), w)
 }

@@ -33,10 +33,19 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
 					<td>{ user.Email }</td>
 					<td>{ user.Name }</td>
 					<td align="left">
-						<i class={ "fa-solid fa-pencil", yellowText() }></i>
+						<i
+							class={ "fa-solid fa-pencil", yellowText() }
+							hx-get={ concat("/bca/partials/users/edit/", user.Id.String()) }
+							style="cursor:pointer"
+							hx-get="/bca/partials/users/add"
+							hx-target="#drawer"
+							hx-swap="innerHTML"
+							_="on click openDrawer()"
+						></i>
 						if user.Id != currentUser {
 							<i
 								class={ "fa-regular fa-trash-can", redText() }
+								style="cursor:pointer"
 								hx-delete={ concat("/bca/partials/users/", user.Id.String()) }
 								hx-target="#users-table"
 								hx-swap="innerHTML"

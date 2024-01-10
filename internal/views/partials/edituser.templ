@@ -1,0 +1,51 @@
+package partials
+
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
+
+css buttondown() {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+templ EditUser(user *types.User) {
+	<form
+		id="user-form"
+		autocomplete="off"
+		if user == nil {
+			hx-post="/bca/partials/users"
+		} else {
+			hx-put={ concat("/bca/partials/users/", user.Id.String()) }
+		}
+		hx-target="#users-table"
+		hx-swap="innerHTML"
+		hx-trigger="submit"
+		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
+	>
+		<div class={ buttondown() }>
+			<div>
+				if user == nil {
+					@components.DrawerTitle("Agregar usuario")
+				} else {
+					@components.DrawerTitle("Editar usuario")
+				}
+				<div>
+					if user == nil {
+						@components.Input("email", "Email", "email", "email", "")
+						@components.Input("text", "Nombre", "name", "name", "")
+						@components.Input("password", "Contraseña", "password", "password", "")
+					} else {
+						@components.Input("email", "Email", "email", "email", user.Email)
+						@components.Input("text", "Nombre", "name", "name", user.Name)
+					}
+				</div>
+			</div>
+			<div class="btn-group">
+				<button type="submit" class="btn" id="save-button">Grabar</button>
+				<button type="button" class="btn" id="close-button" onclick="resetClose()">Cancelar</button>
+			</div>
+		</div>
+	</form>
+}
