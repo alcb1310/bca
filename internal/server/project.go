@@ -2,6 +2,7 @@ package server
 
 import (
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/views/bca/settings/partials"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -126,4 +127,12 @@ func (s *Server) OneProject(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
+}
+
+func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
+	ctxPayload, _ := getMyPaload(r)
+
+	projects, _ := s.DB.GetAllProjects(ctxPayload.CompanyId)
+	component := partials.ProjectsTable(projects)
+	component.Render(r.Context(), w)
 }

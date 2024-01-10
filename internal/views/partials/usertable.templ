@@ -11,10 +11,6 @@ css redText() {
 	color: var(--red-500);
 }
 
-css yellowText() {
-	color: var(--yellow-700);
-}
-
 templ UsersTable(users []types.User, currentUser uuid.UUID) {
 	if len(users) == 0 {
 		<p>No hay usuarios</p>
@@ -34,7 +30,7 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
 					<td>{ user.Name }</td>
 					<td align="left">
 						<i
-							class={ "fa-solid fa-pencil", yellowText() }
+							class="fa-solid fa-pencil yellow-text"
 							hx-get={ concat("/bca/partials/users/edit/", user.Id.String()) }
 							style="cursor:pointer"
 							hx-get="/bca/partials/users/add"

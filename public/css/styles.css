@@ -140,3 +140,7 @@ i:disabled {
 .error-border {
      border: 2px solid var(--red-500);
 }
+
+.yellow-text {
+     color: var(--yellow-700);
+}
