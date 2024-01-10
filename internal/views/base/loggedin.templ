@@ -9,19 +9,5 @@ templ AuthenticatedLayout(title string) {
 			{ children... }
 		}
 		@components.DrawerComponent()
-		<script>
-             function resetClose(){
-                  console.log("Closing")
-                  const email = document.getElementById("email")
-                  const name = document.getElementById("name")
-                  const password = document.getElementById("password")
-
-                  email.value = ""
-                  name.value = ""
-                  if (password) password.value = ""
-
-                  closeDrawer()
-             }
-        </script>
 	}
 }

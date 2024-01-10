@@ -41,9 +41,8 @@ css contextmenu() {
 	background-color: var(--blue-gray-100);
 	color: var(--blue-gray-900);
 	width: fit-content;
-	padding: 1rem;
 	border: 1px solid var(--blue-gray-900);
-	border-radius: 0.5rem;
+	border-radius: 0.8rem;
 	font-size: 0.7rem;
 	right: 3rem;
 	top: 3rem;
@@ -52,10 +51,10 @@ css contextmenu() {
 css contextmenulink() {
 	display: flex;
 	flex-direction: column;
-	gap: 0.8rem;
+	gap: 0.4rem;
 	text-decoration: none;
 	color: var(--blue-gray-900);
-	padding: 0.8rem;
+	padding: 0.4rem;
 }
 
 templ Header() {
@@ -79,13 +78,33 @@ templ Header() {
 	</header>
 	<div id="user-context" class={ contextmenu() }>
 		<div class="contextmenu-item">
-			<a href="/bca/user/perfil" class={ contextmenulink() }>Mi Perfil</a>
+			<p style="padding:0 0.8rem">
+				<a href="/bca/user/perfil" class={ contextmenulink() }>Mi Perfil</a>
+			</p>
 		</div>
 		<div class="contextmenu-item">
-			<a href="/bca/user/admin" class={ contextmenulink() }>Administrar</a>
+			<p style="padding:0 0.8rem">
+				<a href="/bca/user/admin" class={ contextmenulink() }>Administrar</a>
+			</p>
 		</div>
-		<div class="contextmenu-item">
-			<a href="/bca/user/cambio" class={ contextmenulink() }>Cambiar Contrase&ntilde;a</a>
+		<div id="change-password" class="contextmenu-item" style="padding:0 0.8rem">
+			<p
+				class={ contextmenulink() }
+				hx-get="/bca/user/cambio"
+				hx-trigger="click"
+				hx-target="#drawer"
+				hx-swap="innerHTML"
+				_="on click openDrawer()"
+			>
+				Cambiar Contrase&ntilde;a
+			</p>
 		</div>
 	</div>
+	<script>
+         document.getElementById("change-password").addEventListener("click", (event) => {
+              event.preventDefault();
+              isContextMenuOpen = false;
+              contextEl.classList.remove("show-contextmenu");
+         })
+     </script>
 }

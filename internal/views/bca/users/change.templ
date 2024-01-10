@@ -1,11 +1,32 @@
 package users
 
-import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+
+css buttondown() {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	gap: 2rem;
+}
 
 templ ChangePasswordView() {
-	@base.AuthenticatedLayout("") {
-		<div>
-			<h1>Change Password</h1>
+	<form
+		hx-put="/bca/partials/users"
+		hx-trigger="submit"
+		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
+	>
+		<div class={ buttondown() }>
+			@components.DrawerTitle("Cambiar Contraseña")
+			@components.Input("password", "Contraseña", "password", "password", "")
+			<div class="btn-group">
+				<button type="submit" class="btn" id="save-button">Grabar</button>
+				<button type="button" class="btn" id="close-button" onclick="resetClose()">Cancelar</button>
+			</div>
 		</div>
-	}
+	</form>
+	<script>
+         function resetClose(){
+              closeDrawer()
+         }
+    </script>
 }

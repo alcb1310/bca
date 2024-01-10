@@ -12,7 +12,6 @@ userEl.addEventListener("click", (event) => {
      contextEl.classList.toggle("show-contextmenu");
 })
 
-
 window.onkeyup = function(e) {
      if (isContextMenuOpen && e.keyCode === 27) {
           isContextMenuOpen = false;

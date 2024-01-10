@@ -290,7 +290,25 @@ func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
 func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := getMyPaload(r)
 
-	if r.Method == http.MethodPost {
+	switch r.Method {
+	case http.MethodPut:
+		r.ParseForm()
+		pass := r.Form.Get("password")
+
+		if pass == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if _, err := s.DB.UpdatePassword(pass, ctx.Id, ctx.CompanyId); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		return
+
+	case http.MethodPost:
 		u := &types.UserCreate{}
 		err := r.ParseForm()
 		if err != nil {
