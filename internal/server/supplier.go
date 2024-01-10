@@ -3,6 +3,7 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/settings/partials"
 	"database/sql"
 	"encoding/json"
 	"net/http"
@@ -163,4 +164,38 @@ func (s *Server) OneSupplier(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
+}
+
+func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
+	ctxPayload, _ := getMyPaload(r)
+
+	if r.Method == http.MethodPost {
+		r.ParseForm()
+		email := r.Form.Get("contact_email")
+		name := r.Form.Get("contact_name")
+		phone := r.Form.Get("contact_phone")
+		sup := types.Supplier{
+			SupplierId:   r.Form.Get("supplier_id"),
+			Name:         r.Form.Get("name"),
+			ContactEmail: &email,
+			ContactName:  &name,
+			ContactPhone: &phone,
+			CompanyId:    ctxPayload.CompanyId,
+		}
+
+		err := s.DB.CreateSupplier(&sup)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	suppliers, _ := s.DB.GetAllSuppliers(ctxPayload.CompanyId)
+	component := partials.SuppliersTable(suppliers)
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) SupplierAdd(w http.ResponseWriter, r *http.Request) {
+	component := partials.EditSupplier(nil)
+	component.Render(r.Context(), w)
 }

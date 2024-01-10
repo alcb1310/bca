@@ -36,7 +36,7 @@ func (s *Server) authVerify(next http.Handler) http.Handler {
 		secretKey := os.Getenv("SECRET")
 		maker, err := utils.NewJWTMaker(secretKey)
 		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 		session, _ := store.Get(r, "bca")
@@ -49,7 +49,6 @@ func (s *Server) authVerify(next http.Handler) http.Handler {
 
 		tokenData, err := maker.VerifyToken(token)
 		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
@@ -60,7 +59,6 @@ func (s *Server) authVerify(next http.Handler) http.Handler {
 		r = r.Clone(ctx)
 
 		if !s.DB.IsLoggedIn(token, tokenData.ID) {
-			w.WriteHeader(http.StatusUnauthorized)
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}

@@ -24,7 +24,7 @@ func drawer() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder.WriteString(`right:0;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`left:auto;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`width:400px;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`height:calc(100vh - 60px);`)
+	templ_7745c5c3_CSSBuilder.WriteString(`height:calc(100vh - 15px);`)
 	templ_7745c5c3_CSSBuilder.WriteString(`transition:display 3s ease-in-out;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`padding:0.5rem 1rem;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`drawer`, templ_7745c5c3_CSSBuilder.String())
