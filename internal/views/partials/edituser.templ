@@ -42,15 +42,11 @@ templ EditUser(user *types.User) {
 					}
 				</div>
 			</div>
-			<div class="btn-group">
-				<button type="submit" class="btn" id="save-button">Grabar</button>
-				<button type="button" class="btn" id="close-button" onclick="resetClose()">Cancelar</button>
-			</div>
+			@components.ButtonGroup()
 		</div>
 	</form>
 	<script>
          function resetClose(){
-              console.log("Closing")
               const email = document.getElementById("email")
               const name = document.getElementById("name")
               const password = document.getElementById("password")

@@ -27,7 +27,11 @@ func buttondown() templ.CSSClass {
 	}
 }
 
-func EditUser(user *types.User) templ.Component {
+func concat(s1, s2 string) string {
+	return s1 + s2
+}
+
+func EditProject(project *types.Project) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -40,12 +44,12 @@ func EditUser(user *types.User) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form id=\"user-form\" autocomplete=\"off\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form id=\"edit-project\" autocomplete=\"off\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if user == nil {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-post=\"/bca/partials/users\"")
+		if project == nil {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-post=\"/bca/partials/projects\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -54,7 +58,7 @@ func EditUser(user *types.User) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/users/", user.Id.String())))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/projects/", project.ID.String())))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -63,7 +67,7 @@ func EditUser(user *types.User) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-target=\"#users-table\" hx-swap=\"innerHTML\" hx-trigger=\"submit\" _=\"on submit toggle @disabled on &lt;button /&gt; until htmx:afterOnLoad then resetClose()\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-target=\"#projects-table\" hx-swap=\"innerHTML\" _=\"on submit toggle @disabled on &lt;button /&gt; until htmx:afterOnLoad then resetClose()\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -84,23 +88,8 @@ func EditUser(user *types.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if user == nil {
-			templ_7745c5c3_Err = components.DrawerTitle("Agregar usuario").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		} else {
-			templ_7745c5c3_Err = components.DrawerTitle("Editar usuario").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if user == nil {
-			templ_7745c5c3_Err = components.Input("email", "Email", "email", "email", "").Render(ctx, templ_7745c5c3_Buffer)
+		if project == nil {
+			templ_7745c5c3_Err = components.DrawerTitle("Agregar Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -116,12 +105,12 @@ func EditUser(user *types.User) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Input("password", "Contraseña", "password", "password", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.CheckBoxComponent("active", "active", "Activo", false).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = components.Input("email", "Email", "email", "email", user.Email).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.DrawerTitle("Editar Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -129,12 +118,20 @@ func EditUser(user *types.User) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Input("text", "Nombre", "name", "name", user.Name).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Input("text", "Nombre", "name", "name", project.Name).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.CheckBoxComponent("active", "active", "Activo", *project.IsActive).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -147,15 +144,7 @@ func EditUser(user *types.User) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Var3 := `
-         function resetClose(){
-              const email = document.getElementById("email")
-              const name = document.getElementById("name")
-              const password = document.getElementById("password")
-
-              email.value = ""
-              name.value = ""
-              if (password) password.value = ""
-
+         function resetClose() {
               closeDrawer()
          }
     `

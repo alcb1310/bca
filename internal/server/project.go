@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -132,7 +133,43 @@ func (s *Server) OneProject(w http.ResponseWriter, r *http.Request) {
 func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := getMyPaload(r)
 
+	if r.Method == http.MethodPost {
+		r.ParseForm()
+		x := r.Form.Get("active") == "active"
+		p := types.Project{
+			Name:      r.Form.Get("name"),
+			IsActive:  &x,
+			CompanyId: ctxPayload.CompanyId,
+		}
+		if p.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			log.Println("name cannot be empty")
+			return
+		}
+		_, err := s.DB.CreateProject(p)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
+			return
+		}
+
+	}
 	projects, _ := s.DB.GetAllProjects(ctxPayload.CompanyId)
 	component := partials.ProjectsTable(projects)
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) ProjectAdd(w http.ResponseWriter, r *http.Request) {
+	component := partials.EditProject(nil)
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) ProjectEdit(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := getMyPaload(r)
+	id := mux.Vars(r)["id"]
+	parsedId, _ := uuid.Parse(id)
+	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)
+
+	component := partials.EditProject(&p)
 	component.Render(r.Context(), w)
 }
