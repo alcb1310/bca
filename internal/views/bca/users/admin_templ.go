@@ -49,47 +49,6 @@ func AdminView() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var4 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
-				if !templ_7745c5c3_IsBuffer {
-					templ_7745c5c3_Buffer = templ.GetBuffer()
-					defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
-				}
-				if !templ_7745c5c3_IsBuffer {
-					_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
-				}
-				return templ_7745c5c3_Err
-			})
-			templ_7745c5c3_Err = components.DrawerComponent().Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <script>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Var5 := `
-             function resetClose(){
-                  console.log("Closing")
-                  const email = document.getElementById("email")
-                  const name = document.getElementById("name")
-                  const password = document.getElementById("password")
-
-                  email.value = ""
-                  name.value = ""
-                  if (password) password.value = ""
-
-                  closeDrawer()
-             }
-        `
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 			if !templ_7745c5c3_IsBuffer {
 				_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
 			}

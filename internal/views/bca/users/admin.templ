@@ -21,21 +21,5 @@ templ AdminView() {
 			</button>
 		</div>
 		<div id="users-table" hx-target="this" hx-swap="innerHTML" hx-trigger="load" hx-get="/bca/partials/users"></div>
-		@components.DrawerComponent() {
-		}
-		<script>
-             function resetClose(){
-                  console.log("Closing")
-                  const email = document.getElementById("email")
-                  const name = document.getElementById("name")
-                  const password = document.getElementById("password")
-
-                  email.value = ""
-                  name.value = ""
-                  if (password) password.value = ""
-
-                  closeDrawer()
-             }
-        </script>
 	}
 }
