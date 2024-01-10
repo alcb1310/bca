@@ -50,6 +50,7 @@ func (s *Server) authVerify(next http.Handler) http.Handler {
 		tokenData, err := maker.VerifyToken(token)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
@@ -60,6 +61,7 @@ func (s *Server) authVerify(next http.Handler) http.Handler {
 
 		if !s.DB.IsLoggedIn(token, tokenData.ID) {
 			w.WriteHeader(http.StatusUnauthorized)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 

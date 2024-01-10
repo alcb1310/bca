@@ -21,7 +21,7 @@ templ EditProject(project *types.Project) {
 		if project == nil {
 			hx-post="/bca/partials/projects"
 		} else {
-			hx-put={ concat("/bca/partials/projects/", project.ID.String()) }
+			hx-put={ concat("/bca/partials/projects/edit/", project.ID.String()) }
 		}
 		hx-target="#projects-table"
 		hx-swap="innerHTML"
