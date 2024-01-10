@@ -10,7 +10,7 @@ templ EditSupplier(supplier *types.Supplier) {
 		if supplier == nil {
 			hx-post="/bca/partials/suppliers"
 		} else {
-			hx-put={ concat("/bca/partials/suppliers/edit/", supplier.SupplierId) }
+			hx-put={ concat("/bca/partials/suppliers/edit/", supplier.ID.String()) }
 		}
 		hx-target="#supplier-table"
 		hx-swap="innerHTML"
