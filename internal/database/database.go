@@ -44,10 +44,11 @@ type Service interface {
 	UpdateSupplier(supplier *types.Supplier) error
 
 	// database/budget-items.go
-	GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItem, error)
+	GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItemResponse, error)
 	CreateBudgetItem(bi *types.BudgetItem) error
 	GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.BudgetItem, error)
 	UpdateBudgetItem(bi *types.BudgetItem) error
+	GetBudgetItemsByAccumulate(companyId uuid.UUID, accum bool) []types.BudgetItem
 
 	// database/budget.go
 	GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error)

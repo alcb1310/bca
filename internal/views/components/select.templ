@@ -1,0 +1,24 @@
+package components
+
+css selectStyle() {
+	display: block;
+	padding: 0.5rem 1rem;
+	width: 100%;
+	background-color: var(--blue-gray-50);
+	color: var(--blue-gray-900);
+	border-radius: 0.25rem;
+	border: 1px solid var(--blue-gray-700);
+}
+
+templ SelectComponent(items map[string]string, empty, name, id, selected string) {
+	<select name={ name } id={ id } class={ selectStyle() }>
+		<option value="">-- { empty } --</option>
+		for k, v := range items {
+			if k == selected {
+				<option value={ k } selected>{ v }</option>
+			} else {
+				<option value={ k }>{ v }</option>
+			}
+		}
+	</select>
+}

@@ -1,11 +1,31 @@
 package settings
 
 import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
 
 templ BudgetItems() {
 	@base.AuthenticatedLayout("partida") {
-		<div>
-			Budget Items View
+		@components.PageTitle("Partidas")
+		<div class="page-header">
+			<button
+				type="button"
+				class="btn"
+				id="add-button"
+				style="cursor:pointer"
+				hx-get="/bca/partials/budget-item/add"
+				hx-target="#drawer"
+				hx-swap="innerHTML"
+				_="on click openDrawer()"
+			>
+				Agregar
+			</button>
 		</div>
+		<div
+			id="budget-items-table"
+			hx-target="this"
+			hx-swap="innerHTML"
+			hx-trigger="load"
+			hx-get="/bca/partials/budget-item"
+		></div>
 	}
 }

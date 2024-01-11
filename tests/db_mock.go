@@ -105,8 +105,8 @@ func (s *DBMock) UpdateSupplier(supplier *types.Supplier) error {
 	return nil
 }
 
-func (s *DBMock) GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItem, error) {
-	return []types.BudgetItem{}, nil
+func (s *DBMock) GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItemResponse, error) {
+	return []types.BudgetItemResponse{}, nil
 }
 
 func (s *DBMock) CreateBudgetItem(bi *types.BudgetItem) error {
@@ -160,4 +160,8 @@ func (s *DBMock) UpdateInvoice(invoice types.InvoiceCreate) error {
 
 func (s *DBMock) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
 	return nil
+}
+
+func (s *DBMock) GetBudgetItemsByAccumulate(companyId uuid.UUID, accum bool) []types.BudgetItem {
+	return []types.BudgetItem{}
 }
