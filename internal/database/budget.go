@@ -142,7 +142,9 @@ func saveBudget(b *types.CreateBudget, s *sql.Tx) error {
 	return saveBudget(b, s)
 }
 
-func (s *service) GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error) {
+func (s *service) GetBudgetsByProjectId(companyId, projectId uuid.UUID, level *uint8) ([]types.GetBudget, error) {
+	var rows *sql.Rows
+	var err error
 	query := `
         SELECT
             project_id, project_name,
@@ -153,9 +155,15 @@ func (s *service) GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types
             updated_budget, company_id
         FROM vw_budget
         WHERE company_id = $1 and project_id = $2
-        ORDER BY budget_item_code
-    `
-	rows, err := s.db.Query(query, companyId, projectId)
+		`
+	if level == nil {
+		query += "ORDER BY budget_item_code"
+		rows, err = s.db.Query(query, companyId, projectId)
+	} else {
+		query += "AND budget_item_level <= $3 ORDER BY budget_item_code"
+		rows, err = s.db.Query(query, companyId, projectId, *level)
+	}
+
 	if err != nil {
 		return nil, err
 	}

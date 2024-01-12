@@ -176,3 +176,9 @@ select
 from invoice i
 join supplier s on i.supplier_id = s.id
 join project p on i.project_id = p.id;
+
+create or replace view vw_levels as
+select distinct
+     company_id,
+     level
+from budget_item;

@@ -20,6 +20,8 @@ type Service interface {
 	Login(l *types.Login) (string, error)
 	IsLoggedIn(token string, user uuid.UUID) bool
 
+	Levels(companyId uuid.UUID) map[string]string
+
 	// database/dummy.go
 	LoadDummyData(companyId uuid.UUID) error
 
@@ -54,7 +56,7 @@ type Service interface {
 	// database/budget.go
 	GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error)
 	CreateBudget(b *types.CreateBudget) (types.Budget, error)
-	GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error)
+	GetBudgetsByProjectId(companyId, projectId uuid.UUID, level *uint8) ([]types.GetBudget, error)
 	GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*types.GetBudget, error)
 	UpdateBudget(b *types.CreateBudget, budget *types.Budget) error
 
@@ -109,4 +111,26 @@ func (s *service) Health() map[string]string {
 	return map[string]string{
 		"message": "It's healthy",
 	}
+}
+
+func (s *service) Levels(companyId uuid.UUID) map[string]string {
+	levels := make(map[string]string)
+	query := "select level from vw_levels where company_id = $1"
+	rows, err := s.db.Query(query, companyId)
+	if err != nil {
+		log.Fatal(err)
+		return levels
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var level string
+		if err := rows.Scan(&level); err != nil {
+			log.Fatal(err)
+			return levels
+		}
+		levels[level] = level
+	}
+
+	return levels
 }

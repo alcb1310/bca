@@ -52,6 +52,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/transacciones/cierre", s.Closure)
 
 	r.HandleFunc("/bca/reportes/actual", s.Actual)
+	r.HandleFunc("/bca/reportes/actual/generar", s.ActualGenerate)
 	r.HandleFunc("/bca/reportes/cuadre", s.Balance)
 	r.HandleFunc("/bca/reportes/historico", s.Historic)
 	r.HandleFunc("/bca/reportes/gastado", s.Spent)

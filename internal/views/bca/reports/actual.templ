@@ -1,11 +1,31 @@
 package reports
 
 import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
 
-templ ActualView() {
+func concat(s1, s2 string) string {
+	return s1 + s2
+}
+
+templ ActualView(projects, levels map[string]string) {
 	@base.AuthenticatedLayout("actual") {
-		<div>
-			Actual View
-		</div>
+		@components.PageTitle("Actual")
+		<form
+			hx-trigger="click"
+			hx-target="#actual-report"
+			hx-swap="innerHTML"
+			hx-get="/bca/reportes/actual/generar"
+			hx-push-url="true"
+		>
+			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "")
+			@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "")
+			<button
+				type="submit"
+				class="btn"
+			>
+				Generar
+			</button>
+		</form>
+		<div id="actual-report"></div>
 	}
 }
