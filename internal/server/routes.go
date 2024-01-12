@@ -22,22 +22,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// load dummy data
 	r.HandleFunc("/api/v1/load-dummy-data", s.loadDummyDataHandler)
 
-	// users routes
-	r.HandleFunc("/api/v1/users", s.AllUsers)
-	r.HandleFunc("/api/v1/users/{id}", s.OneUser)
-
-	// projects routes
-	r.HandleFunc("/api/v1/projects", s.AllProjects)
-	r.HandleFunc("/api/v1/projects/{id}", s.OneProject)
-
-	// suppliers routes
-	r.HandleFunc("/api/v1/suppliers", s.AllSuppliers)
-	r.HandleFunc("/api/v1/suppliers/{id}", s.OneSupplier)
-
-	// budget-items routes
-	r.HandleFunc("/api/v1/budget-items", s.AllBudgetItems)
-	r.HandleFunc("/api/v1/budget-items/{id}", s.OneBudgetItem)
-
 	// invoice options
 	r.HandleFunc("/api/v1/invoices", s.AllInvoices)
 	r.HandleFunc("/api/v1/invoices/{id}", s.OneInvoice)
@@ -88,6 +72,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.HandleFunc("/bca/partials/budgets", s.BudgetsTable)
 	r.HandleFunc("/bca/partials/budgets/add", s.BudgetAdd)
+	r.HandleFunc("/bca/partials/budgets/{projectId}/{budgetItemId}", s.BudgetEdit)
 
 	// This should be the last route for static files
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))

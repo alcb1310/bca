@@ -240,12 +240,14 @@ func (s *service) UpdateBudget(b *types.CreateBudget, budget *types.Budget) erro
 	if err != nil {
 		return err
 	}
-	defer tx.Commit()
+	defer tx.Rollback()
 
 	err = s.executeUpdateBudget(&toUpdate, tx)
 	if err != nil {
 		return err
 	}
+
+	tx.Commit()
 
 	return nil
 }

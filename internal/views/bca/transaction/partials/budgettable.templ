@@ -43,7 +43,14 @@ templ BudgetTable(budgets []types.GetBudget) {
 						<td align="right">{ utils.PrintFloat(budget.UpdatedBudget) }</td>
 						<td align="center">
 							if budget.RemainingQuantity != nil {
-								<i class="fa-solid fa-pen yellow-text"></i>
+								<i
+									class="fa-solid fa-pen yellow-text"
+									_="on click openDrawer()"
+									hx-target="#drawer"
+									hx-swap="innerHTML"
+									hx-trigger="click"
+									hx-get={ concat(concat(concat("/bca/partials/budgets/", budget.Project.ID.String()), "/"), budget.BudgetItem.ID.String()) }
+								></i>
 							}
 						</td>
 					</tr>

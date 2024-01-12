@@ -196,7 +196,15 @@ func BudgetTable(budgets []types.GetBudget) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if budget.RemainingQuantity != nil {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-solid fa-pen yellow-text\"></i>")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-solid fa-pen yellow-text\" _=\"on click openDrawer()\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" hx-trigger=\"click\" hx-get=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat(concat(concat("/bca/partials/budgets/", budget.Project.ID.String()), "/"), budget.BudgetItem.ID.String())))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"></i>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
