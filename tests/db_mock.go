@@ -165,3 +165,6 @@ func (s *DBMock) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
 func (s *DBMock) GetBudgetItemsByAccumulate(companyId uuid.UUID, accum bool) []types.BudgetItem {
 	return []types.BudgetItem{}
 }
+func (s *DBMock) GetActiveProjects(companyId uuid.UUID, active bool) []types.Project {
+	return []types.Project{}
+}

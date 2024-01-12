@@ -38,11 +38,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/api/v1/budget-items", s.AllBudgetItems)
 	r.HandleFunc("/api/v1/budget-items/{id}", s.OneBudgetItem)
 
-	// budget routes
-	r.HandleFunc("/api/v1/budgets", s.AllBudgets)
-	r.HandleFunc("/api/v1/budgets/{projectId}", s.AllBudgetsByProject)
-	r.HandleFunc("/api/v1/budgets/{projectId}/{budgetItemId}", s.OneBudget)
-
 	// invoice options
 	r.HandleFunc("/api/v1/invoices", s.AllInvoices)
 	r.HandleFunc("/api/v1/invoices/{id}", s.OneInvoice)
@@ -89,6 +84,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/partials/budget-item", s.BudgetItemsTable)
 	r.HandleFunc("/bca/partials/budget-item/add", s.BudgetItemAdd)
 	r.HandleFunc("/bca/partials/budget-item/{id}", s.BudgetItemEdit)
+
+	r.HandleFunc("/bca/partials/budgets", s.BudgetsTable)
+	r.HandleFunc("/bca/partials/budgets/add", s.BudgetAdd)
 
 	// This should be the last route for static files
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))

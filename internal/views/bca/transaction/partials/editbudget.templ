@@ -1,0 +1,81 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
+
+css buttondown() {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+func concat(s1, s2 string) string {
+	return s1 + s2
+}
+
+templ EditBudget(budget *types.Budget, projects, budgetItems map[string]string) {
+	<form
+		id="budget-form"
+		autocomplete="off"
+		hx-post="/bca/partials/budgets"
+		hx-trigger="submit"
+		hx-target="#budget-table"
+		hx-swap="innerHTML"
+		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
+	>
+		<div class={ buttondown() }>
+			<div>
+				@components.DrawerTitle("Agregar Presupuesto")
+				@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "")
+				@components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", "")
+				@components.Input("text", "Cantidad", "quantity", "quantity", "")
+				@components.Input("text", "Unitario", "cost", "cost", "")
+				@components.Input("text", "Total", "total", "total", "0.00")
+			</div>
+			@components.ButtonGroup()
+		</div>
+	</form>
+	<script>
+         const quantity = document.getElementById("quantity")
+         const cost = document.getElementById("cost")
+         const total = document.getElementById("total")
+         const b = document.getElementById("save-button")
+
+         total.disabled = true
+
+         cost.addEventListener("input", setTotal)
+         quantity.addEventListener("input", setTotal)
+
+         function setTotal() {
+              if (isNaN(quantity.value)) {
+                   total.classList.add("error-border")
+                   quantity.classList.add("error-border")
+                   b.disabled = true
+                   total.value = "0.00"
+                   return
+              }
+
+              if (isNaN(cost.value)) {
+                   total.classList.add("error-border")
+                   cost.classList.add("error-border")
+                   b.disabled = true
+                   total.value = "0.00"
+                   return
+              }
+
+              total.classList.remove("error-border")
+              quantity.classList.remove("error-border")
+              cost.classList.remove("error-border")
+              b.disabled = false
+              const q = quantity.value === "" ? 0 : parseFloat(quantity.value)
+              const c = cost.value === "" ? 0 : parseFloat(cost.value)
+
+              total.value = (q * c).toLocaleString()
+         }
+
+         function resetClose() {
+              closeDrawer()
+         }
+     </script>
+}

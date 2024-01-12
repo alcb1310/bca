@@ -92,6 +92,11 @@ thead tr {
      letter-spacing: 0.05rem;
 }
 
+tbody tr:hover {
+     background-color: var(--blue-gray-100);
+     color: var(--blue-gray-900);
+}
+
 i:disabled {
      opacity: 0.5;
 }
@@ -137,8 +142,9 @@ i:disabled {
      opacity: 0.5;
 }
 
-.error-border {
-     border: 2px solid var(--red-500);
+.error-border,
+.error-border:focus {
+     border: 1px solid var(--red-500) !important;
 }
 
 .yellow-text {

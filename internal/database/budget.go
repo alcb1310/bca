@@ -54,17 +54,17 @@ func (s *service) CreateBudget(budget *types.CreateBudget) (types.Budget, error)
 	}
 
 	var z float64 = 0
-	total := *budget.Quantity * *budget.Cost
+	total := budget.Quantity * budget.Cost
 	b := types.Budget{
 		ProjectId:         budget.ProjectId,
 		BudgetItemId:      budget.BudgetItemId,
-		InitialQuantity:   budget.Quantity,
-		InitialCost:       budget.Cost,
+		InitialQuantity:   &budget.Quantity,
+		InitialCost:       &budget.Cost,
 		InitialTotal:      total,
 		SpentQuantity:     &z,
 		SpentTotal:        0,
-		RemainingQuantity: budget.Quantity,
-		RemainingCost:     budget.Cost,
+		RemainingQuantity: &budget.Quantity,
+		RemainingCost:     &budget.Cost,
 		RemainingTotal:    total,
 		UpdatedBudget:     total,
 		CompanyId:         budget.CompanyId,
@@ -83,15 +83,15 @@ func saveBudget(b *types.CreateBudget, s *sql.Tx) error {
 	budget.CompanyId = b.CompanyId
 	budget.ProjectId = b.ProjectId
 
-	total := *b.Quantity * *b.Cost
+	total := b.Quantity * b.Cost
 	budget.InitialTotal = total
 	budget.SpentTotal = 0
 	budget.RemainingTotal = total
 	budget.UpdatedBudget = total
-	budget.InitialQuantity = b.Quantity
-	budget.InitialCost = b.Cost
-	budget.RemainingQuantity = b.Quantity
-	budget.RemainingCost = b.Cost
+	budget.InitialQuantity = &b.Quantity
+	budget.InitialCost = &b.Cost
+	budget.RemainingQuantity = &b.Quantity
+	budget.RemainingCost = &b.Cost
 	var z float64 = 0
 	budget.SpentQuantity = &z
 
@@ -210,7 +210,7 @@ func (s *service) GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*t
 }
 
 func (s *service) UpdateBudget(b *types.CreateBudget, budget *types.Budget) error {
-	total := *b.Quantity * *b.Cost
+	total := b.Quantity * b.Cost
 	diff := total - budget.UpdatedBudget
 
 	toUpdate := types.Budget{
@@ -221,8 +221,8 @@ func (s *service) UpdateBudget(b *types.CreateBudget, budget *types.Budget) erro
 		InitialTotal:      budget.InitialTotal,
 		SpentQuantity:     budget.SpentQuantity,
 		SpentTotal:        budget.SpentTotal,
-		RemainingQuantity: b.Quantity,
-		RemainingCost:     b.Cost,
+		RemainingQuantity: &b.Quantity,
+		RemainingCost:     &b.Cost,
 		RemainingTotal:    total,
 		UpdatedBudget:     diff,
 		CompanyId:         budget.CompanyId,
