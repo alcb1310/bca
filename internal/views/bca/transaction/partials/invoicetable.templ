@@ -1,0 +1,36 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+
+templ InvoiceTable(invoices []types.InvoiceResponse) {
+	<table>
+		<thead>
+			<tr>
+				<th>Fecha</th>
+				<th>Proyecto</th>
+				<th>Proveedor</th>
+				<th>Número</th>
+				<th>Total</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			if len(invoices) == 0 {
+				<tr>
+					<td colspan="6">No hay facturas</td>
+				</tr>
+			} else {
+				for _, invoice := range invoices {
+					<tr>
+						<td>{ invoice.InvoiceDate.String() }</td>
+						<td>{ invoice.Project.Name }</td>
+						<td>{ invoice.Supplier.Name }</td>
+						<td>{ invoice.InvoiceNumber }</td>
+						<td>{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+}

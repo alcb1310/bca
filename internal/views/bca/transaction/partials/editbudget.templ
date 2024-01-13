@@ -53,14 +53,14 @@ templ EditBudget(budget *types.CreateBudget, projects, budgetItems map[string]st
 		</div>
 	</form>
 	<script>
-         const quantity = document.getElementById("quantity")
-         const cost = document.getElementById("cost")
-         const total = document.getElementById("total")
-         const b = document.getElementById("save-button")
+         var quantity = document.getElementById("quantity")
+         var costo = document.getElementById("cost")
+         var total = document.getElementById("total")
+         var b = document.getElementById("save-button")
 
          total.disabled = true
 
-         cost.addEventListener("input", setTotal)
+         costo.addEventListener("input", setTotal)
          quantity.addEventListener("input", setTotal)
 
          function setTotal() {
@@ -72,9 +72,9 @@ templ EditBudget(budget *types.CreateBudget, projects, budgetItems map[string]st
                    return
               }
 
-              if (isNaN(cost.value)) {
+              if (isNaN(costo.value)) {
                    total.classList.add("error-border")
-                   cost.classList.add("error-border")
+                   costo.classList.add("error-border")
                    b.disabled = true
                    total.value = "0.00"
                    return
@@ -82,15 +82,16 @@ templ EditBudget(budget *types.CreateBudget, projects, budgetItems map[string]st
 
               total.classList.remove("error-border")
               quantity.classList.remove("error-border")
-              cost.classList.remove("error-border")
+              costo.classList.remove("error-border")
               b.disabled = false
               const q = quantity.value === "" ? 0 : parseFloat(quantity.value)
-              const c = cost.value === "" ? 0 : parseFloat(cost.value)
+              const c = costo.value === "" ? 0 : parseFloat(costo.value)
 
               total.value = (q * c).toLocaleString()
          }
 
          function resetClose() {
+              quantity = undefined
               closeDrawer()
          }
      </script>

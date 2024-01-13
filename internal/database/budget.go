@@ -217,7 +217,7 @@ func (s *service) GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*t
 	return b, nil
 }
 
-func (s *service) UpdateBudget(b *types.CreateBudget, budget *types.Budget) error {
+func (s *service) UpdateBudget(b types.CreateBudget, budget types.Budget) error {
 	total := b.Quantity * b.Cost
 	diff := total - budget.UpdatedBudget
 

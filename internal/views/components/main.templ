@@ -18,7 +18,7 @@ templ Main(active string) {
 	<section class={ main() }>
 		@SidebarComponent(active)
 		<div class={ maincontent() }>
-			<div class={ maincontentcontainer() }>
+			<div id="main-content" class={ maincontentcontainer() }>
 				{ children... }
 			</div>
 		</div>

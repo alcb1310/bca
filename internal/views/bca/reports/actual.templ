@@ -11,7 +11,7 @@ templ ActualView(projects, levels map[string]string) {
 	@base.AuthenticatedLayout("actual") {
 		@components.PageTitle("Actual")
 		<form
-			hx-trigger="click"
+			hx-trigger="submit"
 			hx-target="#actual-report"
 			hx-swap="innerHTML"
 			hx-get="/bca/reportes/actual/generar"

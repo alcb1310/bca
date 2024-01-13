@@ -182,3 +182,13 @@ select distinct
      company_id,
      level
 from budget_item;
+
+drop view vw_levels;
+
+create or replace view vw_levels as
+select distinct
+     company_id,
+     level
+from budget_item
+order by level;
+

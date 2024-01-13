@@ -101,7 +101,7 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		budget := &types.CreateBudget{
+		budget := types.CreateBudget{
 			ProjectId:    projectId,
 			BudgetItemId: budgetItemId,
 			Quantity:     q,
@@ -109,7 +109,7 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 			CompanyId:    ctx.CompanyId,
 		}
 
-		bu := &types.Budget{
+		bu := types.Budget{
 			ProjectId:         projectId,
 			BudgetItemId:      budgetItemId,
 			InitialQuantity:   bd.InitialQuantity,

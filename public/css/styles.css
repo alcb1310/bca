@@ -131,6 +131,7 @@ i:disabled {
      font-size: 0.8rem;
      font-weight: 900;
      letter-spacing: 0.05rem;
+     text-decoration: none;
 }
 
 .btn-group {

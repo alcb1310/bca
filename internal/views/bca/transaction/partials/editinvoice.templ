@@ -1,0 +1,65 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+
+css buttons() {
+	display: flex;
+	justify-content: space-around;
+}
+
+css container() {
+	width: 50%;
+	margin: 0 auto;
+}
+
+func setTitle(invoice *types.InvoiceResponse) string {
+	if invoice == nil {
+		return "Nueva Factura"
+	}
+	return "Editar Factura"
+}
+
+templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers map[string]string) {
+	@base.AuthenticatedLayout(setTitle(invoice)) {
+		@components.PageTitle(setTitle(invoice))
+		<form
+			id="invoice-form"
+			autocomplete="off"
+			hx-trigger="submit"
+			hx-post="/bca/partials/invoices/add"
+			hx-push-url="true"
+		>
+			<div class={ buttondown() }>
+				<div class={ container() }>
+					if invoice == nil {
+						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "")
+						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", "")
+						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", "")
+						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", "")
+					} else {
+						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoice.Project.ID.String())
+						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoice.Supplier.ID.String())
+						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoice.InvoiceNumber)
+						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", invoice.InvoiceDate.String())
+					}
+				</div>
+				<div class={ buttons() }>
+					<button type="submit" class="btn">Grabar</button>
+					<button
+						type="button"
+						style="cursor:pointer"
+						class="btn"
+						hx-get="/bca/partials/invoices"
+						hx-target="#main-content"
+						hx-swap="innerHTML"
+						hx-push-url="true"
+					>
+						Cancelar
+					</button>
+				</div>
+			</div>
+		</form>
+	}
+}
