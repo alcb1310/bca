@@ -128,7 +128,7 @@ create table if not exists invoice_details (
      company_id uuid not null references company (id) on delete restrict,
      created_at timestamp with time zone default now(),
 
-     unique (project_id, budget_item_id, company_id),
+     unique (invoice_id, budget_item_id, company_id),
      primary key (invoice_id, budget_item_id, company_id)
 );
 
