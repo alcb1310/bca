@@ -203,7 +203,6 @@ func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select
          }
 
          function resetClose() {
-              quantity = undefined
               closeDrawer()
          }
      `

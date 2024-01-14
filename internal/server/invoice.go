@@ -200,8 +200,13 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 
 	projects := []types.Select{}
 	suppliers := []types.Select{}
-	// projects := make(map[string]string)
-	// suppliers := make(map[string]string)
+
+	id := r.URL.Query().Get("id")
+	if id != "" {
+		parsedId, _ := uuid.Parse(id)
+		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
+		invoice = &in
+	}
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
 	for _, v := range p {

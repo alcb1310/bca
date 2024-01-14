@@ -97,7 +97,6 @@ func (s *service) UpdateInvoice(invoice types.InvoiceCreate) error {
 }
 
 func (s *service) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
-	// TODO: implement delete invoice method
 	query := `
 		delete from invoice
 		where id = $1 and company_id = $2

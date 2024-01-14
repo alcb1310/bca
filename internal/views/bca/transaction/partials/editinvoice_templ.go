@@ -45,6 +45,7 @@ func setTitle(invoice *types.InvoiceResponse) string {
 	return "Editar Factura"
 }
 
+// TODO: Create details form user interface
 func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Select) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -191,7 +192,7 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = components.Input("text", "Total", "total", "total", utils.PrintFloat(invoice.InvoiceTotal)).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.Input("text", "Total", "total", "total", "").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -227,7 +228,15 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 				return templ_7745c5c3_Err
 			}
 			if invoice != nil {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button type=\"button\" class=\"btn\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button type=\"button\" class=\"btn\" hx-get=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat(concat("/bca/partials/invoices/", invoice.Id.String()), "/details/add")))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" hx-trigger=\"click\" hx-push-url=\"false\" _=\"on click openDrawer()\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -255,7 +264,15 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 				return templ_7745c5c3_Err
 			}
 			if invoice != nil {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"invoice-details\"></div><script>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div style=\"margin-top: 1rem\" id=\"invoice-details\" hx-get=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat(concat("/bca/partials/invoices/", invoice.Id.String()), "/details")))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"load\" hx-swap=\"innerHTML\"></div><script>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

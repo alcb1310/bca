@@ -48,13 +48,22 @@ templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Se
 						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoice.Supplier.ID.String())
 						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoice.InvoiceNumber)
 						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", utils.ConvertDate(invoice.InvoiceDate))
-						@components.Input("text", "Total", "total", "total", utils.PrintFloat(invoice.InvoiceTotal))
+						@components.Input("text", "Total", "total", "total", "")
 					}
 				</div>
 				<div class={ buttons() }>
 					<button type="submit" class="btn">Grabar</button>
 					if invoice != nil {
-						<button type="button" class="btn">Detalle</button>
+						<button
+							type="button"
+							class="btn"
+							hx-get={ concat(concat("/bca/partials/invoices/", invoice.Id.String()), "/details/add") }
+							hx-target="#drawer"
+							hx-swap="innerHTML"
+							hx-trigger="click"
+							hx-push-url="false"
+							_="on click openDrawer()"
+						>Detalle</button>
 					}
 					<a
 						href="/bca/transacciones/facturas"
@@ -66,7 +75,13 @@ templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Se
 			</div>
 		</form>
 		if invoice != nil {
-			<div id="invoice-details"></div>
+			<div
+				style="margin-top: 1rem"
+				id="invoice-details"
+				hx-get={ concat(concat("/bca/partials/invoices/", invoice.Id.String()), "/details") }
+				hx-trigger="load"
+				hx-swap="innerHTML"
+			></div>
 			<script>
                  var project = document.getElementById("project")
 
