@@ -10,8 +10,17 @@ css buttondown() {
 	gap: 2rem;
 }
 
-templ EditDetails(budgetItems []types.Select) {
-	<form>
+func concat(a, b string) string {
+	return a + b
+}
+
+templ EditDetails(budgetItems []types.Select, invoiceId string) {
+	<form
+		hx-post={ concat(concat("/bca/partials/invoices/", invoiceId), "/details") }
+		hx-trigger="submit"
+		hx-target="#invoice-details"
+		hx-swap="innerHTML"
+	>
 		<div class={ buttondown() }>
 			<div>
 				@components.DrawerTitle("Agregar Detalles")

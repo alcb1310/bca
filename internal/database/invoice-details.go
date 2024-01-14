@@ -28,14 +28,72 @@ func (s *service) GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.Invoice
 }
 
 func (s *service) AddDetail(detail types.InvoiceDetailCreate) error {
-	// TODO: Start a transaction
-	// TODO: On Error rollback changes
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
 
-	// TODO: Add detail to the details table
-	// TODO: In the invoice table update the total
-	// TODO: Update the budget for the saved budget budget item
-	// TODO: Update the budget for the parent budget item
+	query := "insert into invoice_details (invoice_id, budget_item_id, quantity, cost, total, company_id) values ($1, $2, $3, $4, $5, $6)"
+	if _, err := tx.Exec(query, detail.InvoiceId, detail.BudgetItemId, detail.Quantity, detail.Cost, detail.Total, detail.CompanyId); err != nil {
+		return err
+	}
+	query = "update invoice set invoice_total = invoice_total + $1 where id = $2 and company_id = $3"
+	if _, err := tx.Exec(query, detail.Total, detail.InvoiceId, detail.CompanyId); err != nil {
+		return err
+	}
 
-	// TODO: On Success commit changes
+	var projectId uuid.UUID
+	query = "select project_id from invoice where id = $1 and company_id = $2"
+	if err := tx.QueryRow(query, detail.InvoiceId, detail.CompanyId).Scan(&projectId); err != nil {
+		return err
+	}
+
+	query = "select spent_quantity, spent_total, remaining_quantity, remaining_cost, remaining_total, updated_budget from budget where project_id = $1 and budget_item_id = $2 and company_id = $3"
+	var spentQuantity, spentTotal, remainingQuantity, remainingCost, remainingTotal, updatedBudget float64
+	if err := tx.QueryRow(query, projectId, detail.BudgetItemId, detail.CompanyId).Scan(&spentQuantity, &spentTotal, &remainingQuantity, &remainingCost, &remainingTotal, &updatedBudget); err != nil {
+		return err
+	}
+
+	newToSpendTotal := (remainingQuantity - detail.Quantity) * detail.Cost
+	newSpentTotal := spentTotal + detail.Total
+	newUpdatedBudget := newSpentTotal + newToSpendTotal
+
+	query = `
+		update budget set spent_quantity = spent_quantity + $1, spent_total = spent_total + $3,
+		remaining_quantity = remaining_quantity - $1, remaining_cost = $2, remaining_total = $4,
+		updated_budget = $5
+		where project_id = $6 and budget_item_id = $7 and company_id = $8
+	`
+	if _, err := tx.Exec(query, detail.Quantity, detail.Cost, detail.Total, newToSpendTotal, newUpdatedBudget, projectId, detail.BudgetItemId, detail.CompanyId); err != nil {
+		return err
+	}
+
+	updatedDiff := newUpdatedBudget - updatedBudget
+	remainingDiff := newToSpendTotal - remainingTotal
+
+	var parentId *uuid.UUID
+	parentId = &detail.BudgetItemId
+	for true {
+		query = "select parent_id from budget_item where id = $1 and company_id = $2"
+		if err := tx.QueryRow(query, parentId, detail.CompanyId).Scan(&parentId); err != nil {
+			return err
+		}
+		if parentId == nil || parentId == &uuid.Nil {
+			break
+		}
+
+		query = `
+		update budget set spent_total = spent_total + $1, remaining_total = remaining_total + $2,
+		updated_budget = updated_budget + $3
+		where project_id = $4 and budget_item_id = $5 and company_id = $6
+		`
+		if _, err := tx.Exec(query, detail.Total, remainingDiff, updatedDiff, projectId, parentId, detail.CompanyId); err != nil {
+			return err
+		}
+
+	}
+
+	tx.Commit()
 	return nil
 }

@@ -45,7 +45,6 @@ func setTitle(invoice *types.InvoiceResponse) string {
 	return "Editar Factura"
 }
 
-// TODO: Create details form user interface
 func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Select) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
