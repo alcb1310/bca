@@ -27,9 +27,21 @@ templ SuppliersTable(suppliers []types.Supplier) {
 					<tr>
 						<td>{ supplier.SupplierId }</td>
 						<td>{ supplier.Name }</td>
-						<td>{ *supplier.ContactName }</td>
-						<td>{ *supplier.ContactEmail }</td>
-						<td>{ *supplier.ContactPhone }</td>
+						<td>
+							if supplier.ContactName != nil {
+								{ *supplier.ContactName }
+							}
+						</td>
+						<td>
+							if supplier.ContactEmail != nil {
+								{ *supplier.ContactEmail }
+							}
+						</td>
+						<td>
+							if supplier.ContactPhone != nil {
+								{ *supplier.ContactPhone }
+							}
+						</td>
 						<td>
 							<i
 								style="cursor:pointer"

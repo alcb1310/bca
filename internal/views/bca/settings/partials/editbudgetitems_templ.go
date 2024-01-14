@@ -13,11 +13,14 @@ import "bytes"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
 
-func getItems(b []types.BudgetItem) map[string]string {
-	items := map[string]string{}
+func getItems(b []types.BudgetItem) []types.Select {
+	items := []types.Select{}
 
 	for _, item := range b {
-		items[item.ID.String()] = item.Name
+		items = append(items, types.Select{
+			Key:   item.ID.String(),
+			Value: item.Name,
+		})
 	}
 
 	return items

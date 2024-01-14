@@ -53,15 +53,23 @@ func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := getMyPaload(r)
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projectMap := make(map[string]string)
+	projectMap := []types.Select{}
 	for _, v := range p {
-		projectMap[v.ID.String()] = v.Name
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		projectMap = append(projectMap, x)
 	}
 
 	b := s.DB.GetBudgetItemsByAccumulate(ctx.CompanyId, false)
-	budgetItemMap := make(map[string]string)
+	budgetItemMap := []types.Select{}
 	for _, v := range b {
-		budgetItemMap[v.ID.String()] = v.Name
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		budgetItemMap = append(budgetItemMap, x)
 	}
 
 	component := partials.EditBudget(nil, projectMap, budgetItemMap)
@@ -74,15 +82,23 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	budgetItemId, _ := uuid.Parse(mux.Vars(r)["budgetItemId"])
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projectMap := make(map[string]string)
+	projectMap := []types.Select{}
 	for _, v := range p {
-		projectMap[v.ID.String()] = v.Name
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		projectMap = append(projectMap, x)
 	}
 
 	b := s.DB.GetBudgetItemsByAccumulate(ctx.CompanyId, false)
-	budgetItemMap := make(map[string]string)
+	budgetItemMap := []types.Select{}
 	for _, v := range b {
-		budgetItemMap[v.ID.String()] = v.Name
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		budgetItemMap = append(budgetItemMap, x)
 	}
 
 	bd, _ := s.DB.GetOneBudget(ctx.CompanyId, projectId, budgetItemId)

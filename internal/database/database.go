@@ -20,7 +20,7 @@ type Service interface {
 	Login(l *types.Login) (string, error)
 	IsLoggedIn(token string, user uuid.UUID) bool
 
-	Levels(companyId uuid.UUID) map[string]string
+	Levels(companyId uuid.UUID) []types.Select
 
 	// database/dummy.go
 	LoadDummyData(companyId uuid.UUID) error
@@ -113,8 +113,8 @@ func (s *service) Health() map[string]string {
 	}
 }
 
-func (s *service) Levels(companyId uuid.UUID) map[string]string {
-	levels := make(map[string]string)
+func (s *service) Levels(companyId uuid.UUID) []types.Select {
+	levels := []types.Select{}
 	query := "select level from vw_levels where company_id = $1"
 	rows, err := s.db.Query(query, companyId)
 	if err != nil {
@@ -129,7 +129,7 @@ func (s *service) Levels(companyId uuid.UUID) map[string]string {
 			log.Fatal(err)
 			return levels
 		}
-		levels[level] = level
+		levels = append(levels, types.Select{Key: level, Value: level})
 	}
 
 	return levels

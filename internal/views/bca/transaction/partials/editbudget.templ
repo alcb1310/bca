@@ -15,7 +15,7 @@ func concat(s1, s2 string) string {
 	return s1 + s2
 }
 
-templ EditBudget(budget *types.CreateBudget, projects, budgetItems map[string]string) {
+templ EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select) {
 	<form
 		id="budget-form"
 		autocomplete="off"

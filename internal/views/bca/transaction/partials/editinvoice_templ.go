@@ -14,7 +14,7 @@ import "strings"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/base"
 import "bca-go-final/internal/views/components"
-import "time"
+import "bca-go-final/internal/utils"
 
 func buttons() templ.CSSClass {
 	var templ_7745c5c3_CSSBuilder strings.Builder
@@ -45,11 +45,7 @@ func setTitle(invoice *types.InvoiceResponse) string {
 	return "Editar Factura"
 }
 
-func convertDate(date time.Time) string {
-	return date.Format("2006-01-02")
-}
-
-func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers map[string]string) templ.Component {
+func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Select) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -72,7 +68,30 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers map[string]
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <form id=\"invoice-form\" autocomplete=\"off\" hx-trigger=\"submit\" hx-post=\"/bca/partials/invoices/add\" hx-push-url=\"true\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <form id=\"invoice-form\" autocomplete=\"off\" hx-trigger=\"submit\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if invoice == nil {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-post=\"/bca/transacciones/facturas/crear\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-put=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/invoices/", invoice.Id.String())))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-push-url=\"true\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -164,7 +183,15 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers map[string]
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", convertDate(invoice.InvoiceDate)).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", utils.ConvertDate(invoice.InvoiceDate)).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = components.Input("text", "Total", "total", "total", utils.PrintFloat(invoice.InvoiceTotal)).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -195,16 +222,75 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers map[string]
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button> <button type=\"button\" style=\"cursor:pointer\" class=\"btn\" hx-get=\"/bca/partials/invoices\" hx-target=\"#main-content\" hx-swap=\"innerHTML\" hx-push-url=\"true\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var7 := `Cancelar`
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
+			if invoice != nil {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button type=\"button\" class=\"btn\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var7 := `Detalle`
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/bca/transacciones/facturas\" class=\"btn\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></div></div></form>")
+			templ_7745c5c3_Var8 := `Cancelar`
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div></div></form>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if invoice != nil {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"invoice-details\"></div><script>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var9 := `
+                 var project = document.getElementById("project")
+
+                 if (project) {
+                      project.disabled = true
+                 }
+            `
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <script>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var10 := `
+             var total = document.getElementById("total")
+
+             if (total) {
+                  total.disabled = true
+             }
+        `
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

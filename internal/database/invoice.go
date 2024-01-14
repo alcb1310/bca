@@ -17,6 +17,8 @@ func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, err
 			   vw_invoice
 		 where
 			   company_id = $1
+		 order by
+			   invoice_date desc, supplier_name, invoice_number
 	`
 
 	rows, err := s.db.Query(query, companyId)

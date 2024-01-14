@@ -3,7 +3,7 @@ package partials
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/base"
 import "bca-go-final/internal/views/components"
-import "time"
+import "bca-go-final/internal/utils"
 
 css buttons() {
 	display: flex;
@@ -22,18 +22,18 @@ func setTitle(invoice *types.InvoiceResponse) string {
 	return "Editar Factura"
 }
 
-func convertDate(date time.Time) string {
-	return date.Format("2006-01-02")
-}
-
-templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers map[string]string) {
+templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Select) {
 	@base.AuthenticatedLayout(setTitle(invoice)) {
 		@components.PageTitle(setTitle(invoice))
 		<form
 			id="invoice-form"
 			autocomplete="off"
 			hx-trigger="submit"
-			hx-post="/bca/partials/invoices/add"
+			if invoice == nil {
+				hx-post="/bca/transacciones/facturas/crear"
+			} else {
+				hx-put={ concat("/bca/partials/invoices/", invoice.Id.String()) }
+			}
 			hx-push-url="true"
 		>
 			<div class={ buttondown() }>
@@ -47,24 +47,40 @@ templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers map[string
 						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoice.Project.ID.String())
 						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoice.Supplier.ID.String())
 						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoice.InvoiceNumber)
-						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", convertDate(invoice.InvoiceDate))
+						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", utils.ConvertDate(invoice.InvoiceDate))
+						@components.Input("text", "Total", "total", "total", utils.PrintFloat(invoice.InvoiceTotal))
 					}
 				</div>
 				<div class={ buttons() }>
 					<button type="submit" class="btn">Grabar</button>
-					<button
-						type="button"
-						style="cursor:pointer"
+					if invoice != nil {
+						<button type="button" class="btn">Detalle</button>
+					}
+					<a
+						href="/bca/transacciones/facturas"
 						class="btn"
-						hx-get="/bca/partials/invoices"
-						hx-target="#main-content"
-						hx-swap="innerHTML"
-						hx-push-url="true"
 					>
 						Cancelar
-					</button>
+					</a>
 				</div>
 			</div>
 		</form>
+		if invoice != nil {
+			<div id="invoice-details"></div>
+			<script>
+                 var project = document.getElementById("project")
+
+                 if (project) {
+                      project.disabled = true
+                 }
+            </script>
+		}
+		<script>
+             var total = document.getElementById("total")
+
+             if (total) {
+                  total.disabled = true
+             }
+        </script>
 	}
 }

@@ -1,5 +1,7 @@
 package components
 
+import "bca-go-final/internal/types"
+
 css selectStyle() {
 	display: block;
 	margin: 0.5rem 0;
@@ -11,14 +13,14 @@ css selectStyle() {
 	border: 1px solid var(--blue-gray-700);
 }
 
-templ SelectComponent(items map[string]string, empty, name, id, selected string) {
+templ SelectComponent(items []types.Select, empty, name, id, selected string) {
 	<select name={ name } id={ id } class={ selectStyle() }>
 		<option value="">-- { empty } --</option>
-		for k, v := range items {
-			if k == selected {
-				<option value={ k } selected>{ v }</option>
+		for _, v := range items {
+			if v.Key == selected {
+				<option value={ v.Key } selected>{ v.Value }</option>
 			} else {
-				<option value={ k }>{ v }</option>
+				<option value={ v.Key }>{ v.Value }</option>
 			}
 		}
 	</select>

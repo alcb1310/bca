@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bca-go-final/internal/types"
 	"bca-go-final/internal/views/bca/reports"
 	"bca-go-final/internal/views/bca/reports/partials"
 	"log"
@@ -14,9 +15,13 @@ func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := getMyPaload(r)
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projects := make(map[string]string)
+	projects := []types.Select{}
 	for _, v := range p {
-		projects[v.ID.String()] = v.Name
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		projects = append(projects, x)
 	}
 
 	levels := s.DB.Levels(ctx.CompanyId)
