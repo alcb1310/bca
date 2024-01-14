@@ -2,6 +2,7 @@ package database
 
 import (
 	"bca-go-final/internal/types"
+	"log"
 
 	"github.com/google/uuid"
 )
@@ -89,6 +90,74 @@ func (s *service) AddDetail(detail types.InvoiceDetailCreate) error {
 		where project_id = $4 and budget_item_id = $5 and company_id = $6
 		`
 		if _, err := tx.Exec(query, detail.Total, remainingDiff, updatedDiff, projectId, parentId, detail.CompanyId); err != nil {
+			return err
+		}
+
+	}
+
+	tx.Commit()
+	return nil
+}
+
+func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) error {
+	log.Println("Delete invoice detail")
+	var quantity, cost, total float64
+	query := "select quantity, cost, total from invoice_details where invoice_id = $1 and budget_item_id = $2 and company_id = $3"
+	if err := s.db.QueryRow(query, invoiceId, budgetItemId, companyId).Scan(&quantity, &cost, &total); err != nil {
+		log.Println("Error en el select: ", err)
+		return err
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	query = "delete from invoice_details where invoice_id = $1 and budget_item_id = $2 and company_id = $3"
+	if _, err := tx.Exec(query, invoiceId, budgetItemId, companyId); err != nil {
+		log.Println("Error en el delete: ", err)
+		return err
+	}
+	query = "update invoice set invoice_total = invoice_total - $1 where id = $2 and company_id = $3"
+	if _, err := tx.Exec(query, total, invoiceId, companyId); err != nil {
+		log.Println("Error en el update: ", err)
+		return err
+	}
+	var projectId uuid.UUID
+	query = "select project_id from invoice where id = $1 and company_id = $2"
+	if err := tx.QueryRow(query, invoiceId, companyId).Scan(&projectId); err != nil {
+		return err
+	}
+
+	query = `
+	update budget set spent_quantity = spent_quantity - $1, spent_total = spent_total - $2,
+		remaining_quantity = remaining_quantity + $1, remaining_cost = $3, remaining_total = remaining_total + $2
+	where project_id = $4 and budget_item_id = $5 and company_id = $6
+	`
+	if _, err := tx.Exec(query, quantity, total, cost, projectId, budgetItemId, companyId); err != nil {
+		log.Println("Error en el update budget: ", err)
+		return err
+	}
+
+	var parentId *uuid.UUID
+	parentId = &budgetItemId
+	for true {
+		query = "select parent_id from budget_item where id = $1 and company_id = $2"
+		if err := tx.QueryRow(query, parentId, companyId).Scan(&parentId); err != nil {
+			return err
+		}
+		if parentId == nil || parentId == &uuid.Nil {
+			break
+		}
+		log.Println("Parent id: ", parentId)
+
+		query = `
+		update budget set spent_total = spent_total - $1, remaining_total = remaining_total + $1
+		where project_id = $2 and budget_item_id = $3 and company_id = $4
+		`
+		if _, err := tx.Exec(query, total, projectId, parentId, companyId); err != nil {
+			log.Println("Error en el update budget: ", err)
 			return err
 		}
 

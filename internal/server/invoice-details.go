@@ -103,3 +103,27 @@ func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
 	component := details.EditDetails(budgetItems, parsedInvoiceId.String())
 	component.Render(r.Context(), w)
 }
+
+func (s *Server) DetailsEdit(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := getMyPaload(r)
+	iId := mux.Vars(r)["invoiceId"]
+	bId := mux.Vars(r)["budgetItemId"]
+	parsedInvoiceId, _ := uuid.Parse(iId)
+	parsedBudgetItemId, _ := uuid.Parse(bId)
+	_ = parsedBudgetItemId
+
+	if err := s.DB.DeleteDetail(parsedInvoiceId, parsedBudgetItemId, ctx.CompanyId); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+	det, err := s.DB.GetAllDetails(parsedInvoiceId, ctx.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	component := details.InvoiceDetailsTable(det)
+	component.Render(r.Context(), w)
+}

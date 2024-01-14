@@ -70,6 +70,7 @@ type Service interface {
 	// database/invoice-details.GetOneBudget
 	GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.InvoiceDetailsResponse, error)
 	AddDetail(detail types.InvoiceDetailCreate) error
+	DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) error
 }
 
 type service struct {
