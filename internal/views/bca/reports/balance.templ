@@ -1,11 +1,23 @@
 package reports
 
 import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
 
-templ BalanceView() {
+templ BalanceView(projects []types.Select) {
 	@base.AuthenticatedLayout("balance") {
-		<div>
-			Balance View
-		</div>
+		@components.PageTitle("Cuadre mensual")
+		<form
+			hx-post="/bca/reportes/cuadre"
+			hx-trigger="submit"
+			hx-target="#balance"
+			hx-swap="innerHTML"
+			hx-push-url="false"
+		>
+			@components.SelectComponent(projects, "Proyecto", "project", "project", "")
+			@components.Input("date", "Fecha", "date", "date", "")
+			<button type="submit" class="btn">Generar</button>
+		</form>
+		<div id="balance"></div>
 	}
 }

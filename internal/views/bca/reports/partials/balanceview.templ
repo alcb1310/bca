@@ -1,0 +1,43 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+
+css highlight() {
+	color: var(--green-500);
+	font-weight: bold;
+	letter-spacing: 1px;
+	padding-left: 2rem;
+}
+
+templ BalanceView(invoices types.BalanceResponse) {
+	<table style="margin-top: 0.5rem;">
+		<caption style="text-align: left;">Total gastado: <span class={ highlight() }>{ utils.PrintFloat(invoices.Total) }</span></caption>
+		<thead>
+			<tr>
+				<th></th>
+				<th width="100px">Fecha</th>
+				<th width="400px">Proveedor</th>
+				<th width="200px">Factura</th>
+				<th width="150px">Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, invoice := range invoices.Invoices {
+				<tr>
+					<td align="center"><input type="checkbox"/></td>
+					<td align="center">{ utils.ConvertDate(invoice.InvoiceDate) }</td>
+					<td>{ invoice.Supplier.Name }</td>
+					<td>{ invoice.InvoiceNumber }</td>
+					<td align="right">{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
+				</tr>
+			}
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="4">Total gastado</td>
+				<td align="right" class={ highlight() }>{ utils.PrintFloat(invoices.Total) }</td>
+			</tr>
+		</tfoot>
+	</table>
+}
