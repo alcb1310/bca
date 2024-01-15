@@ -9,7 +9,7 @@ import (
 func (s *service) GetAllSuppliers(companyId uuid.UUID) ([]types.Supplier, error) {
 	suppliers := []types.Supplier{}
 
-	sql := "SELECT id, supplier_id, name, contact_name, contact_email, contact_phone, company_id FROM supplier WHERE company_id = $1"
+	sql := "SELECT id, supplier_id, name, contact_name, contact_email, contact_phone, company_id FROM supplier WHERE company_id = $1 ORDER BY name"
 	rows, err := s.db.Query(sql, companyId)
 	if err != nil {
 		return nil, err

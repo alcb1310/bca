@@ -118,6 +118,20 @@ create table if not exists invoice (
      unique (supplier_id, project_id, invoice_number, company_id)
 );
 
+create table if not exists invoice_details (
+     invoice_id uuid not null references invoice (id) on delete restrict,
+     budget_item_id uuid not null references budget_item (id) on delete restrict,
+     quantity numeric not null,
+     cost numeric not null,
+     total numeric not null,
+
+     company_id uuid not null references company (id) on delete restrict,
+     created_at timestamp with time zone default now(),
+
+     unique (invoice_id, budget_item_id, company_id),
+     primary key (invoice_id, budget_item_id, company_id)
+);
+
 -- VIEWS
 
 create or replace view vw_budget_item as
@@ -176,3 +190,34 @@ select
 from invoice i
 join supplier s on i.supplier_id = s.id
 join project p on i.project_id = p.id;
+
+create or replace view vw_levels as
+select distinct
+     company_id,
+     level
+from budget_item;
+
+drop view vw_levels;
+
+create or replace view vw_levels as
+select distinct
+     company_id,
+     level
+from budget_item
+order by level;
+
+
+create or replace view vw_invoice_details as 
+select
+    id.invoice_id,
+    i.invoice_total as invoice_total,
+    id.budget_item_id,
+    b.code as budget_item_code,
+    b.name as budget_item_name,
+    id.quantity,
+    id.cost,
+    id.total,
+    id.company_id
+from invoice_details id
+join budget_item b on id.budget_item_id = b.id
+join invoice i on id.invoice_id = i.id

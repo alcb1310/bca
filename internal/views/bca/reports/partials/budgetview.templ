@@ -1,0 +1,61 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+
+css tableSpacing() {
+	margin-top: "0.5rem";
+}
+
+templ BudgetView(budgets []types.GetBudget) {
+	<table class={ tableSpacing() }>
+		<thead>
+			<tr>
+				<th rowspan="2" width="100px">Código</th>
+				<th rowspan="2" width="380px">Partida</th>
+				<th colspan="2">Gastado</th>
+				<th colspan="3">Por Gastar</th>
+				<th rowspan="2" width="130px">Actualizado</th>
+			</tr>
+			<tr>
+				<th width="130px">Cantidad</th>
+				<th width="130px">Total</th>
+				<th width="130px">Cantidad</th>
+				<th width="130px">Unitario</th>
+				<th width="130px">Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			if len(budgets) == 0 {
+				<tr>
+					<td colspan="8">No hay partidas</td>
+				</tr>
+			} else {
+				for _, budget := range budgets {
+					<tr>
+						<td>{ budget.BudgetItem.Code }</td>
+						<td>{ budget.BudgetItem.Name }</td>
+						<td align="right">
+							if budget.SpentQuantity != nil {
+								{ utils.PrintFloat(*budget.SpentQuantity) }
+							}
+						</td>
+						<td align="right">{ utils.PrintFloat(budget.SpentTotal) }</td>
+						<td align="right">
+							if budget.RemainingQuantity != nil {
+								{ utils.PrintFloat(*budget.RemainingQuantity) }
+							}
+						</td>
+						<td align="right">
+							if budget.RemainingCost != nil {
+								{ utils.PrintFloat(*budget.RemainingCost) }
+							}
+						</td>
+						<td align="right">{ utils.PrintFloat(budget.RemainingTotal) }</td>
+						<td align="right">{ utils.PrintFloat(budget.UpdatedBudget) }</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+}

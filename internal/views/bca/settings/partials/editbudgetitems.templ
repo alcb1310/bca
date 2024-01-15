@@ -1,0 +1,60 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
+
+func getItems(b []types.BudgetItem) []types.Select {
+	items := []types.Select{}
+
+	for _, item := range b {
+		items = append(items, types.Select{
+			Key:   item.ID.String(),
+			Value: item.Name,
+		})
+	}
+
+	return items
+}
+
+templ EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) {
+	<form
+		id="edit-bugdet-item"
+		if budgetItem == nil {
+			hx-post="/bca/partials/budget-item"
+		} else {
+			hx-put={ concat("/bca/partials/budget-item/", budgetItem.ID.String()) }
+		}
+		hx-target="#budget-items-table"
+		hx-swap="innerHTML"
+		hx-trigger="submit"
+		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
+	>
+		<div class={ buttondown() }>
+			<div>
+				if budgetItem == nil {
+					@components.DrawerTitle("Agregar Partida")
+					@components.Input("text", "Código", "code", "code", "")
+					@components.Input("text", "Nombre", "name", "name", "")
+					@components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "")
+					@components.CheckBoxComponent("accumulate", "accumulate", "Acumula", false)
+				} else {
+					@components.DrawerTitle("Editar Partida")
+					@components.Input("text", "Código", "code", "code", budgetItem.Code)
+					@components.Input("text", "Nombre", "name", "name", budgetItem.Name)
+					if budgetItem.ParentId == nil {
+						@components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "")
+					} else {
+						@components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", budgetItem.ParentId.String())
+					}
+					@components.CheckBoxComponent("accumulate", "accumulate", "Acumula", *budgetItem.Accumulate)
+				}
+			</div>
+			@components.ButtonGroup()
+		</div>
+	</form>
+	<script>
+         function resetClose() {
+              closeDrawer()
+         }
+    </script>
+}

@@ -1,0 +1,26 @@
+package components
+
+css main() {
+	position: relative;
+	display: grid;
+	grid-template-columns: auto 1fr;
+}
+
+css maincontent() {
+	padding: 1.5rem;
+}
+
+css maincontentcontainer() {
+	border-radius: 8px;
+}
+
+templ Main(active string) {
+	<section class={ main() }>
+		@SidebarComponent(active)
+		<div class={ maincontent() }>
+			<div id="main-content" class={ maincontentcontainer() }>
+				{ children... }
+			</div>
+		</div>
+	</section>
+}

@@ -57,3 +57,24 @@ func (s *service) UpdateProject(p types.Project, id, companyId uuid.UUID) error 
 
 	return nil
 }
+
+func (s *service) GetActiveProjects(companyId uuid.UUID, active bool) []types.Project {
+	projects := []types.Project{}
+
+	sql := "select id, name, is_active, company_id from project where company_id = $1 and is_active = $2"
+	rows, err := s.db.Query(sql, companyId, active)
+	if err != nil {
+		return projects
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		p := types.Project{}
+		if err := rows.Scan(&p.ID, &p.Name, &p.IsActive, &p.CompanyId); err != nil {
+			return projects
+		}
+		projects = append(projects, p)
+	}
+
+	return projects
+}

@@ -1,0 +1,46 @@
+package partials
+
+import "bca-go-final/internal/types"
+
+templ ProjectsTable(projects []types.Project) {
+	<table>
+		<thead>
+			<tr>
+				<th width="300px">Nombre</th>
+				<th width="100px">Activo</th>
+				<th width="50px"></th>
+			</tr>
+		</thead>
+		<tbody>
+			if len(projects) == 0 {
+				<tr>
+					<td colspan="3">No existen proyectos</td>
+				</tr>
+			} else {
+				for _, project := range projects {
+					<tr>
+						<td>{ project.Name }</td>
+						<td align="center">
+							if *project.IsActive {
+								<i class="fa-regular fa-circle-check"></i>
+							} else {
+								<i class="fa-regular fa-circle-xmark"></i>
+							}
+						</td>
+						<td align="center">
+							<i
+								style="cursor:pointer"
+								class="fa-solid fa-pencil yellow-text"
+								hx-get={ concat("/bca/partials/projects/", project.ID.String()) }
+								hx-target="#drawer"
+								hx-swap="innerHTML"
+								hx-trigger="click"
+								_="on click openDrawer()"
+							></i>
+						</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+}

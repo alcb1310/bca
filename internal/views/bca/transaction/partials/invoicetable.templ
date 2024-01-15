@@ -1,0 +1,50 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+
+css redText() {
+	color: var(--red-500);
+}
+
+templ InvoiceTable(invoices []types.InvoiceResponse) {
+	<table>
+		<thead>
+			<tr>
+				<th width="90px">Fecha</th>
+				<th width="150px">Proyecto</th>
+				<th width="300px">Proveedor</th>
+				<th width="200px">Número</th>
+				<th width="150px">Total</th>
+				<th width="50px"></th>
+			</tr>
+		</thead>
+		<tbody>
+			if len(invoices) == 0 {
+				<tr>
+					<td colspan="6">No hay facturas</td>
+				</tr>
+			} else {
+				for _, invoice := range invoices {
+					<tr>
+						<td align="center">{ utils.ConvertDate(invoice.InvoiceDate) }</td>
+						<td>{ invoice.Project.Name }</td>
+						<td>{ invoice.Supplier.Name }</td>
+						<td>{ invoice.InvoiceNumber }</td>
+						<td align="right">{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
+						<td align="center">
+							<a href={ templ.SafeURL(concat("/bca/transacciones/facturas/crear?id=", invoice.Id.String())) }>
+								<i class="fa fa-pencil yellow-text"></i>
+							</a>
+							if invoice.InvoiceTotal == 0 {
+								<i
+									class={ "fa-regular fa-trash-can", redText() }
+								></i>
+							}
+						</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+}

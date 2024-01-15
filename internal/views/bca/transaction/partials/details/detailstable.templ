@@ -1,0 +1,59 @@
+package details
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+
+css redText() {
+	color: var(--red-500);
+}
+
+func getUrl(invoiceId, detailId string) string {
+	return "/bca/partials/invoices/" + invoiceId + "/details/" + detailId
+}
+
+templ InvoiceDetailsTable(details []types.InvoiceDetailsResponse) {
+	if len(details) > 0 {
+		<input type="hidden" id="invoice-total" value={ utils.PrintFloat(details[0].InvoiceTotal) }/>
+	}
+	<table>
+		<thead>
+			<tr>
+				<th width="120px">Código</th>
+				<th width="500px">Nombre</th>
+				<th width="100px">Cantidad</th>
+				<th width="100px">Costo</th>
+				<th width="100px">Total</th>
+				<th width="30px"></th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, detail := range details {
+				<tr>
+					<td>{ detail.BudgetItemCode }</td>
+					<td>{ detail.BudgetItemName }</td>
+					<td align="right">{ utils.PrintFloat(detail.Quantity) }</td>
+					<td align="right">{ utils.PrintFloat(detail.Cost) }</td>
+					<td align="right">{ utils.PrintFloat(detail.Total) }</td>
+					<td align="center">
+						<i
+							class={ "fa-regular fa-trash-can", redText() }
+							hx-delete={ getUrl(detail.Id.String(), detail.BudgetItemId.String()) }
+							hx-trigger="click"
+							hx-target="#invoice-details"
+							hx-swap="innerHTML"
+							hx-push-url="false"
+						></i>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<script>
+         var invoiceTotal = document.getElementById("invoice-total");
+         if (invoiceTotal) {
+             total.value = invoiceTotal.value;
+         } else {
+             total.value = "0.00";
+         }
+    </script>
+}

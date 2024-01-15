@@ -1,0 +1,13 @@
+package base
+
+import "bca-go-final/internal/views/components"
+
+templ AuthenticatedLayout(title string) {
+	@Layout() {
+		@components.Header()
+		@components.Main(title) {
+			{ children... }
+		}
+		@components.DrawerComponent()
+	}
+}

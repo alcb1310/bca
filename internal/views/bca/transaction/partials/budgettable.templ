@@ -1,0 +1,61 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+
+templ BudgetTable(budgets []types.GetBudget) {
+	<table>
+		<thead>
+			<tr>
+				<th width="180px" rowspan="2">Proyecto</th>
+				<th width="380px" rowspan="2">Partida</th>
+				<th colspan="3">Por Gastar</th>
+				<th width="130px" rowspan="2">Actualizado</th>
+				<th width="30px" rowspan="2"></th>
+			</tr>
+			<tr>
+				<th width="130px">Cantidad</th>
+				<th width="130px">Unitario</th>
+				<th width="130px">Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			if len(budgets) == 0 {
+				<tr>
+					<td colspan="8">No existen presupuestos</td>
+				</tr>
+			} else {
+				for _, budget := range budgets {
+					<tr>
+						<td>{ budget.Project.Name }</td>
+						<td>{ budget.BudgetItem.Name }</td>
+						<td align="right">
+							if budget.RemainingQuantity != nil {
+								{ utils.PrintFloat(*budget.RemainingQuantity) }
+							}
+						</td>
+						<td align="right">
+							if budget.RemainingCost != nil {
+								{ utils.PrintFloat(*budget.RemainingCost) }
+							}
+						</td>
+						<td align="right">{ utils.PrintFloat(budget.RemainingTotal) }</td>
+						<td align="right">{ utils.PrintFloat(budget.UpdatedBudget) }</td>
+						<td align="center">
+							if budget.RemainingQuantity != nil {
+								<i
+									class="fa-solid fa-pen yellow-text"
+									_="on click openDrawer()"
+									hx-target="#drawer"
+									hx-swap="innerHTML"
+									hx-trigger="click"
+									hx-get={ concat(concat(concat("/bca/partials/budgets/", budget.Project.ID.String()), "/"), budget.BudgetItem.ID.String()) }
+								></i>
+							}
+						</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+}

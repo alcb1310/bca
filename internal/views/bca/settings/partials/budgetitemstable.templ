@@ -1,0 +1,57 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "strconv"
+
+templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
+	<table>
+		<thead>
+			<tr>
+				<th width="120px">Código</th>
+				<th width="500px">Nombre</th>
+				<th width="70px">Nivel</th>
+				<th width="100px">Acumula</th>
+				<th width="120px">Padre</th>
+				<th width="70px"></th>
+			</tr>
+		</thead>
+		<tbody>
+			if len(budgetItems) == 0 {
+				<tr>
+					<td colspan="6">No hay Partidas</td>
+				</tr>
+			} else {
+				for _, budgetItem := range budgetItems {
+					<tr>
+						<td>{ budgetItem.Code }</td>
+						<td>{ budgetItem.Name }</td>
+						<td align="center">{ strconv.Itoa(int(budgetItem.Level)) }</td>
+						<td align="center">
+							if *budgetItem.Accumulate {
+								<i class="fa-regular fa-circle-check"></i>
+							} else {
+								<i class="fa-regular fa-circle-xmark"></i>
+							}
+						</td>
+						<td>
+							if budgetItem.ParentCode != nil {
+								{ *budgetItem.ParentCode }
+							}
+						</td>
+						<td align="center">
+							<i
+								style="cursor:pointer"
+								class="fa-solid fa-pencil yellow-text"
+								hx-get={ concat("/bca/partials/budget-item/", budgetItem.ID.String()) }
+								hx-target="#drawer"
+								hx-swap="innerHTML"
+								hx-trigger="click"
+								_="on click openDrawer()"
+							></i>
+						</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+}

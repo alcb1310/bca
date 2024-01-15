@@ -17,6 +17,8 @@ func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, err
 			   vw_invoice
 		 where
 			   company_id = $1
+		 order by
+			   invoice_date desc, supplier_name, invoice_number
 	`
 
 	rows, err := s.db.Query(query, companyId)
@@ -95,7 +97,6 @@ func (s *service) UpdateInvoice(invoice types.InvoiceCreate) error {
 }
 
 func (s *service) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
-	// TODO: implement delete invoice method
 	query := `
 		delete from invoice
 		where id = $1 and company_id = $2
