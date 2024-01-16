@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -31,8 +32,36 @@ func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
-	component := reports.BalanceView()
-	component.Render(r.Context(), w)
+	ctx, _ := getMyPaload(r)
+
+	switch r.Method {
+	case http.MethodPost:
+		r.ParseForm()
+		pId := r.Form.Get("project")
+		parsedProjectId, _ := uuid.Parse(pId)
+		d := r.Form.Get("date")
+		date, _ := time.Parse("2006-01-02", d)
+
+		invoices := s.DB.GetBalance(ctx.CompanyId, parsedProjectId, date)
+
+		component := partials.BalanceView(invoices)
+		component.Render(r.Context(), w)
+
+	case http.MethodGet:
+		p, _ := s.DB.GetAllProjects(ctx.CompanyId)
+		projects := []types.Select{}
+		for _, v := range p {
+			x := types.Select{
+				Key:   v.ID.String(),
+				Value: v.Name,
+			}
+			projects = append(projects, x)
+		}
+
+		component := reports.BalanceView(projects)
+		component.Render(r.Context(), w)
+	}
+
 }
 
 func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {

@@ -132,6 +132,31 @@ create table if not exists invoice_details (
      primary key (invoice_id, budget_item_id, company_id)
 );
 
+create table if not exists historic(
+     project_id uuid not null references project (id) on delete restrict,
+     budget_item_id uuid not null references budget_item (id) on delete restrict,
+     date date not null,
+
+    initial_quantity numeric,
+    initial_cost numeric,
+    initial_total numeric not null,
+
+    spent_quantity numeric,
+    spent_total numeric not null,
+
+    remaining_quantity numeric,
+    remaining_cost numeric,
+    remaining_total numeric not null,
+
+    updated_budget numeric not null,
+
+     company_id uuid not null references company (id) on delete restrict,
+     created_at timestamp with time zone default now(),
+
+     unique (project_id, budget_item_id, date, company_id),
+     primary key (project_id, budget_item_id, date, company_id)
+);
+
 -- VIEWS
 
 create or replace view vw_budget_item as

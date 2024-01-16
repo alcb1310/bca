@@ -71,6 +71,9 @@ type Service interface {
 	GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.InvoiceDetailsResponse, error)
 	AddDetail(detail types.InvoiceDetailCreate) error
 	DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) error
+
+	// database/reports.go
+	GetBalance(companyId, projectId uuid.UUID, date time.Time) types.BalanceResponse
 }
 
 type service struct {
