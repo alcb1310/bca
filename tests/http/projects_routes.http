@@ -7,7 +7,7 @@ Host: localhost:8080
 x-access-token: {{TOKEN}}
 
 {
-     "name": "TEST PROJECT 2"
+     "name": "TEST PROJECT"
 }
 
 GET /api/v1/projects/0a91affc-7eb7-4973-8f80-e90f60c48cf0

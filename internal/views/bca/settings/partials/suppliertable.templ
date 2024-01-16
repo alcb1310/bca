@@ -1,0 +1,61 @@
+package partials
+
+import "bca-go-final/internal/types"
+
+templ SuppliersTable(suppliers []types.Supplier) {
+	<table>
+		<thead>
+			<tr>
+				<th rowspan="2" width="130px">ID</th>
+				<th rowspan="2" width="270px">Nombre</th>
+				<th colspan="3">Contacto</th>
+				<th rowspan="2" width="50px"></th>
+			</tr>
+			<tr>
+				<th width="200px">Nombre</th>
+				<th width="200px">Email</th>
+				<th width="200px">Teléfono</th>
+			</tr>
+		</thead>
+		<tbody>
+			if len(suppliers) == 0 {
+				<tr>
+					<td colspan="6">No hay Proveedores</td>
+				</tr>
+			} else {
+				for _, supplier := range suppliers {
+					<tr>
+						<td>{ supplier.SupplierId }</td>
+						<td>{ supplier.Name }</td>
+						<td>
+							if supplier.ContactName != nil {
+								{ *supplier.ContactName }
+							}
+						</td>
+						<td>
+							if supplier.ContactEmail != nil {
+								{ *supplier.ContactEmail }
+							}
+						</td>
+						<td>
+							if supplier.ContactPhone != nil {
+								{ *supplier.ContactPhone }
+							}
+						</td>
+						<td>
+							<i
+								style="cursor:pointer"
+								class="fa-solid fa-pencil yellow-text"
+								hx-get={ concat("/bca/partials/suppliers/", supplier.ID.String()) }
+								hx-target="#drawer"
+								hx-swap="innerHTML"
+								hx-trigger="click"
+								_="on click openDrawer()"
+							></i>
+						</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+}

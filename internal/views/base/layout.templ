@@ -1,0 +1,18 @@
+package base
+
+templ Layout() {
+	<!DOCTYPE html>
+	<html lang="es">
+		<head>
+			<title>BCA</title>
+			<link rel="stylesheet" href="/css/styles.css"/>
+			<script src="https://kit.fontawesome.com/0b0464ef7a.js" crossorigin="anonymous"></script>
+			<script src="/js/htmx.min.js"></script>
+			<script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+		</head>
+		<body>
+			{ children... }
+			<script src="/js/main.js"></script>
+		</body>
+	</html>
+}

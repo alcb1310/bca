@@ -1,0 +1,56 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "github.com/google/uuid"
+
+func concat(s1, s2 string) string {
+	return s1 + s2
+}
+
+css redText() {
+	color: var(--red-500);
+}
+
+templ UsersTable(users []types.User, currentUser uuid.UUID) {
+	if len(users) == 0 {
+		<p>No hay usuarios</p>
+	}
+	<table>
+		<thead>
+			<tr>
+				<th width="300px">Email</th>
+				<th width="300px">Nombre</th>
+				<th width="50px">&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, user := range users {
+				<tr id={ concat("user-", user.Id.String()) }>
+					<td>{ user.Email }</td>
+					<td>{ user.Name }</td>
+					<td align="left">
+						<i
+							class="fa-solid fa-pencil yellow-text"
+							hx-get={ concat("/bca/partials/users/edit/", user.Id.String()) }
+							style="cursor:pointer"
+							hx-get="/bca/partials/users/add"
+							hx-target="#drawer"
+							hx-swap="innerHTML"
+							_="on click openDrawer()"
+						></i>
+						if user.Id != currentUser {
+							<i
+								class={ "fa-regular fa-trash-can", redText() }
+								style="cursor:pointer"
+								hx-delete={ concat("/bca/partials/users/", user.Id.String()) }
+								hx-target="#users-table"
+								hx-swap="innerHTML"
+								_="on click toggle @disabled to me until htmx:afterOnLoad"
+							></i>
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

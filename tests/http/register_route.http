@@ -1,7 +1,7 @@
-POST http://0.0.0.0:8080/register
+POST http://0.0.0.0:8080/api/register
 
 {
-     "name": "Test company",
+     "name": "Test User",
      "ruc": "1234567890",
      "employees": 1,
      "email": "test@test.com",

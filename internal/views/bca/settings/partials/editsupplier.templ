@@ -1,0 +1,45 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
+
+templ EditSupplier(supplier *types.Supplier) {
+	<form
+		id="edit-supplier"
+		autocomplete="off"
+		if supplier == nil {
+			hx-post="/bca/partials/suppliers"
+		} else {
+			hx-put={ concat("/bca/partials/suppliers/edit/", supplier.ID.String()) }
+		}
+		hx-target="#supplier-table"
+		hx-swap="innerHTML"
+		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
+	>
+		<div class={ buttondown() }>
+			<div>
+				if supplier == nil {
+					@components.DrawerTitle("Agregar Proveedor")
+					@components.Input("text", "Ruc", "supplier_id", "supplier_id", "")
+					@components.Input("text", "Nombre", "name", "name", "")
+					@components.Input("text", "Nombre del contacto", "contact_name", "contact_name", "")
+					@components.Input("text", "Email del contacto", "contact_email", "contact_email", "")
+					@components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", "")
+				} else {
+					@components.DrawerTitle("Agregar Proveedor")
+					@components.Input("text", "Ruc", "supplier_id", "supplier_id", supplier.SupplierId)
+					@components.Input("text", "Nombre", "name", "name", supplier.Name)
+					@components.Input("text", "Nombre del contacto", "contact_name", "contact_name", *supplier.ContactName)
+					@components.Input("text", "Email del contacto", "contact_email", "contact_email", *supplier.ContactEmail)
+					@components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", *supplier.ContactPhone)
+				}
+			</div>
+			@components.ButtonGroup()
+		</div>
+	</form>
+	<script>
+         function resetClose() {
+              closeDrawer()
+         }
+    </script>
+}

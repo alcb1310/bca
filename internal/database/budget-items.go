@@ -6,19 +6,19 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *service) GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItem, error) {
-	sql := "select id, code, name, level, accumulate, parent_id, company_id from vw_budget_item where company_id = $1"
+func (s *service) GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItemResponse, error) {
+	sql := "select id, code, name, level, accumulate, parent_id, parent_code, parent_name, company_id from vw_budget_item where company_id = $1 order by code"
 
 	rows, err := s.db.Query(sql, companyId)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	bis := []types.BudgetItem{}
+	bis := []types.BudgetItemResponse{}
 
 	for rows.Next() {
-		bi := types.BudgetItem{}
-		if err := rows.Scan(&bi.ID, &bi.Code, &bi.Name, &bi.Level, &bi.Accumulate, &bi.ParentId, &bi.CompanyId); err != nil {
+		bi := types.BudgetItemResponse{}
+		if err := rows.Scan(&bi.ID, &bi.Code, &bi.Name, &bi.Level, &bi.Accumulate, &bi.ParentId, &bi.ParentCode, &bi.ParentName, &bi.CompanyId); err != nil {
 			return nil, err
 		}
 		bis = append(bis, bi)
@@ -95,4 +95,29 @@ func (s *service) getBudgetItem(id, companyId uuid.UUID) (*types.BudgetItem, err
 	)
 
 	return bi, err
+}
+
+func (s *service) GetBudgetItemsByAccumulate(companyId uuid.UUID, accum bool) []types.BudgetItem {
+	sql := `
+		  select id, code, name, level, accumulate, parent_id, company_id
+		  from vw_budget_item
+		  where company_id = $1 and accumulate = $2 order by name
+		  `
+
+	rows, err := s.db.Query(sql, companyId, accum)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	bis := []types.BudgetItem{}
+
+	for rows.Next() {
+		bi := types.BudgetItem{}
+		if err := rows.Scan(&bi.ID, &bi.Code, &bi.Name, &bi.Level, &bi.Accumulate, &bi.ParentId, &bi.CompanyId); err != nil {
+			return nil
+		}
+		bis = append(bis, bi)
+	}
+
+	return bis
 }

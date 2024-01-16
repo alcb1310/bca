@@ -1,0 +1,20 @@
+package components
+
+css inputstyle() {
+	display: block;
+	padding: 0.5rem 1rem;
+	width: 92%;
+	border-radius: 0.25rem;
+	border: 1px solid var(--blue-gray-700);
+}
+
+templ Input(t, p, i, n, v string) {
+	<input
+		class={ inputstyle() }
+		type={ t }
+		placeholder={ p }
+		id={ i }
+		name={ n }
+		value={ v }
+	/>
+}

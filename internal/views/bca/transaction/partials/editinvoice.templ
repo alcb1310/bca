@@ -1,0 +1,101 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/utils"
+
+css buttons() {
+	display: flex;
+	justify-content: space-around;
+}
+
+css container() {
+	width: 50%;
+	margin: 0 auto;
+}
+
+func setTitle(invoice *types.InvoiceResponse) string {
+	if invoice == nil {
+		return "Nueva Factura"
+	}
+	return "Editar Factura"
+}
+
+templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Select) {
+	@base.AuthenticatedLayout(setTitle(invoice)) {
+		@components.PageTitle(setTitle(invoice))
+		<form
+			id="invoice-form"
+			autocomplete="off"
+			hx-trigger="submit"
+			if invoice == nil {
+				hx-post="/bca/transacciones/facturas/crear"
+			} else {
+				hx-put={ concat("/bca/partials/invoices/", invoice.Id.String()) }
+			}
+			hx-push-url="true"
+		>
+			<div class={ buttondown() }>
+				<div class={ container() }>
+					if invoice == nil {
+						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "")
+						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", "")
+						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", "")
+						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", "")
+					} else {
+						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoice.Project.ID.String())
+						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoice.Supplier.ID.String())
+						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoice.InvoiceNumber)
+						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", utils.ConvertDate(invoice.InvoiceDate))
+						@components.Input("text", "Total", "total", "total", "")
+					}
+				</div>
+				<div class={ buttons() }>
+					<button type="submit" class="btn">Grabar</button>
+					if invoice != nil {
+						<button
+							type="button"
+							class="btn"
+							hx-get={ concat(concat("/bca/partials/invoices/", invoice.Id.String()), "/details/add") }
+							hx-target="#drawer"
+							hx-swap="innerHTML"
+							hx-trigger="click"
+							hx-push-url="false"
+							_="on click openDrawer()"
+						>Detalle</button>
+					}
+					<a
+						href="/bca/transacciones/facturas"
+						class="btn"
+					>
+						Cancelar
+					</a>
+				</div>
+			</div>
+		</form>
+		if invoice != nil {
+			<div
+				style="margin-top: 1rem"
+				id="invoice-details"
+				hx-get={ concat(concat("/bca/partials/invoices/", invoice.Id.String()), "/details") }
+				hx-trigger="load"
+				hx-swap="innerHTML"
+			></div>
+			<script>
+                 var project = document.getElementById("project")
+
+                 if (project) {
+                      project.disabled = true
+                 }
+            </script>
+		}
+		<script>
+             var total = document.getElementById("total")
+
+             if (total) {
+                  total.disabled = true
+             }
+        </script>
+	}
+}

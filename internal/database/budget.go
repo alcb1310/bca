@@ -54,17 +54,17 @@ func (s *service) CreateBudget(budget *types.CreateBudget) (types.Budget, error)
 	}
 
 	var z float64 = 0
-	total := *budget.Quantity * *budget.Cost
+	total := budget.Quantity * budget.Cost
 	b := types.Budget{
 		ProjectId:         budget.ProjectId,
 		BudgetItemId:      budget.BudgetItemId,
-		InitialQuantity:   budget.Quantity,
-		InitialCost:       budget.Cost,
+		InitialQuantity:   &budget.Quantity,
+		InitialCost:       &budget.Cost,
 		InitialTotal:      total,
 		SpentQuantity:     &z,
 		SpentTotal:        0,
-		RemainingQuantity: budget.Quantity,
-		RemainingCost:     budget.Cost,
+		RemainingQuantity: &budget.Quantity,
+		RemainingCost:     &budget.Cost,
 		RemainingTotal:    total,
 		UpdatedBudget:     total,
 		CompanyId:         budget.CompanyId,
@@ -83,15 +83,15 @@ func saveBudget(b *types.CreateBudget, s *sql.Tx) error {
 	budget.CompanyId = b.CompanyId
 	budget.ProjectId = b.ProjectId
 
-	total := *b.Quantity * *b.Cost
+	total := b.Quantity * b.Cost
 	budget.InitialTotal = total
 	budget.SpentTotal = 0
 	budget.RemainingTotal = total
 	budget.UpdatedBudget = total
-	budget.InitialQuantity = b.Quantity
-	budget.InitialCost = b.Cost
-	budget.RemainingQuantity = b.Quantity
-	budget.RemainingCost = b.Cost
+	budget.InitialQuantity = &b.Quantity
+	budget.InitialCost = &b.Cost
+	budget.RemainingQuantity = &b.Quantity
+	budget.RemainingCost = &b.Cost
 	var z float64 = 0
 	budget.SpentQuantity = &z
 
@@ -142,7 +142,9 @@ func saveBudget(b *types.CreateBudget, s *sql.Tx) error {
 	return saveBudget(b, s)
 }
 
-func (s *service) GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error) {
+func (s *service) GetBudgetsByProjectId(companyId, projectId uuid.UUID, level *uint8) ([]types.GetBudget, error) {
+	var rows *sql.Rows
+	var err error
 	query := `
         SELECT
             project_id, project_name,
@@ -153,9 +155,15 @@ func (s *service) GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types
             updated_budget, company_id
         FROM vw_budget
         WHERE company_id = $1 and project_id = $2
-        ORDER BY budget_item_code
-    `
-	rows, err := s.db.Query(query, companyId, projectId)
+		`
+	if level == nil {
+		query += "ORDER BY budget_item_code"
+		rows, err = s.db.Query(query, companyId, projectId)
+	} else {
+		query += "AND budget_item_level <= $3 ORDER BY budget_item_code"
+		rows, err = s.db.Query(query, companyId, projectId, *level)
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -209,8 +217,8 @@ func (s *service) GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*t
 	return b, nil
 }
 
-func (s *service) UpdateBudget(b *types.CreateBudget, budget *types.Budget) error {
-	total := *b.Quantity * *b.Cost
+func (s *service) UpdateBudget(b types.CreateBudget, budget types.Budget) error {
+	total := b.Quantity * b.Cost
 	diff := total - budget.UpdatedBudget
 
 	toUpdate := types.Budget{
@@ -221,8 +229,8 @@ func (s *service) UpdateBudget(b *types.CreateBudget, budget *types.Budget) erro
 		InitialTotal:      budget.InitialTotal,
 		SpentQuantity:     budget.SpentQuantity,
 		SpentTotal:        budget.SpentTotal,
-		RemainingQuantity: b.Quantity,
-		RemainingCost:     b.Cost,
+		RemainingQuantity: &b.Quantity,
+		RemainingCost:     &b.Cost,
 		RemainingTotal:    total,
 		UpdatedBudget:     diff,
 		CompanyId:         budget.CompanyId,
@@ -232,12 +240,14 @@ func (s *service) UpdateBudget(b *types.CreateBudget, budget *types.Budget) erro
 	if err != nil {
 		return err
 	}
-	defer tx.Commit()
+	defer tx.Rollback()
 
 	err = s.executeUpdateBudget(&toUpdate, tx)
 	if err != nil {
 		return err
 	}
+
+	tx.Commit()
 
 	return nil
 }

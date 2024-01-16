@@ -20,6 +20,8 @@ type Service interface {
 	Login(l *types.Login) (string, error)
 	IsLoggedIn(token string, user uuid.UUID) bool
 
+	Levels(companyId uuid.UUID) []types.Select
+
 	// database/dummy.go
 	LoadDummyData(companyId uuid.UUID) error
 
@@ -36,6 +38,7 @@ type Service interface {
 	CreateProject(p types.Project) (types.Project, error)
 	GetProject(id, companyId uuid.UUID) (types.Project, error)
 	UpdateProject(p types.Project, id, companyId uuid.UUID) error
+	GetActiveProjects(companyId uuid.UUID, active bool) []types.Project
 
 	// database/suppliers.go
 	GetAllSuppliers(companyId uuid.UUID) ([]types.Supplier, error)
@@ -44,17 +47,33 @@ type Service interface {
 	UpdateSupplier(supplier *types.Supplier) error
 
 	// database/budget-items.go
-	GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItem, error)
+	GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItemResponse, error)
 	CreateBudgetItem(bi *types.BudgetItem) error
 	GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.BudgetItem, error)
 	UpdateBudgetItem(bi *types.BudgetItem) error
+	GetBudgetItemsByAccumulate(companyId uuid.UUID, accum bool) []types.BudgetItem
 
 	// database/budget.go
 	GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error)
 	CreateBudget(b *types.CreateBudget) (types.Budget, error)
-	GetBudgetsByProjectId(companyId, projectId uuid.UUID) ([]types.GetBudget, error)
+	GetBudgetsByProjectId(companyId, projectId uuid.UUID, level *uint8) ([]types.GetBudget, error)
 	GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*types.GetBudget, error)
-	UpdateBudget(b *types.CreateBudget, budget *types.Budget) error
+	UpdateBudget(b types.CreateBudget, budget types.Budget) error
+
+	// database/invoice.go
+	GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, error)
+	CreateInvoice(invoice *types.InvoiceCreate) error
+	GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceResponse, error)
+	UpdateInvoice(invoice types.InvoiceCreate) error
+	DeleteInvoice(invoiceId, companyId uuid.UUID) error
+
+	// database/invoice-details.GetOneBudget
+	GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.InvoiceDetailsResponse, error)
+	AddDetail(detail types.InvoiceDetailCreate) error
+	DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) error
+
+	// database/reports.go
+	GetBalance(companyId, projectId uuid.UUID, date time.Time) types.BalanceResponse
 }
 
 type service struct {
@@ -100,4 +119,26 @@ func (s *service) Health() map[string]string {
 	return map[string]string{
 		"message": "It's healthy",
 	}
+}
+
+func (s *service) Levels(companyId uuid.UUID) []types.Select {
+	levels := []types.Select{}
+	query := "select level from vw_levels where company_id = $1"
+	rows, err := s.db.Query(query, companyId)
+	if err != nil {
+		log.Fatal(err)
+		return levels
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var level string
+		if err := rows.Scan(&level); err != nil {
+			log.Fatal(err)
+			return levels
+		}
+		levels = append(levels, types.Select{Key: level, Value: level})
+	}
+
+	return levels
 }

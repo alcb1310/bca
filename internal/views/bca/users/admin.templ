@@ -1,0 +1,25 @@
+package users
+
+import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+
+templ AdminView() {
+	@base.AuthenticatedLayout("") {
+		@components.PageTitle("Administrar usuarios")
+		<div class="page-header">
+			<button
+				type="button"
+				class="btn"
+				id="add-button"
+				style="cursor:pointer"
+				hx-get="/bca/partials/projects/add"
+				hx-target="#drawer"
+				hx-swap="innerHTML"
+				_="on click openDrawer()"
+			>
+				Agregar
+			</button>
+		</div>
+		<div id="users-table" hx-target="this" hx-swap="innerHTML" hx-trigger="load" hx-get="/bca/partials/users"></div>
+	}
+}

@@ -1,0 +1,50 @@
+package partials
+
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
+
+css buttondown() {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+func concat(s1, s2 string) string {
+	return s1 + s2
+}
+
+templ EditProject(project *types.Project) {
+	<form
+		id="edit-project"
+		autocomplete="off"
+		if project == nil {
+			hx-post="/bca/partials/projects"
+		} else {
+			hx-put={ concat("/bca/partials/projects/edit/", project.ID.String()) }
+		}
+		hx-target="#projects-table"
+		hx-swap="innerHTML"
+		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
+	>
+		<div class={ buttondown() }>
+			<div>
+				if project == nil {
+					@components.DrawerTitle("Agregar Proyecto")
+					@components.Input("text", "Nombre", "name", "name", "")
+					@components.CheckBoxComponent("active", "active", "Activo", false)
+				} else {
+					@components.DrawerTitle("Editar Proyecto")
+					@components.Input("text", "Nombre", "name", "name", project.Name)
+					@components.CheckBoxComponent("active", "active", "Activo", *project.IsActive)
+				}
+			</div>
+			@components.ButtonGroup()
+		</div>
+	</form>
+	<script>
+         function resetClose() {
+              closeDrawer()
+         }
+    </script>
+}
