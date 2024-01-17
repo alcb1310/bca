@@ -1,11 +1,23 @@
 package reports
 
 import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
 
-templ HistoricView() {
+templ HistoricView(projects, levels []types.Select) {
 	@base.AuthenticatedLayout("historico") {
-		<div>
-			Historic View
-		</div>
+		@components.PageTitle("Control Histórico")
+		<form
+			hx-get="/bca/reportes/historico"
+			hx-target="#results"
+			hx-swap="innerHTML"
+			hx-push-url="true"
+		>
+			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "")
+			@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "")
+			@components.Input("date", "Fecha", "fecha", "fecha", "")
+			<button type="submit" class="btn">Generar</button>
+		</form>
+		<div id="results"></div>
 	}
 }

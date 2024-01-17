@@ -74,6 +74,7 @@ type Service interface {
 
 	// database/reports.go
 	GetBalance(companyId, projectId uuid.UUID, date time.Time) types.BalanceResponse
+	GetHistoricByProject(companyId, projectId uuid.UUID, date time.Time, level uint8) []types.GetBudget
 }
 
 type service struct {
