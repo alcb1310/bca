@@ -8,6 +8,7 @@ templ HistoricView(projects, levels []types.Select) {
 	@base.AuthenticatedLayout("historico") {
 		@components.PageTitle("Control Histórico")
 		<form
+			id="historic-form"
 			hx-get="/bca/reportes/historico"
 			hx-target="#results"
 			hx-swap="innerHTML"
@@ -16,7 +17,15 @@ templ HistoricView(projects, levels []types.Select) {
 			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "")
 			@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "")
 			@components.Input("date", "Fecha", "fecha", "fecha", "")
-			<button type="submit" class="btn">Generar</button>
+			<div class={ buttonGroup() }>
+				<button type="submit" class="btn">Generar</button>
+				<button
+					type="button"
+					hx-get="/bca/reportes/excel/historico"
+					hx-include="#historic-form"
+					class="btn"
+				>Exportar</button>
+			</div>
 		</form>
 		<div id="results"></div>
 	}

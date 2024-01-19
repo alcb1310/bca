@@ -46,6 +46,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// excel
 	r.HandleFunc("/bca/reportes/excel/cuadre", s.BalanceExcel)
 	r.HandleFunc("/bca/reportes/excel/actual", s.ActualExcel)
+	r.HandleFunc("/bca/reportes/excel/historico", s.HistoricExcel)
 
 	// partials
 
