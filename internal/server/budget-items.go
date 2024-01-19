@@ -3,6 +3,7 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/views/bca/settings/partials"
+	"log"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -41,7 +42,10 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	b, _ := s.DB.GetBudgetItems(ctxPayload.CompanyId)
+	log.Println(r.URL.Query())
+
+	search := r.URL.Query().Get("search")
+	b, _ := s.DB.GetBudgetItems(ctxPayload.CompanyId, search)
 	component := partials.BudgetItemTable(b)
 	component.Render(r.Context(), w)
 }
@@ -85,7 +89,7 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		b, _ := s.DB.GetBudgetItems(ctxPayload.CompanyId)
+		b, _ := s.DB.GetBudgetItems(ctxPayload.CompanyId, "")
 		component := partials.BudgetItemTable(b)
 		component.Render(r.Context(), w)
 
