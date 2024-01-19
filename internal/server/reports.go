@@ -4,6 +4,7 @@ import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/views/bca/reports"
 	"bca-go-final/internal/views/bca/reports/partials"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -98,7 +99,32 @@ func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
-	component := reports.SpentView()
+	ctx, _ := getMyPaload(r)
+
+	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
+	projects := []types.Select{}
+	for _, v := range p {
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		projects = append(projects, x)
+	}
+
+	if r.URL.Query().Get("proyecto") != "" && r.URL.Query().Get("fecha") != "" && r.URL.Query().Get("nivel") != "" {
+		pId := r.URL.Query().Get("proyecto")
+		parsedProjectId, _ := uuid.Parse(pId)
+		d := r.URL.Query().Get("fecha")
+		date, _ := time.Parse("2006-01-02", d)
+		l, _ := strconv.ParseUint(r.URL.Query().Get("nivel"), 10, 64)
+		nivel := uint8(l)
+
+		w.Write([]byte(fmt.Sprintf("Project Id: %s<br>Date: %s<br>Level: %d", parsedProjectId.String(), date.Format("2006-01-02"), nivel)))
+		return
+	}
+
+	levels := s.DB.Levels(ctx.CompanyId)
+	component := reports.SpentView(projects, levels)
 	component.Render(r.Context(), w)
 }
 

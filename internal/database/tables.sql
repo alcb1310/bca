@@ -271,3 +271,28 @@ from historic as b
 join project as p on b.project_id = p.id
 join budget_item as bi on b.budget_item_id = bi.id;
 
+drop view vw_invoice_details;
+
+create or replace view vw_invoice_details as 
+select
+    id.invoice_id,
+    i.invoice_number,
+    i.invoice_total as invoice_total,
+    p.id as project_id,
+    p.name as project_name,
+    s.id as supplier_id,
+    s.supplier_id as supplier_number,
+    s.name as supplier_name,
+    id.budget_item_id,
+    b.code as budget_item_code,
+    b.name as budget_item_name,
+    b.level as budget_item_level,
+    id.quantity,
+    id.cost,
+    id.total,
+    id.company_id
+from invoice_details id
+join budget_item b on id.budget_item_id = b.id
+join invoice i on id.invoice_id = i.id
+join supplier s on i.supplier_id = s.id
+join project p on i.project_id = p.id;
