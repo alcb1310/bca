@@ -47,7 +47,7 @@ type Service interface {
 	UpdateSupplier(supplier *types.Supplier) error
 
 	// database/budget-items.go
-	GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItemResponse, error)
+	GetBudgetItems(companyId uuid.UUID, search string) ([]types.BudgetItemResponse, error)
 	CreateBudgetItem(bi *types.BudgetItem) error
 	GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.BudgetItem, error)
 	UpdateBudgetItem(bi *types.BudgetItem) error

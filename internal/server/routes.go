@@ -43,6 +43,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/user/admin", s.Admin)
 	r.HandleFunc("/bca/user/cambio", s.ChangePassword)
 
+	// excel
+	r.HandleFunc("/bca/reportes/excel/cuadre", s.BalanceExcel)
+	r.HandleFunc("/bca/reportes/excel/actual", s.ActualExcel)
+
 	// partials
 
 	r.HandleFunc("/bca/partials/users", s.UsersTable)

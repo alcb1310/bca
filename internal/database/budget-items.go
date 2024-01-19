@@ -6,10 +6,11 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *service) GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItemResponse, error) {
-	sql := "select id, code, name, level, accumulate, parent_id, parent_code, parent_name, company_id from vw_budget_item where company_id = $1 order by code"
+func (s *service) GetBudgetItems(companyId uuid.UUID, search string) ([]types.BudgetItemResponse, error) {
+	sql := "select id, code, name, level, accumulate, parent_id, parent_code, parent_name, company_id from vw_budget_item where company_id = $1 and (name like $2 or code like $2) order by code"
 
-	rows, err := s.db.Query(sql, companyId)
+	searchTerm := "%" + search + "%"
+	rows, err := s.db.Query(sql, companyId, searchTerm)
 	if err != nil {
 		return nil, err
 	}
