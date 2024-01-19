@@ -7,6 +7,15 @@ templ BudgetItems() {
 	@base.AuthenticatedLayout("partida") {
 		@components.PageTitle("Partidas")
 		<div class="page-header">
+			<input
+				hx-trigger="keyup changed delay:500ms"
+				hx-get="/bca/partials/budget-item"
+				hx-target="#budget-items-table"
+				hx-swap="innerHTML"
+				hx-push-url="true"
+				type="text"
+				name="search"
+			/>
 			<button
 				type="button"
 				class="btn"

@@ -4,10 +4,17 @@ import "bca-go-final/internal/views/base"
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
 
+css buttonGroup() {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+}
+
 templ BalanceView(projects []types.Select) {
 	@base.AuthenticatedLayout("balance") {
 		@components.PageTitle("Cuadre mensual")
 		<form
+			id="balance-form"
 			hx-post="/bca/reportes/cuadre"
 			hx-trigger="submit"
 			hx-target="#balance"
@@ -16,8 +23,20 @@ templ BalanceView(projects []types.Select) {
 		>
 			@components.SelectComponent(projects, "Proyecto", "project", "project", "")
 			@components.Input("date", "Fecha", "date", "date", "")
-			<button type="submit" class="btn">Generar</button>
+			<div class={ buttonGroup() }>
+				<button
+					type="submit"
+					class="btn"
+				>Generar</button>
+				<button
+					type="button"
+					hx-get="/bca/reportes/excel/cuadre"
+					hx-include="#balance-form"
+					class="btn"
+				>Exportar</button>
+			</div>
 		</form>
 		<div id="balance"></div>
+		<div id="excel"></div>
 	}
 }

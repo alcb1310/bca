@@ -47,7 +47,7 @@ type Service interface {
 	UpdateSupplier(supplier *types.Supplier) error
 
 	// database/budget-items.go
-	GetBudgetItems(companyId uuid.UUID) ([]types.BudgetItemResponse, error)
+	GetBudgetItems(companyId uuid.UUID, search string) ([]types.BudgetItemResponse, error)
 	CreateBudgetItem(bi *types.BudgetItem) error
 	GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.BudgetItem, error)
 	UpdateBudgetItem(bi *types.BudgetItem) error
@@ -74,6 +74,7 @@ type Service interface {
 
 	// database/reports.go
 	GetBalance(companyId, projectId uuid.UUID, date time.Time) types.BalanceResponse
+	GetHistoricByProject(companyId, projectId uuid.UUID, date time.Time, level uint8) []types.GetBudget
 }
 
 type service struct {

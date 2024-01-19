@@ -9,10 +9,23 @@ import "github.com/a-h/templ"
 import "context"
 import "io"
 import "bytes"
+import "strings"
 
 import "bca-go-final/internal/views/base"
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
+
+func buttonGroup() templ.CSSClass {
+	var templ_7745c5c3_CSSBuilder strings.Builder
+	templ_7745c5c3_CSSBuilder.WriteString(`display:flex;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`flex-direction:row;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`gap:0.5rem;`)
+	templ_7745c5c3_CSSID := templ.CSSID(`buttonGroup`, templ_7745c5c3_CSSBuilder.String())
+	return templ.ComponentCSSClass{
+		ID:    templ_7745c5c3_CSSID,
+		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
+	}
+}
 
 func BalanceView(projects []types.Select) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -37,7 +50,7 @@ func BalanceView(projects []types.Select) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <form hx-post=\"/bca/reportes/cuadre\" hx-trigger=\"submit\" hx-target=\"#balance\" hx-swap=\"innerHTML\" hx-push-url=\"false\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <form id=\"balance-form\" hx-post=\"/bca/reportes/cuadre\" hx-trigger=\"submit\" hx-target=\"#balance\" hx-swap=\"innerHTML\" hx-push-url=\"false\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -49,16 +62,38 @@ func BalanceView(projects []types.Select) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button type=\"submit\" class=\"btn\">")
+			var templ_7745c5c3_Var3 = []any{buttonGroup()}
+			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var3 := `Generar`
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form><div id=\"balance\"></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var3).String()))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><button type=\"submit\" class=\"btn\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var4 := `Generar`
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button> <button type=\"button\" hx-get=\"/bca/reportes/excel/cuadre\" hx-include=\"#balance-form\" class=\"btn\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var5 := `Exportar`
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></div></form><div id=\"balance\"></div><div id=\"excel\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

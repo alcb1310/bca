@@ -2,6 +2,7 @@ package database
 
 import (
 	"bca-go-final/internal/types"
+	"database/sql"
 	"log"
 	"time"
 
@@ -54,4 +55,46 @@ func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) typ
 	}
 
 	return types.BalanceResponse{Invoices: invoices, Total: total}
+}
+
+func (s *service) GetHistoricByProject(companyId, projectId uuid.UUID, date time.Time, level uint8) []types.GetBudget {
+	var rows *sql.Rows
+	var err error
+	query := `
+        SELECT
+            project_id, project_name,
+            budget_item_id, budget_item_code, budget_item_name, budget_item_level, budget_item_accumulate,
+            initial_quantity, initial_cost, initial_total,
+            spent_quantity, spent_total,
+            remaining_quantity, remaining_cost, remaining_total,
+            updated_budget, company_id
+        FROM vw_historic
+        WHERE company_id = $1 and project_id = $2 AND budget_item_level <= $3 and
+	        extract(year from date) = $4 and extract(month from date) = $5
+		ORDER BY budget_item_code
+		`
+	rows, err = s.db.Query(query, companyId, projectId, level, date.Year(), date.Month())
+
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+	budgets := []types.GetBudget{}
+
+	for rows.Next() {
+		b := types.GetBudget{}
+		if err := rows.Scan(
+			&b.Project.ID, &b.Project.Name,
+			&b.BudgetItem.ID, &b.BudgetItem.Code, &b.BudgetItem.Name, &b.BudgetItem.Level, &b.BudgetItem.Accumulate,
+			&b.InitialQuantity, &b.InitialCost, &b.InitialTotal,
+			&b.SpentQuantity, &b.SpentTotal,
+			&b.RemainingQuantity, &b.RemainingCost, &b.RemainingTotal,
+			&b.UpdatedBudget, &b.CompanyId,
+		); err != nil {
+			return nil
+		}
+		budgets = append(budgets, b)
+	}
+
+	return budgets
 }
