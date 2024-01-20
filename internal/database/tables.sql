@@ -231,22 +231,6 @@ select distinct
 from budget_item
 order by level;
 
-
-create or replace view vw_invoice_details as 
-select
-    id.invoice_id,
-    i.invoice_total as invoice_total,
-    id.budget_item_id,
-    b.code as budget_item_code,
-    b.name as budget_item_name,
-    id.quantity,
-    id.cost,
-    id.total,
-    id.company_id
-from invoice_details id
-join budget_item b on id.budget_item_id = b.id
-join invoice i on id.invoice_id = i.id;
-
 create or replace view vw_historic as
 select
     b.date as date,
