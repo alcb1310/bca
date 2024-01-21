@@ -45,7 +45,15 @@ func InvoiceView() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div><div id=\"invoice-table\" hx-target=\"this\" hx-swap=\"innerHTML\" hx-trigger=\"load\" hx-get=\"/bca/partials/invoices\"></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div><div style=\"position:relative\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Spinner().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"invoice-table\" hx-target=\"this\" hx-swap=\"innerHTML\" hx-trigger=\"load\" hx-get=\"/bca/partials/invoices\" hx-indicator=\"#indicator\"></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
