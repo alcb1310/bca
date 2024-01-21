@@ -261,7 +261,7 @@ from historic as b
 join project as p on b.project_id = p.id
 join budget_item as bi on b.budget_item_id = bi.id;
 
-drop view vw_invoice_details;
+drop view if exists vw_invoice_details;
 
 create or replace view vw_invoice_details as 
 select
