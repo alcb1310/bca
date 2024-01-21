@@ -294,6 +294,18 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	switch r.Method {
+	case http.MethodPatch:
+		if err := s.DB.BalanceInvoice(in); err != nil {
+			log.Printf("error updating invoice: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
+
+		comp := partials.BudgetRow(in)
+		comp.Render(r.Context(), w)
+		return
+
 	case http.MethodPut:
 		r.ParseForm()
 		sId, _ := uuid.Parse(r.Form.Get("supplier"))
