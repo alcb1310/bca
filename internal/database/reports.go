@@ -14,7 +14,7 @@ func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) typ
 	query := `
 	select id, supplier_id, supplier_number, supplier_name, supplier_contact_name, supplier_contact_email, 
 	supplier_contact_phone, project_id, project_name, project_is_active, invoice_number, invoice_date, invoice_total,
-	company_id
+	company_id, is_balanced
 	from vw_invoice
 	where extract(year from invoice_date) = $1 and extract(month from invoice_date) = $2 and company_id = $3
 	and project_id = $4
@@ -46,6 +46,7 @@ func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) typ
 			&i.InvoiceDate,
 			&i.InvoiceTotal,
 			&i.CompanyId,
+			&i.IsBalanced,
 		); err != nil {
 			log.Println("Error in scan", err)
 			return types.BalanceResponse{}

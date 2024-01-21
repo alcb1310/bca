@@ -118,6 +118,8 @@ create table if not exists invoice (
      unique (supplier_id, project_id, invoice_number, company_id)
 );
 
+alter table invoice add column if not exists is_balanced boolean not null default false;
+
 create table if not exists invoice_details (
      invoice_id uuid not null references invoice (id) on delete restrict,
      budget_item_id uuid not null references budget_item (id) on delete restrict,
@@ -196,6 +198,9 @@ from budget as b
 join project as p on b.project_id = p.id
 join budget_item as bi on b.budget_item_id = bi.id;
 
+
+drop view vw_invoice;
+
 create or replace view vw_invoice as
 select
      i.id,
@@ -211,6 +216,7 @@ select
      i.invoice_number,
      i.invoice_date,
      i.invoice_total,
+     i.is_balanced,
      i.company_id as company_id
 from invoice i
 join supplier s on i.supplier_id = s.id

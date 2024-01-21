@@ -12,16 +12,16 @@ func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, err
 		 select
 			  id, supplier_id, supplier_number, supplier_name, supplier_contact_name, supplier_contact_email, supplier_contact_phone,
 			  project_id, project_name, project_is_active,
-			  invoice_number, invoice_date, invoice_total
+			  invoice_number, invoice_date, invoice_total, is_balanced
 		 from
 			   vw_invoice
 		 where
-			   company_id = $1
+			   company_id = $1 and is_balanced = $2
 		 order by
 			   invoice_date desc, supplier_name, invoice_number
 	`
 
-	rows, err := s.db.Query(query, companyId)
+	rows, err := s.db.Query(query, companyId, false)
 	if err != nil {
 		return invoices, err
 	}
@@ -43,6 +43,7 @@ func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, err
 			&invoice.InvoiceNumber,
 			&invoice.InvoiceDate,
 			&invoice.InvoiceTotal,
+			&invoice.IsBalanced,
 		); err != nil {
 			return invoices, err
 		}
@@ -67,7 +68,7 @@ func (s *service) GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceRe
 		 select
 			  id, supplier_id, supplier_number, supplier_name, supplier_contact_name, supplier_contact_email, supplier_contact_phone,
 			  project_id, project_name, project_is_active,
-			  invoice_number, invoice_date, invoice_total
+			  invoice_number, invoice_date, invoice_total, is_balanced
 		 from
 			   vw_invoice
 		 where
@@ -76,7 +77,7 @@ func (s *service) GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceRe
 	err := s.db.QueryRow(query, companyId, invoiceId).Scan(
 		&i.Id, &i.Supplier.ID, &i.Supplier.SupplierId, &i.Supplier.Name, &i.Supplier.ContactName, &i.Supplier.ContactEmail, &i.Supplier.ContactPhone,
 		&i.Project.ID, &i.Project.Name, &i.Project.IsActive,
-		&i.InvoiceNumber, &i.InvoiceDate, &i.InvoiceTotal,
+		&i.InvoiceNumber, &i.InvoiceDate, &i.InvoiceTotal, &i.IsBalanced,
 	)
 	i.CompanyId = companyId
 	i.Supplier.CompanyId = companyId
@@ -102,5 +103,15 @@ func (s *service) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
 		where id = $1 and company_id = $2
 	`
 	_, err := s.db.Exec(query, invoiceId, companyId)
+	return err
+}
+
+func (s *service) BalanceInvoice(invoice types.InvoiceResponse) error {
+	query := `
+		update invoice
+		set is_balanced = $3 
+		where id = $1 and company_id = $2
+	`
+	_, err := s.db.Exec(query, invoice.Id, invoice.CompanyId, true)
 	return err
 }

@@ -16,12 +16,16 @@ templ InvoiceView() {
 				Agregar
 			</a>
 		</div>
-		<div
-			id="invoice-table"
-			hx-target="this"
-			hx-swap="innerHTML"
-			hx-trigger="load"
-			hx-get="/bca/partials/invoices"
-		></div>
+		<div style="position:relative">
+			@components.Spinner()
+			<div
+				id="invoice-table"
+				hx-target="this"
+				hx-swap="innerHTML"
+				hx-trigger="load"
+				hx-get="/bca/partials/invoices"
+				hx-indicator="#indicator"
+			></div>
+		</div>
 	}
 }

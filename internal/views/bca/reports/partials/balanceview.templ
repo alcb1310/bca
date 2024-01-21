@@ -10,6 +10,10 @@ css highlight() {
 	padding-left: 2rem;
 }
 
+func saveURL(id string) string {
+	return "/bca/partials/invoices/" + id
+}
+
 templ BalanceView(invoices types.BalanceResponse) {
 	<table style="margin-top: 0.5rem;">
 		<caption style="text-align: left;">Total gastado: <span class={ highlight() }>{ utils.PrintFloat(invoices.Total) }</span></caption>
@@ -25,7 +29,11 @@ templ BalanceView(invoices types.BalanceResponse) {
 		<tbody>
 			for _, invoice := range invoices.Invoices {
 				<tr>
-					<td align="center"><input type="checkbox"/></td>
+					if invoice.IsBalanced {
+						<td><input type="checkbox" checked disabled/></td>
+					} else {
+						<td align="center"><input type="checkbox" hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) } hx-target="closest tr" hx-swap="outerHTML"/></td>
+					}
 					<td align="center">{ utils.ConvertDate(invoice.InvoiceDate) }</td>
 					<td>{ invoice.Supplier.Name }</td>
 					<td>{ invoice.InvoiceNumber }</td>
