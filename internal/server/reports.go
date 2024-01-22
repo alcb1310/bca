@@ -4,7 +4,6 @@ import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/views/bca/reports"
 	"bca-go-final/internal/views/bca/reports/partials"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -100,7 +99,6 @@ func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := getMyPaload(r)
-
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
 	projects := []types.Select{}
 	for _, v := range p {
@@ -119,7 +117,30 @@ func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
 		l, _ := strconv.ParseUint(r.URL.Query().Get("nivel"), 10, 64)
 		nivel := uint8(l)
 
-		w.Write([]byte(fmt.Sprintf("Project Id: %s<br>Date: %s<br>Level: %d", parsedProjectId.String(), date.Format("2006-01-02"), nivel)))
+		budgetItems := s.DB.GetBudgetItemsByLevel(ctx.CompanyId, nivel)
+		reportData := []types.Spent{}
+		var grandTotal float64 = 0
+
+		for _, bi := range budgetItems {
+			x := []types.BudgetItem{bi}
+			res := []uuid.UUID{}
+			res = s.DB.GetNonAccumulateChildren(&ctx.CompanyId, &parsedProjectId, x, res)
+
+			total := s.DB.GetSpentByBudgetItem(ctx.CompanyId, parsedProjectId, bi.ID, date, res)
+			grandTotal += total
+			if total > 0 {
+				reportData = append(reportData, types.Spent{
+					Spent:      total,
+					BudgetItem: bi,
+				})
+			}
+		}
+
+		component := partials.SpentView(types.SpentResponse{
+			Spent: reportData,
+			Total: grandTotal,
+		})
+		component.Render(r.Context(), w)
 		return
 	}
 

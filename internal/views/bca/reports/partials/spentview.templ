@@ -1,0 +1,31 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+
+templ SpentView(data types.SpentResponse) {
+	<table>
+		<thead>
+			<tr>
+				<th width="100px">Código</th>
+				<th width="380px">Nombre</th>
+				<th width="130px">Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, spent := range data.Spent {
+				<tr>
+					<td>{ spent.BudgetItem.Code }</td>
+					<td>{ spent.BudgetItem.Name }</td>
+					<td align="right">{ utils.PrintFloat(spent.Spent) }</td>
+				</tr>
+			}
+			<tfoot>
+				<tr>
+					<td colspan="2">Total</td>
+					<td align="right">{ utils.PrintFloat(data.Total) }</td>
+				</tr>
+			</tfoot>
+		</tbody>
+	</table>
+}

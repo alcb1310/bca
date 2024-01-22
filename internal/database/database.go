@@ -52,6 +52,8 @@ type Service interface {
 	GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.BudgetItem, error)
 	UpdateBudgetItem(bi *types.BudgetItem) error
 	GetBudgetItemsByAccumulate(companyId uuid.UUID, accum bool) []types.BudgetItem
+	GetBudgetItemsByLevel(companyId uuid.UUID, level uint8) []types.BudgetItem
+	GetNonAccumulateChildren(companyId, id *uuid.UUID, budgetItems []types.BudgetItem, results []uuid.UUID) []uuid.UUID
 
 	// database/budget.go
 	GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error)
@@ -76,6 +78,7 @@ type Service interface {
 	// database/reports.go
 	GetBalance(companyId, projectId uuid.UUID, date time.Time) types.BalanceResponse
 	GetHistoricByProject(companyId, projectId uuid.UUID, date time.Time, level uint8) []types.GetBudget
+	GetSpentByBudgetItem(companyId, projectId, budgetItemId uuid.UUID, date time.Time, ids []uuid.UUID) float64
 }
 
 type service struct {
