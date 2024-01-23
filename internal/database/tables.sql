@@ -48,6 +48,9 @@ create table if not exists project (
     unique (name, company_id)
 );
 
+alter table project add column if not exists gross_area numeric not null default 0;
+alter table project add column if not exists net_area numeric not null default 0;
+
 create table if not exists supplier (
     id uuid primary key default gen_random_uuid(),
     supplier_id text not null,
