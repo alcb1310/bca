@@ -80,6 +80,9 @@ type Service interface {
 	GetHistoricByProject(companyId, projectId uuid.UUID, date time.Time, level uint8) []types.GetBudget
 	GetSpentByBudgetItem(companyId, projectId, budgetItemId uuid.UUID, date time.Time, ids []uuid.UUID) float64
 	GetDetailsByBudgetItem(companyId, projectId, budgetItemId uuid.UUID, date time.Time, ids []uuid.UUID) []types.InvoiceDetails
+
+	// database/closure.go
+	CreateClosure(companyId, projectId uuid.UUID, date time.Time) error
 }
 
 type service struct {
