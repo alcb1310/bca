@@ -32,6 +32,11 @@ templ SpentDetails(invoiceDetails []types.InvoiceDetails) {
 			}
 		</tbody>
 	</table>
+	<button
+		type="button"
+		class="btn"
+		_="on click resetClose()"
+	>Cerrar</button>
 	<script>
         function resetClose() {
              closeDrawer()         
