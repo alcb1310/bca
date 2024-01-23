@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"log"
 
 	"github.com/google/uuid"
 )
@@ -30,8 +29,6 @@ func (s *service) CreateCompany(company *types.CompanyCreate) error {
 	if err := tx.QueryRowContext(ctx, sql).Scan(&role); err != nil {
 		return err
 	}
-	log.Println("Role id: ", role)
-
 	sql = "insert into \"user\" (name, email, password, company_id, role_id) values ($1, $2, $3, $4, $5)"
 	pass, err := utils.EncryptPasssword(company.Password)
 	if err != nil {
