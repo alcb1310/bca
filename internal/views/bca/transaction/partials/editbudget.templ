@@ -33,8 +33,8 @@ templ EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Selec
 			if budget == nil {
 				<div>
 					@components.DrawerTitle("Agregar Presupuesto")
-					@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "")
-					@components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", "")
+					@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "", "Proyecto")
+					@components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", "", "Proveedor")
 					@components.Input("text", "Cantidad", "quantity", "quantity", "")
 					@components.Input("text", "Unitario", "cost", "cost", "")
 					@components.Input("text", "Total", "total", "total", "0.00")
@@ -42,8 +42,8 @@ templ EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Selec
 			} else {
 				<div>
 					@components.DrawerTitle("Editar Presupuesto")
-					@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budget.ProjectId.String())
-					@components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budget.BudgetItemId.String())
+					@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budget.ProjectId.String(), "Proyecto")
+					@components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budget.BudgetItemId.String(), "Proveedor")
 					@components.Input("text", "Cantidad", "quantity", "quantity", fmt.Sprintf("%f", budget.Quantity))
 					@components.Input("text", "Unitario", "cost", "cost", fmt.Sprintf("%f", budget.Cost))
 					@components.Input("text", "Total", "total", "total", fmt.Sprintf("%.2f", budget.Quantity * budget.Cost))

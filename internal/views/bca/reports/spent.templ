@@ -14,8 +14,8 @@ templ SpentView(projects, levels []types.Select) {
 			hx-swap="innerHTML"
 			hx-push-url="true"
 		>
-			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "")
-			@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "")
+			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto")
+			@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "", "Nivel")
 			@components.Input("date", "Fecha", "fecha", "fecha", "")
 			<div class={ buttonGroup() }>
 				<button type="submit" class="btn">Generar</button>

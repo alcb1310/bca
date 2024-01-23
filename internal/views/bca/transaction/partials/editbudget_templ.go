@@ -98,11 +98,11 @@ func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "", "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", "", "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -131,11 +131,11 @@ func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budget.ProjectId.String()).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budget.ProjectId.String(), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budget.BudgetItemId.String()).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budget.BudgetItemId.String(), "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

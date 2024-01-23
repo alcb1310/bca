@@ -21,7 +21,7 @@ templ BalanceView(projects []types.Select) {
 			hx-swap="innerHTML"
 			hx-push-url="false"
 		>
-			@components.SelectComponent(projects, "Proyecto", "project", "project", "")
+			@components.SelectComponent(projects, "Proyecto", "project", "project", "", "Proyecto")
 			@components.Input("date", "Fecha", "date", "date", "")
 			<div class={ buttonGroup() }>
 				<button

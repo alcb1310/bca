@@ -77,7 +77,7 @@ func EditDetails(budgetItems []types.Select, invoiceId string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "item", "item", "").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "item", "item", "", "Partida").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

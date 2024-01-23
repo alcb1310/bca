@@ -41,11 +41,11 @@ func SpentView(projects, levels []types.Select) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "", "Nivel").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

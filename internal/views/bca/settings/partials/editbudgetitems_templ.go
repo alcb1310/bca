@@ -108,7 +108,7 @@ func EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) tem
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "", "Partida").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -146,12 +146,12 @@ func EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) tem
 				return templ_7745c5c3_Err
 			}
 			if budgetItem.ParentId == nil {
-				templ_7745c5c3_Err = components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "", "Partida").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", budgetItem.ParentId.String()).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", budgetItem.ParentId.String(), "Partida").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

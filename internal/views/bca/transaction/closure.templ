@@ -13,7 +13,7 @@ templ ClosureView(projects []types.Select) {
 			hx-confirm="¿Esta seguro de realizar el cierre?"
 			hx-push-url="true"
 		>
-			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "")
+			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto")
 			@components.Input("date", "Fecha", "date", "date", "")
 			<button type="submit" class="btn">Cierre</button>
 		</form>

@@ -54,7 +54,7 @@ func BalanceView(projects []types.Select) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(projects, "Proyecto", "project", "project", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectComponent(projects, "Proyecto", "project", "project", "", "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

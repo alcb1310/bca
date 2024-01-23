@@ -130,7 +130,7 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 				return templ_7745c5c3_Err
 			}
 			if invoice == nil {
-				templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "", "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -138,7 +138,7 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", "").Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", "", "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -159,7 +159,7 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoice.Project.ID.String()).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoice.Project.ID.String(), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -167,7 +167,7 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoice.Supplier.ID.String()).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoice.Supplier.ID.String(), "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
