@@ -27,6 +27,8 @@ func drawer() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder.WriteString(`height:calc(100vh - 15px);`)
 	templ_7745c5c3_CSSBuilder.WriteString(`transition:display 3s ease-in-out;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`padding:0.5rem 1rem;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`overflow-y:auto;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`overflow-x:hidden;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`drawer`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{
 		ID:    templ_7745c5c3_CSSID,
