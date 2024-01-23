@@ -2,14 +2,17 @@ package server
 
 import (
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/reports"
 	"bca-go-final/internal/views/bca/reports/partials"
+	"context"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 )
 
 func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
@@ -136,11 +139,14 @@ func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		nCtx := context.WithValue(r.Context(), "date", utils.ConvertDate(date))
+
 		component := partials.SpentView(types.SpentResponse{
-			Spent: reportData,
-			Total: grandTotal,
+			Spent:   reportData,
+			Total:   grandTotal,
+			Project: parsedProjectId,
 		})
-		component.Render(r.Context(), w)
+		component.Render(nCtx, w)
 		return
 	}
 
@@ -171,5 +177,38 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 
 	budgets, err := s.DB.GetBudgetsByProjectId(ctx.CompanyId, projectId, &level)
 	component := partials.BudgetView(budgets)
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := getMyPaload(r)
+	id := mux.Vars(r)["budgetItemId"]
+	budgetItemId, err := uuid.Parse(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	pId := mux.Vars(r)["projectId"]
+	parsedProjectId, err := uuid.Parse(pId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	d := mux.Vars(r)["date"]
+	date, _ := time.Parse("2006-01-02", d)
+
+	budgetItem, _ := s.DB.GetOneBudgetItem(budgetItemId, ctx.CompanyId)
+
+	x := []types.BudgetItem{*budgetItem}
+	var res []uuid.UUID
+	res = s.DB.GetNonAccumulateChildren(&ctx.CompanyId, &parsedProjectId, x, res)
+
+	spent := s.DB.GetDetailsByBudgetItem(ctx.CompanyId, parsedProjectId, budgetItemId, date, res)
+
+	component := partials.SpentDetails(spent)
 	component.Render(r.Context(), w)
 }

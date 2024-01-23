@@ -1,0 +1,40 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+import "bca-go-final/internal/views/components"
+
+css tableReport() {
+	font-size: 0.8rem;
+}
+
+templ SpentDetails(invoiceDetails []types.InvoiceDetails) {
+	<div>
+		@components.DrawerTitle("Facturas")
+	</div>
+	<table class={ tableReport() }>
+		<thead>
+			<tr>
+				<th width="90px">Fecha</th>
+				<th width="180px">Proveedor</th>
+				<th width="120px">Factura</th>
+				<th width="90px">Monto</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, invoice := range invoiceDetails {
+				<tr>
+					<td>{ utils.ConvertDate(invoice.InvoiceDate) }</td>
+					<td>{ invoice.SupplierName }</td>
+					<td>{ invoice.InvoiceNumber }</td>
+					<td align="right">{ utils.PrintFloat(invoice.Total) }</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<script>
+        function resetClose() {
+             closeDrawer()         
+        }
+    </script>
+}

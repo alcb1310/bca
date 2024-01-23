@@ -1,5 +1,7 @@
 package types
 
+import "github.com/google/uuid"
+
 type BalanceResponse struct {
 	Invoices []InvoiceResponse
 	Total    float64
@@ -11,6 +13,7 @@ type Spent struct {
 }
 
 type SpentResponse struct {
-	Spent []Spent
-	Total float64
+	Spent   []Spent
+	Total   float64
+	Project uuid.UUID
 }
