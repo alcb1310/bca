@@ -13,6 +13,7 @@ import "strings"
 
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
 
 func buttondown() templ.CSSClass {
 	var templ_7745c5c3_CSSBuilder strings.Builder
@@ -109,6 +110,22 @@ func EditProject(project *types.Project) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("text", "Area Bruta", "gross_area", "gross_area", "").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("text", "Area Util", "net_area", "net_area", "").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		} else {
 			templ_7745c5c3_Err = components.DrawerTitle("Editar Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -127,6 +144,22 @@ func EditProject(project *types.Project) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = components.CheckBoxComponent("active", "active", "Activo", *project.IsActive).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("text", "Area Bruta", "gross_area", "gross_area", utils.PrintFloat(project.GrossArea)).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("text", "Area Util", "net_area", "net_area", utils.PrintFloat(project.NetArea)).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
