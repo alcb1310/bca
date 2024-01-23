@@ -268,6 +268,7 @@ select
     id.invoice_id,
     i.invoice_number,
     i.invoice_total as invoice_total,
+    i.invoice_date as invoice_date,
     p.id as project_id,
     p.name as project_name,
     s.id as supplier_id,

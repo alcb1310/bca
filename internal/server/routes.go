@@ -34,6 +34,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/reportes/cuadre", s.Balance)
 	r.HandleFunc("/bca/reportes/historico", s.Historic)
 	r.HandleFunc("/bca/reportes/gastado", s.Spent)
+	r.HandleFunc("/bca/reportes/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem)
 
 	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems)
 	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers)

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) types.BalanceResponse {
@@ -98,4 +99,52 @@ func (s *service) GetHistoricByProject(companyId, projectId uuid.UUID, date time
 	}
 
 	return budgets
+}
+
+func (s *service) GetSpentByBudgetItem(companyId, projectId, budgetItemId uuid.UUID, date time.Time, ids []uuid.UUID) float64 {
+	query := `
+	    select sum(total)
+		from vw_invoice_details where company_id=$1 and extract(year from invoice_date)=$2 and
+		extract(month from invoice_date)=$3 and project_id=$4 and budget_item_id=any($5)
+	`
+	var total *float64
+	s.db.QueryRow(query, companyId, date.Year(), date.Month(), projectId, pq.Array(ids)).Scan(&total)
+	if total == nil {
+		return 0
+	}
+
+	return *total
+}
+
+func (s *service) GetDetailsByBudgetItem(companyId, projectId, budgetItemId uuid.UUID, date time.Time, ids []uuid.UUID) []types.InvoiceDetails {
+	query := `
+	    select invoice_id, invoice_number, invoice_total, invoice_date, project_id, project_name, supplier_id, supplier_number,
+		supplier_name, budget_item_id, budget_item_name, budget_item_code, budget_item_level, quantity, cost, total, company_id
+		from vw_invoice_details where company_id=$1 and extract(year from invoice_date)=$2 and
+		extract(month from invoice_date)=$3 and project_id=$4 and budget_item_id=any($5)
+	`
+	row, err := s.db.Query(query, companyId, date.Year(), date.Month(), projectId, pq.Array(ids))
+	if err != nil {
+		log.Println("Error in query", err)
+		return []types.InvoiceDetails{}
+	}
+	defer row.Close()
+
+	returnInvoiceDetails := []types.InvoiceDetails{}
+
+	for row.Next() {
+		i := types.InvoiceDetails{}
+
+		if err := row.Scan(
+			&i.InvoiceId, &i.InvoiceNumber, &i.InvoiceTotal, &i.InvoiceDate, &i.ProjectId, &i.ProjectName, &i.SupplierId, &i.SupplierNumber,
+			&i.SupplierName, &i.BudgetItemId, &i.BudgetItemName, &i.BudgetItemCode, &i.BudgetItemLevel, &i.Quantity, &i.Cost, &i.Total, &i.CompanyId,
+		); err != nil {
+			log.Println("Error in scan", err)
+			return []types.InvoiceDetails{}
+		}
+		returnInvoiceDetails = append(returnInvoiceDetails, i)
+
+	}
+
+	return returnInvoiceDetails
 }

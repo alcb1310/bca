@@ -1,0 +1,47 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+
+func displayURL(budgetItemId, projectId, date string) string {
+	return "/bca/reportes/gastado/" + projectId + "/" + budgetItemId + "/" + date
+}
+
+templ SpentView(data types.SpentResponse) {
+	<table>
+		<thead>
+			<tr>
+				<th width="100px">Código</th>
+				<th width="380px">Nombre</th>
+				<th width="130px">Total</th>
+				<td width="50px"></td>
+			</tr>
+		</thead>
+		<tbody>
+			for _, spent := range data.Spent {
+				<tr>
+					<td>{ spent.BudgetItem.Code }</td>
+					<td>{ spent.BudgetItem.Name }</td>
+					<td align="right">{ utils.PrintFloat(spent.Spent) }</td>
+					<td align="center">
+						<i
+							class="fa-regular fa-eye"
+							hx-get={ displayURL(spent.BudgetItem.ID.String(), data.Project.String(), ctx.Value("date").(string)) }
+							hx-target="#drawer"
+							hx-swap="innerHTML"
+							hx-trigger="click"
+							_="on click openDrawer()"
+						></i>
+					</td>
+				</tr>
+			}
+			<tfoot>
+				<tr>
+					<td colspan="2">Total</td>
+					<td align="right">{ utils.PrintFloat(data.Total) }</td>
+					<td></td>
+				</tr>
+			</tfoot>
+		</tbody>
+	</table>
+}

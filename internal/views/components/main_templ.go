@@ -26,6 +26,9 @@ func main() templ.CSSClass {
 func maincontent() templ.CSSClass {
 	var templ_7745c5c3_CSSBuilder strings.Builder
 	templ_7745c5c3_CSSBuilder.WriteString(`padding:1.5rem;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`height:calc(100vh - 7rem);`)
+	templ_7745c5c3_CSSBuilder.WriteString(`overflow-y:auto;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`overflow-x:hidden;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`maincontent`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{
 		ID:    templ_7745c5c3_CSSID,
