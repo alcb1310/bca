@@ -5,7 +5,6 @@ all: build
 
 build:
 	@echo "Building..."
-	@npx tailwindcss -i ./internal/views/css/input.css -o ./public/css/output.css
 	@go build -o out cmd/api/main.go
 
 # Run the application
