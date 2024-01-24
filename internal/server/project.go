@@ -5,12 +5,14 @@ import (
 	"bca-go-final/internal/views/bca/settings/partials"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
 
 func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
+	var err error
 	ctxPayload, _ := getMyPaload(r)
 
 	if r.Method == http.MethodPost {
@@ -25,6 +27,22 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 			log.Println("name cannot be empty")
 			return
+		}
+		if r.Form.Get("gross_area") != "" {
+			p.GrossArea, err = strconv.ParseFloat(r.Form.Get("gross_area"), 64)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				log.Println(err)
+				return
+			}
+		}
+		if r.Form.Get("net_area") != "" {
+			p.NetArea, err = strconv.ParseFloat(r.Form.Get("net_area"), 64)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				log.Println(err)
+				return
+			}
 		}
 		_, err := s.DB.CreateProject(p)
 		if err != nil {
@@ -45,6 +63,7 @@ func (s *Server) ProjectAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
+	var err error
 	ctx, _ := getMyPaload(r)
 	id := mux.Vars(r)["id"]
 	parsedId, _ := uuid.Parse(id)
@@ -56,6 +75,24 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 	}
 	x := r.Form.Get("active") == "active"
 	p.IsActive = &x
+
+	if r.Form.Get("gross_area") != "" {
+		p.GrossArea, err = strconv.ParseFloat(r.Form.Get("gross_area"), 64)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			log.Println(err)
+			return
+		}
+	}
+
+	if r.Form.Get("net_area") != "" {
+		p.NetArea, err = strconv.ParseFloat(r.Form.Get("net_area"), 64)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			log.Println(err)
+			return
+		}
+	}
 
 	if err := s.DB.UpdateProject(p, parsedId, ctx.CompanyId); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

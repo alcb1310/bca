@@ -19,8 +19,8 @@ templ ActualView(projects, levels []types.Select) {
 			hx-get="/bca/reportes/actual/generar"
 			hx-push-url="true"
 		>
-			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "")
-			@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "")
+			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto")
+			@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "", "Nivel")
 			<div class={ buttonGroup() }>
 				<button
 					type="submit"

@@ -39,13 +39,13 @@ templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Se
 			<div class={ buttondown() }>
 				<div class={ container() }>
 					if invoice == nil {
-						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "")
-						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", "")
+						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "", "Proyecto")
+						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", "", "Proveedor")
 						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", "")
 						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", "")
 					} else {
-						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoice.Project.ID.String())
-						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoice.Supplier.ID.String())
+						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoice.Project.ID.String(), "Proyecto")
+						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoice.Supplier.ID.String(), "Proveedor")
 						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoice.InvoiceNumber)
 						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", utils.ConvertDate(invoice.InvoiceDate))
 						@components.Input("text", "Total", "total", "total", "")

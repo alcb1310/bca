@@ -24,7 +24,7 @@ templ EditDetails(budgetItems []types.Select, invoiceId string) {
 		<div class={ buttondown() }>
 			<div>
 				@components.DrawerTitle("Agregar Detalles")
-				@components.SelectComponent(budgetItems, "Seleccione una Partida", "item", "item", "")
+				@components.SelectComponent(budgetItems, "Seleccione una Partida", "item", "item", "", "Partida")
 				@components.Input("text", "Cantidad", "quantity", "quantity", "")
 				@components.Input("text", "Costo", "cost", "cost", "")
 				@components.Input("text", "Total", "detailtotal", "detailtotal", "")

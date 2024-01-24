@@ -7,4 +7,6 @@ type Project struct {
 	Name      string    `json:"name"`
 	IsActive  *bool     `json:"is_active"`
 	CompanyId uuid.UUID `json:"company_id"`
+	GrossArea float64   `json:"gross_area"`
+	NetArea   float64   `json:"net_area"`
 }
