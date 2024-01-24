@@ -1,62 +1,76 @@
 package components
 
-css sidebar() {
-	background-color: var(--blue-gray-900);
-	padding: 1.5rem 3rem 1.5rem 1.5rem;
-	position: relative;
-	top: 0;
-	min-height: calc(100vh - 7rem);
-	display: flex;
-	flex-direction: column;
-	gap: 4rem;
-}
-
-css sidebarlist() {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-	font-size: 0.875rem;
-}
-
-css menuheading() {
-	color: var(--blue-gray-200);
-	font-size: 0.8125rem;
-	text-transform: uppercase;
-	font-weight: bold;
-	letter-spacing: 1px;
-	padding: 0.75rem 0;
-}
-
-css menulink() {
-	color: var(--blue-gray-300);
-	display: flex;
-	padding: 0.75rem 0;
-	gap: 0.75rem;
-	align-items: center;
-	text-decoration: none;
-}
-
-css activelink() {
-	color: var(--blue-gray-100);
-}
-
 templ SidebarComponent(active string) {
-	<div class={ sidebar() }>
+	<div class={ "relative flex flex-col py-6 pl-12 pr-6 top-0 w-fit gap-16 bg-blue-gray-900 overflow-y-auto overflow-x-hidden", maincontent() }>
 		<nav id="sidebar_nav">
-			<ul class={ sidebarlist() }>
-				<li class={ menuheading() }><span>Transacciones</span></li>
-				<li><a href="/bca/transacciones/presupuesto" class={ "menulink",menulink(), templ.KV(activelink(), active == "presupuesto") }><i class="fa-solid fa-sack-dollar"></i><span>Presupuesto</span></a></li>
-				<li><a href="/bca/transacciones/facturas" class={ "menulink", menulink(), templ.KV(activelink(), active == "facturas") }><i class="fa-regular fa-file-lines"></i><span>Facturas</span></a></li>
-				<li><a href="/bca/transacciones/cierre" class={ "menulink", menulink(), templ.KV(activelink(), active == "cierre") }><i class="fa-solid fa-landmark"></i><span>Cierre Mensual</span></a></li>
-				<li class={ menuheading() }><span>Reportes</span></li>
-				<li><a href="/bca/reportes/actual" class={ "menulink", menulink(), templ.KV(activelink(), active == "actual") }><i class="fa-regular fa-chart-bar"></i><span>Actual</span></a></li>
-				<li><a href="/bca/reportes/cuadre" class={ "menulink", menulink(), templ.KV(activelink(), active == "cuadre") }><i class="fa-solid fa-scale-balanced"></i><span>Cuadre</span></a></li>
-				<li><a href="/bca/reportes/historico" class={ "menulink", menulink(), templ.KV(activelink(), active == "historico") }><i class="fa-solid fa-clock-rotate-left"></i><span>Hist&oacuterico</span></a></li>
-				<li><a href="/bca/reportes/gastado" class={ "menulink", menulink(), templ.KV(activelink(), active == "gastado") }><i class="fa-solid fa-comments-dollar"></i><span>Gastado por Partida</span></a></li>
-				<li class={ menuheading() }><span>Par&aacute;metros</span></li>
-				<li><a href="/bca/configuracion/partidas" class={ "menulink", menulink(), templ.KV(activelink(), active == "partida") }><i class="fa-solid fa-timeline"></i><span>Partidas</span></a></li>
-				<li><a href="/bca/configuracion/proveedores" class={ "menulink", menulink(), templ.KV(activelink(), active == "proveedor") }><i class="fa-solid fa-users-line"></i><span>Proveedores</span></a></li>
-				<li><a href="/bca/configuracion/proyectos" class={ "menulink", menulink(), templ.KV(activelink(), active == "proyecto") }><i class="fa-solid fa-people-roof"></i><span>Proyectos</span></a></li>
+			<ul class="m-0 p-0 list-none text-sm">
+				<li class="py-3 px-0 text-blue-gray-300 text-xs uppercase font-bold tracking-wider"><span>Transacciones</span></li>
+				<li>
+					<a
+						href="/bca/transacciones/presupuesto"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "presupuesto"), templ.KV("text-blue-gray-300", active != "presupuesto") }
+					><i class="fa-solid fa-sack-dollar"></i><span>Presupuesto</span></a>
+				</li>
+				<li>
+					<a
+						href="/bca/transacciones/facturas"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "facturas"), templ.KV("text-blue-gray-300", active != "facturas") }
+					><i class="fa-regular fa-file-lines"></i><span>Facturas</span></a>
+				</li>
+				<li>
+					<a
+						href="/bca/transacciones/cierre"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "cierre"), templ.KV("text-blue-gray-300", active != "cierre") }
+					><i class="fa-solid fa-landmark"></i><span>Cierre Mensual</span></a>
+				</li>
+				<li
+					class="py-3 px-0 text-blue-gray-300 text-xs uppercase font-bold tracking-wider"
+				><span>Reportes</span></li>
+				<li>
+					<a
+						href="/bca/reportes/actual"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "actual"), templ.KV("text-blue-gray-300", active != "actual") }
+					><i class="fa-regular fa-chart-bar"></i><span>Actual</span></a>
+				</li>
+				<li>
+					<a
+						href="/bca/reportes/cuadre"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "balance"), templ.KV("text-blue-gray-300", active != "balance") }
+					><i class="fa-solid fa-scale-balanced"></i><span>Cuadre</span></a>
+				</li>
+				<li>
+					<a
+						href="/bca/reportes/historico"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "historico"), templ.KV("text-blue-gray-300", active != "historico") }
+					><i class="fa-solid fa-clock-rotate-left"></i><span>Hist&oacuterico</span></a>
+				</li>
+				<li>
+					<a
+						href="/bca/reportes/gastado"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "gastado"), templ.KV("text-blue-gray-300", active != "gastado") }
+					><i class="fa-solid fa-comments-dollar"></i><span>Gastado por Partida</span></a>
+				</li>
+				<li
+					class="py-3 px-0 text-xs text-blue-gray-300 uppercase font-bold tracking-wider"
+				><span>Par&aacute;metros</span></li>
+				<li>
+					<a
+						href="/bca/configuracion/partidas"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "partida"), templ.KV("text-blue-gray-300", active != "partida") }
+					><i class="fa-solid fa-timeline"></i><span>Partidas</span></a>
+				</li>
+				<li>
+					<a
+						href="/bca/configuracion/proveedores"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "proveedor"), templ.KV("text-blue-gray-300", active != "proveedor") }
+					><i class="fa-solid fa-users-line"></i><span>Proveedores</span></a>
+				</li>
+				<li>
+					<a
+						href="/bca/configuracion/proyectos"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "proyecto"), templ.KV("text-blue-gray-300", active != "proyecto") }
+					><i class="fa-solid fa-people-roof"></i><span>Proyectos</span></a>
+				</li>
 			</ul>
 		</nav>
 	</div>
