@@ -59,7 +59,7 @@ func Input(t, p, i, n, v string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if v != "" {
+		if v != "" || t == "date" {
 			var templ_7745c5c3_Var2 = []any{labelStyle()}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 			if templ_7745c5c3_Err != nil {

@@ -21,7 +21,7 @@ css labelStyle() {
 
 templ Input(t, p, i, n, v string) {
 	<div style="position: relative;">
-		if v != "" {
+		if v != "" || t == "date" {
 			<label for={ i } class={ labelStyle() }>{ p }</label>
 		}
 		<input
