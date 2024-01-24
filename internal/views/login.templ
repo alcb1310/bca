@@ -2,35 +2,32 @@ package views
 
 import "bca-go-final/internal/views/base"
 
-css title() {
-	display: block;
-	text-align: center;
-	text-transform: uppercase;
-	font-size: 1.5rem;
-}
-
-css container() {
-	display: flex;
-	flex-direction: column;
-	width: 50%;
-	margin: 0 auto;
-}
-
 templ LoginView(err map[string]string) {
 	@base.Layout() {
-		if len(err) > 0 {
-			for k, v := range err {
-				<p>{ k }: { v }</p>
+		<div class="flex flex-col w-1/2 h-screen mx-auto gap-2 justify-center">
+			<h3 class="block text-center uppercase text-2xl">Login</h3>
+			if len(err) > 0 {
+				for k, v := range err {
+					<p>{ k }: { v }</p>
+				}
 			}
-		} else {
-			<p>No errors</p>
-		}
-		<div class={ container() }>
-			<h3 class={ title() }>Login</h3>
 			<form method="POST" action="/login">
-				<input type="email" name="email" placeholder="Email"/>
-				<input type="password" name="password" placeholder="Password"/>
-				<button class="btn" type="submit">Login</button>
+				<input
+					class="block my-2 w-full py-2 px-4 border border-blue-gray-700 rounded-lg text-blue-gray-700 bg-blue-gray-50"
+					type="email"
+					name="email"
+					placeholder="Email"
+				/>
+				<input
+					class="block my-2 w-full py-2 px-4 border border-blue-gray-700 rounded-lg text-blue-gray-700 bg-blue-gray-50"
+					type="password"
+					name="password"
+					placeholder="Password"
+				/>
+				<button
+					class="block my-2 py-2 px-4 w-full bg-green-700 text-green-50 hover:bg-green-800 border-green-700 hover:border-green-800 border rounded-lg uppercase text-sm font-extrabold no-underline tracking-wider"
+					type="submit"
+				>Login</button>
 			</form>
 		</div>
 	}
