@@ -100,7 +100,6 @@ func (s *service) AddDetail(detail types.InvoiceDetailCreate) error {
 }
 
 func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) error {
-	log.Println("Delete invoice detail")
 	var quantity, cost, total float64
 	query := "select quantity, cost, total from invoice_details where invoice_id = $1 and budget_item_id = $2 and company_id = $3"
 	if err := s.db.QueryRow(query, invoiceId, budgetItemId, companyId).Scan(&quantity, &cost, &total); err != nil {
@@ -150,8 +149,6 @@ func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) err
 		if parentId == nil || parentId == &uuid.Nil {
 			break
 		}
-		log.Println("Parent id: ", parentId)
-
 		query = `
 		update budget set spent_total = spent_total - $1, remaining_total = remaining_total + $1
 		where project_id = $2 and budget_item_id = $3 and company_id = $4

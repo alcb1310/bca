@@ -35,16 +35,16 @@ templ EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) {
 					@components.DrawerTitle("Agregar Partida")
 					@components.Input("text", "Código", "code", "code", "")
 					@components.Input("text", "Nombre", "name", "name", "")
-					@components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "")
+					@components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "", "Partida")
 					@components.CheckBoxComponent("accumulate", "accumulate", "Acumula", false)
 				} else {
 					@components.DrawerTitle("Editar Partida")
 					@components.Input("text", "Código", "code", "code", budgetItem.Code)
 					@components.Input("text", "Nombre", "name", "name", budgetItem.Name)
 					if budgetItem.ParentId == nil {
-						@components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "")
+						@components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "", "Partida")
 					} else {
-						@components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", budgetItem.ParentId.String())
+						@components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", budgetItem.ParentId.String(), "Partida")
 					}
 					@components.CheckBoxComponent("accumulate", "accumulate", "Acumula", *budgetItem.Accumulate)
 				}

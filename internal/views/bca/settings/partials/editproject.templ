@@ -2,6 +2,7 @@ package partials
 
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
 
 css buttondown() {
 	display: flex;
@@ -33,10 +34,14 @@ templ EditProject(project *types.Project) {
 					@components.DrawerTitle("Agregar Proyecto")
 					@components.Input("text", "Nombre", "name", "name", "")
 					@components.CheckBoxComponent("active", "active", "Activo", false)
+					@components.Input("text", "Area Bruta", "gross_area", "gross_area", "")
+					@components.Input("text", "Area Util", "net_area", "net_area", "")
 				} else {
 					@components.DrawerTitle("Editar Proyecto")
 					@components.Input("text", "Nombre", "name", "name", project.Name)
 					@components.CheckBoxComponent("active", "active", "Activo", *project.IsActive)
+					@components.Input("text", "Area Bruta", "gross_area", "gross_area", utils.PrintFloat(project.GrossArea))
+					@components.Input("text", "Area Util", "net_area", "net_area", utils.PrintFloat(project.NetArea))
 				}
 			</div>
 			@components.ButtonGroup()

@@ -8,13 +8,29 @@ css inputstyle() {
 	border: 1px solid var(--blue-gray-700);
 }
 
+css labelStyle() {
+	position: absolute;
+	display: block;
+	top: -0.4rem;
+	padding: 0.1rem 0.5rem;
+	left: 1rem;
+	font-size: 0.7rem;
+	background-color: var(--blue-gray-700);
+	color: var(--blue-gray-50);
+}
+
 templ Input(t, p, i, n, v string) {
-	<input
-		class={ inputstyle() }
-		type={ t }
-		placeholder={ p }
-		id={ i }
-		name={ n }
-		value={ v }
-	/>
+	<div style="position: relative;">
+		if v != "" || t == "date" {
+			<label for={ i } class={ labelStyle() }>{ p }</label>
+		}
+		<input
+			class={ inputstyle() }
+			type={ t }
+			placeholder={ p }
+			id={ i }
+			name={ n }
+			value={ v }
+		/>
+	</div>
 }

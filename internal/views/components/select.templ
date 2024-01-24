@@ -13,15 +13,18 @@ css selectStyle() {
 	border: 1px solid var(--blue-gray-700);
 }
 
-templ SelectComponent(items []types.Select, empty, name, id, selected string) {
-	<select name={ name } id={ id } class={ selectStyle() }>
-		<option value="">-- { empty } --</option>
-		for _, v := range items {
-			if v.Key == selected {
-				<option value={ v.Key } selected>{ v.Value }</option>
-			} else {
-				<option value={ v.Key }>{ v.Value }</option>
+templ SelectComponent(items []types.Select, empty, name, id, selected, label string) {
+	<div style="position: relative;">
+		<label class={ labelStyle() }>{ label }</label>
+		<select name={ name } id={ id } class={ selectStyle() }>
+			<option value="">-- { empty } --</option>
+			for _, v := range items {
+				if v.Key == selected {
+					<option value={ v.Key } selected>{ v.Value }</option>
+				} else {
+					<option value={ v.Key }>{ v.Value }</option>
+				}
 			}
-		}
-	</select>
+		</select>
+	</div>
 }
