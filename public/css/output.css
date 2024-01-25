@@ -662,6 +662,10 @@ i:disabled {
   left: 0px;
 }
 
+.left-4 {
+  left: 1rem;
+}
+
 .left-auto {
   left: auto;
 }
@@ -680,6 +684,10 @@ i:disabled {
 
 .top-12 {
   top: 3rem;
+}
+
+.top-\[-0\.4rem\] {
+  top: -0.4rem;
 }
 
 .z-10 {
@@ -702,6 +710,11 @@ i:disabled {
 .my-2 {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+.my-3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .block {
@@ -838,6 +851,11 @@ i:disabled {
   background-color: rgb(236 239 241 / var(--tw-bg-opacity));
 }
 
+.bg-blue-gray-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(69 90 100 / var(--tw-bg-opacity));
+}
+
 .bg-blue-gray-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(55 71 79 / var(--tw-bg-opacity));
@@ -868,6 +886,11 @@ i:disabled {
 .px-0 {
   padding-left: 0px;
   padding-right: 0px;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .px-4 {
@@ -908,6 +931,22 @@ i:disabled {
   padding-right: 1.5rem;
 }
 
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
+.pt-6 {
+  padding-top: 1.5rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+.pt-3 {
+  padding-top: 0.75rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -915,6 +954,10 @@ i:disabled {
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
+}
+
+.text-\[0\.5rem\] {
+  font-size: 0.5rem;
 }
 
 .text-sm {
@@ -925,6 +968,10 @@ i:disabled {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.text-\[0\.6rem\] {
+  font-size: 0.6rem;
 }
 
 .font-bold {
@@ -959,6 +1006,11 @@ i:disabled {
 .text-blue-gray-300 {
   --tw-text-opacity: 1;
   color: rgb(144 164 174 / var(--tw-text-opacity));
+}
+
+.text-blue-gray-50 {
+  --tw-text-opacity: 1;
+  color: rgb(236 239 241 / var(--tw-text-opacity));
 }
 
 .text-blue-gray-700 {

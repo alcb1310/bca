@@ -15,7 +15,9 @@ css selectStyle() {
 
 templ SelectComponent(items []types.Select, empty, name, id, selected, label string) {
 	<div style="position: relative;">
-		<label class={ labelStyle() }>{ label }</label>
+		<label
+			class="absolute block top-[-0.4rem] px-2 left-4 bg-blue-gray-700 text-blue-gray-50 rounded-lg text-[0.6rem]"
+		>{ label }</label>
 		<select name={ name } id={ id } class={ selectStyle() }>
 			<option value="">-- { empty } --</option>
 			for _, v := range items {
