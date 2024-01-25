@@ -871,6 +871,10 @@ video {
   letter-spacing: 0.05em;
 }
 
+.tracking-wide {
+  letter-spacing: 0.025em;
+}
+
 .text-blue-gray-100 {
   --tw-text-opacity: 1;
   color: rgb(207 216 220 / var(--tw-text-opacity));
@@ -904,6 +908,11 @@ video {
 .text-blue-gray-300 {
   --tw-text-opacity: 1;
   color: rgb(144 164 174 / var(--tw-text-opacity));
+}
+
+.text-green-300 {
+  --tw-text-opacity: 1;
+  color: rgb(134 239 172 / var(--tw-text-opacity));
 }
 
 .no-underline {
