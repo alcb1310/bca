@@ -24,7 +24,7 @@ templ Header() {
 			<p style="padding:0 0.8rem">
 				<a
 					href="/bca/user/perfil"
-					class="p-2 flex flex-col gap-2 no-underline color-blue-gray-900"
+					class="p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600"
 				>Mi Perfil</a>
 			</p>
 		</div>
@@ -32,13 +32,13 @@ templ Header() {
 			<p style="padding:0 0.8rem">
 				<a
 					href="/bca/user/admin"
-					class="p-2 flex flex-col gap-2 no-underline color-blue-gray-900"
+					class="p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600"
 				>Administrar</a>
 			</p>
 		</div>
 		<div id="change-password" class="contextmenu-item" style="padding:0 0.8rem">
 			<p
-				class="p-2 flex flex-col gap-2 no-underline color-blue-gray-900"
+				class="p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600"
 				hx-get="/bca/user/cambio"
 				hx-trigger="click"
 				hx-target="#drawer"

@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+     thead {
+          @apply bg-blue-gray-600 font-bold;
+     }
+
+     thead tr {
+          @apply uppercase text-sm text-blue-gray-100 font-bold tracking-wider leading-8;
+     }
+
+     tbody tr {
+          @apply hover:bg-blue-gray-100 hover:text-blue-gray-900 text-blue-gray-100;
+     }
+
+     i {
+          @apply disabled:opacity-50;
+     }
+}
+
+@layer components {
+     .btn {
+          @apply block my-2 py-2 px-4 bg-green-700 text-green-50 hover:bg-green-800 border-green-700 hover:border-green-800 border rounded-lg uppercase text-sm font-extrabold no-underline disabled:opacity-50;
+     }
+
+     .page-header {
+          @apply flex items-center justify-end;
+     }
+}

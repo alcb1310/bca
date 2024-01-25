@@ -32,7 +32,7 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a><ul class=\"m-0 p-0 flex items-center list-none gap-8\"><li id=\"user\"><a href=\"#\" class=\"text-blue-gray-100\"><i class=\"fa-regular fa-user\"></i></a></li><li><a href=\"#\" class=\"text-blue-gray-100\"><i class=\"fa-regular fa-circle-question\"></i></a></li><li><a href=\"#\" class=\"text-blue-gray-100\" hx-post=\"/bca/logout\" hx-trigger=\"click\" hx-push-url=\"true\" hx-trget=\"body\"><i class=\"fa-solid fa-arrow-right-from-bracket\"></i></a></li></ul></nav></header><div id=\"user-context\" class=\"hidden absolute z-10 bg-blue-gray-100 text-blue-gray-900 w-fit rounded-xl shadow right-12 top-12 text-xs border border-blue-gray-900 \"><div class=\"contextmenu-item\"><p style=\"padding:0 0.8rem\"><a href=\"/bca/user/perfil\" class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a><ul class=\"m-0 p-0 flex items-center list-none gap-8\"><li id=\"user\"><a href=\"#\" class=\"text-blue-gray-100\"><i class=\"fa-regular fa-user\"></i></a></li><li><a href=\"#\" class=\"text-blue-gray-100\"><i class=\"fa-regular fa-circle-question\"></i></a></li><li><a href=\"#\" class=\"text-blue-gray-100\" hx-post=\"/bca/logout\" hx-trigger=\"click\" hx-push-url=\"true\" hx-trget=\"body\"><i class=\"fa-solid fa-arrow-right-from-bracket\"></i></a></li></ul></nav></header><div id=\"user-context\" class=\"hidden absolute z-10 bg-blue-gray-100 text-blue-gray-900 w-fit rounded-xl shadow right-12 top-12 text-xs border border-blue-gray-900 \"><div class=\"contextmenu-item\"><p style=\"padding:0 0.8rem\"><a href=\"/bca/user/perfil\" class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -41,7 +41,7 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></p></div><div class=\"contextmenu-item\"><p style=\"padding:0 0.8rem\"><a href=\"/bca/user/admin\" class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></p></div><div class=\"contextmenu-item\"><p style=\"padding:0 0.8rem\"><a href=\"/bca/user/admin\" class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -50,7 +50,7 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></p></div><div id=\"change-password\" class=\"contextmenu-item\" style=\"padding:0 0.8rem\"><p class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900\" hx-get=\"/bca/user/cambio\" hx-trigger=\"click\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></p></div><div id=\"change-password\" class=\"contextmenu-item\" style=\"padding:0 0.8rem\"><p class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600\" hx-get=\"/bca/user/cambio\" hx-trigger=\"click\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
