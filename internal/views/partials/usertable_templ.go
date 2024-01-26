@@ -9,23 +9,12 @@ import "github.com/a-h/templ"
 import "context"
 import "io"
 import "bytes"
-import "strings"
 
 import "bca-go-final/internal/types"
 import "github.com/google/uuid"
 
 func concat(s1, s2 string) string {
 	return s1 + s2
-}
-
-func redText() templ.CSSClass {
-	var templ_7745c5c3_CSSBuilder strings.Builder
-	templ_7745c5c3_CSSBuilder.WriteString(`color:var(--red-500);`)
-	templ_7745c5c3_CSSID := templ.CSSID(`redText`, templ_7745c5c3_CSSBuilder.String())
-	return templ.ComponentCSSClass{
-		ID:    templ_7745c5c3_CSSID,
-		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
-	}
 }
 
 func UsersTable(users []types.User, currentUser uuid.UUID) templ.Component {
@@ -114,7 +103,7 @@ func UsersTable(users []types.User, currentUser uuid.UUID) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"left\"><i class=\"fa-solid fa-pencil yellow-text\" hx-get=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"left\"><i class=\"fa-solid fa-pencil text-yellow-300 cursor-pointer\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -122,25 +111,12 @@ func UsersTable(users []types.User, currentUser uuid.UUID) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" style=\"cursor:pointer\" hx-get=\"/bca/partials/users/add\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\"></i> ")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-get=\"/bca/partials/users/add\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\"></i> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if user.Id != currentUser {
-				var templ_7745c5c3_Var8 = []any{"fa-regular fa-trash-can", redText()}
-				templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var8).String()))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" style=\"cursor:pointer\" hx-delete=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-regular fa-trash-can text-red-500 cursor-pointer\" hx-delete=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

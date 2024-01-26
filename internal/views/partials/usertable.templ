@@ -7,10 +7,6 @@ func concat(s1, s2 string) string {
 	return s1 + s2
 }
 
-css redText() {
-	color: var(--red-500);
-}
-
 templ UsersTable(users []types.User, currentUser uuid.UUID) {
 	if len(users) == 0 {
 		<p>No hay usuarios</p>
@@ -30,9 +26,8 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
 					<td>{ user.Name }</td>
 					<td align="left">
 						<i
-							class="fa-solid fa-pencil yellow-text"
+							class="fa-solid fa-pencil text-yellow-300 cursor-pointer"
 							hx-get={ concat("/bca/partials/users/edit/", user.Id.String()) }
-							style="cursor:pointer"
 							hx-get="/bca/partials/users/add"
 							hx-target="#drawer"
 							hx-swap="innerHTML"
@@ -40,8 +35,7 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
 						></i>
 						if user.Id != currentUser {
 							<i
-								class={ "fa-regular fa-trash-can", redText() }
-								style="cursor:pointer"
+								class="fa-regular fa-trash-can text-red-500 cursor-pointer"
 								hx-delete={ concat("/bca/partials/users/", user.Id.String()) }
 								hx-target="#users-table"
 								hx-swap="innerHTML"
