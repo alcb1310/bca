@@ -36,7 +36,7 @@ func BudgetView() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"page-header\"><button type=\"button\" class=\"btn\" id=\"add-button\" style=\"cursor:pointer\" hx-get=\"/bca/partials/budgets/add\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"page-header\"><button type=\"button\" class=\"btn\" id=\"add-button\" class=\"cursor-pointer\" hx-get=\"/bca/partials/budgets/add\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

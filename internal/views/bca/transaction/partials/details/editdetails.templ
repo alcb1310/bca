@@ -3,13 +3,6 @@ package details
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
 
-css buttondown() {
-	display: flex;
-	height: 100%;
-	flex-direction: column;
-	gap: 2rem;
-}
-
 func concat(a, b string) string {
 	return a + b
 }
@@ -21,7 +14,7 @@ templ EditDetails(budgetItems []types.Select, invoiceId string) {
 		hx-target="#invoice-details"
 		hx-swap="innerHTML"
 	>
-		<div class={ buttondown() }>
+		<div class="flex flex-col h-full gap-8">
 			<div>
 				@components.DrawerTitle("Agregar Detalles")
 				@components.SelectComponent(budgetItems, "Seleccione una Partida", "item", "item", "", "Partida")
