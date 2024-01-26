@@ -3,10 +3,6 @@ package partials
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 
-css redText() {
-	color: var(--red-500);
-}
-
 templ InvoiceTable(invoices []types.InvoiceResponse) {
 	<table>
 		<thead>
@@ -34,11 +30,11 @@ templ InvoiceTable(invoices []types.InvoiceResponse) {
 						<td align="right">{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
 						<td align="center">
 							<a href={ templ.SafeURL(concat("/bca/transacciones/facturas/crear?id=", invoice.Id.String())) }>
-								<i class="fa fa-pencil yellow-text"></i>
+								<i class="fa fa-pencil text-yellow-600"></i>
 							</a>
 							if invoice.InvoiceTotal == 0 {
 								<i
-									class={ "fa-regular fa-trash-can", redText() }
+									class="fa-regular fa-trash-can text-red-500 cursor-pointer"
 								></i>
 							}
 						</td>

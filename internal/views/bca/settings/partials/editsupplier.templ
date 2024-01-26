@@ -16,7 +16,7 @@ templ EditSupplier(supplier *types.Supplier) {
 		hx-swap="innerHTML"
 		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
 	>
-		<div class={ buttondown() }>
+		<div class="flex h-full flex-col gap-8">
 			<div>
 				if supplier == nil {
 					@components.DrawerTitle("Agregar Proveedor")
