@@ -3,12 +3,8 @@ package partials
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 
-css tableSpacing() {
-	margin-top: "0.5rem";
-}
-
 templ BudgetView(budgets []types.GetBudget) {
-	<table class={ tableSpacing() }>
+	<table class="mt-2">
 		<thead>
 			<tr>
 				<th rowspan="2" width="100px">Código</th>

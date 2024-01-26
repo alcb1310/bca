@@ -4,12 +4,6 @@ import "bca-go-final/internal/views/base"
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
 
-css buttonGroup() {
-	display: flex;
-	flex-direction: row;
-	gap: 0.5rem;
-}
-
 templ BalanceView(projects []types.Select) {
 	@base.AuthenticatedLayout("balance") {
 		@components.PageTitle("Cuadre mensual")
@@ -23,7 +17,7 @@ templ BalanceView(projects []types.Select) {
 		>
 			@components.SelectComponent(projects, "Proyecto", "project", "project", "", "Proyecto")
 			@components.Input("date", "Fecha", "date", "date", "")
-			<div class={ buttonGroup() }>
+			<div class="flex flex-row gap-2">
 				<button
 					type="submit"
 					class="btn"
