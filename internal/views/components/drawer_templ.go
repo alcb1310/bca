@@ -10,10 +10,6 @@ import "context"
 import "io"
 import "bytes"
 
-//css drawer() {
-//height: calc(100vh - 15px);
-//}
-
 func DrawerComponent() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
