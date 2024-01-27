@@ -172,7 +172,7 @@ func BudgetTable(budgets []types.GetBudget) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if budget.RemainingQuantity != nil {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-solid fa-pen yellow-text\" _=\"on click openDrawer()\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" hx-trigger=\"click\" hx-get=\"")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-solid fa-pen text-yellow-600 cursor-pointer\" _=\"on click openDrawer()\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" hx-trigger=\"click\" hx-get=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

@@ -45,7 +45,7 @@ templ SuppliersTable(suppliers []types.Supplier) {
 						<td>
 							<i
 								style="cursor:pointer"
-								class="fa-solid fa-pencil yellow-text"
+								class="fa-solid fa-pencil text-yellow-600"
 								hx-get={ concat("/bca/partials/suppliers/", supplier.ID.String()) }
 								hx-target="#drawer"
 								hx-swap="innerHTML"

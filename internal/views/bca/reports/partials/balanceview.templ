@@ -15,8 +15,8 @@ func saveURL(id string) string {
 }
 
 templ BalanceView(invoices types.BalanceResponse) {
-	<table style="margin-top: 0.5rem;">
-		<caption style="text-align: left;">Total gastado: <span class={ highlight() }>{ utils.PrintFloat(invoices.Total) }</span></caption>
+	<table class="mt-2">
+		<caption class="text-left">Total gastado: <span class="text-green-500 font-bold tracking-wider pl-8">{ utils.PrintFloat(invoices.Total) }</span></caption>
 		<thead>
 			<tr>
 				<th></th>
@@ -44,7 +44,7 @@ templ BalanceView(invoices types.BalanceResponse) {
 		<tfoot>
 			<tr>
 				<td colspan="4">Total gastado</td>
-				<td align="right" class={ highlight() }>{ utils.PrintFloat(invoices.Total) }</td>
+				<td align="right" class="text-green-500 font-bold tracking-wider pl-8">{ utils.PrintFloat(invoices.Total) }</td>
 			</tr>
 		</tfoot>
 	</table>

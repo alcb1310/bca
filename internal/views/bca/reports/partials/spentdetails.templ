@@ -4,15 +4,11 @@ import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 import "bca-go-final/internal/views/components"
 
-css tableReport() {
-	font-size: 0.8rem;
-}
-
 templ SpentDetails(invoiceDetails []types.InvoiceDetails) {
 	<div>
 		@components.DrawerTitle("Facturas")
 	</div>
-	<table class={ tableReport() }>
+	<table class="text-xs">
 		<thead>
 			<tr>
 				<th width="90px">Fecha</th>

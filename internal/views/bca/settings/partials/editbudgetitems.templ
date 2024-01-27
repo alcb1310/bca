@@ -29,7 +29,7 @@ templ EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) {
 		hx-trigger="submit"
 		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
 	>
-		<div class={ buttondown() }>
+		<div class="flex h-full flex-col gap-8">
 			<div>
 				if budgetItem == nil {
 					@components.DrawerTitle("Agregar Partida")

@@ -44,7 +44,7 @@ templ BudgetTable(budgets []types.GetBudget) {
 						<td align="center">
 							if budget.RemainingQuantity != nil {
 								<i
-									class="fa-solid fa-pen yellow-text"
+									class="fa-solid fa-pen text-yellow-600 cursor-pointer"
 									_="on click openDrawer()"
 									hx-target="#drawer"
 									hx-swap="innerHTML"

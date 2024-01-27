@@ -4,13 +4,6 @@ import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
 
-css buttondown() {
-	display: flex;
-	height: 100%;
-	flex-direction: column;
-	gap: 2rem;
-}
-
 func concat(s1, s2 string) string {
 	return s1 + s2
 }
@@ -29,7 +22,7 @@ templ EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Selec
 		hx-swap="innerHTML"
 		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
 	>
-		<div class={ buttondown() }>
+		<div class="flex flex-col h-full gap-8">
 			if budget == nil {
 				<div>
 					@components.DrawerTitle("Agregar Presupuesto")
@@ -46,7 +39,7 @@ templ EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Selec
 					@components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budget.BudgetItemId.String(), "Proveedor")
 					@components.Input("text", "Cantidad", "quantity", "quantity", fmt.Sprintf("%f", budget.Quantity))
 					@components.Input("text", "Unitario", "cost", "cost", fmt.Sprintf("%f", budget.Cost))
-					@components.Input("text", "Total", "total", "total", fmt.Sprintf("%.2f", budget.Quantity * budget.Cost))
+					@components.Input("text", "Total", "total", "total", fmt.Sprintf("%.2f", budget.Quantity*budget.Cost))
 				</div>
 			}
 			@components.ButtonGroup()

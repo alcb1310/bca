@@ -4,13 +4,6 @@ import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 
-css buttondown() {
-	display: flex;
-	height: 100%;
-	flex-direction: column;
-	gap: 2rem;
-}
-
 func concat(s1, s2 string) string {
 	return s1 + s2
 }
@@ -28,7 +21,7 @@ templ EditProject(project *types.Project) {
 		hx-swap="innerHTML"
 		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
 	>
-		<div class={ buttondown() }>
+		<div class="flex h-full flex-col gap-8">
 			<div>
 				if project == nil {
 					@components.DrawerTitle("Agregar Proyecto")

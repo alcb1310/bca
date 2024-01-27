@@ -6,12 +6,22 @@ import "bca-go-final/internal/views/components"
 templ SupplierView() {
 	@base.AuthenticatedLayout("proveedor") {
 		@components.PageTitle("Proveedores")
-		<div class="page-header">
+		<div class="flex justify-between items-center gap-8">
+			<input
+				type="text"
+				id="search"
+				name="search"
+				placeholder="Buscar..."
+				hx-get="/bca/partials/suppliers"
+				hx-target="#supplier-table"
+				hx-swap="innerHTML"
+				hx-trigger="keyup changed delay:500ms"
+				class="block w-full h-fit rounded-lg border border-blue-gray-700 text-blue-gray-900 py-2 px-4"
+			/>
 			<button
 				type="button"
-				class="btn"
+				class="btn cursor-pointer"
 				id="add-button"
-				style="cursor:pointer"
 				hx-get="/bca/partials/suppliers/add"
 				hx-target="#drawer"
 				hx-swap="innerHTML"

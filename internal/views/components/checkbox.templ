@@ -1,28 +1,12 @@
 package components
 
-css cbStyle() {
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-}
-
-css cb() {
-	display: inline-block;
-	width: 1.5rem;
-}
-
-css cbLabel() {
-	display: inline-block;
-	font-size: 0.8rem;
-}
-
 templ CheckBoxComponent(n, i, d string, b bool) {
-	<div class={ cbStyle() }>
+	<div class="flex items-center justify-start gap-x-2">
 		if b {
-			<input type="checkbox" name={ n } id={ i } class={ cb() } value={ n } checked/>
+			<input type="checkbox" name={ n } id={ i } class="inline-block w-4 h-4" value={ n } checked/>
 		} else {
-			<input type="checkbox" name={ n } id={ i } class={ cb() } value={ n }/>
+			<input type="checkbox" name={ n } id={ i } class="inline-block w-4 h-4" value={ n }/>
 		}
-		<label for={ i } class={ cbLabel() }>{ d }</label>
+		<label for={ i } class="inline-block text-sm">{ d }</label>
 	</div>
 }

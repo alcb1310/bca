@@ -2,20 +2,13 @@ package users
 
 import "bca-go-final/internal/views/components"
 
-css buttondown() {
-	display: flex;
-	height: 100%;
-	flex-direction: column;
-	gap: 2rem;
-}
-
 templ ChangePasswordView() {
 	<form
 		hx-put="/bca/partials/users"
 		hx-trigger="submit"
 		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
 	>
-		<div class={ buttondown() }>
+		<div class="flex h-full flex-col gap-8">
 			@components.DrawerTitle("Cambiar Contraseña")
 			@components.Input("password", "Contraseña", "password", "password", "")
 			<div class="btn-group">

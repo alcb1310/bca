@@ -6,17 +6,17 @@ import "bca-go-final/internal/views/components"
 templ InvoiceView() {
 	@base.AuthenticatedLayout("facturas") {
 		@components.PageTitle("Facturas")
-		<div class="page-header">
+		<div class="flex justify-end items-center">
 			<a
 				id="add-button"
 				href="/bca/transacciones/facturas/crear"
 				class="btn"
-				style="cursor:pointer"
+				class="cursor-pointer"
 			>
 				Agregar
 			</a>
 		</div>
-		<div style="position:relative">
+		<div class="relative">
 			@components.Spinner()
 			<div
 				id="invoice-table"

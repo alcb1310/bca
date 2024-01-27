@@ -9,49 +9,6 @@ import "github.com/a-h/templ"
 import "context"
 import "io"
 import "bytes"
-import "strings"
-
-func drawer() templ.CSSClass {
-	var templ_7745c5c3_CSSBuilder strings.Builder
-	templ_7745c5c3_CSSBuilder.WriteString(`display:none;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`flex-direction:column;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`gap:1rem;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`background-color:var(--blue-gray-50);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`color:var(--blue-gray-900);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`position:absolute;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`z-index:10;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`top:0;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`right:0;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`left:auto;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`width:400px;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`height:calc(100vh - 15px);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`transition:display 3s ease-in-out;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`padding:0.5rem 1rem;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`overflow-y:auto;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`overflow-x:hidden;`)
-	templ_7745c5c3_CSSID := templ.CSSID(`drawer`, templ_7745c5c3_CSSBuilder.String())
-	return templ.ComponentCSSClass{
-		ID:    templ_7745c5c3_CSSID,
-		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
-	}
-}
-
-func opaque() templ.CSSClass {
-	var templ_7745c5c3_CSSBuilder strings.Builder
-	templ_7745c5c3_CSSBuilder.WriteString(`display:none;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`background-color:var(--blue-gray-opaque);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`position:absolute;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`top:0;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`left:0;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`width:100%;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`height:100%;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`z-index:9;`)
-	templ_7745c5c3_CSSID := templ.CSSID(`opaque`, templ_7745c5c3_CSSBuilder.String())
-	return templ.ComponentCSSClass{
-		ID:    templ_7745c5c3_CSSID,
-		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
-	}
-}
 
 func DrawerComponent() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -66,37 +23,7 @@ func DrawerComponent() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var2 = []any{opaque()}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var2).String()))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" id=\"opaque\"></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var3 = []any{drawer()}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var3).String()))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" id=\"drawer\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"hidden absolute top-0 left-0 w-full h-full z-10 opacity-70 bg-blue-gray-900\" id=\"opaque\"></div><div class=\"hidden absolute py-2 px-4 top-0 right-0 left-auto w-[400px] h-full overflow-x-hidden oveflow-y-auto z-20 flex-col gap-4 bg-blue-gray-50 text-blue-gray-900\" id=\"drawer\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

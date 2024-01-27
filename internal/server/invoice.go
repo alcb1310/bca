@@ -217,7 +217,7 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 		projects = append(projects, x)
 	}
 
-	sx, _ := s.DB.GetAllSuppliers(ctx.CompanyId)
+	sx, _ := s.DB.GetAllSuppliers(ctx.CompanyId, "")
 	for _, v := range sx {
 		x := types.Select{
 			Key:   v.ID.String(),
@@ -284,7 +284,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 		projects = append(projects, x)
 	}
 
-	sx, _ := s.DB.GetAllSuppliers(ctx.CompanyId)
+	sx, _ := s.DB.GetAllSuppliers(ctx.CompanyId, "")
 	for _, v := range sx {
 		x := types.Select{
 			Key:   v.ID.String(),

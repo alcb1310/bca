@@ -36,7 +36,7 @@ func BudgetItems() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"page-header\"><input hx-trigger=\"keyup changed delay:500ms\" hx-get=\"/bca/partials/budget-item\" hx-target=\"#budget-items-table\" hx-swap=\"innerHTML\" hx-push-url=\"true\" type=\"text\" name=\"search\"> <button type=\"button\" class=\"btn\" id=\"add-button\" style=\"cursor:pointer\" hx-get=\"/bca/partials/budget-item/add\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"flex justify-between gap-8 items-center\"><input hx-trigger=\"keyup changed delay:500ms\" hx-get=\"/bca/partials/budget-item\" hx-target=\"#budget-items-table\" hx-swap=\"innerHTML\" hx-push-url=\"true\" type=\"text\" name=\"search\" placeholder=\"Buscar...\" class=\"block w-full h-fit rounded-lg border border-blue-gray-700 text-blue-gray-900 py-2 px-4\"> <button type=\"button\" class=\"btn cursor-pointer\" id=\"add-button\" hx-get=\"/bca/partials/budget-item/add\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

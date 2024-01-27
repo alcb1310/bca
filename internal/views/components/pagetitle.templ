@@ -1,15 +1,5 @@
 package components
 
-css pagetitle() {
-	font-size: 1.25rem;
-	font-weight: bold;
-	color: var(--blue-gray-50);
-	padding-bottom: 1.5rem;
-	margin-bottom: 3rem;
-	width: 100%;
-	border-bottom: 1px solid var(--blue-gray-200);
-}
-
 templ PageTitle(title string) {
-	<h1 class={ pagetitle() }>{ title }</h1>
+	<h1 class="mb-12 w-full pb-6 text-blue-gray-50 text-xl font-bold border-b border-blue-gray-200">{ title }</h1>
 }
