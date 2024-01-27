@@ -13,6 +13,13 @@ import "bytes"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
 
+func validText(text *string) string {
+	if text == nil {
+		return ""
+	}
+	return *text
+}
+
 func EditSupplier(supplier *types.Supplier) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -123,7 +130,7 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Input("text", "Nombre del contacto", "contact_name", "contact_name", *supplier.ContactName).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Input("text", "Nombre del contacto", "contact_name", "contact_name", validText(supplier.ContactName)).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -131,7 +138,7 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Input("text", "Email del contacto", "contact_email", "contact_email", *supplier.ContactEmail).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Input("text", "Email del contacto", "contact_email", "contact_email", validText(supplier.ContactEmail)).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -139,7 +146,7 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", *supplier.ContactPhone).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", validText(supplier.ContactPhone)).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
