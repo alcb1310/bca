@@ -6,7 +6,7 @@ import "bca-go-final/internal/views/components"
 templ BudgetItems() {
 	@base.AuthenticatedLayout("partida") {
 		@components.PageTitle("Partidas")
-		<div class="page-header">
+		<div class="flex justify-between gap-8 items-center">
 			<input
 				hx-trigger="keyup changed delay:500ms"
 				hx-get="/bca/partials/budget-item"
@@ -15,6 +15,8 @@ templ BudgetItems() {
 				hx-push-url="true"
 				type="text"
 				name="search"
+				placeholder="Buscar..."
+				class="block w-full h-fit rounded-lg border border-blue-gray-700 text-blue-gray-900 py-2 px-4"
 			/>
 			<button
 				type="button"
