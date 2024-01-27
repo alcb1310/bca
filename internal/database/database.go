@@ -41,7 +41,7 @@ type Service interface {
 	GetActiveProjects(companyId uuid.UUID, active bool) []types.Project
 
 	// database/suppliers.go
-	GetAllSuppliers(companyId uuid.UUID) ([]types.Supplier, error)
+	GetAllSuppliers(companyId uuid.UUID, search string) ([]types.Supplier, error)
 	CreateSupplier(supplier *types.Supplier) error
 	GetOneSupplier(id, companyId uuid.UUID) (types.Supplier, error)
 	UpdateSupplier(supplier *types.Supplier) error

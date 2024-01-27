@@ -34,7 +34,8 @@ func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	suppliers, _ := s.DB.GetAllSuppliers(ctxPayload.CompanyId)
+	search := r.URL.Query().Get("search")
+	suppliers, _ := s.DB.GetAllSuppliers(ctxPayload.CompanyId, search)
 	component := partials.SuppliersTable(suppliers)
 	component.Render(r.Context(), w)
 }
@@ -84,7 +85,7 @@ func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	suppliers, _ := s.DB.GetAllSuppliers(ctxPayload.CompanyId)
+	suppliers, _ := s.DB.GetAllSuppliers(ctxPayload.CompanyId, "")
 	component := partials.SuppliersTable(suppliers)
 	component.Render(r.Context(), w)
 }
