@@ -36,7 +36,7 @@ func ProjectView() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"page-header\"><button type=\"button\" class=\"btn cursor-pointer\" id=\"add-button\" hx-get=\"/bca/partials/projects/add\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"flex justify-end items-center\"><button type=\"button\" class=\"btn cursor-pointer\" id=\"add-button\" hx-get=\"/bca/partials/projects/add\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

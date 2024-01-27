@@ -610,12 +610,6 @@ i:disabled {
   opacity: 0.5;
 }
 
-.page-header {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
 .absolute {
   position: absolute;
 }
@@ -732,17 +726,17 @@ i:disabled {
   height: 1rem;
 }
 
+.h-fit {
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
 .h-full {
   height: 100%;
 }
 
 .h-screen {
   height: 100vh;
-}
-
-.h-fit {
-  height: -moz-fit-content;
-  height: fit-content;
 }
 
 .w-1\/2 {
@@ -788,6 +782,10 @@ i:disabled {
 
 .justify-start {
   justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .justify-center {
@@ -958,11 +956,6 @@ i:disabled {
   padding-bottom: 1.5rem;
 }
 
-.px-8 {
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
 .pb-2 {
   padding-bottom: 0.5rem;
 }
@@ -997,10 +990,6 @@ i:disabled {
 
 .text-center {
   text-align: center;
-}
-
-.align-middle {
-  vertical-align: middle;
 }
 
 .text-2xl {

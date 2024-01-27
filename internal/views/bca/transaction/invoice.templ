@@ -6,7 +6,7 @@ import "bca-go-final/internal/views/components"
 templ InvoiceView() {
 	@base.AuthenticatedLayout("facturas") {
 		@components.PageTitle("Facturas")
-		<div class="page-header">
+		<div class="flex justify-end items-center">
 			<a
 				id="add-button"
 				href="/bca/transacciones/facturas/crear"

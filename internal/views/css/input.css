@@ -24,8 +24,4 @@
      .btn {
           @apply block my-2 py-2 px-4 bg-green-700 text-green-50 hover:bg-green-800 border-green-700 hover:border-green-800 border rounded-lg uppercase text-sm font-extrabold no-underline disabled:opacity-50;
      }
-
-     .page-header {
-          @apply flex items-center justify-end;
-     }
 }
