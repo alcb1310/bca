@@ -17,9 +17,6 @@ export const theme = {
                }
           },
      },
-     fontFamily: {
-          sans: ["Roboto", "sans-serif"],
-     }
 };
 export const plugins = [];
 
