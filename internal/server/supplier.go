@@ -49,7 +49,7 @@ func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			log.Println(fmt.Sprintf("ERROR: %s", err.Error()))
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(fmt.Sprintf("<p>%s</p>", err.Error())))
 			return
 		}
@@ -100,9 +100,27 @@ func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 	sup.ContactName = &name
 	sup.ContactPhone = &phone
 
+	if sup.SupplierId == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un valor para el RUC"))
+		return
+	}
+
+	if sup.Name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un valor para el nombre"))
+		return
+	}
+
 	if err := s.DB.UpdateSupplier(&sup); err != nil {
-		log.Println(err)
+		if strings.Contains(err.Error(), "duplicate") {
+			w.WriteHeader(http.StatusConflict)
+			w.Write([]byte(fmt.Sprintf("El ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
+			return
+		}
+		log.Println(fmt.Sprintf("ERROR: %s", err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(fmt.Sprintf("<p>%s</p>", err.Error())))
 		return
 	}
 
