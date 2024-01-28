@@ -87,7 +87,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 		p.GrossArea, err = strconv.ParseFloat(r.Form.Get("gross_area"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println(err)
+			w.Write([]byte("El área bruta debe ser un número válido"))
 			return
 		}
 	}
@@ -96,12 +96,17 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 		p.NetArea, err = strconv.ParseFloat(r.Form.Get("net_area"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println(err)
+			w.Write([]byte("El área neta debe ser un número válido"))
 			return
 		}
 	}
 
 	if err := s.DB.UpdateProject(p, parsedId, ctx.CompanyId); err != nil {
+		if strings.Contains(err.Error(), "duplicate") {
+			w.WriteHeader(http.StatusConflict)
+			w.Write([]byte(fmt.Sprintf("El nombre %s ya existe", p.Name)))
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
 		return
