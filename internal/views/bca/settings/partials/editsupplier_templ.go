@@ -78,7 +78,7 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-swap=\"innerHTML\" hx-target=\"#supplier-table\" hx-target-error=\"#error\" hx-on=\"htmx:responseError: handleHtmxError(event)\n          htmx:afterOnLoad: handleHtmxError(event)\"><div class=\"flex h-full flex-col gap-8\"><div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-swap=\"innerHTML\" hx-target=\"#supplier-table\" hx-target-error=\"#error\" hx-on=\"htmx:afterOnLoad: handleHtmxError(event)\"><div class=\"flex h-full flex-col gap-8\"><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -113,8 +113,7 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var2 := `components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", supplierValidText(supplier, "contact_phone"))`
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
+		templ_7745c5c3_Err = components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", supplierValidText(supplier, "contact_phone")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -130,7 +129,7 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var3 := `
+		templ_7745c5c3_Var2 := `
          function handleHtmxError(event) {
               document.getElementById("error").innerHTML = ""
               if (event.detail.xhr.status === 200) {
@@ -143,7 +142,7 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
               closeDrawer()
          }
     `
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
