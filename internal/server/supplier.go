@@ -3,8 +3,10 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/views/bca/settings/partials"
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -27,9 +29,28 @@ func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
 			CompanyId:    ctxPayload.CompanyId,
 		}
 
+		if sup.SupplierId == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese un valor para el RUC"))
+			return
+		}
+
+		if sup.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese un valor para el nombre"))
+			return
+		}
+
 		err := s.DB.CreateSupplier(&sup)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusConflict)
+				w.Write([]byte(fmt.Sprintf("Proveedor con ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
+				return
+			}
+			log.Println(fmt.Sprintf("ERROR: %s", err.Error()))
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(fmt.Sprintf("<p>%s</p>", err.Error())))
 			return
 		}
 	}
