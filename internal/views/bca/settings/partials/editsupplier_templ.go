@@ -13,7 +13,7 @@ import "bytes"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
 
-func validText(supplier *types.Supplier, text string) string {
+func supplierValidText(supplier *types.Supplier, text string) string {
 	if supplier == nil {
 		return ""
 	}
@@ -82,31 +82,39 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.DrawerTitle("Agregar Proveedor").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		if supplier == nil {
+			templ_7745c5c3_Err = components.DrawerTitle("Agregar Proveedor").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = components.DrawerTitle("Editar Proveedor").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"error\" class=\"text-red-600 text-sm\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("text", "Ruc", "supplier_id", "supplier_id", validText(supplier, "supplier_id")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("text", "Ruc", "supplier_id", "supplier_id", supplierValidText(supplier, "supplier_id")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("text", "Nombre", "name", "name", validText(supplier, "supplier_name")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("text", "Nombre", "name", "name", supplierValidText(supplier, "supplier_name")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("text", "Nombre del contacto", "contact_name", "contact_name", validText(supplier, "contact_name")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("text", "Nombre del contacto", "contact_name", "contact_name", supplierValidText(supplier, "contact_name")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("text", "Email del contacto", "contact_email", "contact_email", validText(supplier, "contact_email")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("text", "Email del contacto", "contact_email", "contact_email", supplierValidText(supplier, "contact_email")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", validText(supplier, "contact_phone")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Var2 := `components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", supplierValidText(supplier, "contact_phone"))`
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -122,7 +130,7 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var2 := `
+		templ_7745c5c3_Var3 := `
          function handleHtmxError(event) {
               document.getElementById("error").innerHTML = ""
               if (event.detail.xhr.status === 200) {
@@ -135,7 +143,7 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
               closeDrawer()
          }
     `
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

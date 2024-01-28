@@ -3,7 +3,7 @@ package partials
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
 
-func validText(supplier *types.Supplier, text string) string {
+func supplierValidText(supplier *types.Supplier, text string) string {
 	if supplier == nil {
 		return ""
 	}
@@ -49,13 +49,17 @@ templ EditSupplier(supplier *types.Supplier) {
 	>
 		<div class="flex h-full flex-col gap-8">
 			<div>
-				@components.DrawerTitle("Agregar Proveedor")
+				if supplier == nil {
+					@components.DrawerTitle("Agregar Proveedor")
+				} else {
+					@components.DrawerTitle("Editar Proveedor")
+				}
 				<div id="error" class="text-red-600 text-sm"></div>
-				@components.Input("text", "Ruc", "supplier_id", "supplier_id", validText(supplier, "supplier_id"))
-				@components.Input("text", "Nombre", "name", "name", validText(supplier, "supplier_name"))
-				@components.Input("text", "Nombre del contacto", "contact_name", "contact_name", validText(supplier, "contact_name"))
-				@components.Input("text", "Email del contacto", "contact_email", "contact_email", validText(supplier, "contact_email"))
-				@components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", validText(supplier, "contact_phone"))
+				@components.Input("text", "Ruc", "supplier_id", "supplier_id", supplierValidText(supplier, "supplier_id"))
+				@components.Input("text", "Nombre", "name", "name", supplierValidText(supplier, "supplier_name"))
+				@components.Input("text", "Nombre del contacto", "contact_name", "contact_name", supplierValidText(supplier, "contact_name"))
+				@components.Input("text", "Email del contacto", "contact_email", "contact_email", supplierValidText(supplier, "contact_email"))
+				components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", supplierValidText(supplier, "contact_phone"))
 			</div>
 			@components.ButtonGroup()
 		</div>
