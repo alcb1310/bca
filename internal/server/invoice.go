@@ -59,7 +59,6 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 		pId := r.Form.Get("project")
 		if pId == "" {
 			w.WriteHeader(http.StatusBadRequest)
-      w.Header().Set("HX-Retarget", "#error")
 			w.Write([]byte("Ingrese un proyecto"))
 			return
 		}
@@ -72,16 +71,16 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 		}
 		supplierId, _ := uuid.Parse(sId)
 		iNumber := r.Form.Get("invoiceNumber")
-    if iNumber == "" {
-      w.WriteHeader(http.StatusBadRequest)
-      w.Write([]byte("Ingrese un número de factura"))
-      return
-    }
+		if iNumber == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese un número de factura"))
+			return
+		}
 		iD := r.Form.Get("invoiceDate")
 		iDate, err := time.Parse("2006-01-02", iD)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-      w.Write([]byte("Ingrese una fecha válida"))
+			w.Write([]byte("Ingrese una fecha válida"))
 			return
 		}
 
@@ -94,16 +93,16 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = s.DB.CreateInvoice(i)
-    if err != nil {
-      if strings.Contains(err.Error(), "duplicate") {
-        w.WriteHeader(http.StatusBadRequest)
-        w.Write([]byte("La Factura ya existe"))
-        return
-      }
-      w.WriteHeader(http.StatusBadRequest)
-      w.Write([]byte(err.Error()))
-      return
-    }
+		if err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("La Factura ya existe"))
+				return
+			}
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
 		in, _ := s.DB.GetOneInvoice(*i.Id, ctx.CompanyId)
 		invoice = &in
 		redirectURL += "?id=" + in.Id.String()
@@ -162,10 +161,26 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 
 	case http.MethodPut:
 		r.ParseForm()
-		sId, _ := uuid.Parse(r.Form.Get("supplier"))
 		pId := invoice.Project.ID
+
+		sId, err := uuid.Parse(r.Form.Get("supplier"))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese un proveedor"))
+			return
+		}
 		iNumber := r.Form.Get("invoiceNumber")
-		iDate, _ := time.Parse("2006-01-02", r.Form.Get("invoiceDate"))
+		if iNumber == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese un número de factura"))
+			return
+		}
+		iDate, err := time.Parse("2006-01-02", r.Form.Get("invoiceDate"))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese una fecha válida"))
+			return
+		}
 
 		i := types.InvoiceCreate{
 			CompanyId:     ctx.CompanyId,
@@ -176,10 +191,15 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 			Id:            &parsedId,
 		}
 
-		err := s.DB.UpdateInvoice(i)
-		if err != nil {
-			log.Printf("error updating invoice: %v", err)
+		if err := s.DB.UpdateInvoice(i); err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("La Factura ya existe"))
+				return
+			}
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			log.Printf("error updating invoice: %v", err)
 			return
 		}
 
