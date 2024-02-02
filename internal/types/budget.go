@@ -3,66 +3,66 @@ package types
 import "github.com/google/uuid"
 
 type Budget struct {
-	ProjectId    uuid.UUID `json:"project_id"`
-	BudgetItemId uuid.UUID `json:"budget_item_id"`
+	ProjectId    uuid.UUID
+	BudgetItemId uuid.UUID
 
-	InitialQuantity *float64 `json:"initial_quantity"`
-	InitialCost     *float64 `json:"initial_cost"`
-	InitialTotal    float64  `json:"initial_total"`
+	InitialQuantity *float64
+	InitialCost     *float64
+	InitialTotal    float64
 
-	SpentQuantity *float64 `json:"spent_quantity"`
-	SpentTotal    float64  `json:"spent_total"`
+	SpentQuantity *float64
+	SpentTotal    float64
 
-	RemainingQuantity *float64 `json:"remaining_quantity"`
-	RemainingCost     *float64 `json:"remaining_cost"`
-	RemainingTotal    float64  `json:"remaining_total"`
+	RemainingQuantity *float64
+	RemainingCost     *float64
+	RemainingTotal    float64
 
-	UpdatedBudget float64 `json:"updated_budget"`
+	UpdatedBudget float64
 
-	CompanyId uuid.UUID `json:"company_id"`
+	CompanyId uuid.UUID
 }
 
 // Structure for creating budget
 type CreateBudget struct {
-	ProjectId    uuid.UUID `json:"project_id"`
-	BudgetItemId uuid.UUID `json:"budget_item_id"`
+	ProjectId    uuid.UUID
+	BudgetItemId uuid.UUID
 
-	Quantity float64 `json:"quantity"`
-	Cost     float64 `json:"cost"`
+	Quantity float64
+	Cost     float64
 
-	CompanyId uuid.UUID `json:"company_id"`
+	CompanyId uuid.UUID
 }
 
 // Structure for reading budgets
 type GetBudget struct {
-	Project    project    `json:"project"`
-	BudgetItem budgetItem `json:"budget_item"`
+	Project    project
+	BudgetItem budgetItem
 
-	InitialQuantity *float64 `json:"initial_quantity"`
-	InitialCost     *float64 `json:"initial_cost"`
-	InitialTotal    float64  `json:"initial_total"`
+	InitialQuantity *float64
+	InitialCost     *float64
+	InitialTotal    float64
 
-	SpentQuantity *float64 `json:"spent_quantity"`
-	SpentTotal    float64  `json:"spent_total"`
+	SpentQuantity *float64
+	SpentTotal    float64
 
-	RemainingQuantity *float64 `json:"remaining_quantity"`
-	RemainingCost     *float64 `json:"remaining_cost"`
-	RemainingTotal    float64  `json:"remaining_total"`
+	RemainingQuantity *float64
+	RemainingCost     *float64
+	RemainingTotal    float64
 
-	UpdatedBudget float64 `json:"updated_budget"`
+	UpdatedBudget float64
 
-	CompanyId uuid.UUID `json:"company_id"`
+	CompanyId uuid.UUID
 }
 
 type project struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
+	ID   uuid.UUID
+	Name string
 }
 
 type budgetItem struct {
-	ID         uuid.UUID `json:"id"`
-	Code       string    `json:"code"`
-	Name       string    `json:"name"`
-	Level      uint8     `json:"level"`
-	Accumulate bool      `json:"accumulate"`
+	ID         uuid.UUID
+	Code       string
+	Name       string
+	Level      uint8
+	Accumulate bool
 }
