@@ -26,6 +26,33 @@ func getItems(b []types.BudgetItem) []types.Select {
 	return items
 }
 
+func budgetItemValidText(budgetItem *types.BudgetItem, text string) string {
+	if budgetItem == nil {
+		return ""
+	}
+	switch text {
+	case "code":
+		return budgetItem.Code
+	case "name":
+		return budgetItem.Name
+	case "parent":
+		if budgetItem.ParentId == nil {
+			return ""
+		}
+		return budgetItem.ParentId.String()
+	case "accumulate":
+		if budgetItem.Accumulate == nil {
+			return ""
+		}
+		if *budgetItem.Accumulate {
+			return "Si"
+		}
+		return "No"
+	default:
+		return ""
+	}
+}
+
 func EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -62,7 +89,7 @@ func EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) tem
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-target=\"#budget-items-table\" hx-swap=\"innerHTML\" hx-trigger=\"submit\" _=\"on submit toggle @disabled on &lt;button /&gt; until htmx:afterOnLoad then resetClose()\"><div class=\"flex h-full flex-col gap-8\"><div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-target=\"#budget-items-table\" hx-target-error=\"#error\" hx-swap=\"innerHTML\" hx-trigger=\"submit\" hx-on=\"htmx:afterOnLoad: handleHtmxError(event)\"><div class=\"flex h-full flex-col gap-8\"><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -71,82 +98,31 @@ func EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) tem
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Input("text", "Código", "code", "code", "").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Input("text", "Nombre", "name", "name", "").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "", "Partida").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.CheckBoxComponent("accumulate", "accumulate", "Acumula", false).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 		} else {
 			templ_7745c5c3_Err = components.DrawerTitle("Editar Partida").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Input("text", "Código", "code", "code", budgetItem.Code).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Input("text", "Nombre", "name", "name", budgetItem.Name).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if budgetItem.ParentId == nil {
-				templ_7745c5c3_Err = components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", "", "Partida").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", budgetItem.ParentId.String(), "Partida").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.CheckBoxComponent("accumulate", "accumulate", "Acumula", *budgetItem.Accumulate).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"error\" class=\"text-red-600 text-sm\"></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Input("text", "Código", "code", "code", budgetItemValidText(budgetItem, "code")).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Input("text", "Nombre", "name", "name", budgetItemValidText(budgetItem, "name")).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", budgetItemValidText(budgetItem, "parent"), "Partida").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.CheckBoxComponent("accumulate", "accumulate", "Acumula", budgetItemValidText(budgetItem, "accumulate") == "Si").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
 		if templ_7745c5c3_Err != nil {
@@ -161,6 +137,14 @@ func EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) tem
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Var2 := `
+         function handleHtmxError(event) {
+              document.getElementById("error").innerHTML = ""
+              if (event.detail.xhr.status === 200) {
+                   resetClose()
+                   return
+              }
+              document.getElementById("error").innerHTML = event.detail.xhr.responseText
+         }
          function resetClose() {
               closeDrawer()
          }

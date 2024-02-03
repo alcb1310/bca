@@ -12,34 +12,52 @@ func setTitle(invoice *types.InvoiceResponse) string {
 	return "Editar Factura"
 }
 
+func invoiceValText(invoice *types.InvoiceResponse, text string) string {
+	if invoice == nil {
+		return ""
+	}
+
+	switch text {
+	case "project":
+		return invoice.Project.ID.String()
+	case "supplier":
+		return invoice.Supplier.ID.String()
+	case "invoiceNumber":
+		return invoice.InvoiceNumber
+	case "invoiceDate":
+		return utils.ConvertDate(invoice.InvoiceDate)
+	case "total":
+		return utils.PrintFloat(invoice.InvoiceTotal)
+	default:
+		return ""
+	}
+}
+
 templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Select) {
 	@base.AuthenticatedLayout(setTitle(invoice)) {
 		@components.PageTitle(setTitle(invoice))
-		<form
-			id="invoice-form"
-			autocomplete="off"
-			hx-trigger="submit"
-			if invoice == nil {
-				hx-post="/bca/transacciones/facturas/crear"
-			} else {
-				hx-put={ concat("/bca/partials/invoices/", invoice.Id.String()) }
-			}
-			hx-push-url="true"
-		>
-			<div class="flex flex-col h-full gap-8">
-				<div class="w-1/2 my-0 mx-auto">
-					if invoice == nil {
-						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "", "Proyecto")
-						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", "", "Proveedor")
-						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", "")
-						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", "")
-					} else {
-						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoice.Project.ID.String(), "Proyecto")
-						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoice.Supplier.ID.String(), "Proveedor")
-						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoice.InvoiceNumber)
-						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", utils.ConvertDate(invoice.InvoiceDate))
-						@components.Input("text", "Total", "total", "total", "")
-					}
+		<div id="response-targets">
+			<form
+				id="invoice-form"
+				autocomplete="off"
+				hx-trigger="submit"
+				if invoice == nil {
+					hx-post="/bca/transacciones/facturas/crear"
+				} else {
+					hx-put={ concat("/bca/partials/invoices/", invoice.Id.String()) }
+				}
+				hx-target-error="find #error"
+        hx-on="htmx:afterRequest: htmxHandleError(event)"
+			>
+				<div class="flex flex-col h-full gap-8">
+					<div class="w-1/2 my-0 mx-auto">
+						<div id="error" class="text-red-500 text-sm"></div>
+						@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoiceValText(invoice, "project"), "Proyecto")
+						@components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoiceValText(invoice, "supplier"), "Proveedor")
+						@components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoiceValText(invoice, "invoiceNumber"))
+						@components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", invoiceValText(invoice, "invoiceDate"))
+						@components.Input("text", "Total", "total", "total", invoiceValText(invoice, "total"))
+					</div>
 				</div>
 				<div class="flex justify-around">
 					<button type="submit" class="btn">Grabar</button>
@@ -62,8 +80,8 @@ templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Se
 						Cancelar
 					</a>
 				</div>
-			</div>
-		</form>
+			</form>
+		</div>
 		if invoice != nil {
 			<div
 				style="margin-top: 1rem"
@@ -73,19 +91,26 @@ templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Se
 				hx-swap="innerHTML"
 			></div>
 			<script>
-                 var project = document.getElementById("project")
+        var project = document.getElementById("project")
 
-                 if (project) {
-                      project.disabled = true
-                 }
-            </script>
+        if (project) {
+             project.disabled = true
+        }
+      </script>
 		}
 		<script>
-             var total = document.getElementById("total")
+        var total = document.getElementById("total")
 
-             if (total) {
-                  total.disabled = true
+        function htmxHandleError(event) {
+             document.getElementById("error").innerHTML = ""
+             if (event.detail.xhr.status >= 400) {
+                  document.getElementById("error").innerHTML = event.detail.xhr.response
              }
-        </script>
+        }
+
+        if (total) {
+             total.disabled = true
+        }
+    </script>
 	}
 }

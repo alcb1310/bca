@@ -3,7 +3,10 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/views/bca/settings/partials"
+	"fmt"
+	"log"
 	"net/http"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -23,6 +26,8 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 			z, err := uuid.Parse(p)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
+				log.Println(err)
+				w.Write([]byte("Código de la partida padre es inválido"))
 				return
 			}
 			u = &z
@@ -34,9 +39,26 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 			ParentId:   u,
 			Accumulate: &x,
 		}
+		if bi.Code == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Debe proporcionar un código de la partida"))
+			return
+		}
+		if bi.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Debe proporcionar un nombre de la partida"))
+			return
+		}
 
 		if err := s.DB.CreateBudgetItem(bi); err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusConflict)
+				w.Write([]byte(fmt.Sprintf("Ya existe una partida con el mismo código: %s y/o el mismo nombre: %s", bi.Code, bi.Name)))
+				return
+			}
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			log.Println(err)
 			return
 		}
 	}
@@ -75,14 +97,34 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 			z, err := uuid.Parse(p)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Código de la partida padre es inválido"))
+				log.Println(err)
 				return
 			}
 			u = &z
 		}
 		budgetItem.ParentId = u
 
+		if budgetItem.Code == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Debe proporcionar un código de la partida"))
+			return
+		}
+		if budgetItem.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Debe proporcionar un nombre de la partida"))
+			return
+		}
+
 		if err := s.DB.UpdateBudgetItem(budgetItem); err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusConflict)
+				w.Write([]byte(fmt.Sprintf("Ya existe una partida con el mismo código: %s y/o el mismo nombre: %s", budgetItem.Code, budgetItem.Name)))
+				return
+			}
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			log.Println(err)
 			return
 		}
 

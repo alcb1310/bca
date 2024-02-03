@@ -3,9 +3,11 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/views/bca/settings/partials"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -25,14 +27,14 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 		}
 		if p.Name == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println("name cannot be empty")
+			w.Write([]byte("Ingrese un valor para el nombre"))
 			return
 		}
 		if r.Form.Get("gross_area") != "" {
 			p.GrossArea, err = strconv.ParseFloat(r.Form.Get("gross_area"), 64)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				log.Println(err)
+				w.Write([]byte("El área bruta debe ser un número válido"))
 				return
 			}
 		}
@@ -40,12 +42,17 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 			p.NetArea, err = strconv.ParseFloat(r.Form.Get("net_area"), 64)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				log.Println(err)
+				w.Write([]byte("El área neta debe ser un número válido"))
 				return
 			}
 		}
 		_, err := s.DB.CreateProject(p)
 		if err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusConflict)
+				w.Write([]byte(fmt.Sprintf("El nombre %s ya existe", p.Name)))
+				return
+			}
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Println(err)
 			return
@@ -80,7 +87,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 		p.GrossArea, err = strconv.ParseFloat(r.Form.Get("gross_area"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println(err)
+			w.Write([]byte("El área bruta debe ser un número válido"))
 			return
 		}
 	}
@@ -89,12 +96,17 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 		p.NetArea, err = strconv.ParseFloat(r.Form.Get("net_area"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println(err)
+			w.Write([]byte("El área neta debe ser un número válido"))
 			return
 		}
 	}
 
 	if err := s.DB.UpdateProject(p, parsedId, ctx.CompanyId); err != nil {
+		if strings.Contains(err.Error(), "duplicate") {
+			w.WriteHeader(http.StatusConflict)
+			w.Write([]byte(fmt.Sprintf("El nombre %s ya existe", p.Name)))
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
 		return

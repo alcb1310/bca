@@ -38,7 +38,7 @@ func EditDetails(budgetItems []types.Select, invoiceId string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"submit\" hx-target=\"#invoice-details\" hx-swap=\"innerHTML\"><div class=\"flex flex-col h-full gap-8\"><div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"submit\" hx-target=\"#invoice-details\" hx-swap=\"innerHTML\" hx-on=\"htmx:afterRequest: htmxHandleDetailsError(event)\"><div class=\"flex flex-col h-full gap-8\"><div id=\"details-error\" class=\"text-red-500 text-sm\"></div><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -84,6 +84,13 @@ func EditDetails(budgetItems []types.Select, invoiceId string) templ.Component {
 
          quantity.addEventListener("input", calculateTotal)
          cost.addEventListener("input", calculateTotal)
+
+         function htmxHandleDetailsError(event) {
+              document.getElementById("details-error").innerHTML = ""
+              if (event.detail.xhr.status >= 400) {
+                   document.getElementById("details-error").innerHTML = event.detail.xhr.response
+              }
+         }
 
          function calculateTotal() {
               let q = quantity.value === "" ? 0 : parseFloat(quantity.value)

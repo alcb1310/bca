@@ -22,6 +22,27 @@ func setTitle(invoice *types.InvoiceResponse) string {
 	return "Editar Factura"
 }
 
+func invoiceValText(invoice *types.InvoiceResponse, text string) string {
+	if invoice == nil {
+		return ""
+	}
+
+	switch text {
+	case "project":
+		return invoice.Project.ID.String()
+	case "supplier":
+		return invoice.Supplier.ID.String()
+	case "invoiceNumber":
+		return invoice.InvoiceNumber
+	case "invoiceDate":
+		return utils.ConvertDate(invoice.InvoiceDate)
+	case "total":
+		return utils.PrintFloat(invoice.InvoiceTotal)
+	default:
+		return ""
+	}
+}
+
 func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Select) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -45,7 +66,7 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <form id=\"invoice-form\" autocomplete=\"off\" hx-trigger=\"submit\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div id=\"response-targets\"><form id=\"invoice-form\" autocomplete=\"off\" hx-trigger=\"submit\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -68,78 +89,31 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-push-url=\"true\"><div class=\"flex flex-col h-full gap-8\"><div class=\"w-1/2 my-0 mx-auto\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-target-error=\"find #error\" hx-on=\"htmx:afterRequest: htmxHandleError(event)\"><div class=\"flex flex-col h-full gap-8\"><div class=\"w-1/2 my-0 mx-auto\"><div id=\"error\" class=\"text-red-500 text-sm\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if invoice == nil {
-				templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "", "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", "", "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", "").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", "").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			} else {
-				templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoice.Project.ID.String(), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoice.Supplier.ID.String(), "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoice.InvoiceNumber).Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", utils.ConvertDate(invoice.InvoiceDate)).Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = components.Input("text", "Total", "total", "total", "").Render(ctx, templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
+			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoiceValText(invoice, "project"), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"flex justify-around\"><button type=\"submit\" class=\"btn\">")
+			templ_7745c5c3_Err = components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoiceValText(invoice, "supplier"), "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoiceValText(invoice, "invoiceNumber")).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", invoiceValText(invoice, "invoiceDate")).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("text", "Total", "total", "total", invoiceValText(invoice, "total")).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><div class=\"flex justify-around\"><button type=\"submit\" class=\"btn\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -184,7 +158,7 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div></div></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></div></form></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -202,12 +176,12 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 					return templ_7745c5c3_Err
 				}
 				templ_7745c5c3_Var6 := `
-                 var project = document.getElementById("project")
+        var project = document.getElementById("project")
 
-                 if (project) {
-                      project.disabled = true
-                 }
-            `
+        if (project) {
+             project.disabled = true
+        }
+      `
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -222,12 +196,19 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Var7 := `
-             var total = document.getElementById("total")
+        var total = document.getElementById("total")
 
-             if (total) {
-                  total.disabled = true
+        function htmxHandleError(event) {
+             document.getElementById("error").innerHTML = ""
+             if (event.detail.xhr.status >= 400) {
+                  document.getElementById("error").innerHTML = event.detail.xhr.response
              }
-        `
+        }
+
+        if (total) {
+             total.disabled = true
+        }
+    `
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

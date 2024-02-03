@@ -2,8 +2,6 @@ package server
 
 import (
 	"bca-go-final/internal/views"
-	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -15,7 +13,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Use(s.authVerify)
 
 	r.HandleFunc("/", s.HelloWorldHandler)
-	r.HandleFunc("/health", s.healthHandler)
 	r.HandleFunc("/api/login", s.Login)
 	r.HandleFunc("/api/register", s.Register)
 
@@ -89,13 +86,4 @@ func (s *Server) RegisterRoutes() http.Handler {
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	component := views.WelcomeView()
 	component.Render(r.Context(), w)
-}
-
-func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResp, err := json.Marshal(s.DB.Health())
-	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
-	}
-
-	_, _ = w.Write(jsonResp)
 }

@@ -18,6 +18,30 @@ func concat(s1, s2 string) string {
 	return s1 + s2
 }
 
+func budgetValText(budget *types.CreateBudget, text string) string {
+	if budget == nil {
+		if text == "total" {
+			return "0.00"
+		}
+		return ""
+	}
+
+	switch text {
+	case "project":
+		return budget.ProjectId.String()
+	case "budgetItem":
+		return budget.BudgetItemId.String()
+	case "quantity":
+		return fmt.Sprintf("%.2f", budget.Quantity)
+	case "cost":
+		return fmt.Sprintf("%.2f", budget.Cost)
+	case "total":
+		return fmt.Sprintf("%.2f", budget.Cost*budget.Quantity)
+	default:
+		return ""
+	}
+}
+
 func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -54,76 +78,48 @@ func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-trigger=\"submit\" hx-target=\"#budget-table\" hx-swap=\"innerHTML\" _=\"on submit toggle @disabled on &lt;button /&gt; until htmx:afterOnLoad then resetClose()\"><div class=\"flex flex-col h-full gap-8\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-trigger=\"submit\" hx-target=\"#budget-table\" hx-target-error=\"#error\" hx-swap=\"innerHTML\" hx-on=\"htmx:afterOnLoad: handleHtmxError(event)\"><div class=\"flex flex-col h-full gap-8\"><div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if budget == nil {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 			templ_7745c5c3_Err = components.DrawerTitle("Agregar Presupuesto").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "", "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", "", "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Input("text", "Cantidad", "quantity", "quantity", "").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Input("text", "Unitario", "cost", "cost", "").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Input("text", "Total", "total", "total", "0.00").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 			templ_7745c5c3_Err = components.DrawerTitle("Editar Presupuesto").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budget.ProjectId.String(), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budget.BudgetItemId.String(), "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Input("text", "Cantidad", "quantity", "quantity", fmt.Sprintf("%f", budget.Quantity)).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Input("text", "Unitario", "cost", "cost", fmt.Sprintf("%f", budget.Cost)).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = components.Input("text", "Total", "total", "total", fmt.Sprintf("%.2f", budget.Quantity*budget.Cost)).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"error\" class=\"text-red-600 text-sm\"></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budgetValText(budget, "project"), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budgetValText(budget, "budgetItem"), "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Input("text", "Cantidad", "quantity", "quantity", budgetValText(budget, "quantity")).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Input("text", "Unitario", "cost", "cost", budgetValText(budget, "cost")).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Input("text", "Total", "total", "total", budgetValText(budget, "total")).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = components.ButtonGroup().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -143,6 +139,15 @@ func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select
 
          costo.addEventListener("input", setTotal)
          quantity.addEventListener("input", setTotal)
+
+         function handleHtmxError(event) {
+              document.getElementById("error").innerHTML = ""
+              if (event.detail.xhr.status === 200) {
+                   resetClose()
+                   return
+              }
+              document.getElementById("error").innerHTML = event.detail.xhr.response
+         }
 
          function setTotal() {
               if (isNaN(quantity.value)) {
