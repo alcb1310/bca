@@ -3,9 +3,11 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/views/bca/transaction/partials/details"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -21,7 +23,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 		biId := r.Form.Get("item")
 		if biId == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println("budgetItemId is empty")
+			w.Write([]byte("Ingrese una partida"))
 			return
 		}
 		parsedBudgetItemId, err := uuid.Parse(biId)
@@ -35,24 +37,24 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 
 		if q == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println("quantity is empty")
+			w.Write([]byte("Ingrese una cantidad"))
 			return
 		}
 		if c == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println("cost is empty")
+			w.Write([]byte("Ingrese un costo"))
 			return
 		}
 		quantity, err := strconv.ParseFloat(q, 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println("Error parsing quantity. Err: ", err)
+			w.Write([]byte("Cantidad debe ser un número válido"))
 			return
 		}
 		cost, err := strconv.ParseFloat(c, 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println("Error parsing cost. Err: ", err)
+			w.Write([]byte("Costo debe ser un número válido"))
 			return
 		}
 
@@ -66,7 +68,18 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := s.DB.AddDetail(d); err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Ya existe una partida con ese nombre en la factura"))
+				return
+			}
+			if strings.Contains(err.Error(), "no rows") {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("No existe presupuesto para esa partida"))
+				return
+			}
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(fmt.Sprintf("Error al insertar partida. Err: %s", err.Error())))
 			log.Println(err)
 			return
 		}
