@@ -1,10 +1,11 @@
 package server
 
 import (
-	"bca-go-final/internal/views"
 	"net/http"
 
 	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/views"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -45,6 +46,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/reportes/excel/cuadre", s.BalanceExcel)
 	r.HandleFunc("/bca/reportes/excel/actual", s.ActualExcel)
 	r.HandleFunc("/bca/reportes/excel/historico", s.HistoricExcel)
+	r.HandleFunc("/bca/reportes/excel/gastado", s.SpentExcel)
 
 	// partials
 
