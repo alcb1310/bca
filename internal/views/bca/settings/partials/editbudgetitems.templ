@@ -31,10 +31,7 @@ func budgetItemValidText(budgetItem *types.BudgetItem, text string) string {
 		}
 		return budgetItem.ParentId.String()
 	case "accumulate":
-		if budgetItem.Accumulate == nil {
-			return ""
-		}
-		if *budgetItem.Accumulate {
+		if budgetItem.Accumulate.Bool {
 			return "Si"
 		}
 		return "No"

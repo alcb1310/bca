@@ -1,10 +1,11 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
 	"database/sql"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
 )
 
 func (s *service) GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error) {
@@ -261,7 +262,7 @@ func (s *service) executeUpdateBudget(budget *types.Budget, tx *sql.Tx) error {
 		return nil
 	}
 
-	if *bi.Accumulate {
+	if bi.Accumulate.Bool {
 		query := `
 			 UPDATE budget
 			 SET remaining_total = budget.remaining_total + $1, updated_budget = budget.updated_budget + $1

@@ -3,6 +3,7 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/views/bca/settings/partials"
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -32,12 +33,13 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 			}
 			u = &z
 		}
+		acc := sql.NullBool{Valid: true, Bool: x}
 		bi := &types.BudgetItem{
 			CompanyId:  ctxPayload.CompanyId,
 			Code:       r.Form.Get("code"),
 			Name:       r.Form.Get("name"),
 			ParentId:   u,
-			Accumulate: &x,
+			Accumulate: acc,
 		}
 		if bi.Code == "" {
 			w.WriteHeader(http.StatusBadRequest)
@@ -88,7 +90,8 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 		budgetItem.Code = r.Form.Get("code")
 		budgetItem.Name = r.Form.Get("name")
 		x := r.Form.Get("accumulate") == "accumulate"
-		budgetItem.Accumulate = &x
+		acc := sql.NullBool{Valid: true, Bool: x}
+		budgetItem.Accumulate = acc
 		p := r.Form.Get("parent")
 		var u *uuid.UUID
 		if p == "" {
