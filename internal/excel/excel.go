@@ -273,20 +273,20 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 		f.SetCellValue("actual", fmt.Sprintf("A%d", row), budget.BudgetItem.Code)
 		f.SetCellValue("actual", fmt.Sprintf("B%d", row), budget.BudgetItem.Name)
 
-		if budget.InitialQuantity != nil {
-			f.SetCellFloat("actual", fmt.Sprintf("C%d", row), *budget.InitialQuantity, 2, 64)
-			f.SetCellFloat("actual", fmt.Sprintf("D%d", row), *budget.InitialCost, 2, 64)
+		if budget.InitialQuantity.Valid {
+			f.SetCellFloat("actual", fmt.Sprintf("C%d", row), budget.InitialQuantity.Float64, 2, 64)
+			f.SetCellFloat("actual", fmt.Sprintf("D%d", row), budget.InitialCost.Float64, 2, 64)
 		}
 		f.SetCellFloat("actual", fmt.Sprintf("E%d", row), budget.InitialTotal, 2, 64)
 
-		if budget.SpentQuantity != nil {
-			f.SetCellFloat("actual", fmt.Sprintf("F%d", row), *budget.SpentQuantity, 2, 64)
+		if budget.SpentQuantity.Valid {
+			f.SetCellFloat("actual", fmt.Sprintf("F%d", row), budget.SpentQuantity.Float64, 2, 64)
 		}
 		f.SetCellFloat("actual", fmt.Sprintf("G%d", row), budget.SpentTotal, 2, 64)
 
-		if budget.RemainingQuantity != nil {
-			f.SetCellFloat("actual", fmt.Sprintf("H%d", row), *budget.RemainingQuantity, 2, 64)
-			f.SetCellFloat("actual", fmt.Sprintf("I%d", row), *budget.RemainingCost, 2, 64)
+		if budget.RemainingQuantity.Valid {
+			f.SetCellFloat("actual", fmt.Sprintf("H%d", row), budget.RemainingQuantity.Float64, 2, 64)
+			f.SetCellFloat("actual", fmt.Sprintf("I%d", row), budget.RemainingCost.Float64, 2, 64)
 		}
 		f.SetCellFloat("actual", fmt.Sprintf("J%d", row), budget.RemainingTotal, 2, 64)
 		f.SetCellFloat("actual", fmt.Sprintf("K%d", row), budget.UpdatedBudget, 2, 64)

@@ -158,8 +158,8 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if budget.SpentQuantity != nil {
-					var templ_7745c5c3_Var15 string = utils.PrintFloat(*budget.SpentQuantity)
+				if budget.SpentQuantity.Valid {
+					var templ_7745c5c3_Var15 string = utils.PrintFloat(budget.SpentQuantity.Float64)
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -178,8 +178,8 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if budget.RemainingQuantity != nil {
-					var templ_7745c5c3_Var17 string = utils.PrintFloat(*budget.RemainingQuantity)
+				if budget.RemainingQuantity.Valid {
+					var templ_7745c5c3_Var17 string = utils.PrintFloat(budget.RemainingQuantity.Float64)
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -189,8 +189,8 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if budget.RemainingCost != nil {
-					var templ_7745c5c3_Var18 string = utils.PrintFloat(*budget.RemainingCost)
+				if budget.RemainingCost.Valid {
+					var templ_7745c5c3_Var18 string = utils.PrintFloat(budget.RemainingCost.Float64)
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
