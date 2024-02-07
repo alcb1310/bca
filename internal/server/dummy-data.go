@@ -1,6 +1,10 @@
 package server
 
-/*
+import (
+	"encoding/json"
+	"net/http"
+)
+
 func (s *Server) loadDummyDataHandler(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)
 	ctx, _ := getMyPaload(r)
@@ -22,4 +26,3 @@ func (s *Server) loadDummyDataHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
-*/

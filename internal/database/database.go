@@ -24,7 +24,7 @@ type Service interface {
 	Levels(companyId uuid.UUID) []types.Select
 
 	// database/dummy.go
-	// LoadDummyData(companyId uuid.UUID) error
+	LoadDummyData(companyId uuid.UUID) error
 
 	// database/users.go
 	GetAllUsers(companyId uuid.UUID) ([]types.User, error)
