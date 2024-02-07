@@ -2,6 +2,7 @@ package server
 
 import (
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/settings/partials"
 	"fmt"
 	"log"
@@ -15,7 +16,7 @@ import (
 
 func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 	var err error
-	ctxPayload, _ := getMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
@@ -71,7 +72,7 @@ func (s *Server) ProjectAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 	var err error
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["id"]
 	parsedId, _ := uuid.Parse(id)
 	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)
@@ -118,7 +119,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ProjectEdit(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["id"]
 	parsedId, _ := uuid.Parse(id)
 	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)

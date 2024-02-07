@@ -1,18 +1,19 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/users"
-	"bca-go-final/internal/views/partials"
 	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/users"
+	"bca-go-final/internal/views/partials"
 )
 
 func (s *Server) Profile(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 
 	user, _ := s.DB.GetUser(ctx.Id, ctx.CompanyId)
 
@@ -31,7 +32,7 @@ func (s *Server) ChangePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["id"]
 	parsedId, _ := uuid.Parse(id)
 
@@ -68,7 +69,7 @@ func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 
 	switch r.Method {
 	case http.MethodPut:
@@ -136,7 +137,7 @@ func (s *Server) UserAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) UserEdit(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["id"]
 	parsedId, _ := uuid.Parse(id)
 	u, _ := s.DB.GetUser(parsedId, ctx.CompanyId)
