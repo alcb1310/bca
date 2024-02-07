@@ -155,7 +155,7 @@ func (s *service) GetNonAccumulateChildren(companyId, id *uuid.UUID, budgetItems
 	}
 	res := results
 	for _, b := range budgetItems {
-		if *b.Accumulate == false {
+		if b.Accumulate.Bool == false {
 			res = append(res, b.ID)
 			continue
 		}

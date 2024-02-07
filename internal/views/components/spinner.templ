@@ -1,14 +1,7 @@
 package components
 
-css spinner() {
-	bg-color: #000;
-	position: absolute;
-	top: 0;
-	text-align: center;
-}
-
 templ Spinner() {
-	<div id="indicator" class={ "htmx-indicator", spinner() }>
+	<div id="indicator" class="htmx-indicator absolute top-0 text-center">
 		<p>Cargando...</p>
 	</div>
 }

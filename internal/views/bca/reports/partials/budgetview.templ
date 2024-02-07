@@ -3,12 +3,8 @@ package partials
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 
-css tableSpacing() {
-	margin-top: "0.5rem";
-}
-
 templ BudgetView(budgets []types.GetBudget) {
-	<table class={ tableSpacing() }>
+	<table class="mt-2">
 		<thead>
 			<tr>
 				<th rowspan="2" width="100px">Código</th>
@@ -36,19 +32,19 @@ templ BudgetView(budgets []types.GetBudget) {
 						<td>{ budget.BudgetItem.Code }</td>
 						<td>{ budget.BudgetItem.Name }</td>
 						<td align="right">
-							if budget.SpentQuantity != nil {
-								{ utils.PrintFloat(*budget.SpentQuantity) }
+							if budget.SpentQuantity.Valid {
+								{ utils.PrintFloat(budget.SpentQuantity.Float64) }
 							}
 						</td>
 						<td align="right">{ utils.PrintFloat(budget.SpentTotal) }</td>
 						<td align="right">
-							if budget.RemainingQuantity != nil {
-								{ utils.PrintFloat(*budget.RemainingQuantity) }
+							if budget.RemainingQuantity.Valid {
+								{ utils.PrintFloat(budget.RemainingQuantity.Float64) }
 							}
 						</td>
 						<td align="right">
-							if budget.RemainingCost != nil {
-								{ utils.PrintFloat(*budget.RemainingCost) }
+							if budget.RemainingCost.Valid {
+								{ utils.PrintFloat(budget.RemainingCost.Float64) }
 							}
 						</td>
 						<td align="right">{ utils.PrintFloat(budget.RemainingTotal) }</td>

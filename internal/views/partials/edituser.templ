@@ -3,13 +3,6 @@ package partials
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
 
-css buttondown() {
-	display: flex;
-	height: 100%;
-	flex-direction: column;
-	gap: 2rem;
-}
-
 templ EditUser(user *types.User) {
 	<form
 		id="user-form"
@@ -24,7 +17,7 @@ templ EditUser(user *types.User) {
 		hx-trigger="submit"
 		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
 	>
-		<div class={ buttondown() }>
+		<div class="flex h-full flex-col gap-8">
 			<div>
 				if user == nil {
 					@components.DrawerTitle("Agregar usuario")

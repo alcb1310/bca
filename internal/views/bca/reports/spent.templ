@@ -8,17 +8,23 @@ templ SpentView(projects, levels []types.Select) {
 	@base.AuthenticatedLayout("gastado") {
 		@components.PageTitle("Gastado por Partida")
 		<form
-			id="spent-form"
-			hx-get="/bca/reportes/gastado"
-			hx-target="#results"
-			hx-swap="innerHTML"
-			hx-push-url="true"
+ 			id="spent-form"
+ 			hx-get="/bca/reportes/gastado"
+ 			hx-target="#results"
+ 			hx-swap="innerHTML"
+ 			hx-push-url="true"
 		>
 			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto")
 			@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "", "Nivel")
 			@components.Input("date", "Fecha", "fecha", "fecha", "")
-			<div class={ buttonGroup() }>
+			<div class="flex flex-row gap-2">
 				<button type="submit" class="btn">Generar</button>
+				<button
+ 					type="button"
+                    class="btn"
+ 					hx-get="/bca/reportes/excel/gastado"
+                    hx-include="#spent-form"
+				>Exportar</button>
 			</div>
 		</form>
 		<div id="results"></div>

@@ -6,12 +6,11 @@ import "bca-go-final/internal/views/components"
 templ ProjectView() {
 	@base.AuthenticatedLayout("proyecto") {
 		@components.PageTitle("Proyectos")
-		<div class="page-header">
+		<div class="flex justify-end items-center">
 			<button
 				type="button"
-				class="btn"
+				class="btn cursor-pointer"
 				id="add-button"
-				style="cursor:pointer"
 				hx-get="/bca/partials/projects/add"
 				hx-target="#drawer"
 				hx-swap="innerHTML"

@@ -17,7 +17,7 @@ templ HistoricView(projects, levels []types.Select) {
 			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto")
 			@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "", "Nivel")
 			@components.Input("date", "Fecha", "fecha", "fecha", "")
-			<div class={ buttonGroup() }>
+			<div class="flex flex-row gap-2">
 				<button type="submit" class="btn">Generar</button>
 				<button
 					type="button"

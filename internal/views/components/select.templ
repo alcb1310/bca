@@ -2,21 +2,14 @@ package components
 
 import "bca-go-final/internal/types"
 
-css selectStyle() {
-	display: block;
-	margin: 0.5rem 0;
-	padding: 0.5rem 1rem;
-	width: 100%;
-	background-color: var(--blue-gray-50);
-	color: var(--blue-gray-900);
-	border-radius: 0.25rem;
-	border: 1px solid var(--blue-gray-700);
-}
-
 templ SelectComponent(items []types.Select, empty, name, id, selected, label string) {
 	<div style="position: relative;">
-		<label class={ labelStyle() }>{ label }</label>
-		<select name={ name } id={ id } class={ selectStyle() }>
+		<label class="absolute block top-[-0.4rem] px-2 left-4 bg-blue-gray-700 text-blue-gray-50 rounded-lg text-[0.6rem]">{ label }</label>
+		<select
+			name={ name }
+			id={ id }
+			class="block my-2 pt-4 pb-2 px-4 w-full rounded-lg border border-blue-gray-700 bg-blue-gray-50 text-blue-gray-900"
+		>
 			<option value="">-- { empty } --</option>
 			for _, v := range items {
 				if v.Key == selected {

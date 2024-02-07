@@ -4,15 +4,32 @@ import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
 
-css buttondown() {
-	display: flex;
-	height: 100%;
-	flex-direction: column;
-	gap: 2rem;
-}
-
 func concat(s1, s2 string) string {
 	return s1 + s2
+}
+
+func budgetValText(budget *types.CreateBudget, text string) string {
+	if budget == nil {
+		if text == "total" {
+			return "0.00"
+		}
+		return ""
+	}
+
+	switch text {
+	case "project":
+		return budget.ProjectId.String()
+	case "budgetItem":
+		return budget.BudgetItemId.String()
+	case "quantity":
+		return fmt.Sprintf("%.2f", budget.Quantity)
+	case "cost":
+		return fmt.Sprintf("%.2f", budget.Cost)
+	case "total":
+		return fmt.Sprintf("%.2f", budget.Cost*budget.Quantity)
+	default:
+		return ""
+	}
 }
 
 templ EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select) {
@@ -26,29 +43,24 @@ templ EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Selec
 		}
 		hx-trigger="submit"
 		hx-target="#budget-table"
+		hx-target-error="#error"
 		hx-swap="innerHTML"
-		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
+		hx-on="htmx:afterOnLoad: handleHtmxError(event)"
 	>
-		<div class={ buttondown() }>
-			if budget == nil {
-				<div>
+		<div class="flex flex-col h-full gap-8">
+			<div>
+				if budget == nil {
 					@components.DrawerTitle("Agregar Presupuesto")
-					@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "", "Proyecto")
-					@components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", "", "Proveedor")
-					@components.Input("text", "Cantidad", "quantity", "quantity", "")
-					@components.Input("text", "Unitario", "cost", "cost", "")
-					@components.Input("text", "Total", "total", "total", "0.00")
-				</div>
-			} else {
-				<div>
+				} else {
 					@components.DrawerTitle("Editar Presupuesto")
-					@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budget.ProjectId.String(), "Proyecto")
-					@components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budget.BudgetItemId.String(), "Proveedor")
-					@components.Input("text", "Cantidad", "quantity", "quantity", fmt.Sprintf("%f", budget.Quantity))
-					@components.Input("text", "Unitario", "cost", "cost", fmt.Sprintf("%f", budget.Cost))
-					@components.Input("text", "Total", "total", "total", fmt.Sprintf("%.2f", budget.Quantity * budget.Cost))
-				</div>
-			}
+				}
+				<div id="error" class="text-red-600 text-sm"></div>
+				@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budgetValText(budget, "project"), "Proyecto")
+				@components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budgetValText(budget, "budgetItem"), "Proveedor")
+				@components.Input("text", "Cantidad", "quantity", "quantity", budgetValText(budget, "quantity"))
+				@components.Input("text", "Unitario", "cost", "cost", budgetValText(budget, "cost"))
+				@components.Input("text", "Total", "total", "total", budgetValText(budget, "total"))
+			</div>
 			@components.ButtonGroup()
 		</div>
 	</form>
@@ -62,6 +74,15 @@ templ EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Selec
 
          costo.addEventListener("input", setTotal)
          quantity.addEventListener("input", setTotal)
+
+         function handleHtmxError(event) {
+              document.getElementById("error").innerHTML = ""
+              if (event.detail.xhr.status === 200) {
+                   resetClose()
+                   return
+              }
+              document.getElementById("error").innerHTML = event.detail.xhr.response
+         }
 
          function setTotal() {
               if (isNaN(quantity.value)) {

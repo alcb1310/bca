@@ -1,15 +1,19 @@
 package types
 
-import "github.com/google/uuid"
+import (
+	"database/sql"
+
+	"github.com/google/uuid"
+)
 
 type BudgetItem struct {
-	ID         uuid.UUID  `json:"id"`
-	Code       string     `json:"code"`
-	Name       string     `json:"name"`
-	Level      uint8      `json:"level"`
-	Accumulate *bool      `json:"accumulate"`
-	ParentId   *uuid.UUID `json:"parent_id"`
-	CompanyId  uuid.UUID  `json:"company_id"`
+	ID         uuid.UUID
+	Code       string
+	Name       string
+	Level      uint8
+	Accumulate sql.NullBool
+	ParentId   *uuid.UUID
+	CompanyId  uuid.UUID
 }
 
 type BudgetItemResponse struct {
@@ -17,9 +21,9 @@ type BudgetItemResponse struct {
 	Code       string
 	Name       string
 	Level      uint8
-	Accumulate *bool
-	ParentId   *uuid.UUID
-	ParentCode *string
-	ParentName *string
+	Accumulate sql.NullBool
+	ParentId   uuid.NullUUID
+	ParentCode sql.NullString
+	ParentName sql.NullString
 	CompanyId  uuid.UUID
 }

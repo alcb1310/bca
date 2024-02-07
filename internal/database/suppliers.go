@@ -6,11 +6,12 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *service) GetAllSuppliers(companyId uuid.UUID) ([]types.Supplier, error) {
+func (s *service) GetAllSuppliers(companyId uuid.UUID, search string) ([]types.Supplier, error) {
 	suppliers := []types.Supplier{}
 
-	sql := "SELECT id, supplier_id, name, contact_name, contact_email, contact_phone, company_id FROM supplier WHERE company_id = $1 ORDER BY name"
-	rows, err := s.db.Query(sql, companyId)
+	se := "%" + search + "%"
+	sql := "SELECT id, supplier_id, name, contact_name, contact_email, contact_phone, company_id FROM supplier WHERE company_id = $1 and (supplier_id like $2 or name like $2) ORDER BY name"
+	rows, err := s.db.Query(sql, companyId, se)
 	if err != nil {
 		return nil, err
 	}

@@ -9,13 +9,15 @@ let isContextMenuOpen = false;
 userEl.addEventListener("click", (event) => {
      event.preventDefault();
      isContextMenuOpen = !isContextMenuOpen;
-     contextEl.classList.toggle("show-contextmenu");
+     contextEl.classList.toggle("block");
+     contextEl.classList.toggle("hidden");
 })
 
 window.onkeyup = function(e) {
      if (isContextMenuOpen && e.keyCode === 27) {
           isContextMenuOpen = false;
-          contextEl.classList.remove("show-contextmenu");
+          contextEl.classList.toggle("block");
+          contextEl.classList.toggle("hidden");
      }
 }
 

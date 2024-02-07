@@ -1,11 +1,11 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
 	"database/sql"
-	"log"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
 )
 
 var (
@@ -18,6 +18,7 @@ var (
 	chId       = uuid.Nil
 )
 
+/*
 func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	log.Println("Loading dummy data")
 
@@ -142,7 +143,7 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	log.Println("Dummy data loaded")
 
 	return nil
-}
+} */
 
 func createBudgetItem(tx *sql.Tx, bi *types.BudgetItem) (uuid.UUID, error) {
 	createdId := uuid.Nil

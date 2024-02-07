@@ -3,8 +3,11 @@ package server
 import (
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/views/bca/transaction/partials"
+	"fmt"
+	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -16,17 +19,29 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		p := r.Form.Get("project")
+		if p == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Seleccione un proyecto"))
+			return
+		}
 		pId, _ := uuid.Parse(p)
 		bi := r.Form.Get("budgetItem")
+		if bi == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Seleccione una partida"))
+			return
+		}
 		bId, _ := uuid.Parse(bi)
 		q, err := strconv.ParseFloat(r.Form.Get("quantity"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("La cantidad debe ser un número"))
 			return
 		}
 		c, err := strconv.ParseFloat(r.Form.Get("cost"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("El costo debe ser un número"))
 			return
 		}
 
@@ -39,7 +54,14 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if _, err := s.DB.CreateBudget(b); err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte(fmt.Sprintf("Ya existe partida %s en el proyecto %s", b.BudgetItemId, b.ProjectId)))
+				return
+			}
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			log.Println(err)
 			return
 		}
 	}
@@ -109,11 +131,13 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 		q, err := strconv.ParseFloat(r.Form.Get("quantity"), 10)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("La cantidad debe ser un número"))
 			return
 		}
 		c, err := strconv.ParseFloat(r.Form.Get("cost"), 10)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("El costo debe ser un número"))
 			return
 		}
 
@@ -141,6 +165,11 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := s.DB.UpdateBudget(budget, bu); err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte(fmt.Sprintf("Ya existe partida %s en el proyecto %s", budgetItemId, projectId)))
+				return
+			}
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -155,8 +184,8 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 			ProjectId:    bd.Project.ID,
 			BudgetItemId: bd.BudgetItem.ID,
 
-			Quantity:  *bd.RemainingQuantity,
-			Cost:      *bd.RemainingCost,
+			Quantity:  bd.RemainingQuantity.Float64,
+			Cost:      bd.RemainingCost.Float64,
 			CompanyId: ctx.CompanyId,
 		}
 		component := partials.EditBudget(budget, projectMap, budgetItemMap)

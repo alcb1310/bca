@@ -28,24 +28,18 @@ templ SuppliersTable(suppliers []types.Supplier) {
 						<td>{ supplier.SupplierId }</td>
 						<td>{ supplier.Name }</td>
 						<td>
-							if supplier.ContactName != nil {
-								{ *supplier.ContactName }
-							}
+							{ supplier.ContactName.String }
 						</td>
 						<td>
-							if supplier.ContactEmail != nil {
-								{ *supplier.ContactEmail }
-							}
+							{ supplier.ContactEmail.String }
 						</td>
 						<td>
-							if supplier.ContactPhone != nil {
-								{ *supplier.ContactPhone }
-							}
+							{ supplier.ContactPhone.String }
 						</td>
 						<td>
 							<i
 								style="cursor:pointer"
-								class="fa-solid fa-pencil yellow-text"
+								class="fa-solid fa-pencil text-yellow-600"
 								hx-get={ concat("/bca/partials/suppliers/", supplier.ID.String()) }
 								hx-target="#drawer"
 								hx-swap="innerHTML"

@@ -1,10 +1,6 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/reports"
-	"bca-go-final/internal/views/bca/reports/partials"
 	"context"
 	"log"
 	"net/http"
@@ -13,6 +9,11 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/reports"
+	"bca-go-final/internal/views/bca/reports/partials"
 )
 
 func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
@@ -209,6 +210,6 @@ func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 
 	spent := s.DB.GetDetailsByBudgetItem(ctx.CompanyId, parsedProjectId, budgetItemId, date, res)
 
-	component := partials.SpentDetails(spent)
+	component := partials.SpentDetails(spent, *budgetItem)
 	component.Render(r.Context(), w)
 }

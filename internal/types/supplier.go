@@ -1,16 +1,20 @@
 package types
 
-import "github.com/google/uuid"
+import (
+	"database/sql"
+
+	"github.com/google/uuid"
+)
 
 type Supplier struct {
-	ID uuid.UUID `json:"id"`
+	ID uuid.UUID
 
-	SupplierId string `json:"supplier_id"`
-	Name       string `json:"name"`
+	SupplierId string
+	Name       string
 
-	ContactName  *string `json:"contact_name"`
-	ContactEmail *string `json:"contact_email"`
-	ContactPhone *string `json:"contact_phone"`
+	ContactName  sql.NullString
+	ContactEmail sql.NullString
+	ContactPhone sql.NullString
 
-	CompanyId uuid.UUID `json:"company_id"`
+	CompanyId uuid.UUID
 }

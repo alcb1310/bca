@@ -1,10 +1,11 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
 	"database/sql"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
 )
 
 func (s *service) GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error) {
@@ -53,18 +54,20 @@ func (s *service) CreateBudget(budget *types.CreateBudget) (types.Budget, error)
 		return types.Budget{}, err
 	}
 
-	var z float64 = 0
+	z := sql.NullFloat64{Float64: 0, Valid: true}
+	q := sql.NullFloat64{Float64: budget.Quantity, Valid: true}
+	c := sql.NullFloat64{Float64: budget.Cost, Valid: true}
 	total := budget.Quantity * budget.Cost
 	b := types.Budget{
 		ProjectId:         budget.ProjectId,
 		BudgetItemId:      budget.BudgetItemId,
-		InitialQuantity:   &budget.Quantity,
-		InitialCost:       &budget.Cost,
+		InitialQuantity:   q,
+		InitialCost:       c,
 		InitialTotal:      total,
-		SpentQuantity:     &z,
+		SpentQuantity:     z,
 		SpentTotal:        0,
-		RemainingQuantity: &budget.Quantity,
-		RemainingCost:     &budget.Cost,
+		RemainingQuantity: q,
+		RemainingCost:     c,
 		RemainingTotal:    total,
 		UpdatedBudget:     total,
 		CompanyId:         budget.CompanyId,
@@ -83,17 +86,20 @@ func saveBudget(b *types.CreateBudget, s *sql.Tx) error {
 	budget.CompanyId = b.CompanyId
 	budget.ProjectId = b.ProjectId
 
+	q := sql.NullFloat64{Float64: b.Quantity, Valid: true}
+	c := sql.NullFloat64{Float64: b.Cost, Valid: true}
+
 	total := b.Quantity * b.Cost
 	budget.InitialTotal = total
 	budget.SpentTotal = 0
 	budget.RemainingTotal = total
 	budget.UpdatedBudget = total
-	budget.InitialQuantity = &b.Quantity
-	budget.InitialCost = &b.Cost
-	budget.RemainingQuantity = &b.Quantity
-	budget.RemainingCost = &b.Cost
-	var z float64 = 0
-	budget.SpentQuantity = &z
+	budget.InitialQuantity = q
+	budget.InitialCost = c
+	budget.RemainingQuantity = q
+	budget.RemainingCost = c
+	z := sql.NullFloat64{Float64: 0, Valid: true}
+	budget.SpentQuantity = z
 
 	query := "select accumulate, parent_id from budget_item where id = $1 and company_id = $2"
 	var accumulate bool
@@ -221,6 +227,8 @@ func (s *service) UpdateBudget(b types.CreateBudget, budget types.Budget) error 
 	total := b.Quantity * b.Cost
 	diff := total - budget.UpdatedBudget
 
+	q := sql.NullFloat64{Float64: b.Quantity, Valid: true}
+	c := sql.NullFloat64{Float64: b.Cost, Valid: true}
 	toUpdate := types.Budget{
 		ProjectId:         budget.ProjectId,
 		BudgetItemId:      budget.BudgetItemId,
@@ -229,8 +237,8 @@ func (s *service) UpdateBudget(b types.CreateBudget, budget types.Budget) error 
 		InitialTotal:      budget.InitialTotal,
 		SpentQuantity:     budget.SpentQuantity,
 		SpentTotal:        budget.SpentTotal,
-		RemainingQuantity: &b.Quantity,
-		RemainingCost:     &b.Cost,
+		RemainingQuantity: q,
+		RemainingCost:     c,
 		RemainingTotal:    total,
 		UpdatedBudget:     diff,
 		CompanyId:         budget.CompanyId,
@@ -261,7 +269,7 @@ func (s *service) executeUpdateBudget(budget *types.Budget, tx *sql.Tx) error {
 		return nil
 	}
 
-	if *bi.Accumulate {
+	if bi.Accumulate.Bool {
 		query := `
 			 UPDATE budget
 			 SET remaining_total = budget.remaining_total + $1, updated_budget = budget.updated_budget + $1

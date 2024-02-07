@@ -4,15 +4,24 @@ import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 import "bca-go-final/internal/views/components"
 
-css tableReport() {
-	font-size: 0.8rem;
+func getSum(invoiceDetails []types.InvoiceDetails) float64 {
+	sum := 0.0
+	for _, invoice := range invoiceDetails {
+		sum += invoice.Total
+	}
+	return sum
 }
 
-templ SpentDetails(invoiceDetails []types.InvoiceDetails) {
+templ SpentDetails(invoiceDetails []types.InvoiceDetails, budgetItem types.BudgetItem) {
 	<div>
 		@components.DrawerTitle("Facturas")
 	</div>
-	<table class={ tableReport() }>
+	<p>Partida:</p>
+	<div class="flex justify-between">
+		<p class="text-sm font-bold">{ budgetItem.Name }</p>
+		<p class="text-sm">Total: { utils.PrintFloat(getSum(invoiceDetails)) }</p>
+	</div>
+	<table class="text-xs">
 		<thead>
 			<tr>
 				<th width="90px">Fecha</th>
@@ -23,7 +32,7 @@ templ SpentDetails(invoiceDetails []types.InvoiceDetails) {
 		</thead>
 		<tbody>
 			for _, invoice := range invoiceDetails {
-				<tr>
+				<tr class="text-blue-gray-700">
 					<td>{ utils.ConvertDate(invoice.InvoiceDate) }</td>
 					<td>{ invoice.SupplierName }</td>
 					<td>{ invoice.InvoiceNumber }</td>
@@ -33,9 +42,9 @@ templ SpentDetails(invoiceDetails []types.InvoiceDetails) {
 		</tbody>
 	</table>
 	<button
-		type="button"
-		class="btn"
-		_="on click resetClose()"
+ 		type="button"
+ 		class="btn"
+ 		_="on click resetClose()"
 	>Cerrar</button>
 	<script>
         function resetClose() {

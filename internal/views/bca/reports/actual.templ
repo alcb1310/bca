@@ -12,27 +12,27 @@ templ ActualView(projects, levels []types.Select) {
 	@base.AuthenticatedLayout("actual") {
 		@components.PageTitle("Actual")
 		<form
-			id="actual-form"
-			hx-trigger="submit"
-			hx-target="#actual-report"
-			hx-swap="innerHTML"
-			hx-get="/bca/reportes/actual/generar"
-			hx-push-url="true"
+ 			id="actual-form"
+ 			hx-trigger="submit"
+ 			hx-target="#actual-report"
+ 			hx-swap="innerHTML"
+ 			hx-get="/bca/reportes/actual/generar"
+ 			hx-push-url="true"
 		>
 			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto")
 			@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "", "Nivel")
-			<div class={ buttonGroup() }>
+			<div class="flex flex-row gap-2">
 				<button
-					type="submit"
-					class="btn"
+ 					type="submit"
+ 					class="btn"
 				>
 					Generar
 				</button>
 				<button
-					type="button"
-					hx-get="/bca/reportes/excel/actual"
-					hx-include="#actual-form"
-					class="btn"
+ 					type="button"
+ 					hx-get="/bca/reportes/excel/actual"
+ 					hx-include="#actual-form"
+ 					class="btn"
 				>Exportar</button>
 			</div>
 		</form>

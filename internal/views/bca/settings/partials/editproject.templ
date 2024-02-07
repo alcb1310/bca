@@ -1,18 +1,36 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
-import "bca-go-final/internal/utils"
-
-css buttondown() {
-	display: flex;
-	height: 100%;
-	flex-direction: column;
-	gap: 2rem;
-}
 
 func concat(s1, s2 string) string {
 	return s1 + s2
+}
+
+func projectValText(project *types.Project, text string) string {
+	if project == nil {
+		return ""
+	}
+
+	switch text {
+	case "name":
+		return project.Name
+	case "gross_area":
+		return fmt.Sprintf("%.2f", project.GrossArea)
+	case "net_area":
+		return fmt.Sprintf("%.2f", project.NetArea)
+	case "active":
+		if project.IsActive == nil {
+			return ""
+		} else if *project.IsActive {
+			return "Si"
+		}
+		return "No"
+	default:
+		return ""
+	}
+
 }
 
 templ EditProject(project *types.Project) {
@@ -25,29 +43,35 @@ templ EditProject(project *types.Project) {
 			hx-put={ concat("/bca/partials/projects/edit/", project.ID.String()) }
 		}
 		hx-target="#projects-table"
+		hx-target-error="#error"
 		hx-swap="innerHTML"
-		_="on submit toggle @disabled on <button /> until htmx:afterOnLoad then resetClose()"
+		hx-on="htmx:afterOnLoad: handleHtmxError(event)"
 	>
-		<div class={ buttondown() }>
+		<div class="flex h-full flex-col gap-8">
 			<div>
 				if project == nil {
 					@components.DrawerTitle("Agregar Proyecto")
-					@components.Input("text", "Nombre", "name", "name", "")
-					@components.CheckBoxComponent("active", "active", "Activo", false)
-					@components.Input("text", "Area Bruta", "gross_area", "gross_area", "")
-					@components.Input("text", "Area Util", "net_area", "net_area", "")
 				} else {
 					@components.DrawerTitle("Editar Proyecto")
-					@components.Input("text", "Nombre", "name", "name", project.Name)
-					@components.CheckBoxComponent("active", "active", "Activo", *project.IsActive)
-					@components.Input("text", "Area Bruta", "gross_area", "gross_area", utils.PrintFloat(project.GrossArea))
-					@components.Input("text", "Area Util", "net_area", "net_area", utils.PrintFloat(project.NetArea))
 				}
+				<div id="error" class="text-red-600 text-sm"></div>
+				@components.Input("text", "Nombre", "name", "name", projectValText(project, "name"))
+				@components.CheckBoxComponent("active", "active", "Activo", projectValText(project, "active") == "Si")
+				@components.Input("text", "Area Bruta", "gross_area", "gross_area", projectValText(project, "gross_area"))
+				@components.Input("text", "Area Util", "net_area", "net_area", projectValText(project, "net_area"))
 			</div>
 			@components.ButtonGroup()
 		</div>
 	</form>
 	<script>
+         function handleHtmxError(event) {
+              document.getElementById("error").innerHTML = ""
+              if (event.detail.xhr.status === 200) {
+                   resetClose()
+                   return
+              }
+              document.getElementById("error").innerHTML = event.detail.xhr.response
+         }
          function resetClose() {
               closeDrawer()
          }

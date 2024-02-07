@@ -30,21 +30,21 @@ templ BudgetTable(budgets []types.GetBudget) {
 						<td>{ budget.Project.Name }</td>
 						<td>{ budget.BudgetItem.Name }</td>
 						<td align="right">
-							if budget.RemainingQuantity != nil {
-								{ utils.PrintFloat(*budget.RemainingQuantity) }
+							if budget.RemainingQuantity.Valid {
+								{ utils.PrintFloat(budget.RemainingQuantity.Float64) }
 							}
 						</td>
 						<td align="right">
-							if budget.RemainingCost != nil {
-								{ utils.PrintFloat(*budget.RemainingCost) }
+							if budget.RemainingCost.Valid {
+								{ utils.PrintFloat(budget.RemainingCost.Float64) }
 							}
 						</td>
 						<td align="right">{ utils.PrintFloat(budget.RemainingTotal) }</td>
 						<td align="right">{ utils.PrintFloat(budget.UpdatedBudget) }</td>
 						<td align="center">
-							if budget.RemainingQuantity != nil {
+							if budget.RemainingQuantity.Valid {
 								<i
-									class="fa-solid fa-pen yellow-text"
+									class="fa-solid fa-pen text-yellow-600 cursor-pointer"
 									_="on click openDrawer()"
 									hx-target="#drawer"
 									hx-swap="innerHTML"

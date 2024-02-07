@@ -1,27 +1,18 @@
 package components
 
 css main() {
-	position: relative;
-	display: grid;
 	grid-template-columns: auto 1fr;
 }
 
 css maincontent() {
-	padding: 1.5rem;
-	height: calc(100vh - 7rem);
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-
-css maincontentcontainer() {
-	border-radius: 8px;
+	height: calc(100vh - 4rem);
 }
 
 templ Main(active string) {
-	<section class={ main() }>
+	<section class={ "relative grid", main() }>
 		@SidebarComponent(active)
-		<div class={ maincontent() }>
-			<div id="main-content" class={ maincontentcontainer() }>
+		<div class={ "p-6 overflow-x-hidden overflow-y-auto", maincontent() }>
+			<div id="main-content" class="rounded-lg">
 				{ children... }
 			</div>
 		</div>
