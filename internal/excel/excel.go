@@ -1,14 +1,15 @@
 package excel
 
 import (
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/types"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/xuri/excelize/v2"
+
+	"bca-go-final/internal/database"
+	"bca-go-final/internal/types"
 )
 
 func Balance(companyId, projectId uuid.UUID, date time.Time, db database.Service) *excelize.File {
@@ -26,7 +27,6 @@ func Balance(companyId, projectId uuid.UUID, date time.Time, db database.Service
 		return f
 	}
 	f.SetActiveSheet(index)
-
 	f.DeleteSheet("Sheet1")
 
 	f.SetCellValue("cuadre", "A1", "Fecha")
@@ -273,20 +273,20 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 		f.SetCellValue("actual", fmt.Sprintf("A%d", row), budget.BudgetItem.Code)
 		f.SetCellValue("actual", fmt.Sprintf("B%d", row), budget.BudgetItem.Name)
 
-		if budget.InitialQuantity != nil {
-			f.SetCellFloat("actual", fmt.Sprintf("C%d", row), *budget.InitialQuantity, 2, 64)
-			f.SetCellFloat("actual", fmt.Sprintf("D%d", row), *budget.InitialCost, 2, 64)
+		if budget.InitialQuantity.Valid {
+			f.SetCellFloat("actual", fmt.Sprintf("C%d", row), budget.InitialQuantity.Float64, 2, 64)
+			f.SetCellFloat("actual", fmt.Sprintf("D%d", row), budget.InitialCost.Float64, 2, 64)
 		}
 		f.SetCellFloat("actual", fmt.Sprintf("E%d", row), budget.InitialTotal, 2, 64)
 
-		if budget.SpentQuantity != nil {
-			f.SetCellFloat("actual", fmt.Sprintf("F%d", row), *budget.SpentQuantity, 2, 64)
+		if budget.SpentQuantity.Valid {
+			f.SetCellFloat("actual", fmt.Sprintf("F%d", row), budget.SpentQuantity.Float64, 2, 64)
 		}
 		f.SetCellFloat("actual", fmt.Sprintf("G%d", row), budget.SpentTotal, 2, 64)
 
-		if budget.RemainingQuantity != nil {
-			f.SetCellFloat("actual", fmt.Sprintf("H%d", row), *budget.RemainingQuantity, 2, 64)
-			f.SetCellFloat("actual", fmt.Sprintf("I%d", row), *budget.RemainingCost, 2, 64)
+		if budget.RemainingQuantity.Valid {
+			f.SetCellFloat("actual", fmt.Sprintf("H%d", row), budget.RemainingQuantity.Float64, 2, 64)
+			f.SetCellFloat("actual", fmt.Sprintf("I%d", row), budget.RemainingCost.Float64, 2, 64)
 		}
 		f.SetCellFloat("actual", fmt.Sprintf("J%d", row), budget.RemainingTotal, 2, 64)
 		f.SetCellFloat("actual", fmt.Sprintf("K%d", row), budget.UpdatedBudget, 2, 64)
@@ -297,5 +297,110 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 	if err := f.SaveAs("./public/" + id.String() + ".xlsx"); err != nil {
 		log.Println(err)
 	}
+	return f
+}
+
+func Spent(project types.Project, data []types.Spent, date time.Time) *excelize.File {
+	log.Println("Spent", len(data))
+	f := excelize.NewFile()
+	id := uuid.New()
+	defer func() {
+		if err := f.Close(); err != nil {
+			log.Println(err)
+		}
+	}()
+
+	index, err := f.NewSheet("gastado")
+	if err != nil {
+		fmt.Println(err)
+		return f
+	}
+
+	f.SetColWidth("gastado", "A", "A", 11.50)
+	f.SetColWidth("gastado", "B", "B", 40)
+	f.SetColWidth("gastado", "C", "C", 13.50)
+
+	pageTitleStyle, _ := f.NewStyle(&excelize.Style{
+		Alignment: &excelize.Alignment{
+			Horizontal: "center",
+			Vertical:   "center",
+		},
+		Font: &excelize.Font{
+			Bold: true,
+			Size: 18,
+		},
+	})
+	colTitleStyle, _ := f.NewStyle(&excelize.Style{
+		Alignment: &excelize.Alignment{
+			Horizontal: "left",
+			Vertical:   "center",
+		},
+		Font: &excelize.Font{
+			Bold: true,
+		},
+	})
+	titleStyle, _ := f.NewStyle(&excelize.Style{
+		Alignment: &excelize.Alignment{
+			Horizontal: "center",
+			Vertical:   "center",
+		},
+		Font: &excelize.Font{
+			Bold: true,
+		},
+		Fill: excelize.Fill{
+			Type:    "pattern",
+			Pattern: 1,
+			Color:   []string{"#D9D9D9"},
+		},
+	})
+
+	exp := "yyyy-mm-dd"
+	dateStyle, _ := f.NewStyle(&excelize.Style{
+		Alignment: &excelize.Alignment{
+			Horizontal: "left",
+		},
+		CustomNumFmt: &exp,
+	})
+
+	f.SetActiveSheet(index)
+	f.DeleteSheet("Sheet1")
+
+	f.SetCellValue("gastado", "A1", "Gastado Por Partida")
+	f.MergeCell("gastado", "A1", "C1")
+	f.SetCellStyle("gastado", "A1", "C1", pageTitleStyle)
+
+	f.SetCellValue("gastado", "A3", "Fecha de corte")
+	f.SetCellFormula("gastado", "B3", fmt.Sprintf("=DATE(%d,%d,%d)", date.Year(), int(date.Month()), date.Day()))
+	f.SetCellStyle("gastado", "B3", "B3", dateStyle)
+	f.SetCellValue("gastado", "A4", "Proyecto")
+	f.SetCellValue("gastado", "B4", project.Name)
+	f.SetCellStyle("gastado", "A3", "A4", colTitleStyle)
+
+	f.SetCellValue("gastado", "A6", "Código")
+	f.SetCellValue("gastado", "B6", "Partida")
+	f.SetCellValue("gastado", "C6", "Total")
+	f.SetCellStyle("gastado", "A6", "C6", titleStyle)
+
+	defaultStyle, _ := f.NewStyle(&excelize.Style{
+		Font: &excelize.Font{
+			Bold: false,
+		},
+		NumFmt: 4,
+	})
+
+	row := 7
+	for _, d := range data {
+		f.SetCellValue("gastado", fmt.Sprintf("A%d", row), d.BudgetItem.Code)
+		f.SetCellValue("gastado", fmt.Sprintf("B%d", row), d.BudgetItem.Name)
+		f.SetCellFloat("gastado", fmt.Sprintf("C%d", row), d.Spent, 2, 64)
+
+		f.SetCellStyle("gastado", fmt.Sprintf("C%d", row), fmt.Sprintf("C%d", row), defaultStyle)
+		row++
+	}
+
+	if err := f.SaveAs("./public/" + id.String() + ".xlsx"); err != nil {
+		log.Println(err)
+	}
+
 	return f
 }

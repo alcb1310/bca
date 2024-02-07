@@ -131,8 +131,8 @@ func BudgetTable(budgets []types.GetBudget) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if budget.RemainingQuantity != nil {
-					var templ_7745c5c3_Var12 string = utils.PrintFloat(*budget.RemainingQuantity)
+				if budget.RemainingQuantity.Valid {
+					var templ_7745c5c3_Var12 string = utils.PrintFloat(budget.RemainingQuantity.Float64)
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -142,8 +142,8 @@ func BudgetTable(budgets []types.GetBudget) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if budget.RemainingCost != nil {
-					var templ_7745c5c3_Var13 string = utils.PrintFloat(*budget.RemainingCost)
+				if budget.RemainingCost.Valid {
+					var templ_7745c5c3_Var13 string = utils.PrintFloat(budget.RemainingCost.Float64)
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -171,7 +171,7 @@ func BudgetTable(budgets []types.GetBudget) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if budget.RemainingQuantity != nil {
+				if budget.RemainingQuantity.Valid {
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-solid fa-pen text-yellow-600 cursor-pointer\" _=\"on click openDrawer()\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" hx-trigger=\"click\" hx-get=\"")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err

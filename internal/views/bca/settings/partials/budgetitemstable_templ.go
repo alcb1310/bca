@@ -122,7 +122,7 @@ func BudgetItemTable(budgetItems []types.BudgetItemResponse) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if *budgetItem.Accumulate {
+				if budgetItem.Accumulate.Bool {
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-regular fa-circle-check\"></i>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -137,12 +137,10 @@ func BudgetItemTable(budgetItems []types.BudgetItemResponse) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if budgetItem.ParentCode != nil {
-					var templ_7745c5c3_Var11 string = *budgetItem.ParentCode
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
+				var templ_7745c5c3_Var11 string = budgetItem.ParentCode.String
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"center\"><i class=\"fa-solid fa-pencil text-yellow-600 cursor-pointer\" hx-get=\"")
 				if templ_7745c5c3_Err != nil {

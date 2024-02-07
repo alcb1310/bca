@@ -27,16 +27,14 @@ templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
 						<td>{ budgetItem.Name }</td>
 						<td align="center">{ strconv.Itoa(int(budgetItem.Level)) }</td>
 						<td align="center">
-							if *budgetItem.Accumulate {
+							if budgetItem.Accumulate.Bool {
 								<i class="fa-regular fa-circle-check"></i>
 							} else {
 								<i class="fa-regular fa-circle-xmark"></i>
 							}
 						</td>
 						<td>
-							if budgetItem.ParentCode != nil {
-								{ *budgetItem.ParentCode }
-							}
+							{ budgetItem.ParentCode.String }
 						</td>
 						<td align="center">
 							<i

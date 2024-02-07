@@ -1,6 +1,10 @@
 package types
 
-import "github.com/google/uuid"
+import (
+	"database/sql"
+
+	"github.com/google/uuid"
+)
 
 type Supplier struct {
 	ID uuid.UUID
@@ -8,9 +12,9 @@ type Supplier struct {
 	SupplierId string
 	Name       string
 
-	ContactName  *string
-	ContactEmail *string
-	ContactPhone *string
+	ContactName  sql.NullString
+	ContactEmail sql.NullString
+	ContactPhone sql.NullString
 
 	CompanyId uuid.UUID
 }

@@ -23,20 +23,11 @@ func supplierValidText(supplier *types.Supplier, text string) string {
 	case "supplier_name":
 		return supplier.Name
 	case "contact_name":
-		if supplier.ContactName == nil {
-			return ""
-		}
-		return *supplier.ContactName
+		return supplier.ContactName.String
 	case "contact_email":
-		if supplier.ContactEmail == nil {
-			return ""
-		}
-		return *supplier.ContactEmail
+		return supplier.ContactEmail.String
 	case "contact_phone":
-		if supplier.ContactPhone == nil {
-			return ""
-		}
-		return *supplier.ContactPhone
+		return supplier.ContactPhone.String
 	default:
 		return ""
 	}

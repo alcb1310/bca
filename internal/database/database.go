@@ -1,7 +1,6 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
 	"context"
 	"database/sql"
 	"fmt"
@@ -12,6 +11,8 @@ import (
 	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
+
+	"bca-go-final/internal/types"
 )
 
 type Service interface {
@@ -23,7 +24,7 @@ type Service interface {
 	Levels(companyId uuid.UUID) []types.Select
 
 	// database/dummy.go
-	LoadDummyData(companyId uuid.UUID) error
+	// LoadDummyData(companyId uuid.UUID) error
 
 	// database/users.go
 	GetAllUsers(companyId uuid.UUID) ([]types.User, error)

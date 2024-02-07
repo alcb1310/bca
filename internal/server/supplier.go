@@ -1,8 +1,7 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/views/bca/settings/partials"
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +9,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/views/bca/settings/partials"
 )
 
 func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
@@ -17,15 +19,18 @@ func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
-		email := r.Form.Get("contact_email")
-		name := r.Form.Get("contact_name")
-		phone := r.Form.Get("contact_phone")
+		e := r.Form.Get("contact_email")
+		email := sql.NullString{Valid: true, String: e}
+		n := r.Form.Get("contact_name")
+		name := sql.NullString{Valid: true, String: n}
+		p := r.Form.Get("contact_phone")
+		phone := sql.NullString{Valid: true, String: p}
 		sup := types.Supplier{
 			SupplierId:   r.Form.Get("supplier_id"),
 			Name:         r.Form.Get("name"),
-			ContactEmail: &email,
-			ContactName:  &name,
-			ContactPhone: &phone,
+			ContactEmail: email,
+			ContactName:  name,
+			ContactPhone: phone,
 			CompanyId:    ctxPayload.CompanyId,
 		}
 
@@ -93,12 +98,15 @@ func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	sup.SupplierId = r.Form.Get("supplier_id")
 	sup.Name = r.Form.Get("name")
-	email := r.Form.Get("contact_email")
-	name := r.Form.Get("contact_name")
-	phone := r.Form.Get("contact_phone")
-	sup.ContactEmail = &email
-	sup.ContactName = &name
-	sup.ContactPhone = &phone
+	e := r.Form.Get("contact_email")
+	email := sql.NullString{Valid: true, String: e}
+	n := r.Form.Get("contact_name")
+	name := sql.NullString{Valid: true, String: n}
+	p := r.Form.Get("contact_phone")
+	phone := sql.NullString{Valid: true, String: p}
+	sup.ContactEmail = email
+	sup.ContactName = name
+	sup.ContactPhone = phone
 
 	if sup.SupplierId == "" {
 		w.WriteHeader(http.StatusBadRequest)

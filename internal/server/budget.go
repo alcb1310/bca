@@ -184,8 +184,8 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 			ProjectId:    bd.Project.ID,
 			BudgetItemId: bd.BudgetItem.ID,
 
-			Quantity:  *bd.RemainingQuantity,
-			Cost:      *bd.RemainingCost,
+			Quantity:  bd.RemainingQuantity.Float64,
+			Cost:      bd.RemainingCost.Float64,
 			CompanyId: ctx.CompanyId,
 		}
 		component := partials.EditBudget(budget, projectMap, budgetItemMap)
