@@ -19,6 +19,7 @@ type Service interface {
 	Health() map[string]string
 	CreateCompany(company *types.CompanyCreate) error
 	Login(l *types.Login) (string, error)
+	RegenerateToken(token string, user uuid.UUID) error
 	IsLoggedIn(token string, user uuid.UUID) bool
 
 	Levels(companyId uuid.UUID) []types.Select
