@@ -824,6 +824,10 @@ i:disabled {
   gap: 2rem;
 }
 
+.gap-5 {
+  gap: 1.25rem;
+}
+
 .gap-x-2 {
   -moz-column-gap: 0.5rem;
        column-gap: 0.5rem;
