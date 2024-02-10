@@ -1,9 +1,14 @@
 package server
 
-/*
+import (
+	"bca-go-final/internal/utils"
+	"encoding/json"
+	"net/http"
+)
+
 func (s *Server) loadDummyDataHandler(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	companyId := ctx.CompanyId
 
 	switch r.Method {
@@ -22,4 +27,3 @@ func (s *Server) loadDummyDataHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
-*/

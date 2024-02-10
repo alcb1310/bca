@@ -17,7 +17,7 @@ import (
 )
 
 func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
 	projects := []types.Select{}
@@ -36,7 +36,7 @@ func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 
 	switch r.Method {
 	case http.MethodPost:
@@ -69,7 +69,7 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
 	projects := []types.Select{}
@@ -102,7 +102,7 @@ func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
 	projects := []types.Select{}
 	for _, v := range p {
@@ -157,7 +157,7 @@ func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	r.ParseForm()
 	p := r.Form.Get("proyecto")
 	projectId, _ := uuid.Parse(p)
@@ -182,7 +182,7 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["budgetItemId"]
 	budgetItemId, err := uuid.Parse(id)
 	if err != nil {

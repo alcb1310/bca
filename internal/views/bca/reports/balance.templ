@@ -8,25 +8,27 @@ templ BalanceView(projects []types.Select) {
 	@base.AuthenticatedLayout("balance") {
 		@components.PageTitle("Cuadre mensual")
 		<form
-			id="balance-form"
-			hx-post="/bca/reportes/cuadre"
-			hx-trigger="submit"
-			hx-target="#balance"
-			hx-swap="innerHTML"
-			hx-push-url="false"
+ 			id="balance-form"
+ 			hx-post="/bca/reportes/cuadre"
+ 			hx-trigger="submit"
+ 			hx-target="#balance"
+ 			hx-swap="innerHTML"
+ 			hx-push-url="false"
 		>
 			@components.SelectComponent(projects, "Proyecto", "project", "project", "", "Proyecto")
-			@components.Input("date", "Fecha", "date", "date", "")
+			<div class="flex flex-row">
+				@components.Input("date", "Fecha", "date", "date", "")
+			</div>
 			<div class="flex flex-row gap-2">
 				<button
-					type="submit"
-					class="btn"
+ 					type="submit"
+ 					class="btn"
 				>Generar</button>
 				<button
-					type="button"
-					hx-get="/bca/reportes/excel/cuadre"
-					hx-include="#balance-form"
-					class="btn"
+ 					type="button"
+ 					hx-get="/bca/reportes/excel/cuadre"
+ 					hx-include="#balance-form"
+ 					class="btn"
 				>Exportar</button>
 			</div>
 		</form>

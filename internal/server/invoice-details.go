@@ -1,8 +1,6 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/views/bca/transaction/partials/details"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,10 +9,14 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/transaction/partials/details"
 )
 
 func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["invoiceId"]
 	parsedInvoiceId, _ := uuid.Parse(id)
 
@@ -97,7 +99,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 
 	id := mux.Vars(r)["invoiceId"]
 	parsedInvoiceId, _ := uuid.Parse(id)
@@ -118,7 +120,7 @@ func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) DetailsEdit(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	iId := mux.Vars(r)["invoiceId"]
 	bId := mux.Vars(r)["budgetItemId"]
 	parsedInvoiceId, _ := uuid.Parse(iId)

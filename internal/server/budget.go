@@ -2,6 +2,7 @@ package server
 
 import (
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/transaction/partials"
 	"fmt"
 	"log"
@@ -14,7 +15,7 @@ import (
 )
 
 func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
@@ -72,7 +73,7 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
 	projectMap := []types.Select{}
@@ -99,7 +100,7 @@ func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	projectId, _ := uuid.Parse(mux.Vars(r)["projectId"])
 	budgetItemId, _ := uuid.Parse(mux.Vars(r)["budgetItemId"])
 

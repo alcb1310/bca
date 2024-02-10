@@ -1,9 +1,6 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,6 +8,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/transaction"
 )
 
 func (s *Server) Budget(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +25,7 @@ func (s *Server) Invoice(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Closure(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
 	projects := []types.Select{}
 	for _, v := range p {

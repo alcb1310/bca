@@ -11,11 +11,12 @@ import (
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/settings/partials"
 )
 
 func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
-	ctxPayload, _ := getMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
@@ -72,7 +73,7 @@ func (s *Server) SupplierAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) SuppliersEdit(w http.ResponseWriter, r *http.Request) {
-	ctxPayload, _ := getMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["id"]
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
@@ -86,7 +87,7 @@ func (s *Server) SuppliersEdit(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
-	ctxPayload, _ := getMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["id"]
 	parsedId, err := uuid.Parse(id)
 	if err != nil {

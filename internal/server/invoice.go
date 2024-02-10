@@ -2,6 +2,7 @@ package server
 
 import (
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/transaction/partials"
 	"log"
 	"net/http"
@@ -13,7 +14,7 @@ import (
 )
 
 func (s *Server) InvoicesTable(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 
 	invoices, _ := s.DB.GetInvoices(ctx.CompanyId)
 	components := partials.InvoiceTable(invoices)
@@ -21,7 +22,7 @@ func (s *Server) InvoicesTable(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	var invoice *types.InvoiceResponse
 	redirectURL := "/bca/transacciones/facturas/crear"
 	invoice = nil
@@ -115,7 +116,7 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	redirectURL := "/bca/transacciones/facturas/crear"
 	id := mux.Vars(r)["id"]
 	parsedId, _ := uuid.Parse(id)

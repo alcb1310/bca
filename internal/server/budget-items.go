@@ -2,6 +2,7 @@ package server
 
 import (
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/settings/partials"
 	"database/sql"
 	"fmt"
@@ -14,7 +15,7 @@ import (
 )
 
 func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
-	ctxPayload, _ := getMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
@@ -72,14 +73,14 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) BudgetItemAdd(w http.ResponseWriter, r *http.Request) {
-	ctxPayload, _ := getMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 	p := s.DB.GetBudgetItemsByAccumulate(ctxPayload.CompanyId, true)
 	component := partials.EditBudgetItem(nil, p)
 	component.Render(r.Context(), w)
 }
 
 func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
-	ctxPayload, _ := getMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["id"]
 	parsedId, _ := uuid.Parse(id)
 	budgetItem, _ := s.DB.GetOneBudgetItem(parsedId, ctxPayload.CompanyId)

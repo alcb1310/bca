@@ -1,13 +1,14 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
 	"bytes"
 	"context"
 	"errors"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 )
 
 func (s *service) CreateCompany(company *types.CompanyCreate) error {
@@ -66,6 +67,14 @@ func (s *service) Login(l *types.Login) (string, error) {
 	}
 
 	return token, nil
+}
+
+func (s *service) RegenerateToken(token string, user uuid.UUID) error {
+	sql := "insert into logged_in (user_id, token) values ($1, $2) on conflict (user_id) do update set token = $2"
+	if _, err := s.db.Exec(sql, user, token); err != nil {
+		return errors.New("server error")
+	}
+	return nil
 }
 
 func (s *service) IsLoggedIn(token string, user uuid.UUID) bool {

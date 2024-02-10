@@ -16,6 +16,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/", s.HelloWorldHandler)
 	r.HandleFunc("/api/login", s.Login)
 	r.HandleFunc("/api/register", s.Register)
+	r.HandleFunc("/bca/dummy", s.loadDummyDataHandler)
 
 	// views
 
