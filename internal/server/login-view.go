@@ -1,14 +1,15 @@
 package server
 
 import (
+	"net/http"
+
+	"github.com/gorilla/sessions"
+
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views"
 	"bca-go-final/internal/views/bca"
 	"bca-go-final/internal/views/derrors"
-	"net/http"
-
-	"github.com/gorilla/sessions"
 )
 
 var (
@@ -89,7 +90,7 @@ func (s *Server) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) BcaView(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	component := bca.LandingPage(ctx.Name)
 	component.Render(r.Context(), w)
 }

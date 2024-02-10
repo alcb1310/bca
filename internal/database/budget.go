@@ -225,7 +225,8 @@ func (s *service) GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*t
 
 func (s *service) UpdateBudget(b types.CreateBudget, budget types.Budget) error {
 	total := b.Quantity * b.Cost
-	diff := total - budget.UpdatedBudget
+	updated := total - budget.UpdatedBudget
+	diff := total - budget.RemainingTotal
 
 	q := sql.NullFloat64{Float64: b.Quantity, Valid: true}
 	c := sql.NullFloat64{Float64: b.Cost, Valid: true}
@@ -240,7 +241,7 @@ func (s *service) UpdateBudget(b types.CreateBudget, budget types.Budget) error 
 		RemainingQuantity: q,
 		RemainingCost:     c,
 		RemainingTotal:    total,
-		UpdatedBudget:     diff,
+		UpdatedBudget:     updated,
 		CompanyId:         budget.CompanyId,
 	}
 
@@ -250,7 +251,7 @@ func (s *service) UpdateBudget(b types.CreateBudget, budget types.Budget) error 
 	}
 	defer tx.Rollback()
 
-	err = s.executeUpdateBudget(&toUpdate, tx)
+	err = s.executeUpdateBudget(&toUpdate, tx, diff)
 	if err != nil {
 		return err
 	}
@@ -260,7 +261,7 @@ func (s *service) UpdateBudget(b types.CreateBudget, budget types.Budget) error 
 	return nil
 }
 
-func (s *service) executeUpdateBudget(budget *types.Budget, tx *sql.Tx) error {
+func (s *service) executeUpdateBudget(budget *types.Budget, tx *sql.Tx, diff float64) error {
 	bi, err := s.getBudgetItem(budget.BudgetItemId, budget.CompanyId)
 	if err != nil {
 		return err
@@ -276,7 +277,7 @@ func (s *service) executeUpdateBudget(budget *types.Budget, tx *sql.Tx) error {
 			 WHERE project_id = $2 and budget_item_id = $3 and company_id = $4
 		  `
 		_, err = tx.Exec(
-			query, budget.UpdatedBudget,
+			query, diff,
 			budget.ProjectId, budget.BudgetItemId, budget.CompanyId,
 		)
 	} else {
@@ -300,5 +301,5 @@ func (s *service) executeUpdateBudget(budget *types.Budget, tx *sql.Tx) error {
 	}
 	budget.BudgetItemId = *bi.ParentId
 
-	return s.executeUpdateBudget(budget, tx)
+	return s.executeUpdateBudget(budget, tx, diff)
 }

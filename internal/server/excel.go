@@ -13,10 +13,11 @@ import (
 
 	"bca-go-final/internal/excel"
 	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 )
 
 func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	id := r.URL.Query().Get("project")
 	parsedProjectId, err := uuid.Parse(id)
 	if err != nil {
@@ -47,7 +48,7 @@ func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -84,7 +85,7 @@ func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) HistoricExcel(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -124,7 +125,7 @@ func (s *Server) HistoricExcel(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) SpentExcel(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := getMyPaload(r)
+	ctx, _ := utils.GetMyPaload(r)
 	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
