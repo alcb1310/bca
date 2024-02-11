@@ -162,6 +162,20 @@ create table if not exists historic(
      primary key (project_id, budget_item_id, date, company_id)
 );
 
+create table if not exists flow(
+    date data not null,
+    project_id uuid not null references project (id) on delete restrict,
+    budget_item_id uuid not null references budget_item (id) on delete restrict,
+
+    total numeric not null,
+
+    created_at timestamp with time zone default now(),
+    company_id uuid not null references company (id) on delete restrict,
+
+    unique (date, project_id, budget_item_id, company_id),
+    primary key (date, project_id, budget_item_id, company_id)
+);
+
 -- VIEWS
 
 create or replace view vw_budget_item as
