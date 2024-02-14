@@ -163,7 +163,7 @@ create table if not exists historic(
 );
 
 create table if not exists flow(
-    date data not null,
+    date date not null,
     project_id uuid not null references project (id) on delete restrict,
     budget_item_id uuid not null references budget_item (id) on delete restrict,
 
