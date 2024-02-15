@@ -1,0 +1,31 @@
+package transaction 
+
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/types"
+
+templ FlowView(projects []types.Select) {
+	@base.AuthenticatedLayout("flujo") {
+		@components.PageTitle("Flujo de Caja")
+		<form
+			id="flow-form"
+			hx-trigger="submit"
+			hx-target="#flow-info"
+			hx-swap="innerHTML"
+			hx-get="/bca/transaction/flow"
+		>
+			@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", "", "Proyecto")
+			<div class="flex flex-row gap-2">
+				<button
+					type="submit"
+					class="btn"
+				>Flujo</button>
+				<button
+					type="button"
+					class="btn"
+				>Agregar</button>
+			</div>
+		</form>
+		<div id="flow-info"></div>
+	}
+}

@@ -19,6 +19,12 @@ templ SidebarComponent(active string) {
 				</li>
 				<li>
 					<a
+						href="/bca/transacciones/flujo"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "flujo"), templ.KV("text-blue-gray-300", active != "flujo") }
+					><i class="fa-solid fa-money-bill-1-wave"></i><span>Flujo de Caja</span></a>
+				</li>
+				<li>
+					<a
 						href="/bca/transacciones/cierre"
 						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "cierre"), templ.KV("text-blue-gray-300", active != "cierre") }
 					><i class="fa-solid fa-landmark"></i><span>Cierre Mensual</span></a>

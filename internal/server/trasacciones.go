@@ -78,3 +78,20 @@ func (s *Server) Closure(w http.ResponseWriter, r *http.Request) {
 	component := transaction.ClosureView(projects)
 	component.Render(r.Context(), w)
 }
+
+func (s *Server) Flow(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+
+	var projects []types.Select
+	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
+	for _, project := range p {
+		x := types.Select{
+			Key:   project.ID.String(),
+			Value: project.Name,
+		}
+		projects = append(projects, x)
+	}
+
+	component := transaction.FlowView(projects)
+	component.Render(r.Context(), w)
+}
