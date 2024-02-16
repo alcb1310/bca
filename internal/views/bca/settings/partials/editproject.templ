@@ -56,9 +56,9 @@ templ EditProject(project *types.Project) {
 				}
 				<div id="error" class="text-red-600 text-sm"></div>
 				@components.Input("text", "Nombre", "name", "name", projectValText(project, "name"))
-				@components.CheckBoxComponent("active", "active", "Activo", projectValText(project, "active") == "Si")
 				@components.Input("text", "Area Bruta", "gross_area", "gross_area", projectValText(project, "gross_area"))
 				@components.Input("text", "Area Util", "net_area", "net_area", projectValText(project, "net_area"))
+				@components.CheckBoxComponent("active", "active", "Activo", projectValText(project, "active") == "Si")
 			</div>
 			@components.ButtonGroup()
 		</div>

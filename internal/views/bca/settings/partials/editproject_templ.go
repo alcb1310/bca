@@ -102,15 +102,15 @@ func EditProject(project *types.Project) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.CheckBoxComponent("active", "active", "Activo", projectValText(project, "active") == "Si").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		templ_7745c5c3_Err = components.Input("text", "Area Bruta", "gross_area", "gross_area", projectValText(project, "gross_area")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = components.Input("text", "Area Util", "net_area", "net_area", projectValText(project, "net_area")).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.CheckBoxComponent("active", "active", "Activo", projectValText(project, "active") == "Si").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
