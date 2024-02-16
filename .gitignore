@@ -26,3 +26,5 @@ tmp/
 .env
 
 node_modules
+
+data
