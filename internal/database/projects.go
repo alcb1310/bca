@@ -9,7 +9,7 @@ import (
 func (s *service) GetAllProjects(companyId uuid.UUID) ([]types.Project, error) {
 	projects := []types.Project{}
 
-	sql := "select id, name, is_active, company_id, gross_area, net_area from project where company_id = $1"
+	sql := "select id, name, is_active, company_id, gross_area, net_area from project where company_id = $1 order by is_active desc, name"
 	rows, err := s.db.Query(sql, companyId)
 	if err != nil {
 		return projects, err
@@ -62,7 +62,7 @@ func (s *service) UpdateProject(p types.Project, id, companyId uuid.UUID) error 
 func (s *service) GetActiveProjects(companyId uuid.UUID, active bool) []types.Project {
 	projects := []types.Project{}
 
-	sql := "select id, name, is_active, company_id from project where company_id = $1 and is_active = $2"
+	sql := "select id, name, is_active, company_id from project where company_id = $1 and is_active = $2 order by name"
 	rows, err := s.db.Query(sql, companyId, active)
 	if err != nil {
 		return projects
