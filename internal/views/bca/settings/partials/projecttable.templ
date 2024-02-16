@@ -1,12 +1,15 @@
 package partials
 
 import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
 
 templ ProjectsTable(projects []types.Project) {
 	<table>
 		<thead>
 			<tr>
 				<th width="300px">Nombre</th>
+				<th width="150px">Area Bruta <span class="lowercase">(m2)</span></th>
+				<th width="150px">Area Util (m2)</th>
 				<th width="100px">Activo</th>
 				<th width="50px"></th>
 			</tr>
@@ -20,6 +23,8 @@ templ ProjectsTable(projects []types.Project) {
 				for _, project := range projects {
 					<tr>
 						<td>{ project.Name }</td>
+						<td align="right">{ utils.PrintFloat(project.GrossArea) }</td>
+						<td align="right">{ utils.PrintFloat(project.NetArea) }</td>
 						<td align="center">
 							if *project.IsActive {
 								<i class="fa-regular fa-circle-check"></i>
