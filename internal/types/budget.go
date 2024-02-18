@@ -59,8 +59,10 @@ type GetBudget struct {
 }
 
 type project struct {
-	ID   uuid.UUID
-	Name string
+	ID        uuid.UUID
+	Name      string
+	NetArea   float64
+	GrossArea float64
 }
 
 type budgetItem struct {
