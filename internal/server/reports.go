@@ -177,6 +177,11 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 	level := uint8(l)
 
 	budgets, err := s.DB.GetBudgetsByProjectId(ctx.CompanyId, projectId, &level)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
 	component := partials.BudgetView(budgets)
 	component.Render(r.Context(), w)
 }

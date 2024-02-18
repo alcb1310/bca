@@ -5,6 +5,13 @@ import "bca-go-final/internal/utils"
 
 templ BudgetView(budgets []types.GetBudget) {
 	<table class="mt-2">
+		if len(budgets) > 0 {
+			<caption class="text-left">
+				<span class="font-bold me-4 inline-block">Area Bruta</span> { utils.PrintFloat(budgets[0].Project.GrossArea) }
+				<br/>
+				<span class="font-bold me-4 inline-block">Area Util</span> { utils.PrintFloat(budgets[0].Project.NetArea) }
+			</caption>
+		}
 		<thead>
 			<tr>
 				<th rowspan="2" width="100px">Código</th>

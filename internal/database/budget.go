@@ -153,7 +153,7 @@ func (s *service) GetBudgetsByProjectId(companyId, projectId uuid.UUID, level *u
 	var err error
 	query := `
         SELECT
-            project_id, project_name,
+            project_id, project_name, project_net_area, project_gross_area,
             budget_item_id, budget_item_code, budget_item_name, budget_item_level, budget_item_accumulate,
             initial_quantity, initial_cost, initial_total,
             spent_quantity, spent_total,
@@ -179,7 +179,7 @@ func (s *service) GetBudgetsByProjectId(companyId, projectId uuid.UUID, level *u
 	for rows.Next() {
 		b := types.GetBudget{}
 		if err := rows.Scan(
-			&b.Project.ID, &b.Project.Name,
+			&b.Project.ID, &b.Project.Name, &b.Project.NetArea, &b.Project.GrossArea,
 			&b.BudgetItem.ID, &b.BudgetItem.Code, &b.BudgetItem.Name, &b.BudgetItem.Level, &b.BudgetItem.Accumulate,
 			&b.InitialQuantity, &b.InitialCost, &b.InitialTotal,
 			&b.SpentQuantity, &b.SpentTotal,

@@ -155,6 +155,9 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 			Bold: true,
 		},
 	})
+	areaStyle, _ := f.NewStyle(&excelize.Style{
+		NumFmt: 4,
+	})
 
 	p, _ := db.GetProject(projectId, companyId)
 
@@ -179,37 +182,42 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 	f.SetCellStyle("actual", "B3", "B3", dateStyle)
 	f.SetCellValue("actual", "A4", "Proyecto")
 	f.SetCellValue("actual", "B4", p.Name)
-	f.SetCellStyle("actual", "A3", "A4", descTitleStyle)
+	f.SetCellStyle("actual", "A3", "A6", descTitleStyle)
+	f.SetCellValue("actual", "A5", "Area Bruta")
+	f.SetCellFloat("actual", "B5", p.GrossArea, 2, 64)
+	f.SetCellValue("actual", "A6", "Area Util")
+	f.SetCellFloat("actual", "B6", p.NetArea, 2, 64)
+	f.SetCellStyle("actual", "B5", "B6", areaStyle)
 
-	f.SetCellValue("actual", "A6", "Código")
-	f.MergeCell("actual", "A6", "A7")
+	f.SetCellValue("actual", "A8", "Código")
+	f.MergeCell("actual", "A8", "A9")
 
-	f.SetCellValue("actual", "B6", "Partida")
-	f.MergeCell("actual", "B6", "B7")
+	f.SetCellValue("actual", "B8", "Partida")
+	f.MergeCell("actual", "B8", "B9")
 
-	f.SetCellValue("actual", "C6", "Inicial")
-	f.MergeCell("actual", "C6", "E6")
-	f.SetCellValue("actual", "C7", "Cantidad")
-	f.SetCellValue("actual", "D7", "Costo")
-	f.SetCellValue("actual", "E7", "Total")
+	f.SetCellValue("actual", "C8", "Inicial")
+	f.MergeCell("actual", "C8", "E8")
+	f.SetCellValue("actual", "C9", "Cantidad")
+	f.SetCellValue("actual", "D9", "Costo")
+	f.SetCellValue("actual", "E9", "Total")
 
-	f.SetCellValue("actual", "F6", "Rendido")
-	f.MergeCell("actual", "F6", "G6")
-	f.SetCellValue("actual", "F7", "Cantidad")
-	f.SetCellValue("actual", "G7", "Total")
+	f.SetCellValue("actual", "F8", "Rendido")
+	f.MergeCell("actual", "F8", "G8")
+	f.SetCellValue("actual", "F9", "Cantidad")
+	f.SetCellValue("actual", "G9", "Total")
 
-	f.SetCellValue("actual", "H6", "Por Gastar")
-	f.MergeCell("actual", "H6", "J6")
-	f.SetCellValue("actual", "H7", "Cantidad")
-	f.SetCellValue("actual", "I7", "Costo")
-	f.SetCellValue("actual", "J7", "Total")
+	f.SetCellValue("actual", "H8", "Por Gastar")
+	f.MergeCell("actual", "H8", "J8")
+	f.SetCellValue("actual", "H9", "Cantidad")
+	f.SetCellValue("actual", "I9", "Costo")
+	f.SetCellValue("actual", "J9", "Total")
 
-	f.SetCellValue("actual", "K6", "Actualizado")
-	f.MergeCell("actual", "K6", "K7")
+	f.SetCellValue("actual", "K8", "Actualizado")
+	f.MergeCell("actual", "K8", "K9")
 
-	f.SetCellStyle("actual", "A6", "K7", colTitleStyle)
+	f.SetCellStyle("actual", "A8", "K9", colTitleStyle)
 
-	row := 8
+	row := 10
 
 	level1Style, _ := f.NewStyle(&excelize.Style{
 		Font: &excelize.Font{
