@@ -64,7 +64,7 @@ func (s *service) GetHistoricByProject(companyId, projectId uuid.UUID, date time
 	var err error
 	query := `
         SELECT
-            project_id, project_name,
+            project_id, project_name, project_gross_area, project_net_area,
             budget_item_id, budget_item_code, budget_item_name, budget_item_level, budget_item_accumulate,
             initial_quantity, initial_cost, initial_total,
             spent_quantity, spent_total,
@@ -78,6 +78,7 @@ func (s *service) GetHistoricByProject(companyId, projectId uuid.UUID, date time
 	rows, err = s.db.Query(query, companyId, projectId, level, date.Year(), date.Month())
 
 	if err != nil {
+		log.Println("Error in query", err)
 		return nil
 	}
 	defer rows.Close()
@@ -86,13 +87,14 @@ func (s *service) GetHistoricByProject(companyId, projectId uuid.UUID, date time
 	for rows.Next() {
 		b := types.GetBudget{}
 		if err := rows.Scan(
-			&b.Project.ID, &b.Project.Name,
+			&b.Project.ID, &b.Project.Name, &b.Project.GrossArea, &b.Project.NetArea,
 			&b.BudgetItem.ID, &b.BudgetItem.Code, &b.BudgetItem.Name, &b.BudgetItem.Level, &b.BudgetItem.Accumulate,
 			&b.InitialQuantity, &b.InitialCost, &b.InitialTotal,
 			&b.SpentQuantity, &b.SpentTotal,
 			&b.RemainingQuantity, &b.RemainingCost, &b.RemainingTotal,
 			&b.UpdatedBudget, &b.CompanyId,
 		); err != nil {
+			log.Println("Error in scan", err)
 			return nil
 		}
 		budgets = append(budgets, b)

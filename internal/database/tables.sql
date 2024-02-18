@@ -163,7 +163,14 @@ create table if not exists historic(
 );
 
 -- VIEWS
+-- drop views to recrate them later
+drop view if exists vw_budget;
+drop view if exists vw_invoice_details;
+drop view if exists vw_invoice;
+drop view if exists vw_levels;
+drop view if exists vw_historic;
 
+--create the views with the appropriate structure
 create or replace view vw_budget_item as
 select
     b.id,
@@ -187,6 +194,8 @@ select
     bi.accumulate as budget_item_accumulate,
     p.id as project_id,
     p.name as project_name,
+    p.gross_area as project_gross_area,
+    p.net_area as project_net_area,
     b.initial_quantity,
     b.initial_cost,
     b.initial_total,
@@ -200,9 +209,6 @@ select
 from budget as b
 join project as p on b.project_id = p.id
 join budget_item as bi on b.budget_item_id = bi.id;
-
-drop view if exists vw_invoice_details;
-drop view if exists vw_invoice;
 
 create or replace view vw_invoice as
 select
@@ -231,8 +237,6 @@ select distinct
      level
 from budget_item;
 
-drop view vw_levels;
-
 create or replace view vw_levels as
 select distinct
      company_id,
@@ -250,6 +254,8 @@ select
     bi.accumulate as budget_item_accumulate,
     p.id as project_id,
     p.name as project_name,
+    p.gross_area as project_gross_area,
+    p.net_area as project_net_area,
     b.initial_quantity,
     b.initial_cost,
     b.initial_total,
