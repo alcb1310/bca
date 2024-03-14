@@ -450,7 +450,7 @@ html {
 
 thead {
   --tw-bg-opacity: 1;
-  background-color: rgb(84 110 122 / var(--tw-bg-opacity));
+  background-color: rgb(69 90 100 / var(--tw-bg-opacity));
   font-weight: 700;
 }
 
@@ -461,7 +461,7 @@ thead tr {
   line-height: 2rem;
   letter-spacing: 0.05em;
   --tw-text-opacity: 1;
-  color: rgb(207 216 220 / var(--tw-text-opacity));
+  color: rgb(236 239 241 / var(--tw-text-opacity));
 }
 
 tbody tr {
