@@ -111,12 +111,12 @@ func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><i class=\"fa fa-pencil text-yellow-600 cursor-pointer\" aria-label=\"Editar\" aria-hidden=\"false\"></i></a> ")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><i class=\"fa fa-pencil text-yellow-600 cursor-pointer\" aria-label=\"Editar factura\"></i></a> ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if invoice.InvoiceTotal == 0 {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-regular fa-trash-can text-red-500 cursor-pointer\" aria-label=\"Eliminar\"></i>")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-regular fa-trash-can text-red-500 cursor-pointer\" aria-label=\"Eliminar factura\"></i>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

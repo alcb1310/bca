@@ -32,14 +32,13 @@ templ InvoiceTable(invoices []types.InvoiceResponse) {
 							<a href={ templ.SafeURL(concat("/bca/transacciones/facturas/crear?id=", invoice.Id.String())) }>
 								<i
                                     class="fa fa-pencil text-yellow-600 cursor-pointer"
-                                    aria-label="Editar"
-                                    aria-hidden="false"
+                                    aria-label="Editar factura"
                                 ></i>
 							</a>
 							if invoice.InvoiceTotal == 0 {
 								<i
 									class="fa-regular fa-trash-can text-red-500 cursor-pointer"
-									aria-label="Eliminar"
+									aria-label="Eliminar factura"
 								></i>
 							}
 						</td>
