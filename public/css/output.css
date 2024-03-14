@@ -694,6 +694,10 @@ i:disabled {
   margin-bottom: 1rem;
 }
 
+.me-4 {
+  margin-inline-end: 1rem;
+}
+
 .mt-12 {
   margin-top: 3rem;
 }
@@ -1043,6 +1047,10 @@ i:disabled {
 
 .uppercase {
   text-transform: uppercase;
+}
+
+.lowercase {
+  text-transform: lowercase;
 }
 
 .tracking-wide {
