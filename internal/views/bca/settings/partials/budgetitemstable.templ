@@ -39,6 +39,7 @@ templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
 						<td align="center">
 							<i
 								class="fa-solid fa-pencil text-yellow-600 cursor-pointer"
+                                aria-label="Editar"
 								hx-get={ concat("/bca/partials/budget-item/", budgetItem.ID.String()) }
 								hx-target="#drawer"
 								hx-swap="innerHTML"

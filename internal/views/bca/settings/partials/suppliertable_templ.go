@@ -101,7 +101,7 @@ func SuppliersTable(suppliers []types.Supplier) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td><i style=\"cursor:pointer\" class=\"fa-solid fa-pencil text-yellow-600\" hx-get=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td><i style=\"cursor:pointer\" class=\"fa-solid fa-pencil text-yellow-600\" aria-label=\"Editar\" hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

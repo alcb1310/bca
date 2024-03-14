@@ -36,6 +36,7 @@ templ ProjectsTable(projects []types.Project) {
 							<i
 								style="cursor:pointer"
 								class="fa-solid fa-pencil text-yellow-600 cursor-pointer"
+                                aria-label="Editar"
 								hx-get={ concat("/bca/partials/projects/", project.ID.String()) }
 								hx-target="#drawer"
 								hx-swap="innerHTML"

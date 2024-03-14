@@ -27,6 +27,7 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
 					<td align="left">
 						<i
 							class="fa-solid fa-pencil text-yellow-600 cursor-pointer"
+                            aria-label="Editar"
 							hx-get={ concat("/bca/partials/users/edit/", user.Id.String()) }
 							hx-get="/bca/partials/users/add"
 							hx-target="#drawer"
@@ -36,6 +37,7 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
 						if user.Id != currentUser {
 							<i
 								class="fa-regular fa-trash-can text-red-500 cursor-pointer"
+                                aria-label="Eliminar"
 								hx-delete={ concat("/bca/partials/users/", user.Id.String()) }
 								hx-target="#users-table"
 								hx-swap="innerHTML"

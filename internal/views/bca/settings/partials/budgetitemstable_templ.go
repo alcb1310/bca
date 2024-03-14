@@ -104,7 +104,7 @@ func BudgetItemTable(budgetItems []types.BudgetItemResponse) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"center\"><i class=\"fa-solid fa-pencil text-yellow-600 cursor-pointer\" hx-get=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"center\"><i class=\"fa-solid fa-pencil text-yellow-600 cursor-pointer\" aria-label=\"Editar\" hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

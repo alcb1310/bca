@@ -33,6 +33,7 @@ templ InvoiceDetailsTable(details []types.InvoiceDetailsResponse) {
 					<td align="center">
 						<i
 							class="fa-regular fa-trash-can text-red-500 cursor-pointer"
+                            aria-label="Eliminar"
 							hx-delete={ getUrl(detail.Id.String(), detail.BudgetItemId.String()) }
 							hx-trigger="click"
 							hx-target="#invoice-details"

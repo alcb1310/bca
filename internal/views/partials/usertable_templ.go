@@ -75,7 +75,7 @@ func UsersTable(users []types.User, currentUser uuid.UUID) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"left\"><i class=\"fa-solid fa-pencil text-yellow-600 cursor-pointer\" hx-get=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"left\"><i class=\"fa-solid fa-pencil text-yellow-600 cursor-pointer\" aria-label=\"Editar\" hx-get=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -88,7 +88,7 @@ func UsersTable(users []types.User, currentUser uuid.UUID) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if user.Id != currentUser {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-regular fa-trash-can text-red-500 cursor-pointer\" hx-delete=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-regular fa-trash-can text-red-500 cursor-pointer\" aria-label=\"Eliminar\" hx-delete=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

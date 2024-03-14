@@ -114,7 +114,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"center\"><i class=\"fa-regular fa-trash-can text-red-500 cursor-pointer\" hx-delete=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td align=\"center\"><i class=\"fa-regular fa-trash-can text-red-500 cursor-pointer\" aria-label=\"Eliminar\" hx-delete=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
