@@ -26,7 +26,16 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
 					<td>{ user.Email }</td>
 					<td>{ user.Name }</td>
 					<td align="left">
-                        @components.EditIcon()
+                        <div
+                            class="inline-block me-2 hover:cursor-pointer"
+                            hx-get={ concat("/bca/partials/users/edit/", user.Id.String()) }
+                            hx-target="#drawer"
+                            hx-swap="innerHTML"
+                            hx-trigger="click"
+                            _="on click openDrawer()"
+                        >
+                            @components.EditIcon()
+                        </div>
 						if user.Id != currentUser {
 							<i
 								class="fa-regular fa-trash-can text-red-500 cursor-pointer"
