@@ -2,6 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
+import "bca-go-final/internal/views/components"
 
 templ InvoiceTable(invoices []types.InvoiceResponse) {
 	<table>
@@ -30,10 +31,7 @@ templ InvoiceTable(invoices []types.InvoiceResponse) {
 						<td align="right">{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
 						<td align="center">
 							<a href={ templ.SafeURL(concat("/bca/transacciones/facturas/crear?id=", invoice.Id.String())) }>
-								<i
-                                    class="fa fa-pencil text-yellow-600 cursor-pointer"
-                                    aria-label="Editar factura"
-                                ></i>
+                                @components.EditIcon()
 							</a>
 							if invoice.InvoiceTotal == 0 {
 								<i

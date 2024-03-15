@@ -2,6 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
+import "bca-go-final/internal/views/components"
 
 templ BudgetTable(budgets []types.GetBudget) {
 	<table>
@@ -43,14 +44,7 @@ templ BudgetTable(budgets []types.GetBudget) {
 						<td align="right">{ utils.PrintFloat(budget.UpdatedBudget) }</td>
 						<td align="center">
 							if budget.RemainingQuantity.Valid {
-								<i
-									class="fa-solid fa-pen text-yellow-600 cursor-pointer"
-									_="on click openDrawer()"
-									hx-target="#drawer"
-									hx-swap="innerHTML"
-									hx-trigger="click"
-									hx-get={ concat(concat(concat("/bca/partials/budgets/", budget.Project.ID.String()), "/"), budget.BudgetItem.ID.String()) }
-								></i>
+                                @components.EditIcon()
 							}
 						</td>
 					</tr>

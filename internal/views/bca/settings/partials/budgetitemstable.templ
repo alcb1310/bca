@@ -2,6 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "strconv"
+import "bca-go-final/internal/views/components"
 
 templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
 	<table>
@@ -37,15 +38,7 @@ templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
 							{ budgetItem.ParentCode.String }
 						</td>
 						<td align="center">
-							<i
-								class="fa-solid fa-pencil text-yellow-600 cursor-pointer"
-                                aria-label="Editar"
-								hx-get={ concat("/bca/partials/budget-item/", budgetItem.ID.String()) }
-								hx-target="#drawer"
-								hx-swap="innerHTML"
-								hx-trigger="click"
-								_="on click openDrawer()"
-							></i>
+							@components.EditIcon()
 						</td>
 					</tr>
 				}
