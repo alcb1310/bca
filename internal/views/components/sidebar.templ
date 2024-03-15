@@ -15,7 +15,10 @@ templ SidebarComponent(active string) {
 					<a
 						href="/bca/transacciones/facturas"
 						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "facturas"), templ.KV("text-blue-gray-300", active != "facturas") }
-					><i class="fa-regular fa-file-lines"></i><span>Facturas</span></a>
+					>
+                        @InvoiceIcon()
+                        <span>Facturas</span>
+                    </a>
 				</li>
 				<li>
 					<a
