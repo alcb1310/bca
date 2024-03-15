@@ -44,7 +44,16 @@ templ BudgetTable(budgets []types.GetBudget) {
 						<td align="right">{ utils.PrintFloat(budget.UpdatedBudget) }</td>
 						<td align="center">
 							if budget.RemainingQuantity.Valid {
-                                @components.EditIcon()
+                                <div
+                                    class="hover:cursor-pointer"
+                                    hx-get={ concat(concat(concat("/bca/partials/budgets/", budget.Project.ID.String()), "/"), budget.BudgetItem.ID.String()) }
+                                    hx-target="#drawer"
+                                    hx-swap="innerHtml"
+                                    hx-trigger="click"
+                                    _="on click openDrawer()"
+                                >
+                                    @components.EditIcon()
+                                </div>
 							}
 						</td>
 					</tr>
