@@ -27,25 +27,30 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
 					<td>{ user.Name }</td>
 					<td align="left">
                         <div
-                            class="inline-block me-2 hover:cursor-pointer"
-                            hx-get={ concat("/bca/partials/users/edit/", user.Id.String()) }
-                            hx-target="#drawer"
-                            hx-swap="innerHTML"
-                            hx-trigger="click"
-                            _="on click openDrawer()"
+                            class="flex align-middle gap-2"
                         >
-                            @components.EditIcon()
+                            <div
+                                class="hover:cursor-pointer"
+                                hx-get={ concat("/bca/partials/users/edit/", user.Id.String()) }
+                                hx-target="#drawer"
+                                hx-swap="innerHTML"
+                                hx-trigger="click"
+                                _="on click openDrawer()"
+                            >
+                                @components.EditIcon()
+                            </div>
+                            if user.Id != currentUser {
+                                <div
+                                    class="hover cursor-pointer"
+                                    hx-delete={ concat("/bca/partials/users/", user.Id.String()) }
+                                    hx-target="#users-table"
+                                    hx-swap="innerHTML"
+                                    _="on click toggle @disabled until htmx:afterOnLoad"
+                                >
+                                    @components.TrashIcon()
+                                </div>
+                            }
                         </div>
-						if user.Id != currentUser {
-							<i
-								class="fa-regular fa-trash-can text-red-500 cursor-pointer"
-                                aria-label="Eliminar"
-								hx-delete={ concat("/bca/partials/users/", user.Id.String()) }
-								hx-target="#users-table"
-								hx-swap="innerHTML"
-								_="on click toggle @disabled to me until htmx:afterOnLoad"
-							></i>
-						}
 					</td>
 				</tr>
 			}
