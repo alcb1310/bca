@@ -31,7 +31,11 @@ templ InvoiceTable(invoices []types.InvoiceResponse) {
 						<td align="right">{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
 						<td align="center">
 							<a href={ templ.SafeURL(concat("/bca/transacciones/facturas/crear?id=", invoice.Id.String())) }>
-                                @components.EditIcon()
+                                <div
+                                    class="hover:cursor-pointer"
+                                >
+                                    @components.EditIcon()
+                                </div>
 							</a>
 							if invoice.InvoiceTotal == 0 {
 								<i
