@@ -57,7 +57,10 @@ templ SidebarComponent(active string) {
 					<a
 						href="/bca/reportes/historico"
 						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "historico"), templ.KV("text-blue-gray-300", active != "historico") }
-					><i class="fa-solid fa-clock-rotate-left"></i><span>Hist&oacuterico</span></a>
+					>
+                        @HistoricIcon()
+                        <span>Hist&oacuterico</span>
+                    </a>
 				</li>
 				<li>
 					<a
