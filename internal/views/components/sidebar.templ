@@ -63,7 +63,10 @@ templ SidebarComponent(active string) {
 					<a
 						href="/bca/reportes/gastado"
 						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "gastado"), templ.KV("text-blue-gray-300", active != "gastado") }
-					><i class="fa-solid fa-comments-dollar"></i><span>Gastado por Partida</span></a>
+					>
+                        @SpentIcon()
+                        <span>Gastado por Partida</span>
+                    </a>
 				</li>
 				<li
 					class="py-3 px-0 text-xs text-blue-gray-300 uppercase font-bold tracking-wider"

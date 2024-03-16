@@ -195,7 +195,15 @@ func SidebarComponent(active string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><i class=\"fa-solid fa-comments-dollar\"></i><span>Gastado por Partida</span></a></li><li class=\"py-3 px-0 text-xs text-blue-gray-300 uppercase font-bold tracking-wider\"><span>Par&aacute;metros</span></li><li>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = SpentIcon().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span>Gastado por Partida</span></a></li><li class=\"py-3 px-0 text-xs text-blue-gray-300 uppercase font-bold tracking-wider\"><span>Par&aacute;metros</span></li><li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
