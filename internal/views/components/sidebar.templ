@@ -33,7 +33,10 @@ templ SidebarComponent(active string) {
 					<a
 						href="/bca/reportes/actual"
 						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "actual"), templ.KV("text-blue-gray-300", active != "actual") }
-					><i class="fa-regular fa-chart-bar"></i><span>Actual</span></a>
+					>
+                        @ActualIcon()
+                        <span>Actual</span>
+                    </a>
 				</li>
 				<li>
 					<a
