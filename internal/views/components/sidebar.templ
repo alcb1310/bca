@@ -45,7 +45,10 @@ templ SidebarComponent(active string) {
 					<a
 						href="/bca/reportes/cuadre"
 						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "balance"), templ.KV("text-blue-gray-300", active != "balance") }
-					><i class="fa-solid fa-scale-balanced"></i><span>Cuadre</span></a>
+					>
+                        @BalanceIcon()
+                        <span>Cuadre</span>
+                    </a>
 				</li>
 				<li>
 					<a
