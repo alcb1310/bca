@@ -9,7 +9,10 @@ templ SidebarComponent(active string) {
 					<a
 						href="/bca/transacciones/presupuesto"
 						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "presupuesto"), templ.KV("text-blue-gray-300", active != "presupuesto") }
-					><i class="fa-solid fa-sack-dollar"></i><span>Presupuesto</span></a>
+					>
+                        @BudgetIcon()
+                        <span>Presupuesto</span>
+                    </a>
 				</li>
 				<li>
 					<a
