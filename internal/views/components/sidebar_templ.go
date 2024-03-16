@@ -103,7 +103,15 @@ func SidebarComponent(active string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><i class=\"fa-solid fa-landmark\"></i><span>Cierre Mensual</span></a></li><li class=\"py-3 px-0 text-blue-gray-300 text-xs uppercase font-bold tracking-wider\"><span>Reportes</span></li><li>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = MonthlyClosureIcon().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span>Cierre Mensual</span></a></li><li class=\"py-3 px-0 text-blue-gray-300 text-xs uppercase font-bold tracking-wider\"><span>Reportes</span></li><li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

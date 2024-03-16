@@ -27,7 +27,10 @@ templ SidebarComponent(active string) {
 					<a
 						href="/bca/transacciones/cierre"
 						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "cierre"), templ.KV("text-blue-gray-300", active != "cierre") }
-					><i class="fa-solid fa-landmark"></i><span>Cierre Mensual</span></a>
+					>
+                        @MonthlyClosureIcon()
+                        <span>Cierre Mensual</span>
+                    </a>
 				</li>
 				<li
 					class="py-3 px-0 text-blue-gray-300 text-xs uppercase font-bold tracking-wider"
