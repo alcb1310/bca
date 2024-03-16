@@ -75,7 +75,10 @@ templ SidebarComponent(active string) {
 					<a
 						href="/bca/configuracion/proveedores"
 						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "proveedor"), templ.KV("text-blue-gray-300", active != "proveedor") }
-					><i class="fa-solid fa-users-line"></i><span>Proveedores</span></a>
+					>
+                        @SupplierIcon()
+                        <span>Proveedores</span>
+                    </a>
 				</li>
 				<li>
 					<a
