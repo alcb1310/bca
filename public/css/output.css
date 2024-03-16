@@ -925,6 +925,11 @@ i:disabled {
   background-color: rgb(234 179 8 / var(--tw-bg-opacity));
 }
 
+.bg-blue-gray-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(176 190 197 / var(--tw-bg-opacity));
+}
+
 .p-0 {
   padding: 0px;
 }
