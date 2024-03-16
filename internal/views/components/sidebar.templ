@@ -81,7 +81,10 @@ templ SidebarComponent(active string) {
 					<a
 						href="/bca/configuracion/proyectos"
 						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "proyecto"), templ.KV("text-blue-gray-300", active != "proyecto") }
-					><i class="fa-solid fa-people-roof"></i><span>Proyectos</span></a>
+					>
+                        @ProjectIcon()
+                        <span>Proyectos</span>
+                    </a>
 				</li>
 			</ul>
 		</nav>

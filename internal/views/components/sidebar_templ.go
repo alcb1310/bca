@@ -238,7 +238,15 @@ func SidebarComponent(active string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><i class=\"fa-solid fa-people-roof\"></i><span>Proyectos</span></a></li></ul></nav></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = ProjectIcon().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span>Proyectos</span></a></li></ul></nav></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
