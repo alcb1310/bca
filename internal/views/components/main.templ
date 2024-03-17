@@ -12,9 +12,9 @@ templ Main(active string) {
 	<section class={ "relative grid", main() }>
 		@SidebarComponent(active)
 		<div class={ "p-6 overflow-x-hidden overflow-y-auto", maincontent() }>
-			<div id="main-content" class="rounded-lg">
+			<main id="main-content" class="rounded-lg">
 				{ children... }
-			</div>
+			</main>
 		</div>
 	</section>
 }

@@ -2,6 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
+import "bca-go-final/internal/views/components"
 
 templ InvoiceTable(invoices []types.InvoiceResponse) {
 	<table>
@@ -29,14 +30,23 @@ templ InvoiceTable(invoices []types.InvoiceResponse) {
 						<td>{ invoice.InvoiceNumber }</td>
 						<td align="right">{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
 						<td align="center">
-							<a href={ templ.SafeURL(concat("/bca/transacciones/facturas/crear?id=", invoice.Id.String())) }>
-								<i class="fa fa-pencil text-yellow-600 cursor-pointer"></i>
-							</a>
-							if invoice.InvoiceTotal == 0 {
-								<i
-									class="fa-regular fa-trash-can text-red-500 cursor-pointer"
-								></i>
-							}
+                            <div class="flex align-middle gap-2">
+                                <a href={ templ.SafeURL(concat("/bca/transacciones/facturas/crear?id=", invoice.Id.String())) }>
+                                    <div
+                                        class="hover:cursor-pointer"
+                                    >
+                                        @components.EditIcon()
+                                    </div>
+                                </a>
+                                if invoice.InvoiceTotal == 0 {
+                                    <div
+                                        class="fa-regular fa-trash-can text-red-500 cursor-pointer"
+                                        aria-label="Eliminar factura"
+                                    >
+                                        @components.TrashIcon()
+                                    </div>
+                                }
+                            </div>
 						</td>
 					</tr>
 				}

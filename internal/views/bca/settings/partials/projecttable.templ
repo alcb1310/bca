@@ -2,6 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
+import "bca-go-final/internal/views/components"
 
 templ ProjectsTable(projects []types.Project) {
 	<table>
@@ -33,15 +34,16 @@ templ ProjectsTable(projects []types.Project) {
 							}
 						</td>
 						<td align="center">
-							<i
-								style="cursor:pointer"
-								class="fa-solid fa-pencil text-yellow-600 cursor-pointer"
-								hx-get={ concat("/bca/partials/projects/", project.ID.String()) }
-								hx-target="#drawer"
-								hx-swap="innerHTML"
-								hx-trigger="click"
-								_="on click openDrawer()"
-							></i>
+                            <div
+                                class="hover:cursor-pointer"
+                                hx-get={ concat("/bca/partials/projects/", project.ID.String()) }
+                                hx-target="#drawer"
+                                hx-swap="innerHTML"
+                                hx-trigger="click"
+                                _="on click openDrawer()"
+                            >
+                                @components.EditIcon()
+                            </div>
 						</td>
 					</tr>
 				}
