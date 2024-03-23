@@ -164,8 +164,14 @@ create table if not exists historic(
 
 create table if not exists category (
     id uuid primary key default gen_random_uuid(),
-    name text not null
+    name text not null,
+
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    unique (name, company_id)
 );
+
 
 create table if not exists materials (
     id uuid primary key default gen_random_uuid(),

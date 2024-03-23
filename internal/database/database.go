@@ -85,6 +85,10 @@ type Service interface {
 
 	// database/closure.go
 	CreateClosure(companyId, projectId uuid.UUID, date time.Time) error
+
+	// database/categories.go
+	GetAllCategories(companyId uuid.UUID) ([]types.Category, error)
+	CreateCategory(category types.Category) error
 }
 
 type service struct {

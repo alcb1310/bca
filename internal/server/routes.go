@@ -82,6 +82,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details/add", s.DetailsAdd)
 	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details/{budgetItemId}", s.DetailsEdit)
 
+	r.HandleFunc("/bca/partials/categories", s.CategoriesTable)
+  r.HandleFunc("/bca/partials/categories/add", s.CategoryAdd)
+
 	// This should be the last route for static files
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
 	return r
