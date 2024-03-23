@@ -89,6 +89,8 @@ type Service interface {
 	// database/categories.go
 	GetAllCategories(companyId uuid.UUID) ([]types.Category, error)
 	CreateCategory(category types.Category) error
+	GetCategory(id, companyId uuid.UUID) (types.Category, error)
+	UpdateCategory(category types.Category) error
 }
 
 type service struct {

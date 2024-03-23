@@ -47,13 +47,31 @@ func EditCategory(category *types.Category) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
+		} else {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-put=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/categories/", category.Id.String())))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" autocomplete=\"off\" hx-target=\"#categories-table\" hx-target-error=\"#error\" hx-swap=\"innerHTML\" hx-trigger=\"submit\" hx-on=\"htmx:afterOnLoad: handleHtmxError(event)\"><div class=\"flex h-full flex-col gap-8\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" autocomplete=\"off\" hx-target=\"#categories-table\" hx-target-error=\"#error\" hx-swap=\"innerHTML\" hx-trigger=\"submit\" hx-on=\"htmx:afterOnLoad: handleHtmxError(event)\"><div class=\"flex h-full flex-col gap-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if category == nil {
 			templ_7745c5c3_Err = components.DrawerTitle("Agregar Categoría").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = components.DrawerTitle("Editar Categoría").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -74,7 +92,7 @@ func EditCategory(category *types.Category) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</form><script>\n    function handleHtmxError(event) {\n         document.getElementById(\"error\").innerHTML = \"\"\n         if (event.detail.xhr.status === 200) {\n              resetClose()\n              return\n         }\n         document.getElementById(\"error\").innerHTML = event.detail.xhr.responseText\n    }\n\n    function resetClose() {\n      closeDrawer()\n    }\n  </script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</form><script>\n    function handleHtmxError(event) {\n      document.getElementById(\"error\").innerHTML = \"\"\n        if (event.detail.xhr.status === 200) {\n          resetClose()\n            return\n        }\n      document.getElementById(\"error\").innerHTML = event.detail.xhr.responseText\n    }\n\n  function resetClose() {\n    closeDrawer()\n  }\n  </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
