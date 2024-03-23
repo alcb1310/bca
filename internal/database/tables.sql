@@ -162,12 +162,18 @@ create table if not exists historic(
      primary key (project_id, budget_item_id, date, company_id)
 );
 
+create table if not exists category (
+    id uuid primary key default gen_random_uuid(),
+    name text not null
+);
+
 create table if not exists materials (
     id uuid primary key default gen_random_uuid(),
     code text not null,
     name text not null,
     unit text not null,
 
+    category_id uuid not null references category (id) on delete restrict,
     company_id uuid not null references company (id) on delete restrict,
     created_at timestamp with time zone default now(),
 

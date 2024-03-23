@@ -3,13 +3,12 @@ package components
 import "bca-go-final/internal/views/components/sidebar"
 
 templ SidebarComponent(active string) {
-	<div class={ "relative flex flex-col py-6 pl-12 pr-6 top-0 w-fit gap-16 bg-blue-gray-900 overflow-y-auto overflow-x-hidden", maincontent() }>
+	<div class={ "relative flex flex-col py-3 pl-12 pr-6 top-0 w-fit gap-16 bg-blue-gray-900 overflow-y-auto overflow-x-hidden", maincontent() }>
 		<nav id="sidebar_nav">
-			<ul class="m-0 p-0 list-none text-sm">
         @sidebar.Transacciones(active)
         @sidebar.Reportes(active)
         @sidebar.Parametros(active)
-			</ul>
+        @sidebar.CostosUnitarios(active)      
 		</nav>
 	</div>
 }
