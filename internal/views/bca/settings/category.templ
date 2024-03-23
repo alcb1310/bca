@@ -1,0 +1,11 @@
+package settings
+
+import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+
+
+templ CategoryView() {
+  @base.AuthenticatedLayout("categorias") {
+    @components.PageTitle("Categorías")
+  }
+}

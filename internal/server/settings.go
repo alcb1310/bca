@@ -20,3 +20,8 @@ func (s *Server) Projects(w http.ResponseWriter, r *http.Request) {
 	component := settings.ProjectView()
 	component.Render(r.Context(), w)
 }
+
+func (s *Server) Categories(w http.ResponseWriter, r *http.Request) {
+	component := settings.CategoryView()
+	component.Render(r.Context(), w)
+}

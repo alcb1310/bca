@@ -18,7 +18,7 @@ templ Parametros(active string) {
 				</li>
         <li>
           <a
-            href="#"
+            href="/bca/configuracion/categorias"
             class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "categorias"), templ.KV("text-blue-gray-300", active != "categorias") }
           >
             @icons.CategoryIcon()
@@ -28,7 +28,7 @@ templ Parametros(active string) {
         <li>
           <a
             href="#"
-            class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "categorias"), templ.KV("text-blue-gray-300", active != "categorias") }
+            class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "materiales"), templ.KV("text-blue-gray-300", active != "materiales") }
           >
             @icons.MaterialsIcon()
             <span>Materiales</span>

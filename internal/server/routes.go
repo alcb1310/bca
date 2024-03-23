@@ -38,6 +38,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems)
 	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers)
 	r.HandleFunc("/bca/configuracion/proyectos", s.Projects)
+	r.HandleFunc("/bca/configuracion/categorias", s.Categories)
 
 	r.HandleFunc("/bca/user/perfil", s.Profile)
 	r.HandleFunc("/bca/user/admin", s.Admin)
