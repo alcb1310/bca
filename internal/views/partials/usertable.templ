@@ -2,7 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "github.com/google/uuid"
-import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/views/components/icons"
 
 func concat(s1, s2 string) string {
 	return s1 + s2
@@ -37,7 +37,7 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
                                 hx-trigger="click"
                                 _="on click openDrawer()"
                             >
-                                @components.EditIcon()
+                                @icons.EditIcon()
                             </div>
                             if user.Id != currentUser {
                                 <div
@@ -47,7 +47,7 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
                                     hx-swap="innerHTML"
                                     _="on click toggle @disabled until htmx:afterOnLoad"
                                 >
-                                    @components.TrashIcon()
+                                    @icons.TrashIcon()
                                 </div>
                             }
                         </div>

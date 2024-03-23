@@ -2,7 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "strconv"
-import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/views/components/icons"
 
 templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
 	<table>
@@ -46,7 +46,7 @@ templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
                                 hx-trigger="click"
                                 _="on click openDrawer()"
                             >
-                                @components.EditIcon()
+                                @icons.EditIcon()
                             </div>
 						</td>
 					</tr>

@@ -12,7 +12,7 @@ import "bytes"
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
-import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/views/components/icons"
 
 func getUrl(invoiceId, detailId string) string {
 	return "/bca/partials/invoices/" + invoiceId + "/details/" + detailId
@@ -127,7 +127,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.TrashIcon().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = icons.TrashIcon().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

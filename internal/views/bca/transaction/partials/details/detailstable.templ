@@ -2,7 +2,7 @@ package details
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
-import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/views/components/icons"
 
 func getUrl(invoiceId, detailId string) string {
 	return "/bca/partials/invoices/" + invoiceId + "/details/" + detailId
@@ -40,7 +40,7 @@ templ InvoiceDetailsTable(details []types.InvoiceDetailsResponse) {
 							hx-swap="innerHTML"
 							hx-push-url="false"
 						>
-                            @components.TrashIcon()
+                            @icons.TrashIcon()
                         </div>
 					</td>
 				</tr>

@@ -2,7 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
-import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/views/components/icons"
 
 templ ProjectsTable(projects []types.Project) {
 	<table>
@@ -42,7 +42,7 @@ templ ProjectsTable(projects []types.Project) {
                                 hx-trigger="click"
                                 _="on click openDrawer()"
                             >
-                                @components.EditIcon()
+                                @icons.EditIcon()
                             </div>
 						</td>
 					</tr>

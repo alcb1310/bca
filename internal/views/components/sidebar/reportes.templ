@@ -1,0 +1,45 @@
+package sidebar
+
+import "bca-go-final/internal/views/components/icons"
+
+templ Reportes(active string) {
+				<li
+					class="py-3 px-0 text-blue-gray-300 text-xs uppercase font-bold tracking-wider"
+				><span>Reportes</span></li>
+				<li>
+					<a
+						href="/bca/reportes/actual"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "actual"), templ.KV("text-blue-gray-300", active != "actual") }
+					>
+                        @icons.ActualIcon()
+                        <span>Actual</span>
+                    </a>
+				</li>
+				<li>
+					<a
+						href="/bca/reportes/cuadre"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "balance"), templ.KV("text-blue-gray-300", active != "balance") }
+					>
+                        @icons.BalanceIcon()
+                        <span>Cuadre</span>
+                    </a>
+				</li>
+				<li>
+					<a
+						href="/bca/reportes/historico"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "historico"), templ.KV("text-blue-gray-300", active != "historico") }
+					>
+                        @icons.HistoricIcon()
+                        <span>Hist&oacuterico</span>
+                    </a>
+				</li>
+				<li>
+					<a
+						href="/bca/reportes/gastado"
+						class={ "flex py-3 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "gastado"), templ.KV("text-blue-gray-300", active != "gastado") }
+					>
+                        @icons.SpentIcon()
+                        <span>Gastado por Partida</span>
+                    </a>
+				</li>
+}
