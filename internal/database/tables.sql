@@ -162,6 +162,19 @@ create table if not exists historic(
      primary key (project_id, budget_item_id, date, company_id)
 );
 
+create table if not exists materials (
+    id uuid primary key default gen_random_uuid(),
+    code text not null,
+    name text not null,
+    unit text not null,
+
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    unique (code, company_id),
+    unique (name, company_id)
+);
+
 -- VIEWS
 -- drop views to recrate them later
 drop view if exists vw_budget;
