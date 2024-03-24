@@ -187,6 +187,31 @@ create table if not exists materials (
     unique (name, company_id)
 );
 
+create table if not exists item (
+    id uuid primary key default gen_random_uuid(),
+    code text not null,
+    name text not null,
+    unit text not null,
+
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    unique (code, company_id),
+    unique (name, company_id)
+);
+
+create table if not exists item_materials(
+    item_id uuid not null references item (id) on delete restrict,
+    material_id uuid not null references materials (id) on delete restrict,
+
+    quantity numeric not null,
+
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    primary key (item_id, material_id, company_id)
+);
+
 -- VIEWS
 -- drop views to recrate them later
 drop view if exists vw_budget;
