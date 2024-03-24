@@ -82,12 +82,12 @@ func BudgetItemTable(budgetItems []types.BudgetItemResponse) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if budgetItem.Accumulate.Bool {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-regular fa-circle-check\"></i>")
+					templ_7745c5c3_Err = icons.CheckCircleIcon().Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				} else {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<i class=\"fa-regular fa-circle-xmark\"></i>")
+					templ_7745c5c3_Err = icons.XMarkCircleIcon().Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

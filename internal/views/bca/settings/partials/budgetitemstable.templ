@@ -29,9 +29,9 @@ templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
 						<td align="center">{ strconv.Itoa(int(budgetItem.Level)) }</td>
 						<td align="center">
 							if budgetItem.Accumulate.Bool {
-								<i class="fa-regular fa-circle-check"></i>
+                @icons.CheckCircleIcon()
 							} else {
-								<i class="fa-regular fa-circle-xmark"></i>
+                @icons.XMarkCircleIcon()
 							}
 						</td>
 						<td>

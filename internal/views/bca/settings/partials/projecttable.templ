@@ -28,9 +28,9 @@ templ ProjectsTable(projects []types.Project) {
 						<td align="right">{ utils.PrintFloat(project.NetArea) }</td>
 						<td align="center">
 							if *project.IsActive {
-								<i class="fa-regular fa-circle-check"></i>
+                @icons.CheckCircleIcon()
 							} else {
-								<i class="fa-regular fa-circle-xmark"></i>
+                @icons.XMarkCircleIcon()
 							}
 						</td>
 						<td align="center">
