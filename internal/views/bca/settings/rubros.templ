@@ -1,0 +1,26 @@
+package settings
+
+import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+
+templ RubrosView() {
+  @base.AuthenticatedLayout("rubros") {
+    @components.PageTitle("Rubros")
+    <div class="flex justify-end items-center">
+      <a
+      id="add-button"
+        class="btn cursor-pointer"
+				href="/bca/configuracion/rubros/crear"
+      >
+        Agregar
+      </a>
+    </div>
+    <div
+      id="rubros-table"
+      hx-target="this"
+      hx-swap="innerHTML"
+      hx-trigger="load"
+      hx-get="/bca/partials/rubros"
+    ></div>
+  }
+}

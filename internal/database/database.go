@@ -97,6 +97,10 @@ type Service interface {
 	CreateMaterial(material types.Material) error
 	GetMaterial(id, companyId uuid.UUID) (types.Material, error)
 	UpdateMaterial(material types.Material) error
+
+	// database/rubros.go
+	GetAllRubros(companyId uuid.UUID) ([]types.Rubro, error)
+	CreateRubro(rubro types.Rubro) error
 }
 
 type service struct {
