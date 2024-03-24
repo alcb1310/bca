@@ -26,6 +26,8 @@ templ EditMaterial(material *types.Material, categories []types.Select) {
     id="edit-material"
     if material == nil {
       hx-post="/bca/partials/materiales"
+    } else {
+      hx-put={ concat("/bca/partials/materiales/", material.Id.String()) }
     }
     autocomplete="off"
     hx-target="#materials-table"
@@ -38,6 +40,8 @@ templ EditMaterial(material *types.Material, categories []types.Select) {
       <div>
         if material == nil {
           @components.DrawerTitle("Agregar Material")
+        } else {
+          @components.DrawerTitle("Editar Material")
         }
         <div id="error" class="text-red-600 text-sm"></div>
         @components.Input("text", "Código", "code", "code", materialValText(material, "code"))

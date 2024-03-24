@@ -95,6 +95,8 @@ type Service interface {
 	// database/materials.go
 	GetAllMaterials(companyId uuid.UUID) []types.Material
 	CreateMaterial(material types.Material) error
+	GetMaterial(id, companyId uuid.UUID) (types.Material, error)
+	UpdateMaterial(material types.Material) error
 }
 
 type service struct {
