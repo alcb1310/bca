@@ -52,5 +52,14 @@ templ Parametros(active string) {
                         <span>Proveedores</span>
                     </a>
 				</li>
+        <li>
+          <a
+            href="/bca/configuracion/rubros"
+						class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "proveedor"), templ.KV("text-blue-gray-300", active != "proveedor") }
+          >
+            @icons.ItemsIcon()
+            <span>Rubros</span>
+          </a>
+        </li>
   </ul>
 }
