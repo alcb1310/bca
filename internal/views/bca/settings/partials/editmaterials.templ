@@ -1,0 +1,66 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
+
+func materialValText(material *types.Material, text string) string {
+  if material == nil {
+    return ""
+  }
+  switch text {
+    case "code":
+      return material.Code
+    case "name":
+      return material.Name
+    case "unit":
+      return material.Unit
+    case "category":
+      return material.Category.Id.String()
+    default:
+        return ""
+  }
+}
+
+templ EditMaterial(material *types.Material, categories []types.Select) {
+  <form
+    id="edit-material"
+    if material == nil {
+      hx-post="/bca/partials/materiales"
+    }
+    autocomplete="off"
+    hx-target="#materials-table"
+    hx-target-error="#error"
+    hx-swap="innerHTML"
+    hx-trigger="submit"
+    hx-on="htmx:afterOnLoad: handleHtmxError(event)"
+  >
+    <div class="flex h-full flex-col gap-4">
+      <div>
+        if material == nil {
+          @components.DrawerTitle("Agregar Material")
+        }
+        <div id="error" class="text-red-600 text-sm"></div>
+        @components.Input("text", "Código", "code", "code", materialValText(material, "code"))
+        @components.Input("text", "Nombre", "name", "name", materialValText(material, "name"))
+        @components.Input("text", "Unidad", "unit", "unit", materialValText(material, "unit"))
+        @components.SelectComponent(categories, "Seleccione una categoría", "category", "category", materialValText(material, "category"), "Categoría")
+      </div>
+      @components.ButtonGroup()
+    </div>
+  </form>
+
+  <script>
+    function handleHtmxError(event) {
+      document.getElementById("error").innerHTML = ""
+        if (event.detail.xhr.status === 200) {
+          resetClose()
+            return
+        }
+      document.getElementById("error").innerHTML = event.detail.xhr.responseText
+    }
+
+  function resetClose() {
+    closeDrawer()
+}
+</script>
+}

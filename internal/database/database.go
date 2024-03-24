@@ -91,6 +91,10 @@ type Service interface {
 	CreateCategory(category types.Category) error
 	GetCategory(id, companyId uuid.UUID) (types.Category, error)
 	UpdateCategory(category types.Category) error
+
+	// database/materials.go
+	GetAllMaterials(companyId uuid.UUID) []types.Material
+	CreateMaterial(material types.Material) error
 }
 
 type service struct {

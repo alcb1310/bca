@@ -319,3 +319,15 @@ join budget_item b on id.budget_item_id = b.id
 join invoice i on id.invoice_id = i.id
 join supplier s on i.supplier_id = s.id
 join project p on i.project_id = p.id;
+
+create or replace view vw_materials as 
+select
+    m.id as id,
+    m.code as code,
+    m.name as name,
+    m.unit as unit,
+    c.id as category_id,
+    c.name as category_name,
+    m.company_id as company_id
+from materials m
+join category c on m.category_id = c.id;

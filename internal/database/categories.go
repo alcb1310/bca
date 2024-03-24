@@ -8,7 +8,7 @@ import (
 
 func (s *service) GetAllCategories(companyId uuid.UUID) ([]types.Category, error) {
 	categories := []types.Category{}
-	sql := "select id, name from category where company_id = $1"
+	sql := "select id, name from category where company_id = $1 order by name"
 	rows, err := s.db.Query(sql, companyId)
 	if err != nil {
 		return categories, err

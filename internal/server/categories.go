@@ -49,8 +49,6 @@ func (s *Server) CategoryAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Method)
-
 	ctxPayload, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["id"]
 	parsedId, _ := uuid.Parse(id)

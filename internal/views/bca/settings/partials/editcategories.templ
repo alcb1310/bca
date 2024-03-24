@@ -23,24 +23,26 @@ templ EditCategory(category *types.Category){
     } else {
       hx-put={ concat("/bca/partials/categories/", category.Id.String()) }
     }
-  autocomplete="off"
+    autocomplete="off"
     hx-target="#categories-table"
     hx-target-error="#error"
     hx-swap="innerHTML"
     hx-trigger="submit"
     hx-on="htmx:afterOnLoad: handleHtmxError(event)"
-    >
+  >
     <div class="flex h-full flex-col gap-4">
-    if category == nil {
-      @components.DrawerTitle("Agregar Categoría")
-    } else {
-      @components.DrawerTitle("Editar Categoría")
-    }
+      <div>
+        if category == nil {
+          @components.DrawerTitle("Agregar Categoría")
+        } else {
+          @components.DrawerTitle("Editar Categoría")
+        }
 
-  <div id="error" class="text-red-600 text-sm"></div>
-    @components.Input("text", "Nombre", "name", "name", categoryValText(category, "name"))
+        <div id="error" class="text-red-600 text-sm"></div>
+        @components.Input("text", "Nombre", "name", "name", categoryValText(category, "name"))
+      </div>
+      @components.ButtonGroup()
     </div>
-    @components.ButtonGroup()
     </form>
 
     <script>
