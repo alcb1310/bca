@@ -40,6 +40,8 @@ templ EditRubros(rubro *types.Rubro) {
         hx-swap="innerHTML"
         if rubro == nil {
           hx-post="/bca/configuracion/rubros/crear"
+        } else {
+          hx-put={ concat("/bca/configuracion/rubros/crear?id=", rubro.Id.String()) }
         }
         hx-target-error="find #error"
         hx-on="htmx:afterRequest: htmxHandleError(event)"
@@ -94,3 +96,6 @@ templ EditRubros(rubro *types.Rubro) {
     }
   </script>
 }
+
+/*
+        */

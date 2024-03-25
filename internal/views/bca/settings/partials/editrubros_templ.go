@@ -70,6 +70,19 @@ func EditRubros(rubro *types.Rubro) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
+			} else {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-put=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/configuracion/rubros/crear?id=", rubro.Id.String())))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" hx-target-error=\"find #error\" hx-on=\"htmx:afterRequest: htmxHandleError(event)\"><div class=\"flex flex-col h-full gap-8\"><div class=\"w-1/2 my-0 mx-auto\"><div id=\"error\" class=\"text-red-500 text-sm\"></div>")
 			if templ_7745c5c3_Err != nil {
@@ -110,15 +123,7 @@ func EditRubros(rubro *types.Rubro) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if rubro != nil {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div style=\"margin-top: 1rem\" id=\"rubro-details\" hx-get=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/rubros/", rubro.Id.String())))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"load\" hx-swap=\"innerHTML\"></div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div style=\"margin-top: 1rem\" id=\"rubro-details\"></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -142,3 +147,9 @@ func EditRubros(rubro *types.Rubro) templ.Component {
 		return templ_7745c5c3_Err
 	})
 }
+
+/*
+   hx-get={ concat("/bca/partials/rubros/", rubro.Id.String()) }
+   hx-trigger="load"
+   hx-swap="innerHTML"
+*/

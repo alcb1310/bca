@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 
 	"bca-go-final/internal/utils"
@@ -13,7 +12,6 @@ func (s *Server) RubrosTable(w http.ResponseWriter, r *http.Request) {
 
 	rubros, _ := s.DB.GetAllRubros(ctxPayload.CompanyId)
 
-	fmt.Println(rubros)
 	component := partials.RubrosTable(rubros)
 	component.Render(r.Context(), w)
 }

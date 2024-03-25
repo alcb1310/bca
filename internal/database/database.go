@@ -100,7 +100,9 @@ type Service interface {
 
 	// database/rubros.go
 	GetAllRubros(companyId uuid.UUID) ([]types.Rubro, error)
-	CreateRubro(rubro types.Rubro) error
+	CreateRubro(rubro types.Rubro) (uuid.UUID, error)
+	GetOneRubro(id, companyId uuid.UUID) (types.Rubro, error)
+	UpdateRubro(rubro types.Rubro) error
 }
 
 type service struct {

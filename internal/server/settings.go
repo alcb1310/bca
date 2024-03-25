@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/google/uuid"
+
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/settings"
@@ -48,7 +50,26 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 	redirectURL := "/bca/configuracion/rubros/crear"
 	var rubro *types.Rubro = nil
 
-	if r.Method == "POST" {
+	id := r.URL.Query().Get("id")
+
+	if id != "" {
+		parsedId, err := uuid.Parse(id)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		r, err := s.DB.GetOneRubro(parsedId, ctxPayload.CompanyId)
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		rubro = &r
+		redirectURL = fmt.Sprintf("%s?id=%s", redirectURL, id)
+	}
+
+	if r.Method == "POST" || r.Method == "PUT" {
 		r.ParseForm()
 
 		code := r.Form.Get("code")
@@ -78,8 +99,11 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 			Unit:      unit,
 			CompanyId: ctxPayload.CompanyId,
 		}
+	}
 
-		if err := s.DB.CreateRubro(*rubro); err != nil {
+	if r.Method == "POST" {
+		id, err := s.DB.CreateRubro(*rubro)
+		if err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
 				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte(fmt.Sprintf("El Código %s ya existe", rubro.Code)))
@@ -92,6 +116,24 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		redirectURL = fmt.Sprintf("%s?id=%s", redirectURL, id)
+		rubro.Id = id
+
+	} else if r.Method == "PUT" {
+		rubro.Id, _ = uuid.Parse(id)
+
+		if err := s.DB.UpdateRubro(*rubro); err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusConflict)
+				w.Write([]byte(fmt.Sprintf("El Código %s ya existe", rubro.Code)))
+				return
+			}
+
+			w.WriteHeader(http.StatusInternalServerError)
+			log.Println(err)
+			w.Write([]byte(err.Error()))
+			return
+		}
 	}
 
 	component := partials.EditRubros(rubro)

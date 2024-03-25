@@ -1,6 +1,7 @@
 package partials
 
 import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components/icons"
 
 templ RubrosTable(rubros []types.Rubro) {
   <table>
@@ -23,7 +24,13 @@ templ RubrosTable(rubros []types.Rubro) {
             <td>{ rubro.Code }</td>
             <td>{ rubro.Name }</td>
             <td>{ rubro.Unit }</td>
-            <td></td>
+            <td>
+              <a href={ templ.SafeURL(concat("/bca/configuracion/rubros/crear?id=", rubro.Id.String())) }>
+                <div class="hover:cursor-pointer">
+                    @icons.EditIcon()
+                </div>
+              </a>
+            </td>
           </tr>
         }
       }
