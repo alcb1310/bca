@@ -120,3 +120,39 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 }
+
+func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request) {
+	ctxPayload, _ := utils.GetMyPaload(r)
+
+	id := mux.Vars(r)["id"]
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	materialId := mux.Vars(r)["materialId"]
+	parsedMaterialId, err := uuid.Parse(materialId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	switch r.Method {
+	case http.MethodDelete:
+		if err := s.DB.DeleteMaterialsByItem(parsedId, parsedMaterialId, ctxPayload.CompanyId); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		acus := s.DB.GetMaterialsByItem(parsedId, ctxPayload.CompanyId)
+
+		w.WriteHeader(http.StatusOK)
+		component := partials.MaterialsItemsTable(acus)
+		component.Render(r.Context(), w)
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+}

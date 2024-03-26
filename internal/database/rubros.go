@@ -84,8 +84,13 @@ func (s *service) GetMaterialsByItem(id, companyId uuid.UUID) []types.ACU {
 }
 
 func (s *service) AddMaterialsByItem(itemId, materialId uuid.UUID, quantity float64, companyId uuid.UUID) error {
-
 	query := "insert into item_materials (item_id, material_id, quantity, company_id) values ($1, $2, $3, $4)"
 	_, err := s.db.Exec(query, itemId, materialId, quantity, companyId)
+	return err
+}
+
+func (s *service) DeleteMaterialsByItem(itemId, materialId, companyId uuid.UUID) error {
+	query := "delete from item_materials where item_id = $1 and material_id = $2 and company_id = $3"
+	_, err := s.db.Exec(query, itemId, materialId, companyId)
 	return err
 }

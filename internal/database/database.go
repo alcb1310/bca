@@ -106,6 +106,7 @@ type Service interface {
 
 	GetMaterialsByItem(id, companyId uuid.UUID) []types.ACU
 	AddMaterialsByItem(itemId, materialId uuid.UUID, quantity float64, companyId uuid.UUID) error
+	DeleteMaterialsByItem(itemId, materialId, companyId uuid.UUID) error
 }
 
 type service struct {
