@@ -430,10 +430,7 @@ select
   m.unit as material_unit,
 
   c.id as category_id,
-  c.name as category_name,
-
-  im.quantity as quantity,
-  im.company_id as company_id
+  c.name as category_name
 from analysis a
 join project p on a.project_id = p.id
 join item_materials im on a.item_id = im.item_id

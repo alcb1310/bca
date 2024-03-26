@@ -130,3 +130,37 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func (s *Server) UnitAnalysis(w http.ResponseWriter, r *http.Request) {
+	ctxPayload, _ := utils.GetMyPaload(r)
+
+	p := s.DB.GetActiveProjects(ctxPayload.CompanyId, true)
+	projects := []types.Select{}
+	for _, v := range p {
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		projects = append(projects, x)
+	}
+
+	component := unit_cost.Analysis(projects)
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) AnalysisTable(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+
+	p := r.URL.Query().Get("project")
+	projectId, err := uuid.Parse(p)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Seleccione un proyecto"))
+		return
+	}
+
+	analysis := s.DB.AnalysisReport(projectId, ctx.CompanyId)
+
+	component := partials.AnalysisTable(analysis)
+	component.Render(r.Context(), w)
+}
