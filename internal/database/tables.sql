@@ -356,3 +356,23 @@ select
     m.company_id as company_id
 from materials m
 join category c on m.category_id = c.id;
+
+create or replace view vw_acu as
+select
+  i.id as item_id,
+  i.code as item_code,
+  i.name as item_name,
+  i.unit as item_unit,
+  m.id as material_id,
+  m.code as material_code,
+  m.name as material_name,
+  m.unit as material_unit,
+  c.id as category_id,
+  c.name as category_name,
+  im.quantity as quantity,
+  im.company_id as company_id
+from item_materials im 
+join item i on im.item_id = i.id
+join materials m on im.material_id = m.id
+join category c on m.category_id = c.id
+order by im.company_id, i.name, c.name, m.code

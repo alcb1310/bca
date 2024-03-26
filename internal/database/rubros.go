@@ -50,3 +50,42 @@ func (s *service) UpdateRubro(rubro types.Rubro) error {
 	_, err := s.db.Exec(query, rubro.Code, rubro.Name, rubro.Unit, rubro.Id, rubro.CompanyId)
 	return err
 }
+
+func (s *service) GetMaterialsByItem(id, companyId uuid.UUID) []types.ACU {
+	acus := []types.ACU{}
+
+	query := `
+    select
+      item_id, item_code, item_name, item_unit,
+      material_id, material_code, material_name, material_unit,
+      quantity, company_id
+    from vw_acu
+    where
+      item_id = $1 and company_id = $2
+    `
+
+	rows, err := s.db.Query(query, id, companyId)
+	if err != nil {
+		log.Println("Error getting materials by item: ", err)
+		return acus
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var acu types.ACU
+		if err := rows.Scan(&acu.Item.Id, &acu.Item.Code, &acu.Item.Name, &acu.Item.Unit, &acu.Material.Id, &acu.Material.Code, &acu.Material.Name, &acu.Material.Unit, &acu.Quantity, &acu.CompanyId); err != nil {
+			log.Println("Error getting materials by item: ", err)
+			return acus
+		}
+		acus = append(acus, acu)
+	}
+
+	return acus
+}
+
+func (s *service) AddMaterialsByItem(itemId, materialId uuid.UUID, quantity float64, companyId uuid.UUID) error {
+
+	query := "insert into item_materials (item_id, material_id, quantity, company_id) values ($1, $2, $3, $4)"
+	_, err := s.db.Exec(query, itemId, materialId, quantity, companyId)
+	return err
+}

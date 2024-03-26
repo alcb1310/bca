@@ -103,6 +103,9 @@ type Service interface {
 	CreateRubro(rubro types.Rubro) (uuid.UUID, error)
 	GetOneRubro(id, companyId uuid.UUID) (types.Rubro, error)
 	UpdateRubro(rubro types.Rubro) error
+
+	GetMaterialsByItem(id, companyId uuid.UUID) []types.ACU
+	AddMaterialsByItem(itemId, materialId uuid.UUID, quantity float64, companyId uuid.UUID) error
 }
 
 type service struct {

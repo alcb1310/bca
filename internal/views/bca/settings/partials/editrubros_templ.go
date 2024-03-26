@@ -105,11 +105,11 @@ func EditRubros(rubro *types.Rubro) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if rubro != nil {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button type=\"button\" class=\"btn\" hx-put=\"")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button type=\"button\" class=\"btn\" hx-get=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/rubros/", rubro.Id.String())))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat(concat("/bca/partials/rubros/", rubro.Id.String()), "/material")))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -123,7 +123,15 @@ func EditRubros(rubro *types.Rubro) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			if rubro != nil {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div style=\"margin-top: 1rem\" id=\"rubro-details\"></div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div style=\"margin-top: 1rem\" id=\"rubro-details\" hx-get=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/rubros/", rubro.Id.String())))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"load\" hx-swap=\"innerHTML\"></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -149,7 +157,4 @@ func EditRubros(rubro *types.Rubro) templ.Component {
 }
 
 /*
-   hx-get={ concat("/bca/partials/rubros/", rubro.Id.String()) }
-   hx-trigger="load"
-   hx-swap="innerHTML"
-*/
+ */

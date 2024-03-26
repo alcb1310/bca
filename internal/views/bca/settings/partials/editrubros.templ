@@ -60,7 +60,7 @@ templ EditRubros(rubro *types.Rubro) {
             <button
               type="button"
               class="btn"
-              hx-put={ concat("/bca/partials/rubros/", rubro.Id.String()) }
+              hx-get={ concat(concat("/bca/partials/rubros/", rubro.Id.String()), "/material") }
               hx-target="#drawer"
               hx-swap="innerHTML"
               hx-trigger="click"

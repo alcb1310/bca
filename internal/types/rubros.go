@@ -9,3 +9,10 @@ type Rubro struct {
 	Unit      string
 	CompanyId uuid.UUID
 }
+
+type ACU struct {
+	Item      Rubro
+	Material  Material
+	Quantity  float64
+	CompanyId uuid.UUID
+}
