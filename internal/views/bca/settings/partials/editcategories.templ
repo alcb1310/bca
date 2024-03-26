@@ -1,0 +1,62 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
+
+func categoryValText(category *types.Category, text string) string {
+  if category == nil {
+    return ""
+  }
+  switch text {
+    case "name":
+      return category.Name
+    default:
+        return ""
+  }
+}
+
+templ EditCategory(category *types.Category){
+  <form
+    id="edit-category"
+    if category == nil {
+      hx-post="/bca/partials/categories"
+    } else {
+      hx-put={ concat("/bca/partials/categories/", category.Id.String()) }
+    }
+    autocomplete="off"
+    hx-target="#categories-table"
+    hx-target-error="#error"
+    hx-swap="innerHTML"
+    hx-trigger="submit"
+    hx-on="htmx:afterOnLoad: handleHtmxError(event)"
+  >
+    <div class="flex h-full flex-col gap-4">
+      <div>
+        if category == nil {
+          @components.DrawerTitle("Agregar Categoría")
+        } else {
+          @components.DrawerTitle("Editar Categoría")
+        }
+
+        <div id="error" class="text-red-600 text-sm"></div>
+        @components.Input("text", "Nombre", "name", "name", categoryValText(category, "name"))
+      </div>
+      @components.ButtonGroup()
+    </div>
+    </form>
+
+    <script>
+    function handleHtmxError(event) {
+      document.getElementById("error").innerHTML = ""
+        if (event.detail.xhr.status === 200) {
+          resetClose()
+            return
+        }
+      document.getElementById("error").innerHTML = event.detail.xhr.responseText
+    }
+
+  function resetClose() {
+    closeDrawer()
+  }
+  </script>
+}

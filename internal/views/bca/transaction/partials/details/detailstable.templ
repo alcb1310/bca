@@ -2,6 +2,7 @@ package details
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
+import "bca-go-final/internal/views/components/icons"
 
 func getUrl(invoiceId, detailId string) string {
 	return "/bca/partials/invoices/" + invoiceId + "/details/" + detailId
@@ -31,14 +32,16 @@ templ InvoiceDetailsTable(details []types.InvoiceDetailsResponse) {
 					<td align="right">{ utils.PrintFloat(detail.Cost) }</td>
 					<td align="right">{ utils.PrintFloat(detail.Total) }</td>
 					<td align="center">
-						<i
-							class="fa-regular fa-trash-can text-red-500 cursor-pointer"
+						<div
+							class="hover:cursor-pointer"
 							hx-delete={ getUrl(detail.Id.String(), detail.BudgetItemId.String()) }
 							hx-trigger="click"
 							hx-target="#invoice-details"
 							hx-swap="innerHTML"
 							hx-push-url="false"
-						></i>
+						>
+                            @icons.TrashIcon()
+                        </div>
 					</td>
 				</tr>
 			}

@@ -36,7 +36,7 @@ func InvoiceView() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"flex justify-end items-center\"><a id=\"add-button\" href=\"/bca/transacciones/facturas/crear\" class=\"btn\" class=\"cursor-pointer\">Agregar</a></div><div class=\"relative\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"flex justify-end items-center\"><a id=\"add-button\" href=\"/bca/transacciones/facturas/crear\" class=\"btn cursor-pointer\">Agregar</a></div><div class=\"relative\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

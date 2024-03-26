@@ -450,7 +450,7 @@ html {
 
 thead {
   --tw-bg-opacity: 1;
-  background-color: rgb(84 110 122 / var(--tw-bg-opacity));
+  background-color: rgb(69 90 100 / var(--tw-bg-opacity));
   font-weight: 700;
 }
 
@@ -461,7 +461,7 @@ thead tr {
   line-height: 2rem;
   letter-spacing: 0.05em;
   --tw-text-opacity: 1;
-  color: rgb(207 216 220 / var(--tw-text-opacity));
+  color: rgb(236 239 241 / var(--tw-text-opacity));
 }
 
 tbody tr {
@@ -694,6 +694,10 @@ i:disabled {
   margin-bottom: 1rem;
 }
 
+.me-4 {
+  margin-inline-end: 1rem;
+}
+
 .mt-12 {
   margin-top: 3rem;
 }
@@ -762,6 +766,10 @@ i:disabled {
 
 .w-full {
   width: 100%;
+}
+
+.transform {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .cursor-pointer {
@@ -959,11 +967,6 @@ i:disabled {
   padding-bottom: 1rem;
 }
 
-.py-6 {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-}
-
 .pb-2 {
   padding-bottom: 0.5rem;
 }
@@ -998,6 +1001,10 @@ i:disabled {
 
 .text-center {
   text-align: center;
+}
+
+.align-middle {
+  vertical-align: middle;
 }
 
 .text-2xl {
@@ -1043,6 +1050,10 @@ i:disabled {
 
 .uppercase {
   text-transform: uppercase;
+}
+
+.lowercase {
+  text-transform: lowercase;
 }
 
 .tracking-wide {
@@ -1108,11 +1119,6 @@ i:disabled {
   color: rgb(220 38 38 / var(--tw-text-opacity));
 }
 
-.text-yellow-600 {
-  --tw-text-opacity: 1;
-  color: rgb(202 138 4 / var(--tw-text-opacity));
-}
-
 .no-underline {
   text-decoration-line: none;
 }
@@ -1125,6 +1131,10 @@ i:disabled {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.hover\:cursor-pointer:hover {
+  cursor: pointer;
 }
 
 .hover\:border-green-800:hover {

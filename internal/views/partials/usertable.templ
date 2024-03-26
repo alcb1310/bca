@@ -2,6 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "github.com/google/uuid"
+import "bca-go-final/internal/views/components/icons"
 
 func concat(s1, s2 string) string {
 	return s1 + s2
@@ -25,23 +26,31 @@ templ UsersTable(users []types.User, currentUser uuid.UUID) {
 					<td>{ user.Email }</td>
 					<td>{ user.Name }</td>
 					<td align="left">
-						<i
-							class="fa-solid fa-pencil text-yellow-600 cursor-pointer"
-							hx-get={ concat("/bca/partials/users/edit/", user.Id.String()) }
-							hx-get="/bca/partials/users/add"
-							hx-target="#drawer"
-							hx-swap="innerHTML"
-							_="on click openDrawer()"
-						></i>
-						if user.Id != currentUser {
-							<i
-								class="fa-regular fa-trash-can text-red-500 cursor-pointer"
-								hx-delete={ concat("/bca/partials/users/", user.Id.String()) }
-								hx-target="#users-table"
-								hx-swap="innerHTML"
-								_="on click toggle @disabled to me until htmx:afterOnLoad"
-							></i>
-						}
+                        <div
+                            class="flex align-middle gap-2"
+                        >
+                            <div
+                                class="hover:cursor-pointer"
+                                hx-get={ concat("/bca/partials/users/edit/", user.Id.String()) }
+                                hx-target="#drawer"
+                                hx-swap="innerHTML"
+                                hx-trigger="click"
+                                _="on click openDrawer()"
+                            >
+                                @icons.EditIcon()
+                            </div>
+                            if user.Id != currentUser {
+                                <div
+                                    class="hover cursor-pointer"
+                                    hx-delete={ concat("/bca/partials/users/", user.Id.String()) }
+                                    hx-target="#users-table"
+                                    hx-swap="innerHTML"
+                                    _="on click toggle @disabled until htmx:afterOnLoad"
+                                >
+                                    @icons.TrashIcon()
+                                </div>
+                            }
+                        </div>
 					</td>
 				</tr>
 			}

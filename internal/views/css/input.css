@@ -10,11 +10,11 @@
      }
 
      thead {
-          @apply bg-blue-gray-600 font-bold;
+          @apply bg-blue-gray-700 font-bold;
      }
 
      thead tr {
-          @apply uppercase text-sm text-blue-gray-100 font-bold tracking-wider leading-8;
+          @apply uppercase text-sm text-blue-gray-50 font-bold tracking-wider leading-8;
      }
 
      tbody tr {
