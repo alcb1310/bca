@@ -38,10 +38,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems)
 	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers)
 	r.HandleFunc("/bca/configuracion/proyectos", s.Projects)
+	r.HandleFunc("/bca/configuracion/categorias", s.Categories)
+	r.HandleFunc("/bca/configuracion/materiales", s.Materiales)
+	r.HandleFunc("/bca/configuracion/rubros", s.Rubros)
+	r.HandleFunc("/bca/configuracion/rubros/crear", s.RubrosAdd)
 
 	r.HandleFunc("/bca/user/perfil", s.Profile)
 	r.HandleFunc("/bca/user/admin", s.Admin)
 	r.HandleFunc("/bca/user/cambio", s.ChangePassword)
+
+	r.HandleFunc("/bca/costo-unitario/cantidades", s.UnitQuantity)
 
 	// excel
 	r.HandleFunc("/bca/reportes/excel/cuadre", s.BalanceExcel)
@@ -80,6 +86,22 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details", s.DetailsTable)
 	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details/add", s.DetailsAdd)
 	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details/{budgetItemId}", s.DetailsEdit)
+
+	r.HandleFunc("/bca/partials/categories", s.CategoriesTable)
+	r.HandleFunc("/bca/partials/categories/add", s.CategoryAdd)
+	r.HandleFunc("/bca/partials/categories/{id}", s.EditCategory)
+
+	r.HandleFunc("/bca/partials/materiales", s.MaterialsTable)
+	r.HandleFunc("/bca/partials/materiales/add", s.MaterialsAdd)
+	r.HandleFunc("/bca/partials/materiales/{id}", s.MaterialsEdit)
+
+	r.HandleFunc("/bca/partials/rubros", s.RubrosTable)
+	r.HandleFunc("/bca/partials/rubros/{id}", s.MaterialsByItem)
+	r.HandleFunc("/bca/partials/rubros/{id}/material", s.MaterialByItemForm)
+	r.HandleFunc("/bca/partials/rubros/{id}/material/{materialId}", s.MaterialItemsOperations)
+
+	r.HandleFunc("/bca/partials/cantidades", s.CantidadesTable)
+	r.HandleFunc("/bca/partials/cantidades/add", s.CantidadesAdd)
 
 	// This should be the last route for static files
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))

@@ -2,7 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
-import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/views/components/icons"
 
 templ BudgetTable(budgets []types.GetBudget) {
 	<table>
@@ -52,7 +52,7 @@ templ BudgetTable(budgets []types.GetBudget) {
                                     hx-trigger="click"
                                     _="on click openDrawer()"
                                 >
-                                    @components.EditIcon()
+                                    @icons.EditIcon()
                                 </div>
 							}
 						</td>

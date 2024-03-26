@@ -12,7 +12,7 @@ import "bytes"
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
-import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/views/components/icons"
 
 func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -116,7 +116,7 @@ func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = components.EditIcon().Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = icons.EditIcon().Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -129,7 +129,7 @@ func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = components.TrashIcon().Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = icons.TrashIcon().Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

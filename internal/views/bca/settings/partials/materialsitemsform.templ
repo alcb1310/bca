@@ -1,0 +1,43 @@
+package partials
+
+import "github.com/google/uuid"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
+
+templ MaterialsItemsForm(itemId uuid.UUID, materials []types.Select) {
+  <form 
+    id="materials-form"
+    autocomplete="off"
+    hx-post={ concat(concat("/bca/partials/rubros/", itemId.String()), "/material") }
+		hx-target="#materials-items-table"
+		hx-target-error="#error"
+		hx-swap="innerHTML"
+		hx-trigger="submit"
+    hx-on="htmx:afterOnLoad: handleHtmxError(event)"
+  >
+    <div class="flex h-full flex-col gap-4">
+      <div>
+        @components.DrawerTitle("Agregar Material")
+        <div id="drawer-error" class="text-red-600 text-sm"></div>
+        @components.SelectComponent(materials, "Seleccionar Material", "material", "material", "", "Material")
+        @components.Input("text", "Cantidad", "quantity", "quantity", "")
+      </div>
+      @components.ButtonGroup()
+    </div>
+  </form>
+
+  <script>
+    function handleHtmxError(event) {
+      document.getElementById("drawer-error").innerHTML = ""
+        if (event.detail.xhr.status === 200) {
+          resetClose()
+            return
+        }
+      document.getElementById("drawer-error").innerHTML = event.detail.xhr.responseText
+    }
+
+    function resetClose() {
+      closeDrawer()
+    }
+  </script>
+}

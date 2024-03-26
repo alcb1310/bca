@@ -2,7 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
-import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/views/components/icons"
 
 templ InvoiceTable(invoices []types.InvoiceResponse) {
 	<table>
@@ -35,7 +35,7 @@ templ InvoiceTable(invoices []types.InvoiceResponse) {
                                     <div
                                         class="hover:cursor-pointer"
                                     >
-                                        @components.EditIcon()
+                                        @icons.EditIcon()
                                     </div>
                                 </a>
                                 if invoice.InvoiceTotal == 0 {
@@ -43,7 +43,7 @@ templ InvoiceTable(invoices []types.InvoiceResponse) {
                                         class="fa-regular fa-trash-can text-red-500 cursor-pointer"
                                         aria-label="Eliminar factura"
                                     >
-                                        @components.TrashIcon()
+                                        @icons.TrashIcon()
                                     </div>
                                 }
                             </div>

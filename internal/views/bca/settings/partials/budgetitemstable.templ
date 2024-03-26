@@ -2,7 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "strconv"
-import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/views/components/icons"
 
 templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
 	<table>
@@ -29,9 +29,9 @@ templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
 						<td align="center">{ strconv.Itoa(int(budgetItem.Level)) }</td>
 						<td align="center">
 							if budgetItem.Accumulate.Bool {
-								<i class="fa-regular fa-circle-check"></i>
+                @icons.CheckCircleIcon()
 							} else {
-								<i class="fa-regular fa-circle-xmark"></i>
+                @icons.XMarkCircleIcon()
 							}
 						</td>
 						<td>
@@ -46,7 +46,7 @@ templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
                                 hx-trigger="click"
                                 _="on click openDrawer()"
                             >
-                                @components.EditIcon()
+                                @icons.EditIcon()
                             </div>
 						</td>
 					</tr>

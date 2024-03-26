@@ -85,6 +85,32 @@ type Service interface {
 
 	// database/closure.go
 	CreateClosure(companyId, projectId uuid.UUID, date time.Time) error
+
+	// database/categories.go
+	GetAllCategories(companyId uuid.UUID) ([]types.Category, error)
+	CreateCategory(category types.Category) error
+	GetCategory(id, companyId uuid.UUID) (types.Category, error)
+	UpdateCategory(category types.Category) error
+
+	// database/materials.go
+	GetAllMaterials(companyId uuid.UUID) []types.Material
+	CreateMaterial(material types.Material) error
+	GetMaterial(id, companyId uuid.UUID) (types.Material, error)
+	UpdateMaterial(material types.Material) error
+
+	// database/rubros.go
+	GetAllRubros(companyId uuid.UUID) ([]types.Rubro, error)
+	CreateRubro(rubro types.Rubro) (uuid.UUID, error)
+	GetOneRubro(id, companyId uuid.UUID) (types.Rubro, error)
+	UpdateRubro(rubro types.Rubro) error
+
+	GetMaterialsByItem(id, companyId uuid.UUID) []types.ACU
+	AddMaterialsByItem(itemId, materialId uuid.UUID, quantity float64, companyId uuid.UUID) error
+	DeleteMaterialsByItem(itemId, materialId, companyId uuid.UUID) error
+
+	// database/acu.go
+	CreateCantidades(projectId, rubroId uuid.UUID, quantity float64, companyId uuid.UUID) error
+	CantidadesTable(companyId uuid.UUID) []types.Quantity
 }
 
 type service struct {

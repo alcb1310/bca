@@ -162,6 +162,69 @@ create table if not exists historic(
      primary key (project_id, budget_item_id, date, company_id)
 );
 
+create table if not exists category (
+    id uuid primary key default gen_random_uuid(),
+    name text not null,
+
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    unique (name, company_id)
+);
+
+
+create table if not exists materials (
+    id uuid primary key default gen_random_uuid(),
+    code text not null,
+    name text not null,
+    unit text not null,
+
+    category_id uuid not null references category (id) on delete restrict,
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    unique (code, company_id),
+    unique (name, company_id)
+);
+
+create table if not exists item (
+    id uuid primary key default gen_random_uuid(),
+    code text not null,
+    name text not null,
+    unit text not null,
+
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    unique (code, company_id),
+    unique (name, company_id)
+);
+
+create table if not exists item_materials(
+    item_id uuid not null references item (id) on delete restrict,
+    material_id uuid not null references materials (id) on delete restrict,
+
+    quantity numeric not null,
+
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    primary key (item_id, material_id, company_id)
+);
+
+create table if not exists analysis(
+    id uuid primary key default gen_random_uuid(),
+
+    project_id uuid not null references project (id) on delete restrict,
+    item_id uuid not null references item (id) on delete restrict,
+    quantity numeric not null,
+
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    unique (item_id, project_id, company_id)
+);
+
 -- VIEWS
 -- drop views to recrate them later
 drop view if exists vw_budget;
@@ -294,3 +357,53 @@ join budget_item b on id.budget_item_id = b.id
 join invoice i on id.invoice_id = i.id
 join supplier s on i.supplier_id = s.id
 join project p on i.project_id = p.id;
+
+create or replace view vw_materials as 
+select
+    m.id as id,
+    m.code as code,
+    m.name as name,
+    m.unit as unit,
+    c.id as category_id,
+    c.name as category_name,
+    m.company_id as company_id
+from materials m
+join category c on m.category_id = c.id;
+
+create or replace view vw_acu as
+select
+  i.id as item_id,
+  i.code as item_code,
+  i.name as item_name,
+  i.unit as item_unit,
+  m.id as material_id,
+  m.code as material_code,
+  m.name as material_name,
+  m.unit as material_unit,
+  c.id as category_id,
+  c.name as category_name,
+  im.quantity as quantity,
+  im.company_id as company_id
+from item_materials im 
+join item i on im.item_id = i.id
+join materials m on im.material_id = m.id
+join category c on m.category_id = c.id
+order by im.company_id, i.name, c.name, m.code;
+
+create or replace view vw_project_costs as 
+select
+  a.id as id,
+  a.quantity as quantity,
+  a.company_id as company_id,
+
+  p.id as project_id,
+  p.name as project_name,
+
+  i.id as item_id,
+  i.code as item_code,
+  i.name as item_name,
+  i.unit as item_unit
+
+from analysis a
+join project p on a.project_id = p.id
+join item i on a.item_id = i.id;
