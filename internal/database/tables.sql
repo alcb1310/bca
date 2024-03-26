@@ -212,6 +212,19 @@ create table if not exists item_materials(
     primary key (item_id, material_id, company_id)
 );
 
+create table if not exists analysis(
+    id uuid primary key default gen_random_uuid(),
+
+    project_id uuid not null references project (id) on delete restrict,
+    item_id uuid not null references item (id) on delete restrict,
+    quantity numeric not null,
+
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    unique (item_id, project_id, company_id)
+);
+
 -- VIEWS
 -- drop views to recrate them later
 drop view if exists vw_budget;
@@ -375,4 +388,22 @@ from item_materials im
 join item i on im.item_id = i.id
 join materials m on im.material_id = m.id
 join category c on m.category_id = c.id
-order by im.company_id, i.name, c.name, m.code
+order by im.company_id, i.name, c.name, m.code;
+
+create or replace view vw_project_costs as 
+select
+  a.id as id,
+  a.quantity as quantity,
+  a.company_id as company_id,
+
+  p.id as project_id,
+  p.name as project_name,
+
+  i.id as item_id,
+  i.code as item_code,
+  i.name as item_name,
+  i.unit as item_unit
+
+from analysis a
+join project p on a.project_id = p.id
+join item i on a.item_id = i.id;
