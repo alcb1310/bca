@@ -1,0 +1,31 @@
+package partials
+
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+
+templ AnalysisTable(analysis []types.AnalysisReport) {
+  <table>
+    <thead>
+      <tr>
+        <td width="300px">Categoría</td>
+        <td width="400px">Material</td>
+        <td width="250px">Cantidad</td>
+      </tr>
+    </thead>
+    <tbody>
+      if len(analysis) == 0 {
+        <tr>
+          <td colspan="3">No se encontraron resultados</td>
+        </tr>
+      } else {
+        for _, a := range analysis {
+          <tr>
+            <td>{ a.CategoryName }</td>
+            <td>{ a.MaterialName }</td>
+            <td align="right">{ utils.PrintFloat(a.Quantity) }</td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+}

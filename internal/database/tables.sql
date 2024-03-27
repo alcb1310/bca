@@ -407,3 +407,33 @@ select
 from analysis a
 join project p on a.project_id = p.id
 join item i on a.item_id = i.id;
+
+create or replace view vw_project_cost_analysis as 
+select
+  a.id as id,
+  a.quantity as quantity,
+  a.company_id as company_id,
+
+  p.id as project_id,
+  p.name as project_name,
+
+  im.quantity as item_material_quantity,
+
+  i.id as item_id,
+  i.code as item_code,
+  i.name as item_name,
+  i.unit as item_unit,
+
+  m.id as material_id,
+  m.code as material_code,
+  m.name as material_name,
+  m.unit as material_unit,
+
+  c.id as category_id,
+  c.name as category_name
+from analysis a
+join project p on a.project_id = p.id
+join item_materials im on a.item_id = im.item_id
+join item i on im.item_id = i.id
+join materials m on im.material_id = m.id
+join category c on m.category_id = c.id;
