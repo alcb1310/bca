@@ -1,0 +1,33 @@
+package unit_cost
+
+import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
+
+templ Analysis(projects []types.Select) {
+  @base.AuthenticatedLayout("analisis") {
+    @components.PageTitle("Analisis")
+
+    <div>
+      <form
+        hx-get="/bca/partials/analisis"
+        hx-target="#analisis-table"
+        hx-swap="innerHTML"
+        hx-trigger="submit"
+      >
+        @components.SelectComponent(projects, "Seleccione un proyecto", "project", "project", "", "Proyecto")
+        <div class="flex justify-start">
+          <button
+            type="submit"
+            class="btn"
+          > 
+            Generar
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div id="analisis-table">
+    </div>
+  }
+}

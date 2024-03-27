@@ -27,7 +27,7 @@ func (s *service) CantidadesTable(companyId uuid.UUID) []types.Quantity {
   `
 	rows, err := s.db.Query(query, companyId)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return quantities
 	}
 	defer rows.Close()
@@ -43,4 +43,34 @@ func (s *service) CantidadesTable(companyId uuid.UUID) []types.Quantity {
 	}
 
 	return quantities
+}
+
+func (s *service) AnalysisReport(project_id, company_id uuid.UUID) []types.AnalysisReport {
+	analysis := []types.AnalysisReport{}
+
+	sql := `
+    select project_name, category_name, material_name, sum(quantity * item_material_quantity)
+    from vw_project_cost_analysis
+    where project_id = $1 and company_id = $2
+    group by project_name, category_name, material_name
+    order by project_name, category_name, material_name
+  `
+
+	rows, err := s.db.Query(sql, project_id, company_id)
+	if err != nil {
+		log.Println(err)
+		return analysis
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var ar types.AnalysisReport
+		if err := rows.Scan(&ar.ProjectName, &ar.CategoryName, &ar.MaterialName, &ar.Quantity); err != nil {
+			log.Fatal(err)
+			return analysis
+		}
+		analysis = append(analysis, ar)
+	}
+
+	return analysis
 }

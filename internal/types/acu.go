@@ -9,3 +9,10 @@ type Quantity struct {
 	Quantity  float64
 	CompanyId uuid.UUID
 }
+
+type AnalysisReport struct {
+	ProjectName  string
+	CategoryName string
+	MaterialName string
+	Quantity     float64
+}
