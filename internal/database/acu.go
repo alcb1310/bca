@@ -45,8 +45,8 @@ func (s *service) CantidadesTable(companyId uuid.UUID) []types.Quantity {
 	return quantities
 }
 
-func (s *service) AnalysisReport(project_id, company_id uuid.UUID) []types.AnalysisReport {
-	analysis := []types.AnalysisReport{}
+func (s *service) AnalysisReport(project_id, company_id uuid.UUID) map[string][]types.AnalysisReport {
+	x := make(map[string][]types.AnalysisReport)
 
 	sql := `
     select project_name, category_name, material_name, sum(quantity * item_material_quantity)
@@ -59,18 +59,24 @@ func (s *service) AnalysisReport(project_id, company_id uuid.UUID) []types.Analy
 	rows, err := s.db.Query(sql, project_id, company_id)
 	if err != nil {
 		log.Println(err)
-		return analysis
+		return x
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var ar types.AnalysisReport
-		if err := rows.Scan(&ar.ProjectName, &ar.CategoryName, &ar.MaterialName, &ar.Quantity); err != nil {
+		var analysis types.AnalysisReport
+		if err := rows.Scan(&analysis.ProjectName, &analysis.CategoryName, &analysis.MaterialName, &analysis.Quantity); err != nil {
 			log.Fatal(err)
-			return analysis
+			return x
 		}
-		analysis = append(analysis, ar)
+
+		_, ok := x[analysis.CategoryName]
+		if ok {
+			x[analysis.CategoryName] = append(x[analysis.CategoryName], analysis)
+		} else {
+			x[analysis.CategoryName] = []types.AnalysisReport{analysis}
+		}
 	}
 
-	return analysis
+	return x
 }

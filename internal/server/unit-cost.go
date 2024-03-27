@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -160,7 +161,12 @@ func (s *Server) AnalysisTable(w http.ResponseWriter, r *http.Request) {
 	}
 
 	analysis := s.DB.AnalysisReport(projectId, ctx.CompanyId)
+	keys := []string{}
+	for k := range analysis {
+		keys = append(keys, k)
+	}
 
-	component := partials.AnalysisTable(analysis)
+	slices.Sort(keys)
+	component := partials.AnalysisTable(analysis, keys)
 	component.Render(r.Context(), w)
 }

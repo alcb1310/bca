@@ -1119,6 +1119,11 @@ i:disabled {
   color: rgb(220 38 38 / var(--tw-text-opacity));
 }
 
+.text-blue-gray-400 {
+  --tw-text-opacity: 1;
+  color: rgb(120 144 156 / var(--tw-text-opacity));
+}
+
 .no-underline {
   text-decoration-line: none;
 }
@@ -1147,12 +1152,37 @@ i:disabled {
   background-color: rgb(84 110 122 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-blue-gray-900:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(38 50 56 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-green-800:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(22 101 52 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-blue-gray-800:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 71 79 / var(--tw-bg-opacity));
+}
+
 .hover\:text-blue-gray-200:hover {
   --tw-text-opacity: 1;
   color: rgb(176 190 197 / var(--tw-text-opacity));
+}
+
+.hover\:text-green-800:hover {
+  --tw-text-opacity: 1;
+  color: rgb(22 101 52 / var(--tw-text-opacity));
+}
+
+.hover\:text-black:hover {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.hover\:text-green-300:hover {
+  --tw-text-opacity: 1;
+  color: rgb(134 239 172 / var(--tw-text-opacity));
 }
