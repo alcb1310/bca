@@ -196,6 +196,64 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 		component := partials.CantidadesTable(quantities)
 		component.Render(r.Context(), w)
 
+	case http.MethodGet:
+		rub, _ := s.DB.GetAllRubros(ctx.CompanyId)
+		rubSelect := []types.Select{}
+		for _, v := range rub {
+			x := types.Select{
+				Key:   v.Id.String(),
+				Value: v.Name,
+			}
+			rubSelect = append(rubSelect, x)
+		}
+
+		p := s.DB.GetActiveProjects(ctx.CompanyId, true)
+		projects := []types.Select{}
+		for _, v := range p {
+			x := types.Select{
+				Key:   v.ID.String(),
+				Value: v.Name,
+			}
+			projects = append(projects, x)
+		}
+
+		quantity := s.DB.GetOneQuantityById(parsedId, ctx.CompanyId)
+
+		component := partials.EditCantidades(&quantity, projects, rubSelect)
+		component.Render(r.Context(), w)
+
+	case http.MethodPut:
+		r.ParseForm()
+
+		q := r.Form.Get("quantity")
+		if q == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese una cantidad"))
+			return
+		}
+		quantity, err := strconv.ParseFloat(q, 64)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Cantidad debe ser numérica"))
+			return
+		}
+
+		quan := s.DB.GetOneQuantityById(parsedId, ctx.CompanyId)
+
+		quan.Quantity = quantity
+
+		if err := s.DB.UpdateQuantity(quan, ctx.CompanyId); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Error al actualizar la cantidad"))
+			log.Println(err.Error())
+			return
+		}
+
+		quantities := s.DB.CantidadesTable(ctx.CompanyId)
+
+		component := partials.CantidadesTable(quantities)
+		component.Render(r.Context(), w)
+
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}

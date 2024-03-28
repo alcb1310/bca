@@ -101,3 +101,21 @@ func (s *service) DeleteCantidades(id, companyId uuid.UUID) error {
 	_, err := s.db.Exec(query, id, companyId)
 	return err
 }
+
+func (s *service) GetOneQuantityById(id, companyId uuid.UUID) types.Quantity {
+	quantity := types.Quantity{}
+	query := "select id, quantity, project_id, project_name, item_id, item_code, item_name, item_unit from vw_project_costs where id = $1 and company_id = $2"
+	err := s.db.QueryRow(query, id, companyId).Scan(&quantity.Id, &quantity.Quantity, &quantity.Project.ID, &quantity.Project.Name,
+		&quantity.Rubro.Id, &quantity.Rubro.Code, &quantity.Rubro.Name, &quantity.Rubro.Unit)
+	if err != nil {
+		log.Println(err)
+		return quantity
+	}
+	return quantity
+}
+
+func (s *service) UpdateQuantity(q types.Quantity, companyId uuid.UUID) error {
+	query := "update analysis set quantity = $1 where id = $2 and company_id = $3"
+	_, err := s.db.Exec(query, q.Quantity, q.Id, companyId)
+	return err
+}

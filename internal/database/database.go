@@ -115,6 +115,8 @@ type Service interface {
 	CantidadesTable(companyId uuid.UUID) []types.Quantity
 	AnalysisReport(project_id, company_id uuid.UUID) map[string][]types.AnalysisReport
 	GetQuantityByMaterialAndItem(itemId, materialId, companyId uuid.UUID) types.ItemMaterialType
+	GetOneQuantityById(id, companyId uuid.UUID) types.Quantity
+	UpdateQuantity(q types.Quantity, companyId uuid.UUID) error
 }
 
 type service struct {

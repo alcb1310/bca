@@ -11,9 +11,9 @@ func quantityValText(quantity *types.Quantity, text string) string {
   }
   switch text {
   case "project":
-    return quantity.Project.Name
+    return quantity.Project.ID.String()
   case "item":
-    return quantity.Rubro.Name
+    return quantity.Rubro.Id.String()
   case "quantity":
     return utils.PrintFloat(quantity.Quantity)
   default:
@@ -21,7 +21,15 @@ func quantityValText(quantity *types.Quantity, text string) string {
   }
 }
 
+func qExists(q *types.Quantity) string {
+  if q == nil {
+    return "true"
+  }
+  return "false"
+}
+
 templ EditCantidades(quantities *types.Quantity, projects, items []types.Select){
+  <input type="hidden" id="hidden" value={ qExists(quantities) } />
   <form
     id="edit-quantity"
     if quantities == nil {
@@ -54,6 +62,18 @@ templ EditCantidades(quantities *types.Quantity, projects, items []types.Select)
   </form>
 
   <script>
+    var h = document.getElementById("hidden")
+    var project = document.getElementById("project")
+    var item = document.getElementById("item")
+
+    if (h.value === "false") {
+      project.disabled = true
+      item.disabled = true
+    } else {
+      project.disabled = false
+      item.disabled = false
+    }
+
     function handleHtmxError(event) {
       document.getElementById("error").innerHTML = ""
 

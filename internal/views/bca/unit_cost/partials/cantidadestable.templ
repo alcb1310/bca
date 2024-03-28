@@ -29,7 +29,14 @@ templ CantidadesTable(quantities []types.Quantity) {
             <td align="center">{ quantity.Rubro.Unit }</td>
             <td align="right">{ utils.PrintFloat(quantity.Quantity) }</td>
             <td class="flex justify-around">
-              <div>
+              <div
+                class="hover:cursor-pointer"
+                hx-get={ fmt.Sprintf("/bca/partials/cantidades/%s", quantity.Id.String()) }
+                hx-target="#drawer"
+                hx-swap="innerHTML"
+                hx-trigger="click"
+                _="on click openDrawer()"
+              >
                 @icons.EditIcon()
               </div>
               <div
