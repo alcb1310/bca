@@ -1,7 +1,9 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
+import "bca-go-final/internal/views/components/icons"
 
 templ CantidadesTable(quantities []types.Quantity) {
   <table>
@@ -26,7 +28,21 @@ templ CantidadesTable(quantities []types.Quantity) {
             <td>{ quantity.Rubro.Name }</td>
             <td align="center">{ quantity.Rubro.Unit }</td>
             <td align="right">{ utils.PrintFloat(quantity.Quantity) }</td>
-            <td></td>
+            <td class="flex justify-around">
+              <div>
+                @icons.EditIcon()
+              </div>
+              <div
+                class="hover:cursor-pointer"
+                hx-delete={ concat("/bca/partials/cantidades/", quantity.Id.String()) }
+                hx-confirm={ fmt.Sprintf("Eliminar el rubro: %s\n del proyecto: %s", quantity.Rubro.Name, quantity.Project.Name) }
+                hx-target="#cantidades-table"
+                hx-swap="innerHTML"
+                hx-trigger="click"
+              >
+                @icons.TrashIcon()
+              </div>
+            </td>
           </tr>
         }
       }

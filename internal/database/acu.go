@@ -95,3 +95,9 @@ func (s *service) GetQuantityByMaterialAndItem(itemId, materialId, companyId uui
 
 	return itemMaterial
 }
+
+func (s *service) DeleteCantidades(id, companyId uuid.UUID) error {
+	query := "delete from analysis where id = $1 and company_id = $2"
+	_, err := s.db.Exec(query, id, companyId)
+	return err
+}

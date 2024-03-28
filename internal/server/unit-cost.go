@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -27,7 +28,6 @@ func (s *Server) CantidadesTable(w http.ResponseWriter, r *http.Request) {
 
 	component := partials.CantidadesTable(quantities)
 	component.Render(r.Context(), w)
-
 }
 
 func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
@@ -169,4 +169,34 @@ func (s *Server) AnalysisTable(w http.ResponseWriter, r *http.Request) {
 	slices.Sort(keys)
 	component := partials.AnalysisTable(analysis, keys)
 	component.Render(r.Context(), w)
+}
+
+func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+
+	id := mux.Vars(r)["id"]
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Error al parsear el ID"))
+		return
+	}
+
+	switch r.Method {
+	case http.MethodDelete:
+		if err := s.DB.DeleteCantidades(parsedId, ctx.CompanyId); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Error al borrar la cantidad"))
+			log.Println(err.Error())
+			return
+		}
+
+		quantities := s.DB.CantidadesTable(ctx.CompanyId)
+
+		component := partials.CantidadesTable(quantities)
+		component.Render(r.Context(), w)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
 }

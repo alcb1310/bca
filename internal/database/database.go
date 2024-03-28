@@ -111,6 +111,7 @@ type Service interface {
 
 	// database/acu.go
 	CreateCantidades(projectId, rubroId uuid.UUID, quantity float64, companyId uuid.UUID) error
+	DeleteCantidades(id, companyId uuid.UUID) error
 	CantidadesTable(companyId uuid.UUID) []types.Quantity
 	AnalysisReport(project_id, company_id uuid.UUID) map[string][]types.AnalysisReport
 	GetQuantityByMaterialAndItem(itemId, materialId, companyId uuid.UUID) types.ItemMaterialType
