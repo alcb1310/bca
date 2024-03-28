@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
@@ -20,17 +21,13 @@ func quantityValText(quantity *types.Quantity, text string) string {
   }
 }
 
-func concat(s1, s2 string) string {
-  return s1 + s2
-}
-
 templ EditCantidades(quantities *types.Quantity, projects, items []types.Select){
   <form
     id="edit-quantity"
     if quantities == nil {
       hx-post="/bca/partials/cantidades/add"
     } else {
-      hx-put={ concat("/bca/partials/cantidades/", quantities.Id.String()) }
+      hx-put={ fmt.Sprintf("/bca/partials/cantidades/%s", quantities.Id.String()) }
     }
     autocomplete="off"
     hx-target="#cantidades-table"

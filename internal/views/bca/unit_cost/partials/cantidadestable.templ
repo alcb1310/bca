@@ -34,7 +34,7 @@ templ CantidadesTable(quantities []types.Quantity) {
               </div>
               <div
                 class="hover:cursor-pointer"
-                hx-delete={ concat("/bca/partials/cantidades/", quantity.Id.String()) }
+                hx-delete={ fmt.Sprintf("/bca/partials/cantidades/%s", quantity.Id.String()) }
                 hx-confirm={ fmt.Sprintf("Eliminar el rubro: %s\n del proyecto: %s", quantity.Rubro.Name, quantity.Project.Name) }
                 hx-target="#cantidades-table"
                 hx-swap="innerHTML"

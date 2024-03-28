@@ -10,6 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
+import "fmt"
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
@@ -28,10 +29,6 @@ func quantityValText(quantity *types.Quantity, text string) string {
 	default:
 		return ""
 	}
-}
-
-func concat(s1, s2 string) string {
-	return s1 + s2
 }
 
 func EditCantidades(quantities *types.Quantity, projects, items []types.Select) templ.Component {
@@ -61,7 +58,7 @@ func EditCantidades(quantities *types.Quantity, projects, items []types.Select) 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/cantidades/", quantities.Id.String())))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/cantidades/%s", quantities.Id.String())))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
