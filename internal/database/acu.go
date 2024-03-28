@@ -80,3 +80,18 @@ func (s *service) AnalysisReport(project_id, company_id uuid.UUID) map[string][]
 
 	return x
 }
+
+func (s *service) GetQuantityByMaterialAndItem(itemId, materialId, companyId uuid.UUID) types.ItemMaterialType {
+	itemMaterial := types.ItemMaterialType{}
+	query := "select quantity from item_materials where item_id = $1 and material_id = $2 and company_id = $3"
+	err := s.db.QueryRow(query, itemId, materialId, companyId).Scan(&itemMaterial.Quantity)
+	if err != nil {
+		log.Println(err)
+		return itemMaterial
+	}
+
+	itemMaterial.ItemId = itemId
+	itemMaterial.MaterialId = materialId
+
+	return itemMaterial
+}

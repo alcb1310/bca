@@ -107,11 +107,13 @@ type Service interface {
 	GetMaterialsByItem(id, companyId uuid.UUID) []types.ACU
 	AddMaterialsByItem(itemId, materialId uuid.UUID, quantity float64, companyId uuid.UUID) error
 	DeleteMaterialsByItem(itemId, materialId, companyId uuid.UUID) error
+	UpdateMaterialByItem(itemId, materialId uuid.UUID, quantity float64, companyId uuid.UUID) error
 
 	// database/acu.go
 	CreateCantidades(projectId, rubroId uuid.UUID, quantity float64, companyId uuid.UUID) error
 	CantidadesTable(companyId uuid.UUID) []types.Quantity
 	AnalysisReport(project_id, company_id uuid.UUID) map[string][]types.AnalysisReport
+	GetQuantityByMaterialAndItem(itemId, materialId, companyId uuid.UUID) types.ItemMaterialType
 }
 
 type service struct {

@@ -91,7 +91,15 @@ func MaterialsItemsTable(acus []types.ACU) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td class=\"flex justify-around\"><div class=\"hover:cursor-pointer\" _=\"on click openDrawer()\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td class=\"flex justify-around\"><div class=\"hover:cursor-pointer\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" hx-trigger=\"click\" hx-get=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat(concat(concat("/bca/partials/rubros/", acu.Item.Id.String()), "/material/"), acu.Material.Id.String())))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" _=\"on click openDrawer()\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

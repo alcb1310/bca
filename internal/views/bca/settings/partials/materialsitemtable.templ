@@ -33,6 +33,10 @@ templ MaterialsItemsTable(acus []types.ACU){
             <td class="flex justify-around">
               <div
                 class="hover:cursor-pointer"
+                hx-target="#drawer"
+                hx-swap="innerHTML"
+                hx-trigger="click"
+                hx-get={ concat (concat (concat("/bca/partials/rubros/", acu.Item.Id.String()), "/material/"), acu.Material.Id.String()) }
                 _="on click openDrawer()"
               >
                 @icons.EditIcon()
