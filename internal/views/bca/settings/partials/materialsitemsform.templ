@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "github.com/google/uuid"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
@@ -34,9 +35,9 @@ templ MaterialsItemsForm(itemMaterial *types.ItemMaterialType, itemId uuid.UUID,
     id="materials-form"
     autocomplete="off"
     if itemMaterial == nil {
-      hx-post={ concat(concat("/bca/partials/rubros/", itemId.String()), "/material") }
+      hx-post={ fmt.Sprintf("/bca/partials/rubros/%s/material", itemId.String()) }
     } else {
-      hx-put={ concat(concat(concat("/bca/partials/rubros/", itemId.String()), "/material/"), itemMaterial.MaterialId.String()) }
+      hx-put={ fmt.Sprintf("/bca/partials/rubros/%s/material/%s", itemId.String(), itemMaterial.MaterialId.String()) }
     }
 		hx-target="#materials-items-table"
 		hx-target-error="#error"

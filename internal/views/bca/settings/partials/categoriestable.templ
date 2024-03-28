@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components/icons"
 
@@ -23,7 +24,7 @@ templ CategoriesTable(categories []types.Category){
             <td align="center">
               <div
                   class="hover:cursor-pointer"
-                  hx-get={ concat("/bca/partials/categories/", category.Id.String()) }
+                  hx-get={ fmt.Sprintf("/bca/partials/categories/%s", category.Id.String()) }
                   hx-target="#drawer"
                   hx-swap="innerHTML"
                   hx-trigger="click"

@@ -10,6 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
+import "fmt"
 import "github.com/google/uuid"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
@@ -68,7 +69,7 @@ func MaterialsItemsForm(itemMaterial *types.ItemMaterialType, itemId uuid.UUID, 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat(concat("/bca/partials/rubros/", itemId.String()), "/material")))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/rubros/%s/material", itemId.String())))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -81,7 +82,7 @@ func MaterialsItemsForm(itemMaterial *types.ItemMaterialType, itemId uuid.UUID, 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat(concat(concat("/bca/partials/rubros/", itemId.String()), "/material/"), itemMaterial.MaterialId.String())))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/rubros/%s/material/%s", itemId.String(), itemMaterial.MaterialId.String())))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

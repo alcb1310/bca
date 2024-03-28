@@ -10,6 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components/icons"
 
@@ -44,7 +45,7 @@ func CategoriesTable(categories []types.Category) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(category.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/categoriestable.templ`, Line: 21, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/categoriestable.templ`, Line: 22, Col: 31}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -54,7 +55,7 @@ func CategoriesTable(categories []types.Category) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/categories/", category.Id.String())))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/categories/%s", category.Id.String())))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
