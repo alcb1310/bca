@@ -23,7 +23,7 @@ func HelpIcon() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-help-circle\" width=\"15\" height=\"15\"><circle cx=\"12\" cy=\"12\" r=\"10\" stroke=\"#f3f4f6\"></circle> <path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" stroke=\"#f3f4f6\"></path> <line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"17\" stroke=\"#f3f4f6\"></line></svg>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-help-circle\" width=\"15\" height=\"15\"><style>\n        .color {\n          fill: #263238;\n          stroke: #f3f4f6;\n        }\n      </style><circle class=\"color\" cx=\"12\" cy=\"12\" r=\"10\"></circle> <path class=\"color\" d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"></path> <line class=\"color\" x1=\"12\" y1=\"17\" x2=\"12\" y2=\"17\"></line></svg>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

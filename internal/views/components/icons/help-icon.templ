@@ -11,8 +11,20 @@ templ HelpIcon() {
         width="15"
         height="15"
     >
-        <circle cx="12" cy="12" r="10" stroke="#f3f4f6"> </circle>
-        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="#f3f4f6"> </path>
-        <line x1="12" y1="17" x2="12" y2="17" stroke="#f3f4f6"> </line>
+      <style>
+        .color {
+          fill: #263238;
+          stroke: #f3f4f6;
+        }
+      </style>
+      <circle
+        class="color"
+        cx="12" cy="12" r="10"> </circle>
+      <path
+        class="color"
+        d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+      <line
+        class="color"
+        x1="12" y1="17" x2="12" y2="17"> </line>
     </svg>
 }
