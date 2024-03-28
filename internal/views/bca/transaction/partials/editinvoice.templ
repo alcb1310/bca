@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/base"
 import "bca-go-final/internal/views/components"
@@ -44,7 +45,7 @@ templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Se
  				if invoice == nil {
 					hx-post="/bca/transacciones/facturas/crear"
 				} else {
-					hx-put={ concat("/bca/partials/invoices/", invoice.Id.String()) }
+          hx-put={ fmt.Sprintf("/bca/partials/invoices/%s", invoice.Id.String()) }
 				}
  				hx-target-error="find #error"
  				hx-on="htmx:afterRequest: htmxHandleError(event)"
@@ -67,7 +68,7 @@ templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Se
 						<button
  							type="button"
  							class="btn"
- 							hx-get={ concat(concat("/bca/partials/invoices/", invoice.Id.String()), "/details/add") }
+              hx-get={ fmt.Sprintf("/bca/partials/invoices/%s/details/add", invoice.Id.String()) }
  							hx-target="#drawer"
  							hx-swap="innerHTML"
  							hx-trigger="click"
@@ -88,7 +89,7 @@ templ EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Se
 			<div
  				style="margin-top: 1rem"
  				id="invoice-details"
- 				hx-get={ concat(concat("/bca/partials/invoices/", invoice.Id.String()), "/details") }
+        hx-get={ fmt.Sprintf("/bca/partials/invoices/%s/details", invoice.Id.String()) }
  				hx-trigger="load"
  				hx-swap="innerHTML"
 			></div>

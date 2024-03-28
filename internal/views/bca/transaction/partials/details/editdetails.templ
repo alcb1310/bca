@@ -1,15 +1,12 @@
 package details
 
+import "fmt"
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
 
-func concat(a, b string) string {
-	return a + b
-}
-
 templ EditDetails(budgetItems []types.Select, invoiceId string) {
 	<form
-		hx-post={ concat(concat("/bca/partials/invoices/", invoiceId), "/details") }
+    hx-post={ fmt.Sprintf("/bca/partials/invoices/%s/details", invoiceId) }
 		hx-trigger="submit"
 		hx-target="#invoice-details"
 		hx-swap="innerHTML"
