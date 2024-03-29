@@ -1,9 +1,9 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 import "bca-go-final/internal/views/components/icons"
-// import "bca-go-final/internal/views/components/icons"
 
 templ MaterialsItemsTable(acus []types.ACU){
   <table
@@ -33,13 +33,17 @@ templ MaterialsItemsTable(acus []types.ACU){
             <td class="flex justify-around">
               <div
                 class="hover:cursor-pointer"
+                hx-target="#drawer"
+                hx-swap="innerHTML"
+                hx-trigger="click"
+                hx-get={ fmt.Sprintf("/bca/partials/rubros/%s/material/%s", acu.Item.Id.String(), acu.Material.Id.String()) }
                 _="on click openDrawer()"
               >
                 @icons.EditIcon()
               </div>
               <div
                 class="hover:cursor-pointer"
-                hx-delete={ concat(concat(concat("/bca/partials/rubros/", acu.Item.Id.String()), "/material/"), acu.Material.Id.String()) }
+                hx-delete={ fmt.Sprintf("/bca/partials/rubros/%s/material/%s", acu.Item.Id.String(), acu.Material.Id.String()) }
                 hx-target="#materials-items-table"
                 hx-swap="innerHTML"
                 hx-trigger="click"

@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
 
@@ -46,7 +47,7 @@ templ EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) {
 		if budgetItem == nil {
 			hx-post="/bca/partials/budget-item"
 		} else {
-			hx-put={ concat("/bca/partials/budget-item/", budgetItem.ID.String()) }
+      hx-put={ fmt.Sprintf("/bca/partials/budget-item/%s", budgetItem.ID.String()) }
 		}
 		hx-target="#budget-items-table"
 		hx-target-error="#error"

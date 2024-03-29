@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
 
@@ -27,7 +28,7 @@ templ EditMaterial(material *types.Material, categories []types.Select) {
     if material == nil {
       hx-post="/bca/partials/materiales"
     } else {
-      hx-put={ concat("/bca/partials/materiales/", material.Id.String()) }
+      hx-put={ fmt.Sprintf("/bca/partials/materiales/%s", material.Id.String()) }
     }
     autocomplete="off"
     hx-target="#materials-table"

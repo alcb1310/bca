@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 import "bca-go-final/internal/views/components/icons"
@@ -44,16 +45,16 @@ templ BudgetTable(budgets []types.GetBudget) {
 						<td align="right">{ utils.PrintFloat(budget.UpdatedBudget) }</td>
 						<td align="center">
 							if budget.RemainingQuantity.Valid {
-                                <div
-                                    class="hover:cursor-pointer"
-                                    hx-get={ concat(concat(concat("/bca/partials/budgets/", budget.Project.ID.String()), "/"), budget.BudgetItem.ID.String()) }
-                                    hx-target="#drawer"
-                                    hx-swap="innerHtml"
-                                    hx-trigger="click"
-                                    _="on click openDrawer()"
-                                >
-                                    @icons.EditIcon()
-                                </div>
+                <div
+                  class="hover:cursor-pointer"
+                  hx-get={ fmt.Sprintf("/bca/partials/budgets/%s/%s", budget.Project.ID.String(), budget.BudgetItem.ID.String()) }
+                  hx-target="#drawer"
+                  hx-swap="innerHtml"
+                  hx-trigger="click"
+                  _="on click openDrawer()"
+                >
+                  @icons.EditIcon()
+                </div>
 							}
 						</td>
 					</tr>

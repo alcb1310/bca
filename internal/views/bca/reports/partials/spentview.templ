@@ -2,6 +2,7 @@ package partials
 
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
+import "bca-go-final/internal/views/components/icons"
 
 func displayURL(budgetItemId, projectId, date string) string {
 	return "/bca/reportes/gastado/" + projectId + "/" + budgetItemId + "/" + date
@@ -24,21 +25,23 @@ templ SpentView(data types.SpentResponse) {
 					<td>{ spent.BudgetItem.Name }</td>
 					<td align="right">{ utils.PrintFloat(spent.Spent) }</td>
 					<td align="center">
-						<i
-							class="fa-regular fa-eye"
+            <span
+              class="hover:cursor-pointer"
 							hx-get={ displayURL(spent.BudgetItem.ID.String(), data.Project.String(), ctx.Value("date").(string)) }
 							hx-target="#drawer"
 							hx-swap="innerHTML"
 							hx-trigger="click"
 							_="on click openDrawer()"
-						></i>
+            >
+              @icons.EyeIcon()
+            </span>
 					</td>
 				</tr>
 			}
 			<tfoot>
 				<tr>
 					<td colspan="2">Total</td>
-					<td align="right">{ utils.PrintFloat(data.Total) }</td>
+					<td align="right" class="text-green-300">{ utils.PrintFloat(data.Total) }</td>
 					<td></td>
 				</tr>
 			</tfoot>

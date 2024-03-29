@@ -3,27 +3,32 @@ package partials
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 
-templ AnalysisTable(analysis []types.AnalysisReport) {
+templ AnalysisTable(analysis map[string][]types.AnalysisReport, keys []string) {
   <table>
     <thead>
       <tr>
-        <td width="300px">Categoría</td>
         <td width="400px">Material</td>
         <td width="250px">Cantidad</td>
       </tr>
     </thead>
     <tbody>
-      if len(analysis) == 0 {
+      if len(keys) == 0 {
         <tr>
           <td colspan="3">No se encontraron resultados</td>
         </tr>
       } else {
-        for _, a := range analysis {
+        for _, k := range keys {
           <tr>
-            <td>{ a.CategoryName }</td>
-            <td>{ a.MaterialName }</td>
-            <td align="right">{ utils.PrintFloat(a.Quantity) }</td>
+            <td colspan="3" class="py-3 text-green-300 hover:text-green-300 hover:bg-blue-gray-800">
+              <span class="">{ k }</span>
+            </td>
           </tr>
+          for _, a := range analysis[k] {
+            <tr>
+              <td>{ a.MaterialName }</td>
+              <td align="right">{ utils.PrintFloat(a.Quantity) }</td>
+            </tr>
+          }
         }
       }
     </tbody>

@@ -103,6 +103,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.HandleFunc("/bca/partials/cantidades", s.CantidadesTable)
 	r.HandleFunc("/bca/partials/cantidades/add", s.CantidadesAdd)
+	r.HandleFunc("/bca/partials/cantidades/{id}", s.CantidadesEdit)
 
 	r.HandleFunc("/bca/partials/analisis", s.AnalysisTable)
 

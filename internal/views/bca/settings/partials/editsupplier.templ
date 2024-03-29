@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
 
@@ -30,7 +31,7 @@ templ EditSupplier(supplier *types.Supplier) {
 		if supplier == nil {
 			hx-post="/bca/partials/suppliers"
 		} else {
-			hx-put={ concat("/bca/partials/suppliers/edit/", supplier.ID.String()) }
+      hx-put={ fmt.Sprintf("/bca/partials/suppliers/edit/%s", supplier.ID.String()) }
 		}
 		hx-swap="innerHTML"
 		hx-target="#supplier-table"

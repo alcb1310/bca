@@ -14,10 +14,6 @@ import "fmt"
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
 
-func concat(s1, s2 string) string {
-	return s1 + s2
-}
-
 func projectValText(project *types.Project, text string) string {
 	if project == nil {
 		return ""
@@ -70,7 +66,7 @@ func EditProject(project *types.Project) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/projects/edit/", project.ID.String())))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/projects/edit/%s", project.ID.String())))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

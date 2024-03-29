@@ -105,7 +105,6 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	case http.MethodGet:
-
 		materials := s.DB.GetAllMaterials(ctxPayload.CompanyId)
 		materialsSelect := []types.Select{}
 		for _, m := range materials {
@@ -113,7 +112,7 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusOK)
-		component := partials.MaterialsItemsForm(parsedId, materialsSelect)
+		component := partials.MaterialsItemsForm(nil, parsedId, materialsSelect)
 		component.Render(r.Context(), w)
 
 	default:
@@ -150,6 +149,54 @@ func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request)
 
 		w.WriteHeader(http.StatusOK)
 		component := partials.MaterialsItemsTable(acus)
+		component.Render(r.Context(), w)
+
+	case http.MethodPut:
+		r.ParseForm()
+
+		quantityText := r.Form.Get("quantity")
+		if quantityText == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese una Cantidad"))
+			return
+		}
+
+		quantity, err := strconv.ParseFloat(quantityText, 64)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Cantidad debe ser un valor numérico"))
+			return
+		}
+
+		if quantity <= 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("La Cantidad debe ser mayor a 0"))
+			return
+		}
+
+		if err := s.DB.UpdateMaterialByItem(parsedId, parsedMaterialId, quantity, ctxPayload.CompanyId); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		acus := s.DB.GetMaterialsByItem(parsedId, ctxPayload.CompanyId)
+
+		w.WriteHeader(http.StatusOK)
+		component := partials.MaterialsItemsTable(acus)
+		component.Render(r.Context(), w)
+
+	case http.MethodGet:
+		im := s.DB.GetQuantityByMaterialAndItem(parsedId, parsedMaterialId, ctxPayload.CompanyId)
+
+		materials := s.DB.GetAllMaterials(ctxPayload.CompanyId)
+		materialsSelect := []types.Select{}
+		for _, m := range materials {
+			materialsSelect = append(materialsSelect, types.Select{Key: m.Id.String(), Value: m.Name})
+		}
+
+		w.WriteHeader(http.StatusOK)
+		component := partials.MaterialsItemsForm(&im, parsedId, materialsSelect)
 		component.Render(r.Context(), w)
 	default:
 		w.WriteHeader(http.StatusBadRequest)

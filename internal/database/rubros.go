@@ -94,3 +94,9 @@ func (s *service) DeleteMaterialsByItem(itemId, materialId, companyId uuid.UUID)
 	_, err := s.db.Exec(query, itemId, materialId, companyId)
 	return err
 }
+
+func (s *service) UpdateMaterialByItem(itemId, materialId uuid.UUID, quantity float64, companyId uuid.UUID) error {
+	query := "update item_materials set quantity = $1 where item_id = $2 and material_id = $3 and company_id = $4"
+	_, err := s.db.Exec(query, quantity, itemId, materialId, companyId)
+	return err
+}

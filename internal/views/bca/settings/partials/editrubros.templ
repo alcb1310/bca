@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/base"
 import "bca-go-final/internal/views/components"
@@ -41,7 +42,7 @@ templ EditRubros(rubro *types.Rubro) {
         if rubro == nil {
           hx-post="/bca/configuracion/rubros/crear"
         } else {
-          hx-put={ concat("/bca/configuracion/rubros/crear?id=", rubro.Id.String()) }
+          hx-put={ fmt.Sprintf("/bca/configuracion/rubros/crear?id=%s", rubro.Id.String()) }
         }
         hx-target-error="find #error"
         hx-on="htmx:afterRequest: htmxHandleError(event)"
@@ -60,7 +61,7 @@ templ EditRubros(rubro *types.Rubro) {
             <button
               type="button"
               class="btn"
-              hx-get={ concat(concat("/bca/partials/rubros/", rubro.Id.String()), "/material") }
+              hx-get={ fmt.Sprintf("/bca/partials/rubros/%s/material", rubro.Id.String() ) }
               hx-target="#drawer"
               hx-swap="innerHTML"
               hx-trigger="click"
@@ -81,7 +82,7 @@ templ EditRubros(rubro *types.Rubro) {
       <div
         style="margin-top: 1rem"
         id="rubro-details"
-        hx-get={ concat("/bca/partials/rubros/", rubro.Id.String()) }
+        hx-get={ fmt.Sprintf("/bca/partials/rubros/%s", rubro.Id.String()) }
         hx-trigger="load"
         hx-swap="innerHTML"
       ></div>

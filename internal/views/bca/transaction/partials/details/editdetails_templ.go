@@ -10,12 +10,9 @@ import "context"
 import "io"
 import "bytes"
 
+import "fmt"
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
-
-func concat(a, b string) string {
-	return a + b
-}
 
 func EditDetails(budgetItems []types.Select, invoiceId string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -34,7 +31,7 @@ func EditDetails(budgetItems []types.Select, invoiceId string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat(concat("/bca/partials/invoices/", invoiceId), "/details")))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/invoices/%s/details", invoiceId)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
