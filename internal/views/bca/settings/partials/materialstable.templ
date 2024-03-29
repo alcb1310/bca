@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components/icons"
 
@@ -29,7 +30,7 @@ templ MaterialsTable(materials []types.Material){
             <td>
               <div
                 class="hover:cursor-pointer"
-                hx-get={ concat("/bca/partials/materiales/", material.Id.String()) }
+                hx-get={ fmt.Sprintf("/bca/partials/materiales/%s", material.Id.String()) }
                 hx-target="#drawer"
                 hx-swap="innerHTML"
                 hx-trigger="click"

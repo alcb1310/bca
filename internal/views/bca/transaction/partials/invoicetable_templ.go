@@ -10,6 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 import "bca-go-final/internal/views/components/icons"
@@ -45,7 +46,7 @@ func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(utils.ConvertDate(invoice.InvoiceDate))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/invoicetable.templ`, Line: 26, Col: 65}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/invoicetable.templ`, Line: 27, Col: 65}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -58,7 +59,7 @@ func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(invoice.Project.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/invoicetable.templ`, Line: 27, Col: 32}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/invoicetable.templ`, Line: 28, Col: 32}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -71,7 +72,7 @@ func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(invoice.Supplier.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/invoicetable.templ`, Line: 28, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/invoicetable.templ`, Line: 29, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -84,7 +85,7 @@ func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(invoice.InvoiceNumber)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/invoicetable.templ`, Line: 29, Col: 33}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/invoicetable.templ`, Line: 30, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -97,7 +98,7 @@ func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(invoice.InvoiceTotal))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/invoicetable.templ`, Line: 30, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/invoicetable.templ`, Line: 31, Col: 64}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -107,7 +108,7 @@ func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL(concat("/bca/transacciones/facturas/crear?id=", invoice.Id.String()))
+				var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL(fmt.Sprintf("/bca/transacciones/facturas/crear?id=%s", invoice.Id.String()))
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var7)))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

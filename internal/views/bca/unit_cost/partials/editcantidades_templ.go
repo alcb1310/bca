@@ -10,6 +10,7 @@ import "context"
 import "io"
 import "bytes"
 
+import "fmt"
 import "bca-go-final/internal/views/components"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
@@ -20,9 +21,9 @@ func quantityValText(quantity *types.Quantity, text string) string {
 	}
 	switch text {
 	case "project":
-		return quantity.Project.Name
+		return quantity.Project.ID.String()
 	case "item":
-		return quantity.Rubro.Name
+		return quantity.Rubro.Id.String()
 	case "quantity":
 		return utils.PrintFloat(quantity.Quantity)
 	default:
@@ -30,8 +31,11 @@ func quantityValText(quantity *types.Quantity, text string) string {
 	}
 }
 
-func concat(s1, s2 string) string {
-	return s1 + s2
+func qExists(q *types.Quantity) string {
+	if q == nil {
+		return "true"
+	}
+	return "false"
 }
 
 func EditCantidades(quantities *types.Quantity, projects, items []types.Select) templ.Component {
@@ -47,7 +51,15 @@ func EditCantidades(quantities *types.Quantity, projects, items []types.Select) 
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form id=\"edit-quantity\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input type=\"hidden\" id=\"hidden\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(qExists(quantities)))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><form id=\"edit-quantity\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -61,7 +73,7 @@ func EditCantidades(quantities *types.Quantity, projects, items []types.Select) 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat("/bca/partials/cantidades/", quantities.Id.String())))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/cantidades/%s", quantities.Id.String())))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -109,7 +121,7 @@ func EditCantidades(quantities *types.Quantity, projects, items []types.Select) 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n    function handleHtmxError(event) {\n      document.getElementById(\"error\").innerHTML = \"\"\n\n      if (event.detail.xhr.status === 200) {\n        resetClose()\n        return\n      }\n\n      document.getElementById(\"error\").innerHTML = event.detail.xhr.responseText\n    }\n\n    function resetClose() {\n      closeDrawer()\n    }\n  </script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n    var h = document.getElementById(\"hidden\")\n    var project = document.getElementById(\"project\")\n    var item = document.getElementById(\"item\")\n\n    if (h.value === \"false\") {\n      project.disabled = true\n      item.disabled = true\n    } else {\n      project.disabled = false\n      item.disabled = false\n    }\n\n    function handleHtmxError(event) {\n      document.getElementById(\"error\").innerHTML = \"\"\n\n      if (event.detail.xhr.status === 200) {\n        resetClose()\n        return\n      }\n\n      document.getElementById(\"error\").innerHTML = event.detail.xhr.responseText\n    }\n\n    function resetClose() {\n      closeDrawer()\n    }\n  </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

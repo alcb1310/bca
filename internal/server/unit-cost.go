@@ -3,10 +3,12 @@ package server
 import (
 	"log"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -26,7 +28,6 @@ func (s *Server) CantidadesTable(w http.ResponseWriter, r *http.Request) {
 
 	component := partials.CantidadesTable(quantities)
 	component.Render(r.Context(), w)
-
 }
 
 func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
@@ -160,7 +161,100 @@ func (s *Server) AnalysisTable(w http.ResponseWriter, r *http.Request) {
 	}
 
 	analysis := s.DB.AnalysisReport(projectId, ctx.CompanyId)
+	keys := []string{}
+	for k := range analysis {
+		keys = append(keys, k)
+	}
 
-	component := partials.AnalysisTable(analysis)
+	slices.Sort(keys)
+	component := partials.AnalysisTable(analysis, keys)
 	component.Render(r.Context(), w)
+}
+
+func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+
+	id := mux.Vars(r)["id"]
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Error al parsear el ID"))
+		return
+	}
+
+	switch r.Method {
+	case http.MethodDelete:
+		if err := s.DB.DeleteCantidades(parsedId, ctx.CompanyId); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Error al borrar la cantidad"))
+			log.Println(err.Error())
+			return
+		}
+
+		quantities := s.DB.CantidadesTable(ctx.CompanyId)
+
+		component := partials.CantidadesTable(quantities)
+		component.Render(r.Context(), w)
+
+	case http.MethodGet:
+		rub, _ := s.DB.GetAllRubros(ctx.CompanyId)
+		rubSelect := []types.Select{}
+		for _, v := range rub {
+			x := types.Select{
+				Key:   v.Id.String(),
+				Value: v.Name,
+			}
+			rubSelect = append(rubSelect, x)
+		}
+
+		p := s.DB.GetActiveProjects(ctx.CompanyId, true)
+		projects := []types.Select{}
+		for _, v := range p {
+			x := types.Select{
+				Key:   v.ID.String(),
+				Value: v.Name,
+			}
+			projects = append(projects, x)
+		}
+
+		quantity := s.DB.GetOneQuantityById(parsedId, ctx.CompanyId)
+
+		component := partials.EditCantidades(&quantity, projects, rubSelect)
+		component.Render(r.Context(), w)
+
+	case http.MethodPut:
+		r.ParseForm()
+
+		q := r.Form.Get("quantity")
+		if q == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese una cantidad"))
+			return
+		}
+		quantity, err := strconv.ParseFloat(q, 64)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Cantidad debe ser numérica"))
+			return
+		}
+
+		quan := s.DB.GetOneQuantityById(parsedId, ctx.CompanyId)
+
+		quan.Quantity = quantity
+
+		if err := s.DB.UpdateQuantity(quan, ctx.CompanyId); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Error al actualizar la cantidad"))
+			log.Println(err.Error())
+			return
+		}
+
+		quantities := s.DB.CantidadesTable(ctx.CompanyId)
+
+		component := partials.CantidadesTable(quantities)
+		component.Render(r.Context(), w)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
 }

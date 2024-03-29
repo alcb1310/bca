@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 import "bca-go-final/internal/views/components/icons"
@@ -34,16 +35,16 @@ templ ProjectsTable(projects []types.Project) {
 							}
 						</td>
 						<td align="center">
-                            <div
-                                class="hover:cursor-pointer"
-                                hx-get={ concat("/bca/partials/projects/", project.ID.String()) }
-                                hx-target="#drawer"
-                                hx-swap="innerHTML"
-                                hx-trigger="click"
-                                _="on click openDrawer()"
-                            >
-                                @icons.EditIcon()
-                            </div>
+              <div
+                class="hover:cursor-pointer"
+                hx-get={ fmt.Sprintf("/bca/partials/projects/%s", project.ID.String()) }
+                hx-target="#drawer"
+                hx-swap="innerHTML"
+                hx-trigger="click"
+                _="on click openDrawer()"
+              >
+                @icons.EditIcon()
+              </div>
 						</td>
 					</tr>
 				}

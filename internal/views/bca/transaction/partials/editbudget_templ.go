@@ -14,10 +14,6 @@ import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components"
 
-func concat(s1, s2 string) string {
-	return s1 + s2
-}
-
 func budgetValText(budget *types.CreateBudget, text string) string {
 	if budget == nil {
 		if text == "total" {
@@ -69,7 +65,7 @@ func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat(concat(concat("/bca/partials/budgets/", budget.ProjectId.String()), "/"), budget.BudgetItemId.String())))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/budgets/%s/%s", budget.ProjectId.String(), budget.BudgetItemId.String())))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -101,7 +97,7 @@ func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budgetValText(budget, "budgetItem"), "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budgetValText(budget, "budgetItem"), "Partida").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

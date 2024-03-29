@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/views/components/icons"
 
@@ -25,7 +26,7 @@ templ RubrosTable(rubros []types.Rubro) {
             <td>{ rubro.Name }</td>
             <td>{ rubro.Unit }</td>
             <td>
-              <a href={ templ.SafeURL(concat("/bca/configuracion/rubros/crear?id=", rubro.Id.String())) }>
+              <a href={ templ.SafeURL(fmt.Sprintf("/bca/configuracion/rubros/crear?id=%s", rubro.Id.String()))}>
                 <div class="hover:cursor-pointer">
                     @icons.EditIcon()
                 </div>

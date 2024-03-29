@@ -10,11 +10,11 @@ import "context"
 import "io"
 import "bytes"
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 import "bca-go-final/internal/views/components/icons"
 
-// import "bca-go-final/internal/views/components/icons"
 func MaterialsItemsTable(acus []types.ACU) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -91,7 +91,15 @@ func MaterialsItemsTable(acus []types.ACU) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td class=\"flex justify-around\"><div class=\"hover:cursor-pointer\" _=\"on click openDrawer()\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</td><td class=\"flex justify-around\"><div class=\"hover:cursor-pointer\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" hx-trigger=\"click\" hx-get=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/rubros/%s/material/%s", acu.Item.Id.String(), acu.Material.Id.String())))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" _=\"on click openDrawer()\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -103,7 +111,7 @@ func MaterialsItemsTable(acus []types.ACU) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(concat(concat(concat("/bca/partials/rubros/", acu.Item.Id.String()), "/material/"), acu.Material.Id.String())))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/rubros/%s/material/%s", acu.Item.Id.String(), acu.Material.Id.String())))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

@@ -1,5 +1,6 @@
 package partials
 
+import "fmt"
 import "bca-go-final/internal/types"
 import "strconv"
 import "bca-go-final/internal/views/components/icons"
@@ -37,17 +38,17 @@ templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
 						<td>
 							{ budgetItem.ParentCode.String }
 						</td>
-                        <td align="center">
-                            <div
-                                class="hover:cursor-pointer"
-                                hx-get={ concat("/bca/partials/budget-item/", budgetItem.ID.String()) }
-                                hx-target="#drawer"
-                                hx-swap="innerHTML"
-                                hx-trigger="click"
-                                _="on click openDrawer()"
-                            >
-                                @icons.EditIcon()
-                            </div>
+            <td align="center">
+              <div
+                  class="hover:cursor-pointer"
+                  hx-get={ fmt.Sprintf("/bca/partials/budget-item/%s", budgetItem.ID.String()) }
+                  hx-target="#drawer"
+                  hx-swap="innerHTML"
+                  hx-trigger="click"
+                  _="on click openDrawer()"
+              >
+                @icons.EditIcon()
+              </div>
 						</td>
 					</tr>
 				}
