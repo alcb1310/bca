@@ -50,6 +50,7 @@ create table if not exists project (
 
 alter table project add column if not exists gross_area numeric not null default 0;
 alter table project add column if not exists net_area numeric not null default 0;
+alter table project add column if not exists last_closure date default null;
 
 create table if not exists supplier (
     id uuid primary key default gen_random_uuid(),

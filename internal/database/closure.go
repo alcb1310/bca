@@ -1,14 +1,15 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
 	"errors"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 )
 
 func (s *service) CreateClosure(companyId, projectId uuid.UUID, date time.Time) error {
