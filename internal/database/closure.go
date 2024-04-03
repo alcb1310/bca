@@ -69,6 +69,12 @@ func (s *service) CreateClosure(companyId, projectId uuid.UUID, date time.Time) 
 		return err
 	}
 
+	query = "update project set last_closure = $1 where id = $2 and company_id = $3"
+	if _, err := tx.Exec(query, date, projectId, companyId); err != nil {
+		log.Println("Error en el update project")
+		return err
+	}
+
 	tx.Commit()
 	log.Println(fmt.Sprintf("Terminado el cierre del proyecto: %s para la fecha: %s", projectId, utils.ConvertDate(date)))
 	return nil
