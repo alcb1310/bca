@@ -1,9 +1,12 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
+	"errors"
+	"time"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
 )
 
 func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, error) {
@@ -57,8 +60,22 @@ func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, err
 }
 
 func (s *service) CreateInvoice(invoice *types.InvoiceCreate) error {
-	query := "insert into invoice (company_id, supplier_id, project_id, invoice_number, invoice_date) values ($1, $2, $3, $4, $5) returning id"
-	err := s.db.QueryRow(query, invoice.CompanyId, invoice.SupplierId, invoice.ProjectId, invoice.InvoiceNumber, invoice.InvoiceDate).Scan(&invoice.Id)
+	var closure_date time.Time
+	var test time.Time
+
+	query := "select last_closure from project where id = $1 and company_id = $2"
+
+	err := s.db.QueryRow(query, invoice.ProjectId, invoice.CompanyId).Scan(&closure_date)
+	if err == nil {
+		test = time.Date(closure_date.Year(), closure_date.Month()+1, 1-1, 1, 0, 0, 0, time.UTC)
+
+		if invoice.InvoiceDate.Before(test) {
+			return errors.New("La fecha indicada es menor al último cierre")
+		}
+	}
+
+	query = "insert into invoice (company_id, supplier_id, project_id, invoice_number, invoice_date) values ($1, $2, $3, $4, $5) returning id"
+	err = s.db.QueryRow(query, invoice.CompanyId, invoice.SupplierId, invoice.ProjectId, invoice.InvoiceNumber, invoice.InvoiceDate).Scan(&invoice.Id)
 	return err
 }
 
@@ -87,6 +104,10 @@ func (s *service) GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceRe
 }
 
 func (s *service) UpdateInvoice(invoice types.InvoiceCreate) error {
+	if invoice.IsBalanced {
+		return errors.New("La factura ya se encuentra cuadrada")
+	}
+
 	query := `
 		update invoice
 		set supplier_id = $1, project_id = $2, invoice_number = $3, invoice_date = $4
