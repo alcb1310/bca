@@ -60,16 +60,15 @@ func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, err
 }
 
 func (s *service) CreateInvoice(invoice *types.InvoiceCreate) error {
-	var closure_date time.Time
-	var test time.Time
+	var cl, closure_date time.Time
 
 	query := "select last_closure from project where id = $1 and company_id = $2"
 
-	err := s.db.QueryRow(query, invoice.ProjectId, invoice.CompanyId).Scan(&closure_date)
+	err := s.db.QueryRow(query, invoice.ProjectId, invoice.CompanyId).Scan(&cl)
 	if err == nil {
-		test = time.Date(closure_date.Year(), closure_date.Month()+1, 1-1, 1, 0, 0, 0, time.UTC)
+		closure_date = time.Date(cl.Year(), cl.Month()+1, 1-1, 1, 0, 0, 0, time.UTC)
 
-		if invoice.InvoiceDate.Before(test) {
+		if invoice.InvoiceDate.Before(closure_date) {
 			return errors.New("La fecha indicada es menor al último cierre")
 		}
 	}
