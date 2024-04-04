@@ -119,7 +119,23 @@ func (s *service) UpdateInvoice(invoice types.InvoiceCreate) error {
 }
 
 func (s *service) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
-	query := `
+	var total float64
+	isBalanced := false
+
+	query := "select invoice_total, is_balanced from invoice where id = $1 and company_id = $2"
+	if err := s.db.QueryRow(query, invoiceId, companyId).Scan(&total, &isBalanced); err != nil {
+		return errors.New("La Factura no existe")
+	}
+
+	if isBalanced {
+		return errors.New("No se puede borrar una Factura cuadrada")
+	}
+
+	if total > 0 {
+		return errors.New("No se puede borrar una Factura que ya tiene pagos")
+	}
+
+	query = `
 		delete from invoice
 		where id = $1 and company_id = $2
 	`
