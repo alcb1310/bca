@@ -103,16 +103,31 @@ func (s *service) GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceRe
 }
 
 func (s *service) UpdateInvoice(invoice types.InvoiceCreate) error {
+	// Can not update invoice if it is already balanced
 	if invoice.IsBalanced {
 		return errors.New("La factura ya se encuentra cuadrada")
 	}
 
-	query := `
+	// Can not update invoice date to a date before last_closure
+	var cl, closure_date time.Time
+
+	query := "select last_closure from project where id = $1 and company_id = $2"
+
+	err := s.db.QueryRow(query, invoice.ProjectId, invoice.CompanyId).Scan(&cl)
+	if err == nil {
+		closure_date = time.Date(cl.Year(), cl.Month()+1, 1-1, 1, 0, 0, 0, time.UTC)
+
+		if invoice.InvoiceDate.Before(closure_date) {
+			return errors.New("La fecha indicada es menor al último cierre")
+		}
+	}
+
+	query = `
 		update invoice
 		set supplier_id = $1, project_id = $2, invoice_number = $3, invoice_date = $4
 		where id = $5 and company_id = $6
 	`
-	_, err := s.db.Exec(query, invoice.SupplierId, invoice.ProjectId, invoice.InvoiceNumber, invoice.InvoiceDate, invoice.Id, invoice.CompanyId)
+	_, err = s.db.Exec(query, invoice.SupplierId, invoice.ProjectId, invoice.InvoiceNumber, invoice.InvoiceDate, invoice.Id, invoice.CompanyId)
 
 	return err
 }
