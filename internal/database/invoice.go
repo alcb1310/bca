@@ -1,9 +1,12 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
+	"errors"
+	"time"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
 )
 
 func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, error) {
@@ -57,8 +60,21 @@ func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, err
 }
 
 func (s *service) CreateInvoice(invoice *types.InvoiceCreate) error {
-	query := "insert into invoice (company_id, supplier_id, project_id, invoice_number, invoice_date) values ($1, $2, $3, $4, $5) returning id"
-	err := s.db.QueryRow(query, invoice.CompanyId, invoice.SupplierId, invoice.ProjectId, invoice.InvoiceNumber, invoice.InvoiceDate).Scan(&invoice.Id)
+	var cl, closure_date time.Time
+
+	query := "select last_closure from project where id = $1 and company_id = $2"
+
+	err := s.db.QueryRow(query, invoice.ProjectId, invoice.CompanyId).Scan(&cl)
+	if err == nil {
+		closure_date = time.Date(cl.Year(), cl.Month()+1, 1-1, 1, 0, 0, 0, time.UTC)
+
+		if invoice.InvoiceDate.Before(closure_date) {
+			return errors.New("La fecha indicada es menor al último cierre")
+		}
+	}
+
+	query = "insert into invoice (company_id, supplier_id, project_id, invoice_number, invoice_date) values ($1, $2, $3, $4, $5) returning id"
+	err = s.db.QueryRow(query, invoice.CompanyId, invoice.SupplierId, invoice.ProjectId, invoice.InvoiceNumber, invoice.InvoiceDate).Scan(&invoice.Id)
 	return err
 }
 
@@ -87,18 +103,53 @@ func (s *service) GetOneInvoice(invoiceId, companyId uuid.UUID) (types.InvoiceRe
 }
 
 func (s *service) UpdateInvoice(invoice types.InvoiceCreate) error {
-	query := `
+	// Can not update invoice if it is already balanced
+	if invoice.IsBalanced {
+		return errors.New("La factura ya se encuentra cuadrada")
+	}
+
+	// Can not update invoice date to a date before last_closure
+	var cl, closure_date time.Time
+
+	query := "select last_closure from project where id = $1 and company_id = $2"
+
+	err := s.db.QueryRow(query, invoice.ProjectId, invoice.CompanyId).Scan(&cl)
+	if err == nil {
+		closure_date = time.Date(cl.Year(), cl.Month()+1, 1-1, 1, 0, 0, 0, time.UTC)
+
+		if invoice.InvoiceDate.Before(closure_date) {
+			return errors.New("La fecha indicada es menor al último cierre")
+		}
+	}
+
+	query = `
 		update invoice
 		set supplier_id = $1, project_id = $2, invoice_number = $3, invoice_date = $4
 		where id = $5 and company_id = $6
 	`
-	_, err := s.db.Exec(query, invoice.SupplierId, invoice.ProjectId, invoice.InvoiceNumber, invoice.InvoiceDate, invoice.Id, invoice.CompanyId)
+	_, err = s.db.Exec(query, invoice.SupplierId, invoice.ProjectId, invoice.InvoiceNumber, invoice.InvoiceDate, invoice.Id, invoice.CompanyId)
 
 	return err
 }
 
 func (s *service) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
-	query := `
+	var total float64
+	isBalanced := false
+
+	query := "select invoice_total, is_balanced from invoice where id = $1 and company_id = $2"
+	if err := s.db.QueryRow(query, invoiceId, companyId).Scan(&total, &isBalanced); err != nil {
+		return errors.New("La Factura no existe")
+	}
+
+	if isBalanced {
+		return errors.New("No se puede borrar una Factura cuadrada")
+	}
+
+	if total > 0 {
+		return errors.New("No se puede borrar una Factura que ya tiene pagos")
+	}
+
+	query = `
 		delete from invoice
 		where id = $1 and company_id = $2
 	`

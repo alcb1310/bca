@@ -1,9 +1,6 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction/partials"
 	"log"
 	"net/http"
 	"strings"
@@ -11,6 +8,10 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/transaction/partials"
 )
 
 func (s *Server) InvoicesTable(w http.ResponseWriter, r *http.Request) {
@@ -158,6 +159,20 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 
 		comp := partials.BudgetRow(in)
 		comp.Render(r.Context(), w)
+		return
+
+	case http.MethodDelete:
+		if err := s.DB.DeleteInvoice(parsedId, ctx.CompanyId); err != nil {
+			log.Printf("error deleting invoice: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		invoices, _ := s.DB.GetInvoices(ctx.CompanyId)
+
+		components := partials.InvoiceTable(invoices)
+		w.WriteHeader(http.StatusOK)
+		components.Render(r.Context(), w)
 		return
 
 	case http.MethodPut:

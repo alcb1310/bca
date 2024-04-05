@@ -126,7 +126,15 @@ func InvoiceTable(invoices []types.InvoiceResponse) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				if invoice.InvoiceTotal == 0 {
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"fa-regular fa-trash-can text-red-500 cursor-pointer\" aria-label=\"Eliminar factura\">")
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"fa-regular fa-trash-can text-red-500 cursor-pointer\" aria-label=\"Eliminar factura\" hx-delete=\"")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(fmt.Sprintf("/bca/partials/invoices/%s", invoice.Id.String())))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-confirm=\"¿Realmente deseas eliminar esta factura?\" hx-swap=\"outerHTML\" hx-target=\"closest table\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

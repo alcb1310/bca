@@ -43,6 +43,10 @@ templ InvoiceTable(invoices []types.InvoiceResponse) {
                   <div
                       class="fa-regular fa-trash-can text-red-500 cursor-pointer"
                       aria-label="Eliminar factura"
+                      hx-delete={ fmt.Sprintf("/bca/partials/invoices/%s", invoice.Id.String()) }
+                      hx-confirm="¿Realmente deseas eliminar esta factura?"
+                      hx-swap="outerHTML"
+                      hx-target="closest table"
                   >
                     @icons.TrashIcon()
                   </div>

@@ -1,10 +1,12 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
+	"errors"
 	"log"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
 )
 
 func (s *service) GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.InvoiceDetailsResponse, error) {
@@ -29,13 +31,22 @@ func (s *service) GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.Invoice
 }
 
 func (s *service) AddDetail(detail types.InvoiceDetailCreate) error {
+	query := "select is_balanced from invoice where id = $1 and company_id = $2"
+	var isBalanced bool
+	if err := s.db.QueryRow(query, detail.InvoiceId, detail.CompanyId).Scan(&isBalanced); err != nil {
+		return err
+	}
+	if isBalanced {
+		return errors.New("La factura ya se encuentra balanceada")
+	}
+
 	tx, err := s.db.Begin()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
-	query := "insert into invoice_details (invoice_id, budget_item_id, quantity, cost, total, company_id) values ($1, $2, $3, $4, $5, $6)"
+	query = "insert into invoice_details (invoice_id, budget_item_id, quantity, cost, total, company_id) values ($1, $2, $3, $4, $5, $6)"
 	if _, err := tx.Exec(query, detail.InvoiceId, detail.BudgetItemId, detail.Quantity, detail.Cost, detail.Total, detail.CompanyId); err != nil {
 		return err
 	}
@@ -100,8 +111,18 @@ func (s *service) AddDetail(detail types.InvoiceDetailCreate) error {
 }
 
 func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) error {
+	query := "select is_balanced from invoice where id = $1 and company_id = $2"
+	var isBalanced bool
+	if err := s.db.QueryRow(query, invoiceId, companyId).Scan(&isBalanced); err != nil {
+		log.Println("Error en el select: ", err)
+		return err
+	}
+	if isBalanced {
+		return errors.New("La factura ya se encuentra balanceada")
+	}
+
 	var quantity, cost, total float64
-	query := "select quantity, cost, total from invoice_details where invoice_id = $1 and budget_item_id = $2 and company_id = $3"
+	query = "select quantity, cost, total from invoice_details where invoice_id = $1 and budget_item_id = $2 and company_id = $3"
 	if err := s.db.QueryRow(query, invoiceId, budgetItemId, companyId).Scan(&quantity, &cost, &total); err != nil {
 		log.Println("Error en el select: ", err)
 		return err
