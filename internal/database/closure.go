@@ -1,14 +1,15 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
 	"errors"
 	"fmt"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 )
 
 func (s *service) CreateClosure(companyId, projectId uuid.UUID, date time.Time) error {
@@ -65,6 +66,12 @@ func (s *service) CreateClosure(companyId, projectId uuid.UUID, date time.Time) 
 	query = "update invoice set is_balanced = true where company_id = $1 and project_id = $2 and extract(year from invoice_date) = $3 and extract(month from invoice_date) = $4"
 	if _, err := tx.Exec(query, companyId, projectId, date.Year(), date.Month()); err != nil {
 		log.Println("Error en el update")
+		return err
+	}
+
+	query = "update project set last_closure = $1 where id = $2 and company_id = $3"
+	if _, err := tx.Exec(query, date, projectId, companyId); err != nil {
+		log.Println("Error en el update project")
 		return err
 	}
 

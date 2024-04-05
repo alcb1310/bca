@@ -123,7 +123,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"click\" hx-target=\"#invoice-details\" hx-swap=\"innerHTML\" hx-push-url=\"false\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"click\" hx-target=\"#invoice-details\" hx-swap=\"innerHTML\" hx-push-url=\"false\" hx-confirm=\"Seguro que desea borrar este detalle?\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

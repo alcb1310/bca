@@ -39,9 +39,10 @@ templ InvoiceDetailsTable(details []types.InvoiceDetailsResponse) {
 							hx-target="#invoice-details"
 							hx-swap="innerHTML"
 							hx-push-url="false"
+              hx-confirm="Seguro que desea borrar este detalle?"
 						>
-                            @icons.TrashIcon()
-                        </div>
+                @icons.TrashIcon()
+            </div>
 					</td>
 				</tr>
 			}

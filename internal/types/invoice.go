@@ -12,6 +12,7 @@ type InvoiceCreate struct {
 	ProjectId     *uuid.UUID
 	InvoiceNumber *string
 	InvoiceDate   *time.Time
+	IsBalanced    bool
 	CompanyId     uuid.UUID
 }
 
