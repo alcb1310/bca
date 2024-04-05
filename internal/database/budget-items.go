@@ -1,10 +1,12 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
+	"errors"
 	"log"
 
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
 )
 
 func (s *service) GetBudgetItems(companyId uuid.UUID, search string) ([]types.BudgetItemResponse, error) {
@@ -55,6 +57,17 @@ func (s *service) GetOneBudgetItem(id uuid.UUID, companyId uuid.UUID) (*types.Bu
 }
 
 func (s *service) UpdateBudgetItem(bi *types.BudgetItem) error {
+	var parentId uuid.UUID
+
+	sql := "select parent_id from budget_item where id = $1 and company_id = $2"
+	err := s.db.QueryRow(sql, bi.ID, bi.CompanyId).Scan(&parentId)
+	if err != nil {
+		return err
+	}
+	if *bi.ParentId != parentId {
+		return errors.New("No se puede cambiar la partida padre")
+	}
+
 	var level uint8 = 1
 	if bi.ParentId != nil {
 		sql := "select level from budget_item where id = $1 and company_id = $2"
@@ -66,8 +79,8 @@ func (s *service) UpdateBudgetItem(bi *types.BudgetItem) error {
 	}
 	bi.Level = level
 
-	sql := "update budget_item set code = $1, name = $2, level = $3, accumulate = $4, parent_id = $5 where id = $6 and company_id = $7"
-	_, err := s.db.Exec(sql, bi.Code, bi.Name, level, bi.Accumulate, bi.ParentId, bi.ID, bi.CompanyId)
+	sql = "update budget_item set code = $1, name = $2, level = $3, accumulate = $4, parent_id = $5 where id = $6 and company_id = $7"
+	_, err = s.db.Exec(sql, bi.Code, bi.Name, level, bi.Accumulate, bi.ParentId, bi.ID, bi.CompanyId)
 	return err
 }
 
