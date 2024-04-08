@@ -58,7 +58,7 @@ type Service interface {
 	GetNonAccumulateChildren(companyId, id *uuid.UUID, budgetItems []types.BudgetItem, results []uuid.UUID) []uuid.UUID
 
 	// database/budget.go
-	GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error)
+	GetBudgets(companyId, project_id uuid.UUID, search string) ([]types.GetBudget, error)
 	CreateBudget(b *types.CreateBudget) (types.Budget, error)
 	GetBudgetsByProjectId(companyId, projectId uuid.UUID, level *uint8) ([]types.GetBudget, error)
 	GetOneBudget(companyId, projectId, budgetItemId uuid.UUID) (*types.GetBudget, error)

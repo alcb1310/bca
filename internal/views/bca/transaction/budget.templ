@@ -3,11 +3,42 @@ package transaction
 
 import "bca-go-final/internal/views/base"
 import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
 
-templ BudgetView() {
+templ BudgetView(projects []types.Select) {
 	@base.AuthenticatedLayout("presupuesto") {
 		@components.PageTitle("Presupuesto")
-		<div class="flex justify-end items-center">
+		<div class="flex justify-between items-center gap-5">
+            <form
+                class="w-full flex justify-between items-center gap-5"
+                hx-trigger="submit"
+                hx-get="/bca/partials/budgets"
+                hx-target="#budget-table"
+                hx-swap="innerHTML"
+            >
+                <select
+                    name="proyecto"
+                    class="block w-fit h-fit rounded-lg border border-blue-gray-700 text-blue-gray-900 py-2 px-4"
+                >
+                    <option value="">-- Proyectos --</option>
+                    for _, v := range projects {
+                        <option value={ v.Key }>{ v.Value }</option>
+                    }
+                </select>
+
+                <input
+                    type="text"
+                    name="buscar"
+                    placeholder="Buscar..."
+                    class="block w-full h-fit rounded-lg border border-blue-gray-700 text-blue-gray-900 py-2 px-4"
+                />
+                <button
+                    type="submit"
+                    class="btn"
+                >
+                    Buscar
+                </button>
+            </form>
 			<button
 				type="button"
 				class="btn"

@@ -2,13 +2,19 @@ package database
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/google/uuid"
 
 	"bca-go-final/internal/types"
 )
 
-func (s *service) GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error) {
+func (s *service) GetBudgets(companyId, project_id uuid.UUID, search string) ([]types.GetBudget, error) {
+	var rows *sql.Rows
+	var err error
+
+	term := "%" + search + "%"
+
 	query := `
         SELECT
             project_id, project_name,
@@ -19,10 +25,24 @@ func (s *service) GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error) {
             updated_budget, company_id
         FROM vw_budget
         WHERE company_id = $1
-        ORDER BY project_name, budget_item_code
+            AND (budget_item_code like $2 OR budget_item_name like $2)
     `
-	rows, err := s.db.Query(query, companyId)
+
+	if project_id != uuid.Nil {
+		query += " AND project_id = $3"
+		query += `
+            ORDER BY project_name, budget_item_code
+        `
+		rows, err = s.db.Query(query, companyId, term, project_id)
+	} else {
+		query += `
+            ORDER BY project_name, budget_item_code
+        `
+		rows, err = s.db.Query(query, companyId, term)
+	}
+
 	if err != nil {
+		log.Println("Query Error: ", err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -38,6 +58,7 @@ func (s *service) GetBudgets(companyId uuid.UUID) ([]types.GetBudget, error) {
 			&b.RemainingQuantity, &b.RemainingCost, &b.RemainingTotal,
 			&b.UpdatedBudget, &b.CompanyId,
 		); err != nil {
+			log.Println("Scan Error: ", err.Error())
 			return nil, err
 		}
 		budgets = append(budgets, b)

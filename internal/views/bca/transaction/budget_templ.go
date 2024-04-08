@@ -12,8 +12,9 @@ import "bytes"
 
 import "bca-go-final/internal/views/base"
 import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
 
-func BudgetView() templ.Component {
+func BudgetView(projects []types.Select) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -36,7 +37,38 @@ func BudgetView() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"flex justify-end items-center\"><button type=\"button\" class=\"btn\" id=\"add-button\" class=\"cursor-pointer\" hx-get=\"/bca/partials/budgets/add\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">Agregar</button></div><div id=\"budget-table\" hx-target=\"this\" hx-swap=\"innerHTML\" hx-trigger=\"load\" hx-get=\"/bca/partials/budgets\"></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <div class=\"flex justify-between items-center gap-5\"><form class=\"w-full flex justify-between items-center gap-5\" hx-trigger=\"submit\" hx-get=\"/bca/partials/budgets\" hx-target=\"#budget-table\" hx-swap=\"innerHTML\"><select name=\"proyecto\" class=\"block w-fit h-fit rounded-lg border border-blue-gray-700 text-blue-gray-900 py-2 px-4\"><option value=\"\">-- Proyectos --</option> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			for _, v := range projects {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<option value=\"")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(v.Key))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var3 string
+				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(v.Value)
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/budget.templ`, Line: 24, Col: 57}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</option>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</select> <input type=\"text\" name=\"buscar\" placeholder=\"Buscar...\" class=\"block w-full h-fit rounded-lg border border-blue-gray-700 text-blue-gray-900 py-2 px-4\"> <button type=\"submit\" class=\"btn\">Buscar</button></form><button type=\"button\" class=\"btn\" id=\"add-button\" class=\"cursor-pointer\" hx-get=\"/bca/partials/budgets/add\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">Agregar</button></div><div id=\"budget-table\" hx-target=\"this\" hx-swap=\"innerHTML\" hx-trigger=\"load\" hx-get=\"/bca/partials/budgets\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
