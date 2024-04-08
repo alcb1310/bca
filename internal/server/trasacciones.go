@@ -15,7 +15,18 @@ import (
 )
 
 func (s *Server) Budget(w http.ResponseWriter, r *http.Request) {
-	component := transaction.BudgetView()
+	ctx, _ := utils.GetMyPaload(r)
+	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
+	projects := []types.Select{}
+	for _, v := range p {
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		projects = append(projects, x)
+	}
+
+	component := transaction.BudgetView(projects)
 	component.Render(r.Context(), w)
 }
 
