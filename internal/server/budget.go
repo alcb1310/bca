@@ -67,7 +67,23 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	b, _ := s.DB.GetBudgets(ctx.CompanyId)
+	var err error
+	project_id := uuid.Nil
+
+	p := r.URL.Query().Get("proyecto")
+	if p != "" {
+		project_id, err = uuid.Parse(p)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			log.Println(err)
+			return
+		}
+	}
+
+	se := r.URL.Query().Get("buscar")
+
+	b, _ := s.DB.GetBudgets(ctx.CompanyId, project_id, se)
 	component := partials.BudgetTable(b)
 	component.Render(r.Context(), w)
 }
@@ -175,7 +191,7 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		b, _ := s.DB.GetBudgets(ctx.CompanyId)
+		b, _ := s.DB.GetBudgets(ctx.CompanyId, uuid.Nil, "")
 
 		component := partials.BudgetTable(b)
 		component.Render(r.Context(), w)
