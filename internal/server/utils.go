@@ -81,3 +81,23 @@ func (s *Server) getSelect(query string, companyId uuid.UUID) []types.Select {
 
 	return sel
 }
+
+func (s *Server) returnAllSelects(query []string, companyId uuid.UUID) map[string][]types.Select {
+	results := make(map[string][]types.Select)
+	resultChannel := make(chan Result)
+	defer close(resultChannel)
+
+	for _, v := range query {
+		go func(v string) {
+			results[v] = s.getSelect(v, companyId)
+			resultChannel <- Result{v, results[v]}
+		}(v)
+	}
+
+	for i := 0; i < len(query); i++ {
+		r := <-resultChannel
+		results[r.n] = r.s
+	}
+
+	return results
+}

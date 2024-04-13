@@ -92,8 +92,10 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	projects := s.getSelect("projects", ctx.CompanyId)
-	budgetItems := s.getSelect("budgetitems", ctx.CompanyId)
+	data := []string{"projects", "budgetitems"}
+	res := s.returnAllSelects(data, ctx.CompanyId)
+	projects := res["projects"]
+	budgetItems := res["budgetitems"]
 
 	component := partials.EditBudget(nil, projects, budgetItems)
 	component.Render(r.Context(), w)
@@ -104,8 +106,10 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	projectId, _ := uuid.Parse(mux.Vars(r)["projectId"])
 	budgetItemId, _ := uuid.Parse(mux.Vars(r)["budgetItemId"])
 
-	projects := s.getSelect("projects", ctx.CompanyId)
-	budgetItems := s.getSelect("budgetitems", ctx.CompanyId)
+	data := []string{"projects", "budgetitems"}
+	res := s.returnAllSelects(data, ctx.CompanyId)
+	projects := res["projects"]
+	budgetItems := res["budgetitems"]
 
 	bd, _ := s.DB.GetOneBudget(ctx.CompanyId, projectId, budgetItemId)
 

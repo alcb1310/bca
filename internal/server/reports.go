@@ -19,8 +19,8 @@ import (
 func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	query := []string{"projects", "levels"}
-	results := s.ReturnAllSelects(query, ctx.CompanyId)
+	data := []string{"projects", "levels"}
+	results := s.returnAllSelects(data, ctx.CompanyId)
 	projects := results["projects"]
 	levels := results["levels"]
 
@@ -56,8 +56,8 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	query := []string{"projects", "levels"}
-	results := s.ReturnAllSelects(query, ctx.CompanyId)
+	data := []string{"projects", "levels"}
+	results := s.returnAllSelects(data, ctx.CompanyId)
 	projects := results["projects"]
 	levels := results["levels"]
 
@@ -82,8 +82,8 @@ func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
 func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	query := []string{"projects", "levels"}
-	results := s.ReturnAllSelects(query, ctx.CompanyId)
+	data := []string{"projects", "levels"}
+	results := s.returnAllSelects(data, ctx.CompanyId)
 	projects := results["projects"]
 	levels := results["levels"]
 

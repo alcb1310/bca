@@ -34,8 +34,10 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		rubros := s.getSelect("rubros", ctx.CompanyId)
-		projects := s.getSelect("projects", ctx.CompanyId)
+		data := []string{"rubros", "projects"}
+		results := s.returnAllSelects(data, ctx.CompanyId)
+		rubros := results["rubros"]
+		projects := results["projects"]
 
 		component := partials.EditCantidades(nil, projects, rubros)
 		component.Render(r.Context(), w)
@@ -170,8 +172,10 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	case http.MethodGet:
-		rubros := s.getSelect("rubros", ctx.CompanyId)
-		projects := s.getSelect("projects", ctx.CompanyId)
+		data := []string{"rubros", "projects"}
+		results := s.returnAllSelects(data, ctx.CompanyId)
+		rubros := results["rubros"]
+		projects := results["projects"]
 
 		quantity := s.DB.GetOneQuantityById(parsedId, ctx.CompanyId)
 

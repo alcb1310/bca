@@ -28,8 +28,10 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 	redirectURL := "/bca/transacciones/facturas/crear"
 	invoice = nil
 
-	projects := s.getSelect("projects", ctx.CompanyId)
-	suppliers := s.getSelect("suppliers", ctx.CompanyId)
+	data := []string{"projects", "suppliers"}
+	res := s.returnAllSelects(data, ctx.CompanyId)
+	projects := res["projects"]
+	suppliers := res["suppliers"]
 
 	id := r.URL.Query().Get("id")
 	if id != "" {
@@ -105,8 +107,10 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	parsedId, _ := uuid.Parse(id)
 	invoice := &types.InvoiceResponse{}
 
-	projects := s.getSelect("projects", ctx.CompanyId)
-	suppliers := s.getSelect("suppliers", ctx.CompanyId)
+	data := []string{"projects", "suppliers"}
+	res := s.returnAllSelects(data, ctx.CompanyId)
+	projects := res["projects"]
+	suppliers := res["suppliers"]
 
 	in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 	invoice = &in
