@@ -19,17 +19,10 @@ import (
 func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
-
-	levels := s.DB.Levels(ctx.CompanyId)
+	query := []string{"projects", "levels"}
+	results := s.ReturnAllSelects(query, ctx.CompanyId)
+	projects := results["projects"]
+	levels := results["levels"]
 
 	component := reports.ActualView(projects, levels)
 	component.Render(r.Context(), w)
@@ -52,15 +45,7 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	case http.MethodGet:
-		p, _ := s.DB.GetAllProjects(ctx.CompanyId)
-		projects := []types.Select{}
-		for _, v := range p {
-			x := types.Select{
-				Key:   v.ID.String(),
-				Value: v.Name,
-			}
-			projects = append(projects, x)
-		}
+		projects := s.getSelect("projects", ctx.CompanyId)
 
 		component := reports.BalanceView(projects)
 		component.Render(r.Context(), w)
@@ -71,17 +56,10 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
-
-	levels := s.DB.Levels(ctx.CompanyId)
+	query := []string{"projects", "levels"}
+	results := s.ReturnAllSelects(query, ctx.CompanyId)
+	projects := results["projects"]
+	levels := results["levels"]
 
 	if r.URL.Query().Get("proyecto") != "" && r.URL.Query().Get("fecha") != "" && r.URL.Query().Get("nivel") != "" {
 		pId := r.URL.Query().Get("proyecto")
@@ -103,15 +81,11 @@ func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
+
+	query := []string{"projects", "levels"}
+	results := s.ReturnAllSelects(query, ctx.CompanyId)
+	projects := results["projects"]
+	levels := results["levels"]
 
 	if r.URL.Query().Get("proyecto") != "" && r.URL.Query().Get("fecha") != "" && r.URL.Query().Get("nivel") != "" {
 		pId := r.URL.Query().Get("proyecto")
@@ -151,7 +125,6 @@ func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	levels := s.DB.Levels(ctx.CompanyId)
 	component := reports.SpentView(projects, levels)
 	component.Render(r.Context(), w)
 }

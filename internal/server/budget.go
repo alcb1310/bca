@@ -1,9 +1,6 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction/partials"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +9,10 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/transaction/partials"
 )
 
 func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
@@ -91,27 +92,10 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projectMap := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projectMap = append(projectMap, x)
-	}
+	projects := s.getSelect("projects", ctx.CompanyId)
+	budgetItems := s.getSelect("budgetitems", ctx.CompanyId)
 
-	b := s.DB.GetBudgetItemsByAccumulate(ctx.CompanyId, false)
-	budgetItemMap := []types.Select{}
-	for _, v := range b {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		budgetItemMap = append(budgetItemMap, x)
-	}
-
-	component := partials.EditBudget(nil, projectMap, budgetItemMap)
+	component := partials.EditBudget(nil, projects, budgetItems)
 	component.Render(r.Context(), w)
 }
 
@@ -120,25 +104,8 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	projectId, _ := uuid.Parse(mux.Vars(r)["projectId"])
 	budgetItemId, _ := uuid.Parse(mux.Vars(r)["budgetItemId"])
 
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projectMap := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projectMap = append(projectMap, x)
-	}
-
-	b := s.DB.GetBudgetItemsByAccumulate(ctx.CompanyId, false)
-	budgetItemMap := []types.Select{}
-	for _, v := range b {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		budgetItemMap = append(budgetItemMap, x)
-	}
+	projects := s.getSelect("projects", ctx.CompanyId)
+	budgetItems := s.getSelect("budgetitems", ctx.CompanyId)
 
 	bd, _ := s.DB.GetOneBudget(ctx.CompanyId, projectId, budgetItemId)
 
@@ -205,7 +172,7 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 			Cost:      bd.RemainingCost.Float64,
 			CompanyId: ctx.CompanyId,
 		}
-		component := partials.EditBudget(budget, projectMap, budgetItemMap)
+		component := partials.EditBudget(budget, projects, budgetItems)
 		component.Render(r.Context(), w)
 	}
 

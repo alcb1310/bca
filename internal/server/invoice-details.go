@@ -104,16 +104,7 @@ func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["invoiceId"]
 	parsedInvoiceId, _ := uuid.Parse(id)
 
-	budgetItems := []types.Select{}
-	bi := s.DB.GetBudgetItemsByAccumulate(ctx.CompanyId, false)
-
-	for _, v := range bi {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		budgetItems = append(budgetItems, x)
-	}
+	budgetItems := s.getSelect("budgetitems", ctx.CompanyId)
 
 	component := details.EditDetails(budgetItems, parsedInvoiceId.String())
 	component.Render(r.Context(), w)

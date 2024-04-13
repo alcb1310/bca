@@ -10,7 +10,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
-	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/unit_cost"
 	"bca-go-final/internal/views/bca/unit_cost/partials"
@@ -35,27 +34,10 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		rub, _ := s.DB.GetAllRubros(ctx.CompanyId)
-		rubSelect := []types.Select{}
-		for _, v := range rub {
-			x := types.Select{
-				Key:   v.Id.String(),
-				Value: v.Name,
-			}
-			rubSelect = append(rubSelect, x)
-		}
+		rubros := s.getSelect("rubros", ctx.CompanyId)
+		projects := s.getSelect("projects", ctx.CompanyId)
 
-		p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-		projects := []types.Select{}
-		for _, v := range p {
-			x := types.Select{
-				Key:   v.ID.String(),
-				Value: v.Name,
-			}
-			projects = append(projects, x)
-		}
-
-		component := partials.EditCantidades(nil, projects, rubSelect)
+		component := partials.EditCantidades(nil, projects, rubros)
 		component.Render(r.Context(), w)
 
 	case http.MethodPost:
@@ -134,16 +116,7 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) UnitAnalysis(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-
-	p := s.DB.GetActiveProjects(ctxPayload.CompanyId, true)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
+	projects := s.getSelect("projects", ctxPayload.CompanyId)
 
 	component := unit_cost.Analysis(projects)
 	component.Render(r.Context(), w)
@@ -197,29 +170,12 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	case http.MethodGet:
-		rub, _ := s.DB.GetAllRubros(ctx.CompanyId)
-		rubSelect := []types.Select{}
-		for _, v := range rub {
-			x := types.Select{
-				Key:   v.Id.String(),
-				Value: v.Name,
-			}
-			rubSelect = append(rubSelect, x)
-		}
-
-		p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-		projects := []types.Select{}
-		for _, v := range p {
-			x := types.Select{
-				Key:   v.ID.String(),
-				Value: v.Name,
-			}
-			projects = append(projects, x)
-		}
+		rubros := s.getSelect("rubros", ctx.CompanyId)
+		projects := s.getSelect("projects", ctx.CompanyId)
 
 		quantity := s.DB.GetOneQuantityById(parsedId, ctx.CompanyId)
 
-		component := partials.EditCantidades(&quantity, projects, rubSelect)
+		component := partials.EditCantidades(&quantity, projects, rubros)
 		component.Render(r.Context(), w)
 
 	case http.MethodPut:

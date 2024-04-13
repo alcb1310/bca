@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
-	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/settings/partials"
 )
@@ -105,14 +104,10 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	case http.MethodGet:
-		materials := s.DB.GetAllMaterials(ctxPayload.CompanyId)
-		materialsSelect := []types.Select{}
-		for _, m := range materials {
-			materialsSelect = append(materialsSelect, types.Select{Key: m.Id.String(), Value: m.Name})
-		}
+		materials := s.getSelect("materials", ctxPayload.CompanyId)
 
 		w.WriteHeader(http.StatusOK)
-		component := partials.MaterialsItemsForm(nil, parsedId, materialsSelect)
+		component := partials.MaterialsItemsForm(nil, parsedId, materials)
 		component.Render(r.Context(), w)
 
 	default:
@@ -188,15 +183,10 @@ func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request)
 
 	case http.MethodGet:
 		im := s.DB.GetQuantityByMaterialAndItem(parsedId, parsedMaterialId, ctxPayload.CompanyId)
-
-		materials := s.DB.GetAllMaterials(ctxPayload.CompanyId)
-		materialsSelect := []types.Select{}
-		for _, m := range materials {
-			materialsSelect = append(materialsSelect, types.Select{Key: m.Id.String(), Value: m.Name})
-		}
+		materials := s.getSelect("materials", ctxPayload.CompanyId)
 
 		w.WriteHeader(http.StatusOK)
-		component := partials.MaterialsItemsForm(&im, parsedId, materialsSelect)
+		component := partials.MaterialsItemsForm(&im, parsedId, materials)
 		component.Render(r.Context(), w)
 	default:
 		w.WriteHeader(http.StatusBadRequest)

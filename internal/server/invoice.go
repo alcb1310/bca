@@ -28,32 +28,14 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 	redirectURL := "/bca/transacciones/facturas/crear"
 	invoice = nil
 
-	projects := []types.Select{}
-	suppliers := []types.Select{}
+	projects := s.getSelect("projects", ctx.CompanyId)
+	suppliers := s.getSelect("suppliers", ctx.CompanyId)
 
 	id := r.URL.Query().Get("id")
 	if id != "" {
 		parsedId, _ := uuid.Parse(id)
 		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 		invoice = &in
-	}
-
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
-
-	sx, _ := s.DB.GetAllSuppliers(ctx.CompanyId, "")
-	for _, v := range sx {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		suppliers = append(suppliers, x)
 	}
 
 	if r.Method == http.MethodPost {
@@ -123,30 +105,11 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	parsedId, _ := uuid.Parse(id)
 	invoice := &types.InvoiceResponse{}
 
-	projects := []types.Select{}
-	suppliers := []types.Select{}
-	// projects := make(map[string]string)
-	// suppliers := make(map[string]string)
+	projects := s.getSelect("projects", ctx.CompanyId)
+	suppliers := s.getSelect("suppliers", ctx.CompanyId)
+
 	in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 	invoice = &in
-
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
-
-	sx, _ := s.DB.GetAllSuppliers(ctx.CompanyId, "")
-	for _, v := range sx {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		suppliers = append(suppliers, x)
-	}
 
 	switch r.Method {
 	case http.MethodPatch:

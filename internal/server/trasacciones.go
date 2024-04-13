@@ -9,22 +9,13 @@ import (
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/transaction"
 )
 
 func (s *Server) Budget(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
+	projects := s.getSelect("projects", ctx.CompanyId)
 
 	component := transaction.BudgetView(projects)
 	component.Render(r.Context(), w)
@@ -37,15 +28,7 @@ func (s *Server) Invoice(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) Closure(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
+	projects := s.getSelect("projects", ctx.CompanyId)
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
