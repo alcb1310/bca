@@ -1,6 +1,8 @@
 package server
 
 import (
+	"log"
+
 	"github.com/google/uuid"
 
 	"bca-go-final/internal/types"
@@ -82,16 +84,18 @@ func (s *Server) getSelect(query string, companyId uuid.UUID) []types.Select {
 	return sel
 }
 
-func (s *Server) returnAllSelects(query []string, companyId uuid.UUID) map[string][]types.Select {
+func (s *Server) returnAllSelects(query []string, companyId uuid.UUID, flags ...bool) map[string][]types.Select {
+	log.Println(flags)
+
 	results := make(map[string][]types.Select)
 	resultChannel := make(chan Result)
 	defer close(resultChannel)
 
-	for _, v := range query {
+	for _, value := range query {
 		go func(v string) {
 			results[v] = s.getSelect(v, companyId)
 			resultChannel <- Result{v, results[v]}
-		}(v)
+		}(value)
 	}
 
 	for i := 0; i < len(query); i++ {

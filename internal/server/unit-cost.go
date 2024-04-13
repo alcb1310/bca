@@ -118,7 +118,7 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) UnitAnalysis(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	projects := s.getSelect("projects", ctxPayload.CompanyId)
+	projects := s.returnAllSelects([]string{"projects"}, ctxPayload.CompanyId)["projects"]
 
 	component := unit_cost.Analysis(projects)
 	component.Render(r.Context(), w)

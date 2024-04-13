@@ -104,7 +104,7 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	case http.MethodGet:
-		materials := s.getSelect("materials", ctxPayload.CompanyId)
+		materials := s.returnAllSelects([]string{"materials"}, ctxPayload.CompanyId)["materials"]
 
 		w.WriteHeader(http.StatusOK)
 		component := partials.MaterialsItemsForm(nil, parsedId, materials)
@@ -183,7 +183,7 @@ func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request)
 
 	case http.MethodGet:
 		im := s.DB.GetQuantityByMaterialAndItem(parsedId, parsedMaterialId, ctxPayload.CompanyId)
-		materials := s.getSelect("materials", ctxPayload.CompanyId)
+		materials := s.returnAllSelects([]string{"materials"}, ctxPayload.CompanyId)["materials"]
 
 		w.WriteHeader(http.StatusOK)
 		component := partials.MaterialsItemsForm(&im, parsedId, materials)

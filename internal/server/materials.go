@@ -82,7 +82,7 @@ func (s *Server) MaterialsTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialsAdd(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	categories := s.getSelect("categories", ctxPayload.CompanyId)
+	categories := s.returnAllSelects([]string{"categories"}, ctxPayload.CompanyId)["categories"]
 
 	component := partials.EditMaterial(nil, categories)
 	component.Render(r.Context(), w)
@@ -102,7 +102,7 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		categories := s.getSelect("categories", ctxPayload.CompanyId)
+		categories := s.returnAllSelects([]string{"categories"}, ctxPayload.CompanyId)["categories"]
 
 		component := partials.EditMaterial(&material, categories)
 		component.Render(r.Context(), w)

@@ -104,7 +104,7 @@ func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["invoiceId"]
 	parsedInvoiceId, _ := uuid.Parse(id)
 
-	budgetItems := s.getSelect("budgetitems", ctx.CompanyId)
+	budgetItems := s.returnAllSelects([]string{"budgetitems"}, ctx.CompanyId)["budgetitems"]
 
 	component := details.EditDetails(budgetItems, parsedInvoiceId.String())
 	component.Render(r.Context(), w)

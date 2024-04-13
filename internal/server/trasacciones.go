@@ -15,7 +15,7 @@ import (
 
 func (s *Server) Budget(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	projects := s.getSelect("projects", ctx.CompanyId)
+	projects := s.returnAllSelects([]string{"projects"}, ctx.CompanyId)["projects"]
 
 	component := transaction.BudgetView(projects)
 	component.Render(r.Context(), w)
@@ -28,7 +28,7 @@ func (s *Server) Invoice(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) Closure(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	projects := s.getSelect("projects", ctx.CompanyId)
+	projects := s.returnAllSelects([]string{"projects"}, ctx.CompanyId)["projects"]
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
