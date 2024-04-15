@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 	"slices"
-	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -63,21 +62,10 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 		}
 
 		q := r.Form.Get("quantity")
-		if q == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad es requerida"))
-			return
-		}
-
-		quantity, err := strconv.ParseFloat(q, 64)
+		quantity, err := utils.ConvertFloat(q, "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad debe ser un número"))
-			return
-		}
-		if quantity <= 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad debe ser mayor a 0"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -174,15 +162,10 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
 		q := r.Form.Get("quantity")
-		if q == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una cantidad"))
-			return
-		}
-		quantity, err := strconv.ParseFloat(q, 64)
+		quantity, err := utils.ConvertFloat(q, "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Cantidad debe ser numérica"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 

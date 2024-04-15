@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -32,18 +31,18 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if r.Form.Get("gross_area") != "" {
-			p.GrossArea, err = strconv.ParseFloat(r.Form.Get("gross_area"), 64)
+			p.GrossArea, err = utils.ConvertFloat(r.Form.Get("gross_area"), "área bruta", false)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("El área bruta debe ser un número válido"))
+				w.Write([]byte(err.Error()))
 				return
 			}
 		}
 		if r.Form.Get("net_area") != "" {
-			p.NetArea, err = strconv.ParseFloat(r.Form.Get("net_area"), 64)
+			p.NetArea, err = utils.ConvertFloat(r.Form.Get("net_area"), "área útil", false)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("El área neta debe ser un número válido"))
+				w.Write([]byte(err.Error()))
 				return
 			}
 		}
@@ -84,19 +83,19 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 	p.IsActive = &x
 
 	if r.Form.Get("gross_area") != "" {
-		p.GrossArea, err = strconv.ParseFloat(r.Form.Get("gross_area"), 64)
+		p.GrossArea, err = utils.ConvertFloat(r.Form.Get("gross_area"), "área bruta", false)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("El área bruta debe ser un número válido"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 	}
 
 	if r.Form.Get("net_area") != "" {
-		p.NetArea, err = strconv.ParseFloat(r.Form.Get("net_area"), 64)
+		p.NetArea, err = utils.ConvertFloat(r.Form.Get("net_area"), "área útil", false)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("El área neta debe ser un número válido"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 	}

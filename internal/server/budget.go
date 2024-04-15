@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -36,17 +35,17 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 		}
 		bId, _ := utils.ValidateUUID(bi, "partida")
 
-		q, err := strconv.ParseFloat(r.Form.Get("quantity"), 64)
+		q, err := utils.ConvertFloat(r.Form.Get("quantity"), "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad debe ser un número"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
-		c, err := strconv.ParseFloat(r.Form.Get("cost"), 64)
+		c, err := utils.ConvertFloat(r.Form.Get("cost"), "costo", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("El costo debe ser un número"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -119,16 +118,16 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPut:
 		r.ParseForm()
-		q, err := strconv.ParseFloat(r.Form.Get("quantity"), 10)
+		q, err := utils.ConvertFloat(r.Form.Get("quantity"), "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad debe ser un número"))
+			w.Write([]byte(err.Error()))
 			return
 		}
-		c, err := strconv.ParseFloat(r.Form.Get("cost"), 10)
+		c, err := utils.ConvertFloat(r.Form.Get("cost"), "costo", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("El costo debe ser un número"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -28,29 +27,20 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 			log.Println("Error parsing budgetItemId. Err: ", err)
 			return
 		}
-		q := r.Form.Get("quantity")
-		c := r.Form.Get("cost")
 
-		if q == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una cantidad"))
-			return
-		}
-		if c == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un costo"))
-			return
-		}
-		quantity, err := strconv.ParseFloat(q, 64)
+		q := r.Form.Get("quantity")
+		quantity, err := utils.ConvertFloat(q, "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Cantidad debe ser un número válido"))
+			w.Write([]byte(err.Error()))
 			return
 		}
-		cost, err := strconv.ParseFloat(c, 64)
+
+		c := r.Form.Get("cost")
+		cost, err := utils.ConvertFloat(c, "costo", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Costo debe ser un número válido"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 

@@ -2,7 +2,6 @@ package server
 
 import (
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -57,22 +56,10 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 		}
 
 		quantityText := r.Form.Get("quantity")
-		if quantityText == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una Cantidad"))
-			return
-		}
-
-		quantity, err := strconv.ParseFloat(quantityText, 64)
+		quantity, err := utils.ConvertFloat(quantityText, "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Cantidad debe ser un valor numérico"))
-			return
-		}
-
-		if quantity <= 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La Cantidad debe ser mayor a 0"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -139,22 +126,10 @@ func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request)
 		r.ParseForm()
 
 		quantityText := r.Form.Get("quantity")
-		if quantityText == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una Cantidad"))
-			return
-		}
-
-		quantity, err := strconv.ParseFloat(quantityText, 64)
+		quantity, err := utils.ConvertFloat(quantityText, "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Cantidad debe ser un valor numérico"))
-			return
-		}
-
-		if quantity <= 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La Cantidad debe ser mayor a 0"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
