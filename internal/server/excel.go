@@ -19,12 +19,13 @@ import (
 func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 	id := r.URL.Query().Get("project")
-	parsedProjectId, err := uuid.Parse(id)
+	parsedProjectId, err := utils.ValidateUUID(id, "proyecto")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Println("Error parsing projectId. Err: ", err)
 		return
 	}
+
 	d := r.URL.Query().Get("date")
 	dateVal, _ := time.Parse("2006-01-02", d)
 
@@ -49,7 +50,7 @@ func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
+	parsedProjectId, err := utils.ValidateUUID(r.URL.Query().Get("proyecto"), "proyecto")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Println("Error parsing projectId. Err: ", err)
@@ -75,7 +76,6 @@ func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
 	if err := f.Write(w); err != nil {
 		log.Println(err.Error())
 	}
-
 	go func() {
 		time.Sleep(1 * time.Second)
 		if err := os.Remove(f.Path); err != nil {
@@ -86,7 +86,7 @@ func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) HistoricExcel(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
+	parsedProjectId, err := utils.ValidateUUID(r.URL.Query().Get("proyecto"), "proyecto")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Println("Error parsing projectId. Err: ", err)
@@ -126,7 +126,7 @@ func (s *Server) HistoricExcel(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SpentExcel(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
+	parsedProjectId, err := utils.ValidateUUID(r.URL.Query().Get("proyecto"), "proyecto")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Println("Error parsing projectId. Err: ", err)

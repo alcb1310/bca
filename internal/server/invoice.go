@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -35,27 +34,27 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 
 	id := r.URL.Query().Get("id")
 	if id != "" {
-		parsedId, _ := uuid.Parse(id)
+		parsedId, _ := utils.ValidateUUID(id, "factura")
 		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 		invoice = &in
 	}
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
-		pId := r.Form.Get("project")
-		if pId == "" {
+		projectId, err := utils.ValidateUUID(r.Form.Get("project"), "proyecto")
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un proyecto"))
+			w.Write([]byte(err.Error()))
 			return
 		}
-		projectId, _ := uuid.Parse(pId)
-		sId := r.Form.Get("supplier")
-		if sId == "" {
+
+		supplierId, err := utils.ValidateUUID(r.Form.Get("supplier"), "proveedor")
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un proveedor"))
+			w.Write([]byte(err.Error()))
 			return
 		}
-		supplierId, _ := uuid.Parse(sId)
+
 		iNumber := r.Form.Get("invoiceNumber")
 		if iNumber == "" {
 			w.WriteHeader(http.StatusBadRequest)
@@ -103,8 +102,7 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 	redirectURL := "/bca/transacciones/facturas/crear"
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "factura")
 	invoice := &types.InvoiceResponse{}
 
 	data := []string{"projects", "suppliers"}
@@ -146,12 +144,13 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		pId := invoice.Project.ID
 
-		sId, err := uuid.Parse(r.Form.Get("supplier"))
+		sId, err := utils.ValidateUUID(r.Form.Get("supplier"), "proveedor")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un proveedor"))
+			w.Write([]byte(err.Error()))
 			return
 		}
+
 		iNumber := r.Form.Get("invoiceNumber")
 		if iNumber == "" {
 			w.WriteHeader(http.StatusBadRequest)

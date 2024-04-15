@@ -1,17 +1,17 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/settings/partials"
 )
 
 func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
@@ -73,8 +73,7 @@ func (s *Server) ProjectAdd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "proyecto")
 	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)
 
 	r.ParseForm()
@@ -120,8 +119,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) ProjectEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "proyecto")
 	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)
 
 	component := partials.EditProject(&p)

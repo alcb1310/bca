@@ -4,10 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 	"time"
-
-	"github.com/google/uuid"
 
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/transaction"
@@ -32,16 +29,14 @@ func (s *Server) Closure(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
-		pId := r.Form.Get("proyecto")
-		parsedProjectId, err := uuid.Parse(pId)
 		success := "true"
+
+		pId := r.Form.Get("proyecto")
+		parsedProjectId, err := utils.ValidateUUID(pId, "proyecto")
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			if strings.Contains(err.Error(), "length: 0") {
-				log.Println("Seleccione un proyecto")
-				return
-			}
 			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			return
 		}
 

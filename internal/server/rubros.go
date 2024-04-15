@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/utils"
@@ -24,8 +23,7 @@ func (s *Server) RubrosTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialsByItem(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "rubro")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -41,8 +39,7 @@ func (s *Server) MaterialsByItem(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "material")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -52,16 +49,10 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		r.ParseForm()
 
-		materialId := r.Form.Get("material")
-		if materialId == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Seleccione un Material"))
-			return
-		}
-		parsedMaterialId, err := uuid.Parse(materialId)
+		parsedMaterialId, err := utils.ValidateUUID(r.Form.Get("material"), "material")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Material Incorrecto"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -118,15 +109,13 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "rubro")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	materialId := mux.Vars(r)["materialId"]
-	parsedMaterialId, err := uuid.Parse(materialId)
+	parsedMaterialId, err := utils.ValidateUUID(mux.Vars(r)["materialId"], "rubro")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

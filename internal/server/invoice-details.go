@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -17,20 +16,15 @@ import (
 
 func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["invoiceId"]
-	parsedInvoiceId, _ := uuid.Parse(id)
+	parsedInvoiceId, _ := utils.ValidateUUID(mux.Vars(r)["invoiceId"], "factura")
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		biId := r.Form.Get("item")
-		if biId == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una partida"))
-			return
-		}
-		parsedBudgetItemId, err := uuid.Parse(biId)
+		parsedBudgetItemId, err := utils.ValidateUUID(biId, "partida")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
 			log.Println("Error parsing budgetItemId. Err: ", err)
 			return
 		}
@@ -100,9 +94,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-
-	id := mux.Vars(r)["invoiceId"]
-	parsedInvoiceId, _ := uuid.Parse(id)
+	parsedInvoiceId, _ := utils.ValidateUUID(mux.Vars(r)["invoiceId"], "factura")
 
 	budgetItems := s.returnAllSelects([]string{"budgetitems"}, ctx.CompanyId)["budgetitems"]
 
@@ -112,11 +104,8 @@ func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) DetailsEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	iId := mux.Vars(r)["invoiceId"]
-	bId := mux.Vars(r)["budgetItemId"]
-	parsedInvoiceId, _ := uuid.Parse(iId)
-	parsedBudgetItemId, _ := uuid.Parse(bId)
-	_ = parsedBudgetItemId
+	parsedInvoiceId, _ := utils.ValidateUUID(mux.Vars(r)["invoiceId"], "factura")
+	parsedBudgetItemId, _ := utils.ValidateUUID(mux.Vars(r)["budgetItemId"], "partida")
 
 	if err := s.DB.DeleteDetail(parsedInvoiceId, parsedBudgetItemId, ctx.CompanyId); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -50,8 +49,7 @@ func (s *Server) CategoryAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "categoria")
 	c, _ := s.DB.GetCategory(parsedId, ctxPayload.CompanyId)
 
 	switch r.Method {

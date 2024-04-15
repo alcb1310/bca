@@ -26,20 +26,23 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Seleccione un proyecto"))
 			return
 		}
-		pId, _ := uuid.Parse(p)
+		pId, _ := utils.ValidateUUID(p, "proyecto")
+
 		bi := r.Form.Get("budgetItem")
 		if bi == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Seleccione una partida"))
 			return
 		}
-		bId, _ := uuid.Parse(bi)
+		bId, _ := utils.ValidateUUID(bi, "partida")
+
 		q, err := strconv.ParseFloat(r.Form.Get("quantity"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("La cantidad debe ser un número"))
 			return
 		}
+
 		c, err := strconv.ParseFloat(r.Form.Get("cost"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -73,7 +76,7 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 
 	p := r.URL.Query().Get("proyecto")
 	if p != "" {
-		project_id, err = uuid.Parse(p)
+		project_id, err = utils.ValidateUUID(p, "proyecto")
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
@@ -103,8 +106,8 @@ func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	projectId, _ := uuid.Parse(mux.Vars(r)["projectId"])
-	budgetItemId, _ := uuid.Parse(mux.Vars(r)["budgetItemId"])
+	projectId, _ := utils.ValidateUUID(mux.Vars(r)["projectId"], "proyecto")
+	budgetItemId, _ := utils.ValidateUUID(mux.Vars(r)["budgetItemId"], "partida")
 
 	data := []string{"projects", "budgetitems"}
 	res := s.returnAllSelects(data, ctx.CompanyId)

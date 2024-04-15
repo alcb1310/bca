@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -40,11 +39,10 @@ func (s *Server) MaterialsTable(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		categoryId := r.Form.Get("category")
-		categoryIdParsed, err := uuid.Parse(categoryId)
+		categoryIdParsed, err := utils.ValidateUUID(r.Form.Get("category"), "categoria")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para la Categoría"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -91,8 +89,7 @@ func (s *Server) MaterialsAdd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "material")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -131,11 +128,10 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		categoryId := r.Form.Get("category")
-		categoryIdParsed, err := uuid.Parse(categoryId)
+		categoryIdParsed, err := utils.ValidateUUID(r.Form.Get("category"), "categoria")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para la Categoría"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 

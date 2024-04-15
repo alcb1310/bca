@@ -3,7 +3,6 @@ package server
 import (
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -33,8 +32,7 @@ func (s *Server) ChangePassword(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "usuario")
 
 	if ctx.Id == parsedId {
 		w.WriteHeader(http.StatusForbidden)
@@ -138,8 +136,7 @@ func (s *Server) UserAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) UserEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "usuario")
 	u, _ := s.DB.GetUser(parsedId, ctx.CompanyId)
 
 	component := partials.EditUser(&u)

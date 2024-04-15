@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/utils"
@@ -46,29 +45,19 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
 		pId := r.Form.Get("project")
-		parsedProjectId, err := uuid.Parse(pId)
+		parsedProjectId, err := utils.ValidateUUID(pId, "proyecto")
 		if err != nil {
-			if strings.Contains(err.Error(), "length: 0") {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Seleccione un proyecto"))
-				return
-			}
-
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Seleccione un proyecto"))
 			log.Println(err)
 			return
 		}
 
 		rubroId := r.Form.Get("item")
-		parsedRubroId, err := uuid.Parse(rubroId)
+		parsedRubroId, err := utils.ValidateUUID(rubroId, "rubro")
 		if err != nil {
-			if strings.Contains(err.Error(), "length: 0") {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Seleccione un rubro"))
-				return
-			}
-
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Seleccione un rubro"))
 			log.Println(err)
 			return
 		}
@@ -128,10 +117,10 @@ func (s *Server) AnalysisTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
 	p := r.URL.Query().Get("project")
-	projectId, err := uuid.Parse(p)
+	projectId, err := utils.ValidateUUID(p, "proyecto")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Seleccione un proyecto"))
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -149,11 +138,10 @@ func (s *Server) AnalysisTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "cantidad")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Error al parsear el ID"))
+		w.Write([]byte(err.Error()))
 		return
 	}
 

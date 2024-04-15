@@ -35,7 +35,8 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		r.ParseForm()
 		pId := r.Form.Get("project")
-		parsedProjectId, _ := uuid.Parse(pId)
+		parsedProjectId, _ := utils.ValidateUUID(pId, "proyecto")
+
 		d := r.Form.Get("date")
 		date, _ := time.Parse("2006-01-02", d)
 
@@ -63,7 +64,8 @@ func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Query().Get("proyecto") != "" && r.URL.Query().Get("fecha") != "" && r.URL.Query().Get("nivel") != "" {
 		pId := r.URL.Query().Get("proyecto")
-		parsedProjectId, _ := uuid.Parse(pId)
+		parsedProjectId, _ := utils.ValidateUUID(pId, "proyecto")
+
 		d := r.URL.Query().Get("fecha")
 		date, _ := time.Parse("2006-01-02", d)
 		l, _ := strconv.ParseUint(r.URL.Query().Get("nivel"), 10, 64)
@@ -89,7 +91,8 @@ func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Query().Get("proyecto") != "" && r.URL.Query().Get("fecha") != "" && r.URL.Query().Get("nivel") != "" {
 		pId := r.URL.Query().Get("proyecto")
-		parsedProjectId, _ := uuid.Parse(pId)
+		parsedProjectId, _ := utils.ValidateUUID(pId, "proyecto")
+
 		d := r.URL.Query().Get("fecha")
 		date, _ := time.Parse("2006-01-02", d)
 		l, _ := strconv.ParseUint(r.URL.Query().Get("nivel"), 10, 64)
@@ -133,7 +136,7 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 	r.ParseForm()
 	p := r.Form.Get("proyecto")
-	projectId, _ := uuid.Parse(p)
+	projectId, _ := utils.ValidateUUID(p, "proyecto")
 	z := r.Form.Get("nivel")
 	var l uint64
 	var err error
@@ -161,16 +164,14 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["budgetItemId"]
-	budgetItemId, err := uuid.Parse(id)
+	budgetItemId, err := utils.ValidateUUID(mux.Vars(r)["budgetItemId"], "partida")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
 		return
 	}
 
-	pId := mux.Vars(r)["projectId"]
-	parsedProjectId, err := uuid.Parse(pId)
+	parsedProjectId, err := utils.ValidateUUID(mux.Vars(r)["projectId"], "proyecto")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
