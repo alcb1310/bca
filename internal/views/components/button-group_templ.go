@@ -23,7 +23,7 @@ func ButtonGroup() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex justify-between\"><button type=\"submit\" class=\"btn\" id=\"save-button\">Grabar</button> <button type=\"button\" class=\"btn\" id=\"close-button\" onclick=\"resetClose()\">Cancelar</button></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex justify-between\"><button type=\"submit\" class=\"btn\" id=\"save-button\" data-testid=\"save-button\">Grabar</button> <button type=\"button\" class=\"btn\" id=\"close-button\" onclick=\"resetClose()\" data-testid=\"cancel-button\">Cancelar</button></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

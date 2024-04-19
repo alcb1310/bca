@@ -10,16 +10,18 @@ require (
 )
 
 require (
+	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect
 	github.com/xuri/efp v0.0.0-20230802181842-ad255f2331ca // indirect
 	github.com/xuri/nfp v0.0.0-20230819163627-dc951e3ffe1a // indirect
-	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/net v0.21.0 // indirect
 )
 
 require (
+	github.com/PuerkitoBio/goquery v1.9.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/google/uuid v1.4.0
 	github.com/gorilla/sessions v1.2.2
@@ -29,7 +31,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/stretchr/testify v1.8.4 // indirect
 	github.com/xuri/excelize/v2 v2.8.0
-	golang.org/x/crypto v0.14.0
+	golang.org/x/crypto v0.19.0
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/text v0.13.0
+	golang.org/x/text v0.14.0
 )
