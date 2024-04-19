@@ -25,7 +25,7 @@ func Header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header class=\"flex items-center py-4 px-6 bg-blue-gray-900\"><nav class=\"w-full flex items-center justify-between\"><a href=\"/bca\" class=\"text-blue-gray-100 font-bold text-2xl no-underline\">Sistema Control Presupuestario</a><ul class=\"m-0 p-0 flex items-center list-none gap-8\"><li id=\"user\"><a href=\"#\" class=\"text-blue-gray-100\" aria-label=\"User\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header class=\"flex items-center py-4 px-6 bg-blue-gray-900\"><nav class=\"w-full flex items-center justify-between\"><a href=\"/bca\" class=\"text-blue-gray-100 font-bold text-2xl no-underline\" aria-label=\"Application Name\" data-testid=\"application-name\">Sistema Control Presupuestario</a><ul class=\"m-0 p-0 flex items-center list-none gap-8\"><li id=\"user\"><a href=\"#\" class=\"text-blue-gray-100\" aria-label=\"Usuario\" data-testid=\"user-icon\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -33,7 +33,7 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li><li><a href=\"https://github.com/alcb1310/bca/wiki\" target=\"_blank\" class=\"text-blue-gray-100\" aria-label=\"Help\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li><li><a href=\"https://github.com/alcb1310/bca/wiki\" target=\"_blank\" class=\"text-blue-gray-100\" aria-label=\"Ayuda\" data-testid=\"help-icon\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -41,7 +41,7 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li><li><a href=\"#\" class=\"text-blue-gray-100\" hx-post=\"/bca/logout\" hx-trigger=\"click\" hx-push-url=\"true\" hx-trget=\"body\" aria-label=\"Logout\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li><li><a href=\"#\" class=\"text-blue-gray-100\" hx-post=\"/bca/logout\" hx-trigger=\"click\" hx-push-url=\"true\" hx-trget=\"body\" aria-label=\"Cerrar Sesión\" data-testid=\"logout-icon\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -49,7 +49,7 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li></ul></nav></header><div id=\"user-context\" class=\"hidden absolute z-10 bg-blue-gray-100 text-blue-gray-900 w-fit rounded-xl shadow right-12 top-12 text-xs border border-blue-gray-900 \"><div class=\"contextmenu-item\"><p style=\"padding:0 0.8rem\"><a href=\"/bca/user/perfil\" class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600\">Mi Perfil</a></p></div><div class=\"contextmenu-item\"><p style=\"padding:0 0.8rem\"><a href=\"/bca/user/admin\" class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600\">Administrar</a></p></div><div id=\"change-password\" class=\"contextmenu-item\" style=\"padding:0 0.8rem\"><p class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600\" hx-get=\"/bca/user/cambio\" hx-trigger=\"click\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">Cambiar Contrase&ntilde;a</p></div></div><script>\n         document.getElementById(\"change-password\").addEventListener(\"click\", (event) => {\n              event.preventDefault();\n              isContextMenuOpen = false;\n              contextEl.classList.remove(\"show-contextmenu\");\n         })\n     </script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li></ul></nav></header><div id=\"user-context\" class=\"hidden absolute z-10 bg-blue-gray-100 text-blue-gray-900 w-fit rounded-xl shadow right-12 top-12 text-xs border border-blue-gray-900 \" data-testid=\"user-context\"><div class=\"contextmenu-item\"><p style=\"padding:0 0.8rem\"><a href=\"/bca/user/perfil\" class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600\">Mi Perfil</a></p></div><div class=\"contextmenu-item\"><p style=\"padding:0 0.8rem\"><a href=\"/bca/user/admin\" class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600\">Administrar</a></p></div><div id=\"change-password\" class=\"contextmenu-item\" style=\"padding:0 0.8rem\"><p class=\"p-2 flex flex-col gap-2 no-underline color-blue-gray-900 cursor-pointer hover:text-blue-gray-200 hover:bg-blue-gray-600\" hx-get=\"/bca/user/cambio\" hx-trigger=\"click\" hx-target=\"#drawer\" hx-swap=\"innerHTML\" _=\"on click openDrawer()\">Cambiar Contrase&ntilde;a</p></div></div><script>\n         document.getElementById(\"change-password\").addEventListener(\"click\", (event) => {\n              event.preventDefault();\n              isContextMenuOpen = false;\n              contextEl.classList.remove(\"show-contextmenu\");\n         })\n     </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
