@@ -9,27 +9,30 @@ templ Transacciones(active string){
 					<a
 						href="/bca/transacciones/presupuesto"
 						class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "presupuesto"), templ.KV("text-blue-gray-300", active != "presupuesto") }
+                        data-testid="menu-presupuesto"
 					>
                         @icons.BudgetIcon()
-                        <span>Presupuesto</span>
+                        <span data-testid="text-presupuesto">Presupuesto</span>
                     </a>
 				</li>
 				<li>
 					<a
 						href="/bca/transacciones/facturas"
 						class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "facturas"), templ.KV("text-blue-gray-300", active != "facturas") }
+                        data-testid="menu-facturas"
 					>
                         @icons.InvoiceIcon()
-                        <span>Facturas</span>
+                        <span data-testid="text-facturas">Facturas</span>
                     </a>
 				</li>
 				<li>
 					<a
 						href="/bca/transacciones/cierre"
 						class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "cierre"), templ.KV("text-blue-gray-300", active != "cierre") }
+                        data-testid="menu-cierre"
 					>
                         @icons.MonthlyClosureIcon()
-                        <span>Cierre Mensual</span>
+                        <span data-testid="text-cierre">Cierre Mensual</span>
                     </a>
 				</li>
       </ul>
