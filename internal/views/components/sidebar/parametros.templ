@@ -3,63 +3,77 @@ package sidebar
 import "bca-go-final/internal/views/components/icons"
 
 templ Parametros(active string) {
-			<ul class="m-0 p-0 list-none text-sm">
-				<li
-					class="py-3 px-0 text-xs text-blue-gray-300 uppercase font-bold tracking-wider"
-				><span>Par&aacute;metros</span></li>
-				<li>
-					<a
-						href="/bca/configuracion/partidas"
-						class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "partida"), templ.KV("text-blue-gray-300", active != "partida") }
-					>
-                        @icons.BudgetItemIcon()
-                        <span>Partidas</span>
-                    </a>
-				</li>
-        <li>
-          <a
+<ul class="m-0 p-0 list-none text-sm">
+    <li
+        class="py-3 px-0 text-xs text-blue-gray-300 uppercase font-bold tracking-wider"
+    >
+        <span>Par&aacute;metros</span>
+    </li>
+
+    <li>
+        <a
+            href="/bca/configuracion/partidas"
+            class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "partida"), templ.KV("text-blue-gray-300", active != "partida") }
+            data-testid="menu-partida"
+        >
+            @icons.BudgetItemIcon()
+            <span data-testid="text-partida">Partidas</span>
+        </a>
+    </li>
+
+    <li>
+        <a
             href="/bca/configuracion/categorias"
             class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "categorias"), templ.KV("text-blue-gray-300", active != "categorias") }
-          >
+            data-testid="menu-categorias"
+        >
             @icons.CategoryIcon()
-            <span>Categorias</span>
-          </a>
-        </li>
-        <li>
-          <a
+            <span data-testid="text-categorias">Categorias</span>
+        </a>
+    </li>
+    
+    <li>
+        <a
             href="/bca/configuracion/materiales"
             class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "materiales"), templ.KV("text-blue-gray-300", active != "materiales") }
-          >
+            data-testid="menu-materiales"
+        >
             @icons.MaterialsIcon()
-            <span>Materiales</span>
-          </a>
-        </li>
-				<li>
-					<a
-						href="/bca/configuracion/proyectos"
-						class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "proyecto"), templ.KV("text-blue-gray-300", active != "proyecto") }
-					>
-                        @icons.ProjectIcon()
-                        <span>Proyectos</span>
-                    </a>
-				</li>
-				<li>
-					<a
-						href="/bca/configuracion/proveedores"
-						class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "proveedor"), templ.KV("text-blue-gray-300", active != "proveedor") }
-					>
-                        @icons.SupplierIcon()
-                        <span>Proveedores</span>
-                    </a>
-				</li>
-        <li>
-          <a
+            <span data-testid="text-materiales">Materiales</span>
+        </a>
+    </li>
+
+    <li>
+        <a
+            href="/bca/configuracion/proyectos"
+            class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "proyecto"), templ.KV("text-blue-gray-300", active != "proyecto") }
+            data-testid="menu-proyecto"
+        >
+            @icons.ProjectIcon()
+            <span data-testid="text-proyecto">Proyectos</span>
+        </a>
+    </li>
+
+    <li>
+        <a
+            href="/bca/configuracion/proveedores"
+            class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "proveedor"), templ.KV("text-blue-gray-300", active != "proveedor") }
+            data-testid="menu-proveedor"
+        >
+            @icons.SupplierIcon()
+            <span data-testid="text-proveedor">Proveedores</span>
+        </a>
+    </li>
+
+    <li>
+        <a
             href="/bca/configuracion/rubros"
-						class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "rubros"), templ.KV("text-blue-gray-300", active != "rubros") }
-          >
+            class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "rubros"), templ.KV("text-blue-gray-300", active != "rubros") }
+            data-testid="menu-rubros"
+        >
             @icons.ItemsIcon()
-            <span>Rubros</span>
-          </a>
-        </li>
-  </ul>
+            <span data-testid="text-rubros">Rubros</span>
+        </a>
+    </li>
+</ul>
 }
