@@ -1,16 +1,12 @@
 package sidebar
 
 import (
-	"context"
-	"io"
 	"testing"
-
-	"github.com/PuerkitoBio/goquery"
 )
 
 func TestTransacciones(t *testing.T) {
 	t.Run("Transacciones menu has to have all menu options", func(t *testing.T) {
-		doc := getTransaccionesMenu("presupuesto", t)
+		doc := getMenu("presupuesto", "transacciones", t)
 
 		// menuPresupuesto := doc.Find(`[data-testid="menu-presupuesto"]`)
 		menuPresupuesto := doc.Find(`[data-testid="menu-presupuesto"]`)
@@ -43,38 +39,24 @@ func TestTransacciones(t *testing.T) {
 
 	t.Run("Should highlight the selected menu", func(t *testing.T) {
 		t.Run("Should highlight presupuesto menu", func(t *testing.T) {
-			doc := getTransaccionesMenu("presupuesto", t)
+			doc := getMenu("presupuesto", "transacciones", t)
 			if !hasActiveMenu("presupuesto", doc) {
 				t.Error("Presupuesto menu not highlighted")
 			}
 		})
 
 		t.Run("Should highlight facturas menu", func(t *testing.T) {
-			doc := getTransaccionesMenu("facturas", t)
+			doc := getMenu("facturas", "transacciones", t)
 			if !hasActiveMenu("facturas", doc) {
 				t.Error("Facturas menu not highlighted")
 			}
 		})
 
 		t.Run("Should highlight cierre menu", func(t *testing.T) {
-			doc := getTransaccionesMenu("cierre", t)
+			doc := getMenu("cierre", "transacciones", t)
 			if !hasActiveMenu("cierre", doc) {
 				t.Error("Cierre menu not highlighted")
 			}
 		})
 	})
-}
-
-func getTransaccionesMenu(active string, t *testing.T) *goquery.Document {
-	r, w := io.Pipe()
-	go func() {
-		_ = Transacciones(active).Render(context.Background(), w)
-		_ = w.Close()
-	}()
-
-	doc, err := goquery.NewDocumentFromReader(r)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return doc
 }

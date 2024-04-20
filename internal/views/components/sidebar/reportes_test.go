@@ -1,16 +1,12 @@
 package sidebar
 
 import (
-	"context"
-	"io"
 	"testing"
-
-	"github.com/PuerkitoBio/goquery"
 )
 
 func TestReportes(t *testing.T) {
 	t.Run("Reportes menu has to have all menu options", func(t *testing.T) {
-		doc := getReportesMenu("actual", t)
+		doc := getMenu("actual", "reportes", t)
 
 		menuActual := doc.Find(`[data-testid="menu-actual"]`)
 		if menuActual.Length() == 0 {
@@ -51,46 +47,31 @@ func TestReportes(t *testing.T) {
 
 	t.Run("Should highlight the selected menu", func(t *testing.T) {
 		t.Run("Should highlight actual menu", func(t *testing.T) {
-			doc := getReportesMenu("actual", t)
+			doc := getMenu("actual", "reportes", t)
 			if !hasActiveMenu("actual", doc) {
 				t.Error("Actual menu not highlighted")
 			}
 		})
 
 		t.Run("Should highlight balance menu", func(t *testing.T) {
-			doc := getReportesMenu("balance", t)
+			doc := getMenu("balance", "reportes", t)
 			if !hasActiveMenu("balance", doc) {
 				t.Error("Cuadre menu not highlighted")
 			}
 		})
 
 		t.Run("Should highlight gastado menu", func(t *testing.T) {
-			doc := getReportesMenu("gastado", t)
+			doc := getMenu("gastado", "reportes", t)
 			if !hasActiveMenu("gastado", doc) {
 				t.Error("Gastado menu not highlighted")
 			}
 		})
 
 		t.Run("Should highlight historico menu", func(t *testing.T) {
-			doc := getReportesMenu("historico", t)
+			doc := getMenu("historico", "reportes", t)
 			if !hasActiveMenu("historico", doc) {
 				t.Error("Historico menu not highlighted")
 			}
 		})
 	})
-}
-
-func getReportesMenu(active string, t *testing.T) *goquery.Document {
-	r, w := io.Pipe()
-	go func() {
-		_ = Reportes(active).Render(context.Background(), w)
-		_ = w.Close()
-	}()
-
-	doc, err := goquery.NewDocumentFromReader(r)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	return doc
 }
