@@ -44,34 +44,22 @@ func TestTransacciones(t *testing.T) {
 	t.Run("Should highlight the selected menu", func(t *testing.T) {
 		t.Run("Should highlight presupuesto menu", func(t *testing.T) {
 			doc := getTransaccionesMenu("presupuesto", t)
-			menu := doc.Find(`[data-testid="menu-presupuesto"]`)
-			if menu.Length() == 0 {
-				t.Error("Presupuesto menu not found")
-			}
-			if menu.HasClass("text-blue-gray-100") == false {
-				t.Error("Presupuesto menu should have text-blue-gray-100 class")
+			if !hasActiveMenu("presupuesto", doc) {
+				t.Error("Presupuesto menu not highlighted")
 			}
 		})
 
 		t.Run("Should highlight facturas menu", func(t *testing.T) {
 			doc := getTransaccionesMenu("facturas", t)
-			menu := doc.Find(`[data-testid="menu-facturas"]`)
-			if menu.Length() == 0 {
-				t.Error("Facturas menu not found")
-			}
-			if menu.HasClass("text-blue-gray-100") == false {
-				t.Error("Facturas menu should have text-blue-gray-100 class")
+			if !hasActiveMenu("facturas", doc) {
+				t.Error("Facturas menu not highlighted")
 			}
 		})
 
 		t.Run("Should highlight cierre menu", func(t *testing.T) {
 			doc := getTransaccionesMenu("cierre", t)
-			menu := doc.Find(`[data-testid="menu-cierre"]`)
-			if menu.Length() == 0 {
-				t.Error("Cierre menu not found")
-			}
-			if menu.HasClass("text-blue-gray-100") == false {
-				t.Error("Cierre menu should have text-blue-gray-100 class")
+			if !hasActiveMenu("cierre", doc) {
+				t.Error("Cierre menu not highlighted")
 			}
 		})
 	})
