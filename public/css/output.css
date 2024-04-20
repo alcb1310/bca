@@ -859,6 +859,10 @@ i:disabled {
   overflow-x: hidden;
 }
 
+.text-balance {
+  text-wrap: balance;
+}
+
 .rounded-lg {
   border-radius: 0.5rem;
 }
