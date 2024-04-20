@@ -15,7 +15,7 @@ func hasActiveMenu(menu string, doc *goquery.Document) bool {
 }
 
 func getMenu(active, menu string, t *testing.T) *goquery.Document {
-	if menu != "parametros" && menu != "transacciones" && menu != "reportes" {
+	if menu != "parametros" && menu != "transacciones" && menu != "reportes" && menu != "costosunitarios" {
 		t.Fatal("Menu not found")
 	}
 	r, w := io.Pipe()
@@ -29,6 +29,9 @@ func getMenu(active, menu string, t *testing.T) *goquery.Document {
 
 		case "reportes":
 			_ = Reportes(active).Render(context.Background(), w)
+
+		case "costosunitarios":
+			_ = CostosUnitarios(active).Render(context.Background(), w)
 
 		}
 		_ = w.Close()
