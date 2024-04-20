@@ -12,6 +12,9 @@ func EncryptPasssword(p string) ([]byte, error) {
 
 func ComparePassword(hashed, plain string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(plain))
+	if err != nil {
+		return false, errors.New("Credenciales inválidas")
+	}
 
-	return err == nil, errors.New("Credenciales inválidas")
+	return true, nil
 }

@@ -10,10 +10,14 @@ func TestComparePassword(t *testing.T) {
 		password := "password"
 		hashed, _ := EncryptPasssword(password)
 
-		valid, _ := ComparePassword(string(hashed), password)
+		valid, err := ComparePassword(string(hashed), password)
 
 		if !valid {
 			t.Errorf("Password '%s' should be valid", password)
+		}
+
+		if err != nil {
+			t.Errorf("Error: %v", err)
 		}
 	})
 
