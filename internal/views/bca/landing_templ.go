@@ -31,14 +31,14 @@ func LandingPage(user string) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><p>Bienvenido <span class=\"text-green-300 font-bold tracking-wide\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div><p>Bienvenido <span class=\"text-green-300 font-bold tracking-wide\" data-testid=\"welcome\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(user)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/landing.templ`, Line: 7, Col: 76}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/landing.templ`, Line: 7, Col: 98}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
