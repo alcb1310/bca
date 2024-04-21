@@ -110,53 +110,13 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPut:
 		r.ParseForm()
-		q, err := utils.ConvertFloat(r.Form.Get("quantity"), "cantidad", true)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(err.Error()))
-			return
-		}
-		c, err := utils.ConvertFloat(r.Form.Get("cost"), "costo", true)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(err.Error()))
-			return
-		}
-
-		budget := types.CreateBudget{
-			ProjectId:    projectId,
-			BudgetItemId: budgetItemId,
-			Quantity:     q,
-			Cost:         c,
-			CompanyId:    ctx.CompanyId,
-		}
-
-		bu := types.Budget{
-			ProjectId:         projectId,
-			BudgetItemId:      budgetItemId,
-			InitialQuantity:   bd.InitialQuantity,
-			InitialCost:       bd.InitialCost,
-			InitialTotal:      bd.InitialTotal,
-			SpentQuantity:     bd.SpentQuantity,
-			SpentTotal:        bd.SpentTotal,
-			RemainingQuantity: bd.RemainingQuantity,
-			RemainingCost:     bd.RemainingCost,
-			RemainingTotal:    bd.RemainingTotal,
-			UpdatedBudget:     bd.UpdatedBudget,
-			CompanyId:         ctx.CompanyId,
-		}
-
-		if err := s.DB.UpdateBudget(budget, bu); err != nil {
-			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte(fmt.Sprintf("Ya existe partida %s en el proyecto %s", budgetItemId, projectId)))
-				return
-			}
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
 
 		b, _ := s.DB.GetBudgets(ctx.CompanyId, uuid.Nil, "")
+		err := updateBudget(r.Form, projectId, budgetItemId, ctx.CompanyId, bd, s)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
 		component := partials.BudgetTable(b)
 		component.Render(r.Context(), w)
@@ -173,5 +133,45 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 		component := partials.EditBudget(budget, projects, budgetItems)
 		component.Render(r.Context(), w)
 	}
+}
 
+func updateBudget(form url.Values, projectId, budgetItemId, companyId uuid.UUID, bd *types.GetBudget, s *Server) error {
+	quantity, err := utils.ConvertFloat(form.Get("quantity"), "cantidad", true)
+	if err != nil {
+		return err
+	}
+
+	cost, err := utils.ConvertFloat(form.Get("cost"), "costo", true)
+	if err != nil {
+		return err
+	}
+
+	budget := types.CreateBudget{
+		ProjectId:    projectId,
+		BudgetItemId: budgetItemId,
+		Quantity:     quantity,
+		Cost:         cost,
+		CompanyId:    companyId,
+	}
+
+	bu := types.Budget{
+		ProjectId:         projectId,
+		BudgetItemId:      budgetItemId,
+		InitialQuantity:   bd.InitialQuantity,
+		InitialCost:       bd.InitialCost,
+		InitialTotal:      bd.InitialTotal,
+		SpentQuantity:     bd.SpentQuantity,
+		SpentTotal:        bd.SpentTotal,
+		RemainingQuantity: bd.RemainingQuantity,
+		RemainingCost:     bd.RemainingCost,
+		RemainingTotal:    bd.RemainingTotal,
+		UpdatedBudget:     bd.UpdatedBudget,
+		CompanyId:         companyId,
+	}
+
+	if err := s.DB.UpdateBudget(budget, bu); err != nil {
+		return err
+	}
+
+	return nil
 }

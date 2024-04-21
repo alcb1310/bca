@@ -7,9 +7,18 @@ import (
 	"github.com/google/uuid"
 
 	"bca-go-final/internal/database"
+	"bca-go-final/internal/types"
 )
 
 var companyId = uuid.New()
+
+var oldBudget = types.GetBudget{
+	CompanyId:      companyId,
+	InitialTotal:   1,
+	SpentTotal:     0,
+	RemainingTotal: 1,
+	UpdatedBudget:  1,
+}
 
 func TestCreateBudget(t *testing.T) {
 	db := database.ServiceMock{}
@@ -224,6 +233,120 @@ func TestCreateBudget(t *testing.T) {
 				form.Add("cost", "-4")
 
 				_, err := createBudget(form, companyId, srv)
+				if err == nil {
+					t.Error("Expected an error and got none")
+				}
+
+				if err.Error() != "costo debe ser un número positivo" {
+					t.Errorf("Expected 'costo debe ser un número positivo' and got '%s'", err.Error())
+				}
+			})
+		})
+	})
+}
+
+func TestUpdateBudget(t *testing.T) {
+	db := database.ServiceMock{}
+	_, srv := NewServer(db)
+
+	t.Run("valid budget data", func(t *testing.T) {
+		t.Run("success", func(t *testing.T) {
+			form := url.Values{}
+
+			form.Add("quantity", "1")
+			form.Add("cost", "1")
+
+			err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
+
+			if err != nil {
+				t.Errorf("Expected no error and got %v", err)
+			}
+		})
+	})
+
+	t.Run("invalid budget data", func(t *testing.T) {
+		t.Run("invalid quantity", func(t *testing.T) {
+			t.Run("empty quantity", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("cost", "1")
+
+				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
+				if err == nil {
+					t.Error("Expected an error and got none")
+				}
+
+				if err.Error() != "cantidad es requerido" {
+					t.Errorf("Expected 'cantidad es requerido' and got '%s'", err.Error())
+				}
+			})
+
+			t.Run("invalid quantity", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("quantity", "invalid")
+				form.Add("cost", "1")
+
+				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
+				if err == nil {
+					t.Error("Expected an error and got none")
+				}
+
+				if err.Error() != "cantidad debe ser un número válido" {
+					t.Errorf("Expected 'cantidad debe ser un número válido' and got '%s'", err.Error())
+				}
+			})
+
+			t.Run("quantity must be a positive number", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("quantity", "-4")
+				form.Add("cost", "1")
+
+				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
+				if err == nil {
+					t.Error("Expected an error and got none")
+				}
+
+				if err.Error() != "cantidad debe ser un número positivo" {
+					t.Errorf("Expected 'cantidad debe ser un número positivo' and got '%s'", err.Error())
+				}
+			})
+		})
+
+		t.Run("invalid cost", func(t *testing.T) {
+			t.Run("empty cost", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("quantity", "1")
+
+				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
+				if err == nil {
+					t.Error("Expected an error and got none")
+				}
+
+				if err.Error() != "costo es requerido" {
+					t.Errorf("Expected 'costo es requerido' and got '%s'", err.Error())
+				}
+			})
+
+			t.Run("invalid cost", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("cost", "invalid")
+				form.Add("quantity", "1")
+
+				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
+				if err == nil {
+					t.Error("Expected an error and got none")
+				}
+
+				if err.Error() != "costo debe ser un número válido" {
+					t.Errorf("Expected 'costo debe ser un número válido' and got '%s'", err.Error())
+				}
+			})
+
+			t.Run("cost must be a positive number", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("cost", "-4")
+				form.Add("quantity", "1")
+
+				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
 				if err == nil {
 					t.Error("Expected an error and got none")
 				}
