@@ -1,7 +1,6 @@
 package server
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,46 +15,6 @@ import (
 	"bca-go-final/internal/views/bca/transaction/partials"
 )
 
-func createBudget(form url.Values, companyId uuid.UUID, s *Server) (types.Budget, error) {
-
-	projectID, err := utils.ValidateUUID(form.Get("project"), "proyecto")
-	if err != nil {
-		return types.Budget{}, err
-	}
-	budgetItemID, err := utils.ValidateUUID(form.Get("budgetItem"), "partida")
-	if err != nil {
-		return types.Budget{}, err
-	}
-
-	quantity, err := utils.ConvertFloat(form.Get("quantity"), "cantidad", true)
-	if err != nil {
-		return types.Budget{}, err
-	}
-
-	cost, err := utils.ConvertFloat(form.Get("cost"), "costo", true)
-	if err != nil {
-		return types.Budget{}, err
-	}
-	budgetInfo := &types.CreateBudget{
-		ProjectId:    projectID,
-		BudgetItemId: budgetItemID,
-		CompanyId:    companyId,
-		Quantity:     quantity,
-		Cost:         cost,
-	}
-
-	budget, err := s.DB.CreateBudget(budgetInfo)
-	if err != nil {
-		if strings.Contains(err.Error(), "duplicate") {
-			return types.Budget{}, errors.New(fmt.Sprintf("Ya existe partida %s en el proyecto %s", budgetInfo.BudgetItemId, budgetInfo.ProjectId))
-		}
-		log.Println(fmt.Sprintf("Error creating budget. Err: %v", err))
-		return types.Budget{}, err
-	}
-
-	return budget, nil
-}
-
 func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
@@ -63,12 +22,56 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
 		form := r.Form
-		_, err := createBudget(form, ctx.CompanyId, s)
-
+		projectID, err := utils.ValidateUUID(form.Get("project"), "proyecto")
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
 			return
 		}
+		budgetItemID, err := utils.ValidateUUID(form.Get("budgetItem"), "partida")
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		q := form.Get("quantity")
+		quantity, err := utils.ConvertFloat(q, "cantidad", true)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		cost, err := utils.ConvertFloat(form.Get("cost"), "costo", true)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		budgetInfo := &types.CreateBudget{
+			ProjectId:    projectID,
+			BudgetItemId: budgetItemID,
+			CompanyId:    ctx.CompanyId,
+			Quantity:     quantity,
+			Cost:         cost,
+		}
+
+		_, err = s.DB.CreateBudget(budgetInfo)
+		if err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusConflict)
+				w.Write([]byte(fmt.Sprintf("Ya existe partida %s en el proyecto %s", budgetInfo.BudgetItemId, budgetInfo.ProjectId)))
+				return
+			}
+
+			log.Println(fmt.Sprintf("Error creating budget. Err: %v", err))
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
 	}
 
 	searchTerm := r.URL.Query().Get("buscar")
