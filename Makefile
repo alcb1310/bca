@@ -34,12 +34,18 @@ test:
 	@echo "Testing..."
 	@go clean -testcache
 	@echo "Cache cleaned..."
-	@go test ./tests -v
+	@go test ./... -cover
 
 # Clean the binary
 clean:
 	@echo "Cleaning..."
 	@rm -f main
+
+# Coverage report
+cover: 
+	@go clean -testcache
+	@go test ./... -coverprofile=coverage.out
+	@go tool cover -html=coverage.out
 
 # Live Reload
 watch:
