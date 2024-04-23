@@ -16,12 +16,12 @@ func ConvertFloat(value, field string, required bool) (val float64, err error) {
 	val, err = strconv.ParseFloat(value, 64)
 
 	if err != nil {
-		err = errors.New(fmt.Sprintf("%s debe ser un número válido", field))
+		return val, errors.New(fmt.Sprintf("%s debe ser un número válido", field))
 	}
 
 	if val < 0 {
-		err = errors.New(fmt.Sprintf("%s debe ser un número positivo", field))
+		return val, errors.New(fmt.Sprintf("%s debe ser un número positivo", field))
 	}
 
-	return
+	return val, nil
 }
