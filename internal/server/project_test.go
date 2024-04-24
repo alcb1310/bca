@@ -279,3 +279,29 @@ func TestProjectsTable(t *testing.T) {
 		})
 	})
 }
+
+func TestProjectAdd(t *testing.T) {
+	db := database.ServiceMock{}
+	_, router := NewServer(db)
+
+	response := httptest.NewRecorder()
+	request := &http.Request{
+		Method: http.MethodGet,
+		URL: &url.URL{
+			Path: "/bca/partials/projects/add",
+		},
+	}
+
+	router.ProjectAdd(response, request)
+
+	got := response.Code
+	want := http.StatusOK
+	if got != want {
+		t.Errorf("got %d, want %d", got, want)
+	}
+
+	expected := "Agregar Proyecto"
+	if !strings.Contains(response.Body.String(), expected) {
+		t.Errorf("expected %s, got %s", expected, response.Body.String())
+	}
+}
