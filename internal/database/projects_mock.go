@@ -17,6 +17,9 @@ func (s ServiceMock) GetProject(id, companyId uuid.UUID) (types.Project, error) 
 }
 
 func (s ServiceMock) UpdateProject(project types.Project, id, companyId uuid.UUID) error {
+	if project.Name == "exists" {
+		return errors.New("conflict duplicate key value violates unique constraint")
+	}
 	return nil
 }
 

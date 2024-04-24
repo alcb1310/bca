@@ -132,6 +132,11 @@ func TestProjectsTable(t *testing.T) {
 				if got != want {
 					t.Errorf("got %d, want %d", got, want)
 				}
+
+				expected := "El nombre exists ya existe"
+				if !strings.Contains(response.Body.String(), expected) {
+					t.Errorf("expected %s, got %s", expected, response.Body.String())
+				}
 			})
 		})
 	})
@@ -334,4 +339,180 @@ func TestProjectEdit(t *testing.T) {
 	if !strings.Contains(response.Body.String(), expected) {
 		t.Errorf("expected %s, got %s", expected, response.Body.String())
 	}
+}
+
+func TestProjectEditSave(t *testing.T) {
+	db := database.ServiceMock{}
+	_, router := NewServer(db)
+
+	t.Run("successful edit", func(t *testing.T) {
+		response := httptest.NewRecorder()
+		formData := url.Values{
+			"name":       {"prueba"},
+			"gross_area": {"100"},
+			"net_area":   {"100"},
+		}
+
+		request := &http.Request{
+			Method: http.MethodPost,
+			URL: &url.URL{
+				Path: fmt.Sprintf("/bca/partials/projects/edit/%s", uuid.New().String()),
+			},
+			Form: formData,
+		}
+
+		router.ProjectEditSave(response, request)
+
+		got := response.Code
+		want := http.StatusOK
+		if got != want {
+			t.Errorf("got %d, want %d", got, want)
+		}
+	})
+
+	t.Run("unsuccessful edit", func(t *testing.T) {
+		t.Run("duplicate name", func(t *testing.T) {
+			response := httptest.NewRecorder()
+			formData := url.Values{
+				"name":       {"exists"},
+				"gross_area": {"100"},
+				"net_area":   {"100"},
+			}
+
+			request := &http.Request{
+				Method: http.MethodPost,
+				URL: &url.URL{
+					Path: fmt.Sprintf("/bca/partials/projects/edit/%s", uuid.New().String()),
+				},
+				Form: formData,
+			}
+
+			router.ProjectEditSave(response, request)
+
+			got := response.Code
+			want := http.StatusConflict
+			if got != want {
+				t.Errorf("got %d, want %d", got, want)
+			}
+
+			expected := "El nombre exists ya existe"
+			if !strings.Contains(response.Body.String(), expected) {
+				t.Errorf("expected %s, got %s", expected, response.Body.String())
+			}
+		})
+
+		t.Run("gross area", func(t *testing.T) {
+			t.Run("invalid gross area", func(t *testing.T) {
+				response := httptest.NewRecorder()
+				formData := url.Values{
+					"name":       {"prueba"},
+					"gross_area": {"invalid"},
+					"net_area":   {"100"},
+				}
+
+				request := &http.Request{
+					Method: http.MethodPost,
+					URL: &url.URL{
+						Path: fmt.Sprintf("/bca/partials/projects/edit/%s", uuid.New().String()),
+					},
+					Form: formData,
+				}
+
+				router.ProjectEditSave(response, request)
+
+				got := response.Code
+				want := http.StatusBadRequest
+				if got != want {
+					t.Errorf("got %d, want %d", got, want)
+				}
+
+				expected := "área bruta debe ser un número válido"
+				if !strings.Contains(response.Body.String(), expected) {
+					t.Errorf("expected %s, got %s", expected, response.Body.String())
+				}
+			})
+
+			t.Run("negative gross area", func(t *testing.T) {
+				response := httptest.NewRecorder()
+				formData := url.Values{
+					"name":       {"prueba"},
+					"gross_area": {"-1"},
+					"net_area":   {"100"},
+				}
+
+				request := &http.Request{
+					Method: http.MethodPost,
+					URL: &url.URL{
+						Path: fmt.Sprintf("/bca/partials/projects/edit/%s", uuid.New().String()),
+					},
+					Form: formData,
+				}
+
+				router.ProjectEditSave(response, request)
+
+				got := response.Code
+				want := http.StatusBadRequest
+				if got != want {
+					t.Errorf("got %d, want %d", got, want)
+				}
+
+				expected := "área bruta debe ser un número positivo"
+				if !strings.Contains(response.Body.String(), expected) {
+					t.Errorf("expected %s, got %s", expected, response.Body.String())
+				}
+			})
+		})
+
+		t.Run("net area", func(t *testing.T) {
+			t.Run("invalid net area", func(t *testing.T) {
+				response := httptest.NewRecorder()
+				formData := url.Values{
+					"name":       {"prueba"},
+					"gross_area": {"100"},
+					"net_area":   {"invalid"},
+				}
+
+				request := &http.Request{
+					Method: http.MethodPost,
+					URL: &url.URL{
+						Path: fmt.Sprintf("/bca/partials/projects/edit/%s", uuid.New().String()),
+					},
+					Form: formData,
+				}
+
+				router.ProjectEditSave(response, request)
+
+				got := response.Code
+				want := http.StatusBadRequest
+				if got != want {
+					t.Errorf("got %d, want %d", got, want)
+				}
+			})
+
+			t.Run("negative net area", func(t *testing.T) {
+				response := httptest.NewRecorder()
+				formData := url.Values{
+					"name":       {"prueba"},
+					"gross_area": {"100"},
+					"net_area":   {"-1"},
+				}
+
+				request := &http.Request{
+					Method: http.MethodPost,
+					URL: &url.URL{
+						Path: fmt.Sprintf("/bca/partials/projects/edit/%s", uuid.New().String()),
+					},
+					Form: formData,
+				}
+
+				router.ProjectEditSave(response, request)
+
+				got := response.Code
+				want := http.StatusBadRequest
+				if got != want {
+					t.Errorf("got %d, want %d", got, want)
+				}
+			})
+		})
+	})
 }
