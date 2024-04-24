@@ -1,6 +1,8 @@
 package database
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 
 	"bca-go-final/internal/types"
@@ -23,5 +25,8 @@ func (s ServiceMock) GetActiveProjects(companyId uuid.UUID, active bool) []types
 }
 
 func (s ServiceMock) CreateProject(p types.Project) (types.Project, error) {
+	if p.Name == "exists" {
+		return types.Project{}, errors.New("conflict duplicate key value violates unique constraint")
+	}
 	return types.Project{}, nil
 }

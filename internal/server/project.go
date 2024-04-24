@@ -17,6 +17,11 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctxPayload, _ := utils.GetMyPaload(r)
 
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		x := r.Form.Get("active") == "active"
@@ -27,7 +32,7 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 		}
 		if p.Name == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para el nombre"))
+			w.Write([]byte("El nombre del proyecto es requerido"))
 			return
 		}
 		if r.Form.Get("gross_area") != "" {
