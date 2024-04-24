@@ -18,6 +18,11 @@ import (
 func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 
@@ -135,6 +140,9 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 		}
 		component := partials.EditBudget(budget, projects, budgetItems)
 		component.Render(r.Context(), w)
+
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
 

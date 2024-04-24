@@ -33,20 +33,34 @@ func TestBudgetsTable(t *testing.T) {
 
 	t.Run("Successful budgets request", func(t *testing.T) {
 		t.Run("Should return 200 when GET budgets", func(t *testing.T) {
-			response := httptest.NewRecorder()
-			request, _ := http.NewRequest(http.MethodGet, "/bca/partials/budget", nil)
-			router.BudgetsTable(response, request)
+			t.Run("No filter", func(t *testing.T) {
+				response := httptest.NewRecorder()
+				request, _ := http.NewRequest(http.MethodGet, "/bca/partials/budget", nil)
+				router.BudgetsTable(response, request)
 
-			got := response.Code
-			want := http.StatusOK
-			if got != want {
-				t.Errorf("got %d, want %d", got, want)
-			}
+				got := response.Code
+				want := http.StatusOK
+				if got != want {
+					t.Errorf("got %d, want %d", got, want)
+				}
 
-			expected := `<table><thead><tr><th width="180px" rowspan="2">Proyecto</th><th width="380px" rowspan="2">Partida</th><th colspan="3">Por Gastar</th><th width="130px" rowspan="2">Actualizado</th><th width="30px" rowspan="2"></th></tr><tr><th width="130px">Cantidad</th><th width="130px">Unitario</th><th width="130px">Total</th></tr></thead> <tbody><tr><td colspan="8">No existen presupuestos</td></tr></tbody></table>`
-			if response.Body.String() != expected {
-				t.Errorf("got %s, want %s", response.Body.String(), expected)
-			}
+				expected := `<table><thead><tr><th width="180px" rowspan="2">Proyecto</th><th width="380px" rowspan="2">Partida</th><th colspan="3">Por Gastar</th><th width="130px" rowspan="2">Actualizado</th><th width="30px" rowspan="2"></th></tr><tr><th width="130px">Cantidad</th><th width="130px">Unitario</th><th width="130px">Total</th></tr></thead> <tbody><tr><td colspan="8">No existen presupuestos</td></tr></tbody></table>`
+				if response.Body.String() != expected {
+					t.Errorf("got %s, want %s", response.Body.String(), expected)
+				}
+			})
+
+			t.Run("With filter", func(t *testing.T) {
+				response := httptest.NewRecorder()
+				request, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/bca/partials/budget?proyecto=%s&buscar=%s", projectDuplicate, "term"), nil)
+				router.BudgetsTable(response, request)
+
+				got := response.Code
+				want := http.StatusOK
+				if got != want {
+					t.Errorf("got %d, want %d", got, want)
+				}
+			})
 		})
 
 		t.Run("Valid POST request", func(t *testing.T) {
@@ -395,118 +409,382 @@ func TestBudgetsTable(t *testing.T) {
 			})
 		})
 	})
-}
 
-func TestUpdateBudget(t *testing.T) {
-	db := database.ServiceMock{}
-	_, srv := NewServer(db)
+	t.Run("Unsupported request methods", func(t *testing.T) {
+		t.Run("PATCH", func(t *testing.T) {
+			response := httptest.NewRecorder()
+			request := &http.Request{
+				Method: http.MethodPatch,
+				URL: &url.URL{
+					Path: "/bca/partials/budget",
+				},
+			}
+			router.BudgetsTable(response, request)
+			got := response.Code
+			want := http.StatusMethodNotAllowed
+			if got != want {
+				t.Errorf("got %d, want %d", got, want)
+			}
+		})
 
-	t.Run("valid budget data", func(t *testing.T) {
-		t.Run("success", func(t *testing.T) {
-			form := url.Values{}
+		t.Run("DELETE", func(t *testing.T) {
+			response := httptest.NewRecorder()
+			request := &http.Request{
+				Method: http.MethodDelete,
+				URL: &url.URL{
+					Path: "/bca/partials/budget",
+				},
+			}
+			router.BudgetsTable(response, request)
+			got := response.Code
+			want := http.StatusMethodNotAllowed
+			if got != want {
+				t.Errorf("got %d, want %d", got, want)
+			}
+		})
 
-			form.Add("quantity", "1")
-			form.Add("cost", "1")
-
-			err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
-
-			if err != nil {
-				t.Errorf("Expected no error and got %v", err)
+		t.Run("PUT", func(t *testing.T) {
+			response := httptest.NewRecorder()
+			request := &http.Request{
+				Method: http.MethodPut,
+				URL: &url.URL{
+					Path: "/bca/partials/budget",
+				},
+			}
+			router.BudgetsTable(response, request)
+			got := response.Code
+			want := http.StatusMethodNotAllowed
+			if got != want {
+				t.Errorf("got %d, want %d", got, want)
 			}
 		})
 	})
+}
 
-	t.Run("invalid budget data", func(t *testing.T) {
-		t.Run("invalid quantity", func(t *testing.T) {
-			t.Run("empty quantity", func(t *testing.T) {
+func TestBudgetAdd(t *testing.T) {
+	db := database.ServiceMock{}
+	_, srv := NewServer(db)
+
+	t.Run("display budget form", func(t *testing.T) {
+		response := httptest.NewRecorder()
+		request := &http.Request{
+			Method: http.MethodGet,
+			URL: &url.URL{
+				Path: "/bca/partials/budget/add",
+			},
+		}
+		srv.BudgetAdd(response, request)
+		got := response.Code
+		want := http.StatusOK
+		if got != want {
+			t.Errorf("got %d, want %d", got, want)
+		}
+		expected := "Agregar Presupuesto"
+
+		if !strings.Contains(response.Body.String(), expected) {
+			t.Errorf("got %s, want %s", response.Body.String(), expected)
+		}
+
+	})
+}
+
+func TestBudgetEdit(t *testing.T) {
+	db := database.ServiceMock{}
+	_, srv := NewServer(db)
+	projectId := uuid.New().String()
+	budgetItemId := uuid.New().String()
+
+	t.Run("unimplemented method", func(t *testing.T) {
+		response := httptest.NewRecorder()
+		request := &http.Request{
+			Method: http.MethodPost,
+			URL: &url.URL{
+				Path: fmt.Sprintf("/bca/partials/budget/%s/%s", projectId, budgetItemId),
+			},
+		}
+
+		srv.BudgetEdit(response, request)
+		got := response.Code
+		want := http.StatusMethodNotAllowed
+		if got != want {
+			t.Errorf("got %d, want %d", got, want)
+		}
+	})
+
+	t.Run("display edit form", func(t *testing.T) {
+		response := httptest.NewRecorder()
+		request := &http.Request{
+			Method: http.MethodGet,
+			URL: &url.URL{
+				Path: fmt.Sprintf("/bca/partials/budget/%s/%s", projectId, budgetItemId),
+			},
+		}
+		srv.BudgetEdit(response, request)
+		got := response.Code
+		want := http.StatusOK
+		if got != want {
+			t.Errorf("got %d, want %d", got, want)
+		}
+
+		expected := "Editar Presupuesto"
+
+		if !strings.Contains(response.Body.String(), expected) {
+			t.Errorf("got %s, want %s", response.Body.String(), expected)
+		}
+	})
+
+	t.Run("update budget", func(t *testing.T) {
+		t.Run("valid budget data", func(t *testing.T) {
+			t.Run("success", func(t *testing.T) {
+				response := httptest.NewRecorder()
 				form := url.Values{}
+				form.Add("quantity", "1")
 				form.Add("cost", "1")
 
-				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
-				if err == nil {
-					t.Error("Expected an error and got none")
+				request := &http.Request{
+					Method: http.MethodPut,
+					URL: &url.URL{
+						Path: fmt.Sprintf("/bca/partials/budget/%s/%s", projectId, budgetItemId),
+					},
+					Form: form,
 				}
 
-				if err.Error() != "cantidad es requerido" {
-					t.Errorf("Expected 'cantidad es requerido' and got '%s'", err.Error())
-				}
-			})
-
-			t.Run("invalid quantity", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("quantity", "invalid")
-				form.Add("cost", "1")
-
-				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
-				if err == nil {
-					t.Error("Expected an error and got none")
+				srv.BudgetEdit(response, request)
+				got := response.Code
+				want := http.StatusOK
+				if got != want {
+					t.Errorf("got %d, want %d", got, want)
 				}
 
-				if err.Error() != "cantidad debe ser un número válido" {
-					t.Errorf("Expected 'cantidad debe ser un número válido' and got '%s'", err.Error())
-				}
-			})
+				expected := "<table"
 
-			t.Run("quantity must be a positive number", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("quantity", "-4")
-				form.Add("cost", "1")
-
-				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
-				if err == nil {
-					t.Error("Expected an error and got none")
-				}
-
-				if err.Error() != "cantidad debe ser un número positivo" {
-					t.Errorf("Expected 'cantidad debe ser un número positivo' and got '%s'", err.Error())
+				if !strings.Contains(response.Body.String(), expected) {
+					t.Errorf("got %s, want %s", response.Body.String(), expected)
 				}
 			})
 		})
 
-		t.Run("invalid cost", func(t *testing.T) {
-			t.Run("empty cost", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("quantity", "1")
+		t.Run("invalid budget data", func(t *testing.T) {
+			t.Run("invalid quantity", func(t *testing.T) {
+				t.Run("empty quantity", func(t *testing.T) {
+					response := httptest.NewRecorder()
+					form := url.Values{}
+					form.Add("cost", "1")
 
-				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
-				if err == nil {
-					t.Error("Expected an error and got none")
-				}
+					request := &http.Request{
+						Method: http.MethodPut,
+						URL: &url.URL{
+							Path: fmt.Sprintf("/bca/partials/budget/%s/%s", projectId, budgetItemId),
+						},
+						Form: form,
+					}
 
-				if err.Error() != "costo es requerido" {
-					t.Errorf("Expected 'costo es requerido' and got '%s'", err.Error())
-				}
+					srv.BudgetEdit(response, request)
+
+					got := response.Code
+					want := http.StatusBadRequest
+					if got != want {
+						t.Errorf("got %d, want %d", got, want)
+					}
+					expected := "cantidad es requerido"
+					if !strings.Contains(response.Body.String(), expected) {
+						t.Errorf("got %s, want %s", response.Body.String(), expected)
+					}
+				})
+
+				t.Run("invalid quantity", func(t *testing.T) {
+					response := httptest.NewRecorder()
+					form := url.Values{}
+					form.Add("quantity", "invalid")
+					form.Add("cost", "1")
+
+					request := &http.Request{
+						Method: http.MethodPut,
+						URL: &url.URL{
+							Path: fmt.Sprintf("/bca/partials/budget/%s/%s", projectId, budgetItemId),
+						},
+						Form: form,
+					}
+
+					srv.BudgetEdit(response, request)
+
+					got := response.Code
+					want := http.StatusBadRequest
+					if got != want {
+						t.Errorf("got %d, want %d", got, want)
+					}
+
+					expected := "cantidad debe ser un número válido"
+					if !strings.Contains(response.Body.String(), expected) {
+						t.Errorf("got %s, want %s", response.Body.String(), expected)
+					}
+				})
+
+				t.Run("negative quantity", func(t *testing.T) {
+					response := httptest.NewRecorder()
+					form := url.Values{}
+					form.Add("quantity", "-1")
+					form.Add("cost", "1")
+
+					request := &http.Request{
+						Method: http.MethodPut,
+						URL: &url.URL{
+							Path: fmt.Sprintf("/bca/partials/budget/%s/%s", projectId, budgetItemId),
+						},
+						Form: form,
+					}
+
+					srv.BudgetEdit(response, request)
+
+					got := response.Code
+					want := http.StatusBadRequest
+					if got != want {
+						t.Errorf("got %d, want %d", got, want)
+					}
+
+					expected := "cantidad debe ser un número positivo"
+					if !strings.Contains(response.Body.String(), expected) {
+						t.Errorf("got %s, want %s", response.Body.String(), expected)
+					}
+				})
 			})
 
-			t.Run("invalid cost", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("cost", "invalid")
-				form.Add("quantity", "1")
+			t.Run("invalid quantity", func(t *testing.T) {
+				t.Run("empty cost", func(t *testing.T) {
+					response := httptest.NewRecorder()
+					form := url.Values{}
+					form.Add("quantity", "1")
 
-				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
-				if err == nil {
-					t.Error("Expected an error and got none")
-				}
+					request := &http.Request{
+						Method: http.MethodPut,
+						URL: &url.URL{
+							Path: fmt.Sprintf("/bca/partials/budget/%s/%s", projectId, budgetItemId),
+						},
+						Form: form,
+					}
 
-				if err.Error() != "costo debe ser un número válido" {
-					t.Errorf("Expected 'costo debe ser un número válido' and got '%s'", err.Error())
-				}
-			})
+					srv.BudgetEdit(response, request)
 
-			t.Run("cost must be a positive number", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("cost", "-4")
-				form.Add("quantity", "1")
+					got := response.Code
+					want := http.StatusBadRequest
+					if got != want {
+						t.Errorf("got %d, want %d", got, want)
+					}
+					expected := "costo es requerido"
+					if !strings.Contains(response.Body.String(), expected) {
+						t.Errorf("got %s, want %s", response.Body.String(), expected)
+					}
+				})
 
-				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
-				if err == nil {
-					t.Error("Expected an error and got none")
-				}
+				t.Run("invalid cost", func(t *testing.T) {
+					response := httptest.NewRecorder()
+					form := url.Values{}
+					form.Add("cost", "invalid")
+					form.Add("quantity", "1")
 
-				if err.Error() != "costo debe ser un número positivo" {
-					t.Errorf("Expected 'costo debe ser un número positivo' and got '%s'", err.Error())
-				}
+					request := &http.Request{
+						Method: http.MethodPut,
+						URL: &url.URL{
+							Path: fmt.Sprintf("/bca/partials/budget/%s/%s", projectId, budgetItemId),
+						},
+						Form: form,
+					}
+
+					srv.BudgetEdit(response, request)
+
+					got := response.Code
+					want := http.StatusBadRequest
+					if got != want {
+						t.Errorf("got %d, want %d", got, want)
+					}
+
+					expected := "costo debe ser un número válido"
+					if !strings.Contains(response.Body.String(), expected) {
+						t.Errorf("got %s, want %s", response.Body.String(), expected)
+					}
+				})
+
+				t.Run("negative cost", func(t *testing.T) {
+					response := httptest.NewRecorder()
+					form := url.Values{}
+					form.Add("cost", "-1")
+					form.Add("quantity", "1")
+
+					request := &http.Request{
+						Method: http.MethodPut,
+						URL: &url.URL{
+							Path: fmt.Sprintf("/bca/partials/budget/%s/%s", projectId, budgetItemId),
+						},
+						Form: form,
+					}
+
+					srv.BudgetEdit(response, request)
+
+					got := response.Code
+					want := http.StatusBadRequest
+					if got != want {
+						t.Errorf("got %d, want %d", got, want)
+					}
+
+					expected := "costo debe ser un número positivo"
+					if !strings.Contains(response.Body.String(), expected) {
+						t.Errorf("got %s, want %s", response.Body.String(), expected)
+					}
+				})
 			})
 		})
 	})
 }
+
+// func TestUpdateBudget(t *testing.T) {
+// 	db := database.ServiceMock{}
+// 	_, srv := NewServer(db)
+//
+// 	t.Run("invalid budget data", func(t *testing.T) {
+// 		t.Run("invalid cost", func(t *testing.T) {
+// 			t.Run("empty cost", func(t *testing.T) {
+// 				form := url.Values{}
+// 				form.Add("quantity", "1")
+//
+// 				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
+// 				if err == nil {
+// 					t.Error("Expected an error and got none")
+// 				}
+//
+// 				if err.Error() != "costo es requerido" {
+// 					t.Errorf("Expected 'costo es requerido' and got '%s'", err.Error())
+// 				}
+// 			})
+//
+// 			t.Run("invalid cost", func(t *testing.T) {
+// 				form := url.Values{}
+// 				form.Add("cost", "invalid")
+// 				form.Add("quantity", "1")
+//
+// 				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
+// 				if err == nil {
+// 					t.Error("Expected an error and got none")
+// 				}
+//
+// 				if err.Error() != "costo debe ser un número válido" {
+// 					t.Errorf("Expected 'costo debe ser un número válido' and got '%s'", err.Error())
+// 				}
+// 			})
+//
+// 			t.Run("cost must be a positive number", func(t *testing.T) {
+// 				form := url.Values{}
+// 				form.Add("cost", "-4")
+// 				form.Add("quantity", "1")
+//
+// 				err := updateBudget(form, uuid.New(), uuid.New(), companyId, &oldBudget, srv)
+// 				if err == nil {
+// 					t.Error("Expected an error and got none")
+// 				}
+//
+// 				if err.Error() != "costo debe ser un número positivo" {
+// 					t.Errorf("Expected 'costo debe ser un número positivo' and got '%s'", err.Error())
+// 				}
+// 			})
+// 		})
+// 	})
+// }
