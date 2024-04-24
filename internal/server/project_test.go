@@ -1,11 +1,14 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/google/uuid"
 
 	"bca-go-final/internal/database"
 )
@@ -301,6 +304,33 @@ func TestProjectAdd(t *testing.T) {
 	}
 
 	expected := "Agregar Proyecto"
+	if !strings.Contains(response.Body.String(), expected) {
+		t.Errorf("expected %s, got %s", expected, response.Body.String())
+	}
+}
+
+func TestProjectEdit(t *testing.T) {
+	db := database.ServiceMock{}
+	_, router := NewServer(db)
+	projectId := uuid.New().String()
+
+	response := httptest.NewRecorder()
+	request := &http.Request{
+		Method: http.MethodGet,
+		URL: &url.URL{
+			Path: fmt.Sprintf("/bca/partials/project/%s", projectId),
+		},
+	}
+
+	router.ProjectEdit(response, request)
+
+	got := response.Code
+	want := http.StatusOK
+	if got != want {
+		t.Errorf("got %d, want %d", got, want)
+	}
+
+	expected := "Editar Proyecto"
 	if !strings.Contains(response.Body.String(), expected) {
 		t.Errorf("expected %s, got %s", expected, response.Body.String())
 	}
