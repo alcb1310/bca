@@ -1,11 +1,14 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/google/uuid"
 
 	"bca-go-final/internal/database"
 )
@@ -226,10 +229,31 @@ func TestSupplierAdd(t *testing.T) {
 	}
 }
 
-// TODO: Create the TestSupplierEdit
 func TestSupplierEdit(t *testing.T) {
-	// TEST: Should display the edit supplier form
-	t.Skip("Test not implemented")
+	db := database.ServiceMock{}
+	_, router := NewServer(db)
+	supplierId := uuid.New().String()
+
+	response := httptest.NewRecorder()
+	request := &http.Request{
+		Method: http.MethodGet,
+		URL: &url.URL{
+			Path: fmt.Sprintf("/bca/partials/suppliers/%s", supplierId),
+		},
+	}
+
+	router.SuppliersEdit(response, request)
+
+	got := response.Code
+	want := http.StatusOK
+	if got != want {
+		t.Errorf("got %d, want %d", got, want)
+	}
+
+	expected := "Editar Proveedor"
+	if !strings.Contains(response.Body.String(), expected) {
+		t.Errorf("expected %s, got %s", expected, response.Body.String())
+	}
 }
 
 // TODO: Create the TestSupplierEditSave
