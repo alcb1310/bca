@@ -1,6 +1,8 @@
 package database
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 
 	"bca-go-final/internal/types"
@@ -11,6 +13,13 @@ func (s ServiceMock) GetAllSuppliers(companyId uuid.UUID, search string) ([]type
 }
 
 func (s ServiceMock) CreateSupplier(supplier *types.Supplier) error {
+	if supplier.SupplierId == "0123456789" {
+		return errors.New("duplicate key value violates unique constraint \"supplier_supplier_id_key\"")
+	}
+
+	if supplier.Name == "exists" {
+		return errors.New("conflict duplicate key value violates unique constraint \"supplier_name_key\"")
+	}
 	return nil
 }
 

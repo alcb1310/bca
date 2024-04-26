@@ -15,6 +15,11 @@ import (
 )
 
 func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
 	ctxPayload, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
