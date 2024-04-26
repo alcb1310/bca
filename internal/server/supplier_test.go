@@ -256,24 +256,177 @@ func TestSupplierEdit(t *testing.T) {
 	}
 }
 
-// TODO: Create the TestSupplierEditSave
 func TestSupplierEditSave(t *testing.T) {
-	// TEST: Should save supplier
+	db := database.ServiceMock{}
+	_, router := NewServer(db)
+
 	t.Run("Successful request", func(t *testing.T) {
-		t.Skip("Test not implemented")
+		response := httptest.NewRecorder()
+		supplierId := uuid.New().String()
+
+		form := url.Values{
+			"supplier_id":   {"1234567890"},
+			"name":          {"prueba"},
+			"contact_name":  {"prueba"},
+			"contact_phone": {"1234567890"},
+			"contact_email": {"prueba@example.com"},
+		}
+
+		request := &http.Request{
+			Method: http.MethodPut,
+			URL: &url.URL{
+				Path: fmt.Sprintf("/bca/partials/suppliers/edit/%s", supplierId),
+			},
+			Form: form,
+		}
+
+		router.SuppliersEditSave(response, request)
+
+		got := response.Code
+		want := http.StatusOK
+		if got != want {
+			t.Errorf("got %d, want %d", got, want)
+		}
 	})
 
 	t.Run("Invalid data", func(t *testing.T) {
-		// TEST: Empty RUC should return error
 		t.Run("Empty RUC", func(t *testing.T) {
-			t.Skip()
+			response := httptest.NewRecorder()
+			supplierId := uuid.New().String()
+
+			form := url.Values{
+				"name":          {"prueba"},
+				"contact_name":  {"prueba"},
+				"contact_phone": {"1234567890"},
+			}
+
+			request := &http.Request{
+				Method: http.MethodPut,
+				URL: &url.URL{
+					Path: fmt.Sprintf("/bca/partials/suppliers/edit/%s", supplierId),
+				},
+				Form: form,
+			}
+
+			router.SuppliersEditSave(response, request)
+			got := response.Code
+			want := http.StatusBadRequest
+			if got != want {
+				t.Errorf("got %d, want %d", got, want)
+			}
+
+			expected := "Ingrese un valor para el RUC"
+			responseBody := response.Body.String()
+			if !strings.Contains(responseBody, expected) {
+				t.Errorf("expected %s, got %s", expected, responseBody)
+			}
 		})
 
-		// TEST: Empty Name should return error
 		t.Run("Empty Name", func(t *testing.T) {
-			t.Skip()
+			response := httptest.NewRecorder()
+			supplierId := uuid.New().String()
+
+			form := url.Values{
+				"supplier_id":   {"0123456789"},
+				"contact_name":  {"prueba"},
+				"contact_phone": {"1234567890"},
+			}
+
+			request := &http.Request{
+				Method: http.MethodPut,
+				URL: &url.URL{
+					Path: fmt.Sprintf("/bca/partials/suppliers/edit/%s", supplierId),
+				},
+				Form: form,
+			}
+
+			router.SuppliersEditSave(response, request)
+
+			got := response.Code
+			want := http.StatusBadRequest
+			if got != want {
+				t.Errorf("got %d, want %d", got, want)
+			}
+
+			expected := "Ingrese un valor para el nombre"
+			responseBody := response.Body.String()
+			if !strings.Contains(responseBody, expected) {
+				t.Errorf("expected %s, got %s", expected, responseBody)
+			}
+		})
+
+		t.Run("Conflict", func(t *testing.T) {
+			t.Run("Existing supplier_id", func(t *testing.T) {
+				response := httptest.NewRecorder()
+				supplierId := uuid.New().String()
+
+				form := url.Values{
+					"supplier_id":   {"0123456789"},
+					"name":          {"prueba"},
+					"contact_name":  {"prueba"},
+					"contact_phone": {"1234567890"},
+					"contact_email": {"prueba@example.com"},
+				}
+
+				request := &http.Request{
+					Method: http.MethodPut,
+					URL: &url.URL{
+						Path: fmt.Sprintf("/bca/partials/suppliers/edit/%s", supplierId),
+					},
+					Form: form,
+				}
+
+				router.SuppliersEditSave(response, request)
+
+				got := response.Code
+				want := http.StatusConflict
+				if got != want {
+					t.Errorf("got %d, want %d", got, want)
+				}
+
+				expected := "El ruc 0123456789 y/o nombre prueba ya existe"
+				received := response.Body.String()
+
+				if expected != received {
+					t.Errorf("got %s, want %s", received, expected)
+				}
+			})
+
+			t.Run("Existing supplier_id", func(t *testing.T) {
+				response := httptest.NewRecorder()
+				supplierId := uuid.New().String()
+
+				form := url.Values{
+					"supplier_id":   {"023456789"},
+					"name":          {"exists"},
+					"contact_name":  {"prueba"},
+					"contact_phone": {"1234567890"},
+					"contact_email": {"prueba@example.com"},
+				}
+
+				request := &http.Request{
+					Method: http.MethodPut,
+					URL: &url.URL{
+						Path: fmt.Sprintf("/bca/partials/suppliers/edit/%s", supplierId),
+					},
+					Form: form,
+				}
+
+				router.SuppliersEditSave(response, request)
+
+				got := response.Code
+				want := http.StatusConflict
+				if got != want {
+					t.Errorf("got %d, want %d", got, want)
+				}
+
+				expected := "El ruc 023456789 y/o nombre exists ya existe"
+				received := response.Body.String()
+
+				if expected != received {
+					t.Errorf("got %s, want %s", received, expected)
+				}
+			})
 		})
 	})
-}
-}
 }
