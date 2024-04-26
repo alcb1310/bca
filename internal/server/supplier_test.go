@@ -200,8 +200,30 @@ func TestSuppliersTable(t *testing.T) {
 	})
 }
 
-// TODO: Create the TestSupplierAdd
 func TestSupplierAdd(t *testing.T) {
+	db := database.ServiceMock{}
+	_, router := NewServer(db)
+
+	response := httptest.NewRecorder()
+	request := &http.Request{
+		Method: http.MethodGet,
+		URL: &url.URL{
+			Path: "/bca/partials/suppliers/add",
+		},
+	}
+
+	router.SupplierAdd(response, request)
+
+	got := response.Code
+	want := http.StatusOK
+	if got != want {
+		t.Errorf("got %d, want %d", got, want)
+	}
+
+	expected := "Agregar Proveedor"
+	if !strings.Contains(response.Body.String(), expected) {
+		t.Errorf("expected %s, got %s", expected, response.Body.String())
+	}
 }
 
 // TODO: Create the TestSupplierEdit

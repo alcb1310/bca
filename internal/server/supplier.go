@@ -78,13 +78,7 @@ func (s *Server) SupplierAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SuppliersEdit(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, err := utils.ValidateUUID(id, "proveedor")
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
-		return
-	}
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "proveedor")
 
 	sup, _ := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
 	component := partials.EditSupplier(&sup)
@@ -93,13 +87,7 @@ func (s *Server) SuppliersEdit(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, err := utils.ValidateUUID(id, "proveedor")
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
-		return
-	}
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "proyecto")
 
 	sup, _ := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
 	r.ParseForm()
