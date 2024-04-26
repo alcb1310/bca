@@ -1,10 +1,36 @@
 package server
 
-import "testing"
+import (
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
 
-// TEST: Profile function
+	"bca-go-final/internal/database"
+)
+
 func TestProfile(t *testing.T) {
-	t.Skip("Not implemented")
+	db := database.ServiceMock{}
+	_, router := NewServer(db)
+
+	response := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/bca/user/perfil", nil)
+
+	router.Profile(response, request)
+
+	got := response.Code
+	want := http.StatusOK
+
+	if got != want {
+		t.Errorf("Got %d, want %d", got, want)
+	}
+
+	expected := "Mi Perfil"
+	recieved := response.Body.String()
+
+	if !strings.Contains(recieved, expected) {
+		t.Errorf("Response does not contain %s, but is %s", expected, recieved)
+	}
 }
 
 // TEST: Admin function
