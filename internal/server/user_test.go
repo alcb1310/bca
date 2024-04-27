@@ -33,9 +33,28 @@ func TestProfile(t *testing.T) {
 	}
 }
 
-// TEST: Admin function
 func TestAdmin(t *testing.T) {
-	t.Skip("Not implemented")
+	db := database.ServiceMock{}
+	_, router := NewServer(db)
+
+	response := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/bca/user/admin", nil)
+
+	router.Admin(response, request)
+
+	got := response.Code
+	want := http.StatusOK
+
+	if got != want {
+		t.Errorf("Got %d, want %d", got, want)
+	}
+
+	expected := "Administrar usuarios"
+	recieved := response.Body.String()
+
+	if !strings.Contains(recieved, expected) {
+		t.Errorf("Response does not contain %s, but is %s", expected, recieved)
+	}
 }
 
 // TEST: ChangePassword function
