@@ -25,7 +25,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			if err == io.EOF {
 				resp["error"] = err.Error()
 			} else {
-				resp["error"] = "employees must be a number"
+				resp["error"] = "employees must be a valid positive number"
 				resp["field"] = "employees"
 			}
 			jsonResp, err := json.Marshal(resp)
