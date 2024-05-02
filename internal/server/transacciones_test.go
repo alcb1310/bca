@@ -41,3 +41,16 @@ func TestBudget(t *testing.T) {
 	assert.Contains(t, response.Body.String(), "Presupuesto")
 	assert.Contains(t, response.Body.String(), "Proyecto 1")
 }
+
+func TestInvoice(t *testing.T) {
+	db := mocks.NewServiceMock()
+	_, srv := server.NewServer(db)
+
+	response := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/bca/transacciones/facturas", nil)
+
+	srv.Invoice(response, request)
+
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Facturas")
+}
