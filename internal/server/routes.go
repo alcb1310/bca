@@ -14,13 +14,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Use(s.authVerify)
 
 	r.HandleFunc("/", s.HelloWorldHandler)
-	r.HandleFunc("/api/login", s.Login)
-	r.HandleFunc("/api/register", s.Register)
+	r.HandleFunc("/api/login", s.Login)       // Fully tested
+	r.HandleFunc("/api/register", s.Register) // Fully tested
 	r.HandleFunc("/bca/dummy", s.loadDummyDataHandler)
 
 	// views
 
-	r.HandleFunc("/login", s.LoginView)
+	r.HandleFunc("/login", s.LoginView) // Fully tested
 	r.HandleFunc("/bca", s.BcaView)
 	r.HandleFunc("/bca/logout", s.Logout)
 	r.HandleFunc("/bca/transacciones/presupuesto", s.Budget)
