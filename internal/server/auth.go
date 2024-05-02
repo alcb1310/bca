@@ -1,13 +1,14 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"strings"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 )
 
 func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
