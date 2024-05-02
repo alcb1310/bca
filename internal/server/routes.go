@@ -21,8 +21,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// views
 
 	r.HandleFunc("/login", s.LoginView) // Fully tested
-	r.HandleFunc("/bca", s.BcaView)
+	r.HandleFunc("/bca", s.BcaView)     // Fully tested
 	r.HandleFunc("/bca/logout", s.Logout)
+
 	r.HandleFunc("/bca/transacciones/presupuesto", s.Budget)
 	r.HandleFunc("/bca/transacciones/facturas", s.Invoice)
 	r.HandleFunc("/bca/transacciones/facturas/crear", s.InvoiceAdd)

@@ -139,3 +139,16 @@ func TestLoginView(t *testing.T) {
 		assert.Equal(t, http.StatusMethodNotAllowed, response.Code)
 	})
 }
+
+func TestBcaView(t *testing.T) {
+	db := mocks.NewServiceMock()
+	_, srv := server.NewServer(db)
+
+	response := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/bca", nil)
+
+	srv.BcaView(response, request)
+
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Bienvenido")
+}
