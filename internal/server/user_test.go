@@ -3,14 +3,15 @@ package server
 import (
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
-	"bca-go-final/internal/database"
+	"github.com/stretchr/testify/assert"
+
+	"bca-go-final/mocks"
 )
 
 func TestProfile(t *testing.T) {
-	db := database.ServiceMock{}
+	db := mocks.NewServiceMock()
 	_, router := NewServer(db)
 
 	response := httptest.NewRecorder()
@@ -18,23 +19,12 @@ func TestProfile(t *testing.T) {
 
 	router.Profile(response, request)
 
-	got := response.Code
-	want := http.StatusOK
-
-	if got != want {
-		t.Errorf("Got %d, want %d", got, want)
-	}
-
-	expected := "Mi Perfil"
-	recieved := response.Body.String()
-
-	if !strings.Contains(recieved, expected) {
-		t.Errorf("Response does not contain %s, but is %s", expected, recieved)
-	}
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Mi Perfil")
 }
 
 func TestAdmin(t *testing.T) {
-	db := database.ServiceMock{}
+	db := mocks.NewServiceMock()
 	_, router := NewServer(db)
 
 	response := httptest.NewRecorder()
@@ -42,24 +32,21 @@ func TestAdmin(t *testing.T) {
 
 	router.Admin(response, request)
 
-	got := response.Code
-	want := http.StatusOK
-
-	if got != want {
-		t.Errorf("Got %d, want %d", got, want)
-	}
-
-	expected := "Administrar usuarios"
-	recieved := response.Body.String()
-
-	if !strings.Contains(recieved, expected) {
-		t.Errorf("Response does not contain %s, but is %s", expected, recieved)
-	}
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Administrar usuarios")
 }
 
-// TEST: ChangePassword function
 func TestChangePassword(t *testing.T) {
-	t.Skip("Not implemented")
+	db := mocks.NewServiceMock()
+	_, router := NewServer(db)
+
+	response := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/bca/user/cambio", nil)
+
+	router.ChangePassword(response, request)
+
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Cambiar Contraseña")
 }
 
 // TEST: SingleUser function
