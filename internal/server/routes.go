@@ -41,7 +41,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/configuracion/proyectos", s.Projects)    // Fully tested
 	r.HandleFunc("/bca/configuracion/categorias", s.Categories) // Fully tested
 	r.HandleFunc("/bca/configuracion/materiales", s.Materiales) // Fully tested
-	r.HandleFunc("/bca/configuracion/rubros", s.Rubros)
+	r.HandleFunc("/bca/configuracion/rubros", s.Rubros)         // Fully tested
 	r.HandleFunc("/bca/configuracion/rubros/crear", s.RubrosAdd)
 
 	r.HandleFunc("/bca/user/perfil", s.Profile)
