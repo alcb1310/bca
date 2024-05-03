@@ -36,13 +36,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/reportes/gastado", s.Spent)                                               // Fully tested
 	r.HandleFunc("/bca/reportes/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) // Trouble reading URL parameters
 
-	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems)  // Fully tested
-	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers) // Fully tested
-	r.HandleFunc("/bca/configuracion/proyectos", s.Projects)    // Fully tested
-	r.HandleFunc("/bca/configuracion/categorias", s.Categories) // Fully tested
-	r.HandleFunc("/bca/configuracion/materiales", s.Materiales) // Fully tested
-	r.HandleFunc("/bca/configuracion/rubros", s.Rubros)         // Fully tested
-	r.HandleFunc("/bca/configuracion/rubros/crear", s.RubrosAdd)
+	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems)   // Fully tested
+	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers)  // Fully tested
+	r.HandleFunc("/bca/configuracion/proyectos", s.Projects)     // Fully tested
+	r.HandleFunc("/bca/configuracion/categorias", s.Categories)  // Fully tested
+	r.HandleFunc("/bca/configuracion/materiales", s.Materiales)  // Fully tested
+	r.HandleFunc("/bca/configuracion/rubros", s.Rubros)          // Fully tested
+	r.HandleFunc("/bca/configuracion/rubros/crear", s.RubrosAdd) // Fully tested
 
 	r.HandleFunc("/bca/user/perfil", s.Profile)
 	r.HandleFunc("/bca/user/admin", s.Admin)
