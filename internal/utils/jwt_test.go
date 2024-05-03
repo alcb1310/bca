@@ -77,3 +77,33 @@ func TestGenerateJWT(t *testing.T) {
 		assert.Equal(t, "token has expired", err.Error())
 	})
 }
+
+func TestGenerateToken(t *testing.T) {
+	u := types.User{
+		Id:        uuid.New(),
+		Email:     "a@a.com",
+		Name:      "Andres",
+		RoleId:    "admin",
+		CompanyId: uuid.New(),
+	}
+
+	t.Run("long secret", func(t *testing.T) {
+		t.Setenv("SECRET", "supersecretkey")
+
+		token, err := utils.GenerateToken(u)
+
+		assert.Nil(t, err)
+		assert.NotEmpty(t, token)
+	})
+
+	t.Run("short secret", func(t *testing.T) {
+		t.Setenv("SECRET", "short")
+
+		token, err := utils.GenerateToken(u)
+
+		assert.NotNil(t, err)
+		assert.Empty(t, token)
+
+		assert.Equal(t, "invalid key size: must be at least 8 characters", err.Error())
+	})
+}
