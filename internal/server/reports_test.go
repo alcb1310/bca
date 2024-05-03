@@ -50,10 +50,10 @@ func TestActual(t *testing.T) {
 
 func TestActualGenerate(t *testing.T) {
 	var lev uint8 = 0
-	t.Run("valid data", func(t *testing.T) {
-		db := mocks.NewServiceMock()
-		_, srv := server.NewServer(db)
+	db := mocks.NewServiceMock()
+	_, srv := server.NewServer(db)
 
+	t.Run("valid data", func(t *testing.T) {
 		form := url.Values{}
 		form.Add("proyecto", projectId.String())
 		form.Add("nivel", strconv.Itoa(int(lev)))
@@ -72,9 +72,6 @@ func TestActualGenerate(t *testing.T) {
 
 	t.Run("data validation", func(t *testing.T) {
 		t.Run("level", func(t *testing.T) {
-			db := mocks.NewServiceMock()
-			_, srv := server.NewServer(db)
-
 			form := url.Values{}
 			form.Add("proyecto", projectId.String())
 			form.Add("nivel", "nivel")
@@ -90,7 +87,6 @@ func TestActualGenerate(t *testing.T) {
 			assert.Equal(t, http.StatusBadRequest, response.Code)
 			assert.Contains(t, response.Body.String(), "nivel debe ser un número válido")
 		})
-
 	})
 
 	t.Run("Database Error", func(t *testing.T) {
@@ -114,10 +110,10 @@ func TestActualGenerate(t *testing.T) {
 }
 
 func TestBalance(t *testing.T) {
-	t.Run("GET Method", func(t *testing.T) {
-		db := mocks.NewServiceMock()
-		_, srv := server.NewServer(db)
+	db := mocks.NewServiceMock()
+	_, srv := server.NewServer(db)
 
+	t.Run("GET Method", func(t *testing.T) {
 		db.On("Levels", uuid.UUID{}).Return([]types.Select{
 			{
 				Key:   "1",
@@ -144,9 +140,6 @@ func TestBalance(t *testing.T) {
 	})
 
 	t.Run("POST Method", func(t *testing.T) {
-		db := mocks.NewServiceMock()
-		_, srv := server.NewServer(db)
-
 		form := url.Values{}
 		form.Add("proyecto", projectId.String())
 		form.Add("date", "2022-01-01")
@@ -167,26 +160,26 @@ func TestBalance(t *testing.T) {
 }
 
 func TestHistoric(t *testing.T) {
+	db := mocks.NewServiceMock()
+	_, srv := server.NewServer(db)
+
+	db.On("Levels", uuid.UUID{}).Return([]types.Select{
+		{
+			Key:   "1",
+			Value: "1",
+		},
+	})
+
+	db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{
+		{
+			ID:        uuid.UUID{},
+			Name:      "1",
+			CompanyId: companyId,
+			IsActive:  &trueValue,
+		},
+	})
+
 	t.Run("No Query Params", func(t *testing.T) {
-		db := mocks.NewServiceMock()
-		_, srv := server.NewServer(db)
-
-		db.On("Levels", uuid.UUID{}).Return([]types.Select{
-			{
-				Key:   "1",
-				Value: "1",
-			},
-		})
-
-		db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{
-			{
-				ID:        uuid.UUID{},
-				Name:      "1",
-				CompanyId: companyId,
-				IsActive:  &trueValue,
-			},
-		})
-
 		response := httptest.NewRecorder()
 		request := httptest.NewRequest(http.MethodGet, "/bca/reportes/historico", nil)
 
@@ -197,24 +190,6 @@ func TestHistoric(t *testing.T) {
 	})
 
 	t.Run("Query Params", func(t *testing.T) {
-		db := mocks.NewServiceMock()
-		_, srv := server.NewServer(db)
-
-		db.On("Levels", uuid.UUID{}).Return([]types.Select{
-			{
-				Key:   "1",
-				Value: "1",
-			},
-		})
-
-		db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{
-			{
-				ID:        uuid.UUID{},
-				Name:      "1",
-				CompanyId: companyId,
-				IsActive:  &trueValue,
-			},
-		})
 		date := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 		var level uint8 = 2
 
