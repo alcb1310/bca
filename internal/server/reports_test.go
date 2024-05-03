@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"net/url"
 	"strconv"
 	"strings"
@@ -16,12 +15,10 @@ import (
 
 	"bca-go-final/internal/server"
 	"bca-go-final/internal/types"
-	"bca-go-final/mocks"
 )
 
 func TestActual(t *testing.T) {
-	db := mocks.NewServiceMock()
-	_, srv := server.NewServer(db)
+	srv, db := server.MakeServer()
 
 	db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{
 		{
@@ -39,8 +36,7 @@ func TestActual(t *testing.T) {
 		},
 	}, nil)
 
-	response := httptest.NewRecorder()
-	request := httptest.NewRequest(http.MethodGet, "/bca/reportes/actual", nil)
+	request, response := server.MakeRequest(http.MethodGet, "/bca/reportes/actual", nil)
 
 	srv.Actual(response, request)
 
@@ -50,8 +46,7 @@ func TestActual(t *testing.T) {
 
 func TestActualGenerate(t *testing.T) {
 	var lev uint8 = 0
-	db := mocks.NewServiceMock()
-	_, srv := server.NewServer(db)
+	srv, db := server.MakeServer()
 
 	t.Run("valid data", func(t *testing.T) {
 		form := url.Values{}
@@ -61,9 +56,7 @@ func TestActualGenerate(t *testing.T) {
 
 		db.On("GetBudgetsByProjectId", uuid.UUID{}, projectId, &lev).Return([]types.GetBudget{}, nil)
 
-		response := httptest.NewRecorder()
-		request := httptest.NewRequest(http.MethodPost, "/bca/reportes/actual/generar", reader)
-		request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+		request, response := server.MakeRequest(http.MethodPost, "/bca/reportes/actual/generar", reader)
 
 		srv.ActualGenerate(response, request)
 
@@ -78,9 +71,7 @@ func TestActualGenerate(t *testing.T) {
 			reader := strings.NewReader(form.Encode())
 			db.On("GetBudgetsByProjectId", uuid.UUID{}, uuid.UUID{}, &lev).Return([]types.GetBudget{}, nil)
 
-			response := httptest.NewRecorder()
-			request := httptest.NewRequest(http.MethodPost, "/bca/reportes/actual/generar", reader)
-			request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			request, response := server.MakeRequest(http.MethodPost, "/bca/reportes/actual/generar", reader)
 
 			srv.ActualGenerate(response, request)
 
@@ -90,18 +81,16 @@ func TestActualGenerate(t *testing.T) {
 	})
 
 	t.Run("Database Error", func(t *testing.T) {
-		db := mocks.NewServiceMock()
-		_, srv := server.NewServer(db)
+		srv, db := server.MakeServer()
 
 		form := url.Values{}
 		form.Add("proyecto", projectId.String())
 		form.Add("nivel", strconv.Itoa(int(lev)))
 		reader := strings.NewReader(form.Encode())
 
-		db.On("GetBudgetsByProjectId", uuid.UUID{}, uuid.UUID{}, &lev).Return([]types.GetBudget{}, UnknownError)
+		db.On("GetBudgetsByProjectId", uuid.UUID{}, projectId, &lev).Return([]types.GetBudget{}, UnknownError)
 
-		response := httptest.NewRecorder()
-		request := httptest.NewRequest(http.MethodPost, "/bca/reportes/actual/generar", reader)
+		request, response := server.MakeRequest(http.MethodPost, "/bca/reportes/actual/generar", reader)
 
 		srv.ActualGenerate(response, request)
 
@@ -110,8 +99,7 @@ func TestActualGenerate(t *testing.T) {
 }
 
 func TestBalance(t *testing.T) {
-	db := mocks.NewServiceMock()
-	_, srv := server.NewServer(db)
+	srv, db := server.MakeServer()
 
 	t.Run("GET Method", func(t *testing.T) {
 		db.On("Levels", uuid.UUID{}).Return([]types.Select{
@@ -130,8 +118,7 @@ func TestBalance(t *testing.T) {
 			},
 		}, nil)
 
-		response := httptest.NewRecorder()
-		request := httptest.NewRequest(http.MethodGet, "/bca/reportes/cuadre", nil)
+		request, response := server.MakeRequest(http.MethodGet, "/bca/reportes/cuadre", nil)
 
 		srv.Balance(response, request)
 
@@ -145,12 +132,11 @@ func TestBalance(t *testing.T) {
 		form.Add("date", "2022-01-01")
 		reader := strings.NewReader(form.Encode())
 
-		date := time.Date(0001, 1, 1, 0, 0, 0, 0, time.UTC)
+		date := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
 
 		db.On("GetBalance", uuid.UUID{}, uuid.UUID{}, date).Return(types.BalanceResponse{})
 
-		response := httptest.NewRecorder()
-		request := httptest.NewRequest(http.MethodPost, "/bca/reportes/cuadre", reader)
+		request, response := server.MakeRequest(http.MethodPost, "/bca/reportes/cuadre", reader)
 
 		srv.Balance(response, request)
 
@@ -160,8 +146,7 @@ func TestBalance(t *testing.T) {
 }
 
 func TestHistoric(t *testing.T) {
-	db := mocks.NewServiceMock()
-	_, srv := server.NewServer(db)
+	srv, db := server.MakeServer()
 
 	db.On("Levels", uuid.UUID{}).Return([]types.Select{
 		{
@@ -180,8 +165,7 @@ func TestHistoric(t *testing.T) {
 	})
 
 	t.Run("No Query Params", func(t *testing.T) {
-		response := httptest.NewRecorder()
-		request := httptest.NewRequest(http.MethodGet, "/bca/reportes/historico", nil)
+		request, response := server.MakeRequest(http.MethodGet, "/bca/reportes/historico", nil)
 
 		srv.Historic(response, request)
 
@@ -196,8 +180,7 @@ func TestHistoric(t *testing.T) {
 		db.On("GetHistoricByProject", uuid.UUID{}, projectId, date, level).Return([]types.GetBudget{})
 
 		url := fmt.Sprintf("/bca/reportes/historico?proyecto=%s&fecha=%s&nivel=%d", projectId.String(), "2022-01-01", 2)
-		response := httptest.NewRecorder()
-		request := httptest.NewRequest(http.MethodGet, url, nil)
+		request, response := server.MakeRequest(http.MethodGet, url, nil)
 
 		srv.Historic(response, request)
 
@@ -206,8 +189,7 @@ func TestHistoric(t *testing.T) {
 }
 
 func TestSpent(t *testing.T) {
-	db := mocks.NewServiceMock()
-	_, srv := server.NewServer(db)
+	srv, db := server.MakeServer()
 
 	db.On("Levels", uuid.UUID{}).Return([]types.Select{
 		{
@@ -226,8 +208,7 @@ func TestSpent(t *testing.T) {
 	})
 
 	t.Run("No Query params", func(t *testing.T) {
-		response := httptest.NewRecorder()
-		request := httptest.NewRequest(http.MethodGet, "/bca/reportes/gastado", nil)
+		request, response := server.MakeRequest(http.MethodGet, "/bca/reportes/gastado", nil)
 
 		srv.Spent(response, request)
 
@@ -257,12 +238,15 @@ func TestSpent(t *testing.T) {
 		db.On("GetNonAccumulateChildren", &uuid.UUID{}, &projectId, budgetItemArray, []uuid.UUID{}).Return([]uuid.UUID{}).Return([]uuid.UUID{responseUUID})
 		db.On("GetSpentByBudgetItem", uuid.UUID{}, projectId, budgetItem.ID, time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC), []uuid.UUID{responseUUID}).Return(1.0)
 
-		response := httptest.NewRecorder()
-		request := httptest.NewRequest(http.MethodGet, url, nil)
+		request, response := server.MakeRequest(http.MethodGet, url, nil)
 
 		srv.Spent(response, request)
 
 		assert.Equal(t, http.StatusOK, response.Code)
 
 	})
+}
+
+func TestSpentByBudgetItem(t *testing.T) {
+	t.Skip()
 }
