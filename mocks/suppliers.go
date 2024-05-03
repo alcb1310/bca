@@ -7,7 +7,7 @@ import (
 )
 
 func (s *ServiceMock) GetAllSuppliers(companyId uuid.UUID, search string) ([]types.Supplier, error) {
-	args := s.Called(companyId)
+	args := s.Called(companyId, search)
 	return args.Get(0).([]types.Supplier), args.Error(1)
 }
 

@@ -35,30 +35,33 @@ func (s *Server) Closure(w http.ResponseWriter, r *http.Request) {
 		parsedProjectId, err := utils.ValidateUUID(pId, "proyecto")
 		if err != nil {
 			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(err.Error()))
 			return
 		}
 
 		d := r.Form.Get("date")
 		if d == "" {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("Seleccione una fecha")
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Seleccione una fecha"))
 			return
 		}
 		date, err := time.Parse("2006-01-02", d)
 		if err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Fecha inválida"))
 			return
 		}
 
 		if err := s.DB.CreateClosure(ctx.CompanyId, parsedProjectId, date); err != nil {
 			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
 			log.Println(fmt.Sprintf("No se pudo cerrar el proyecto: %s para la fecha: %s", parsedProjectId, utils.ConvertDate(date)))
-			success = "false"
+			w.Write([]byte(fmt.Sprintf("No se pudo cerrar el proyecto: %s para la fecha: %s", parsedProjectId, utils.ConvertDate(date))))
+			// success = "false"
+			return
 		}
-		// w.WriteHeader(http.StatusOK)
+
 		w.Header().Set("HX-Redirect", "/bca/transacciones/cierre?success="+success)
 		http.Redirect(w, r, "/bca/transacciones/cierre?success=true", http.StatusOK)
 		return

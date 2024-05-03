@@ -27,7 +27,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/transacciones/presupuesto", s.Budget) // Fully tested
 	r.HandleFunc("/bca/transacciones/facturas", s.Invoice)   // Fully tested
 	r.HandleFunc("/bca/transacciones/facturas/crear", s.InvoiceAdd)
-	r.HandleFunc("/bca/transacciones/cierre", s.Closure)
+	r.HandleFunc("/bca/transacciones/cierre", s.Closure) // Fully tested
 
 	r.HandleFunc("/bca/reportes/actual", s.Actual)
 	r.HandleFunc("/bca/reportes/actual/generar", s.ActualGenerate)
