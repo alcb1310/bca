@@ -1,6 +1,7 @@
 package server_test
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -226,5 +227,67 @@ func TestHistoric(t *testing.T) {
 		srv.Historic(response, request)
 
 		assert.Equal(t, http.StatusOK, response.Code)
+	})
+}
+
+func TestSpent(t *testing.T) {
+	db := mocks.NewServiceMock()
+	_, srv := server.NewServer(db)
+
+	db.On("Levels", uuid.UUID{}).Return([]types.Select{
+		{
+			Key:   "1",
+			Value: "1",
+		},
+	})
+
+	db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{
+		{
+			ID:        uuid.UUID{},
+			Name:      "1",
+			CompanyId: companyId,
+			IsActive:  &trueValue,
+		},
+	})
+
+	t.Run("No Query params", func(t *testing.T) {
+		response := httptest.NewRecorder()
+		request := httptest.NewRequest(http.MethodGet, "/bca/reportes/gastado", nil)
+
+		srv.Spent(response, request)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Contains(t, response.Body.String(), "Gastado")
+	})
+
+	t.Run("Query params", func(t *testing.T) {
+		url := fmt.Sprintf("/bca/reportes/gastado?proyecto=%s&fecha=%s&nivel=%d", projectId.String(), "2022-01-01", 2)
+
+		trueVal := sql.NullBool{Bool: true, Valid: true}
+		responseUUID := uuid.New()
+
+		budgetItem := types.BudgetItem{
+			ID:         uuid.UUID{},
+			Code:       "1",
+			Name:       "1",
+			Level:      1,
+			CompanyId:  companyId,
+			ParentId:   nil,
+			Accumulate: trueVal,
+		}
+
+		budgetItemArray := []types.BudgetItem{budgetItem}
+
+		db.On("GetBudgetItemsByLevel", uuid.UUID{}, uint8(2)).Return(budgetItemArray)
+		db.On("GetNonAccumulateChildren", &uuid.UUID{}, &projectId, budgetItemArray, []uuid.UUID{}).Return([]uuid.UUID{}).Return([]uuid.UUID{responseUUID})
+		db.On("GetSpentByBudgetItem", uuid.UUID{}, projectId, budgetItem.ID, time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC), []uuid.UUID{responseUUID}).Return(1.0)
+
+		response := httptest.NewRecorder()
+		request := httptest.NewRequest(http.MethodGet, url, nil)
+
+		srv.Spent(response, request)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+
 	})
 }
