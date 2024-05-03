@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -22,7 +21,6 @@ func (s *Server) Profile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Admin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Admin")
 	component := users.AdminView()
 	component.Render(r.Context(), w)
 }

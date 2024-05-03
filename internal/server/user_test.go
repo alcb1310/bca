@@ -48,3 +48,16 @@ func TestAdmin(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Contains(t, response.Body.String(), "Admin")
 }
+
+func TestChangePassword(t *testing.T) {
+	db := mocks.NewServiceMock()
+	_, srv := server.NewServer(db)
+
+	response := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/bca/user/cambio", nil)
+
+	srv.ChangePassword(response, request)
+
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Cambiar Contraseña")
+}

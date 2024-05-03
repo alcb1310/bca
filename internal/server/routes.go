@@ -44,9 +44,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/configuracion/rubros", s.Rubros)          // Fully tested
 	r.HandleFunc("/bca/configuracion/rubros/crear", s.RubrosAdd) // Fully tested
 
-	r.HandleFunc("/bca/user/perfil", s.Profile) // Fully tested
-	r.HandleFunc("/bca/user/admin", s.Admin)    // Fully tested
-	r.HandleFunc("/bca/user/cambio", s.ChangePassword)
+	r.HandleFunc("/bca/user/perfil", s.Profile)        // Fully tested
+	r.HandleFunc("/bca/user/admin", s.Admin)           // Fully tested
+	r.HandleFunc("/bca/user/cambio", s.ChangePassword) // Fully tested
 
 	r.HandleFunc("/bca/costo-unitario/cantidades", s.UnitQuantity)
 	r.HandleFunc("/bca/costo-unitario/analisis", s.UnitAnalysis)
