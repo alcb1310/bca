@@ -145,8 +145,9 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 	} else {
 		l, err = strconv.ParseUint(z, 10, 64)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
 			log.Println(err)
+			w.Write([]byte("nivel debe ser un número válido"))
 			return
 		}
 	}
