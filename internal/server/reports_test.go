@@ -1,6 +1,7 @@
 package server_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -161,5 +162,69 @@ func TestBalance(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, response.Code)
 
+	})
+}
+
+func TestHistoric(t *testing.T) {
+	t.Run("No Query Params", func(t *testing.T) {
+		db := mocks.NewServiceMock()
+		_, srv := server.NewServer(db)
+
+		db.On("Levels", uuid.UUID{}).Return([]types.Select{
+			{
+				Key:   "1",
+				Value: "1",
+			},
+		})
+
+		db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{
+			{
+				ID:        uuid.UUID{},
+				Name:      "1",
+				CompanyId: companyId,
+				IsActive:  &trueValue,
+			},
+		})
+
+		response := httptest.NewRecorder()
+		request := httptest.NewRequest(http.MethodGet, "/bca/reportes/historico", nil)
+
+		srv.Historic(response, request)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Contains(t, response.Body.String(), "Histórico")
+	})
+
+	t.Run("Query Params", func(t *testing.T) {
+		db := mocks.NewServiceMock()
+		_, srv := server.NewServer(db)
+
+		db.On("Levels", uuid.UUID{}).Return([]types.Select{
+			{
+				Key:   "1",
+				Value: "1",
+			},
+		})
+
+		db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{
+			{
+				ID:        uuid.UUID{},
+				Name:      "1",
+				CompanyId: companyId,
+				IsActive:  &trueValue,
+			},
+		})
+		date := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+		var level uint8 = 2
+
+		db.On("GetHistoricByProject", uuid.UUID{}, projectId, date, level).Return([]types.GetBudget{})
+
+		url := fmt.Sprintf("/bca/reportes/historico?proyecto=%s&fecha=%s&nivel=%d", projectId.String(), "2022-01-01", 2)
+		response := httptest.NewRecorder()
+		request := httptest.NewRequest(http.MethodGet, url, nil)
+
+		srv.Historic(response, request)
+
+		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }

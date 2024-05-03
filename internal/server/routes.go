@@ -32,7 +32,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/reportes/actual", s.Actual)                 // Fully tested
 	r.HandleFunc("/bca/reportes/actual/generar", s.ActualGenerate) // Fully tested
 	r.HandleFunc("/bca/reportes/cuadre", s.Balance)                // Fully tested
-	r.HandleFunc("/bca/reportes/historico", s.Historic)
+	r.HandleFunc("/bca/reportes/historico", s.Historic)            // Fully tested
 	r.HandleFunc("/bca/reportes/gastado", s.Spent)
 	r.HandleFunc("/bca/reportes/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem)
 
