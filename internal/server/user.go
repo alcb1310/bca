@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -76,6 +77,7 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 
 		if pass == "" {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("contraseña inválida"))
 			return
 		}
 
@@ -91,7 +93,7 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 		u := &types.UserCreate{}
 		err := r.ParseForm()
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -101,16 +103,19 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 		u.RoleId = r.Form.Get("role")
 		u.CompanyId = ctx.CompanyId
 
-		if u.Email != "" && !utils.IsValidEmail(u.Email) {
+		if u.Email == "" || !utils.IsValidEmail(u.Email) {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid email"))
 			return
 		}
 		if u.Password == "" {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid password"))
 			return
 		}
 		if u.Name == "" {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid name"))
 			return
 		}
 		if u.RoleId == "" {
@@ -119,7 +124,14 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 
 		_, err = s.DB.CreateUser(u)
 		if err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusConflict)
+				w.Write([]byte("Usuario ya existe"))
+				return
+			}
+
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Error al crear usuario"))
 			return
 		}
 	}
