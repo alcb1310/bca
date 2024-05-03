@@ -1,9 +1,14 @@
 package server
 
 import (
+	"io"
+	"net/http"
+	"net/http/httptest"
+
 	"github.com/google/uuid"
 
 	"bca-go-final/internal/types"
+	"bca-go-final/mocks"
 )
 
 type Result struct {
@@ -100,4 +105,17 @@ func (s *Server) returnAllSelects(query []string, companyId uuid.UUID, flags ...
 	}
 
 	return results
+}
+
+func MakeServer() (*Server, *mocks.ServiceMock) {
+	db := mocks.NewServiceMock()
+	_, srv := NewServer(db)
+	return srv, db
+}
+
+func MakeRequest(string, URL string, buf io.Reader) (*http.Request, *httptest.ResponseRecorder) {
+	request := httptest.NewRequest(string, URL, buf)
+	response := httptest.NewRecorder()
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	return request, response
 }
