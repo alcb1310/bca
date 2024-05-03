@@ -3,11 +3,13 @@ package server_test
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	"bca-go-final/internal/server"
@@ -306,4 +308,26 @@ func TestUserAdd(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Contains(t, response.Body.String(), "Agregar usuario")
+}
+
+func TestUserEdit(t *testing.T) {
+	userId := uuid.New()
+	testURL := fmt.Sprintf("/bca/partials/users/edit/%s", userId.String())
+
+	srv, db := server.MakeServer()
+
+	db.On("GetUser", userId, uuid.UUID{}).Return(types.User{
+		Id:        userId,
+		Name:      "Test",
+		Email:     "test@b.com",
+		RoleId:    "a",
+		CompanyId: uuid.New(),
+	}, nil)
+	request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+	request = mux.SetURLVars(request, map[string]string{"id": userId.String()})
+
+	srv.UserEdit(response, request)
+
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Editar usuario")
 }
