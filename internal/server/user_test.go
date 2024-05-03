@@ -331,3 +331,68 @@ func TestUserEdit(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Contains(t, response.Body.String(), "Editar usuario")
 }
+
+func TestSingleUser(t *testing.T) {
+	userId := uuid.New()
+	testURL := fmt.Sprintf("/bca/partials/users/%s", userId.String())
+	t.Run("Delete Method", func(t *testing.T) {
+		srv, db := server.MakeServer()
+		db.On("DeleteUser", userId, uuid.UUID{}).Return(nil)
+		db.On("GetAllUsers", uuid.UUID{}).Return([]types.User{
+			{
+				Id:        userId,
+				Name:      "Test",
+				Email:     "test@b.com",
+				RoleId:    "a",
+				CompanyId: uuid.New(),
+			},
+		}, nil)
+
+		request, response := server.MakeRequest(http.MethodDelete, testURL, nil)
+		request = mux.SetURLVars(request, map[string]string{"id": userId.String()})
+
+		srv.SingleUser(response, request)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+	t.Run("PUT Method", func(t *testing.T) {
+		srv, db := server.MakeServer()
+		db.On("GetUser", userId, uuid.UUID{}).Return(types.User{
+			Id:     userId,
+			Name:   "Test",
+			Email:  "test@b.com",
+			RoleId: "a",
+		}, nil)
+
+		db.On("UpdateUser", types.User{
+			Id:     userId,
+			Name:   "Test",
+			Email:  "test@b.com",
+			RoleId: "a",
+		}, userId, uuid.UUID{}).Return(types.User{
+			Id:     userId,
+			Name:   "Test",
+			Email:  "test@b.com",
+			RoleId: "a",
+		}, nil)
+
+		db.On("GetAllUsers", uuid.UUID{}).Return([]types.User{
+			{
+				Id:        userId,
+				Name:      "Test",
+				Email:     "test@b.com",
+				RoleId:    "a",
+				CompanyId: uuid.New(),
+			},
+		}, nil)
+
+		request, response := server.MakeRequest(http.MethodPut, testURL, nil)
+		request = mux.SetURLVars(request, map[string]string{"id": userId.String()})
+
+		srv.SingleUser(response, request)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+}
