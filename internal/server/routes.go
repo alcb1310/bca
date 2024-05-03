@@ -29,14 +29,14 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/transacciones/facturas/crear", s.InvoiceAdd)
 	r.HandleFunc("/bca/transacciones/cierre", s.Closure) // Fully tested
 
-	r.HandleFunc("/bca/reportes/actual", s.Actual)                 // Fully tested
-	r.HandleFunc("/bca/reportes/actual/generar", s.ActualGenerate) // Fully tested
-	r.HandleFunc("/bca/reportes/cuadre", s.Balance)                // Fully tested
-	r.HandleFunc("/bca/reportes/historico", s.Historic)            // Fully tested
-	r.HandleFunc("/bca/reportes/gastado", s.Spent)                 // Fully tested
-	r.HandleFunc("/bca/reportes/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem)
+	r.HandleFunc("/bca/reportes/actual", s.Actual)                                               // Fully tested
+	r.HandleFunc("/bca/reportes/actual/generar", s.ActualGenerate)                               // Fully tested
+	r.HandleFunc("/bca/reportes/cuadre", s.Balance)                                              // Fully tested
+	r.HandleFunc("/bca/reportes/historico", s.Historic)                                          // Fully tested
+	r.HandleFunc("/bca/reportes/gastado", s.Spent)                                               // Fully tested
+	r.HandleFunc("/bca/reportes/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) // Trouble reading URL parameters
 
-	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems)
+	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems) // Fully tested
 	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers)
 	r.HandleFunc("/bca/configuracion/proyectos", s.Projects)
 	r.HandleFunc("/bca/configuracion/categorias", s.Categories)

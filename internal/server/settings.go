@@ -15,7 +15,6 @@ import (
 func (s *Server) BudgetItems(w http.ResponseWriter, r *http.Request) {
 	component := settings.BudgetItems()
 	component.Render(r.Context(), w)
-
 }
 
 func (s *Server) Suppliers(w http.ResponseWriter, r *http.Request) {
