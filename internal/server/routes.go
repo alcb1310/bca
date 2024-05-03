@@ -36,8 +36,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/reportes/gastado", s.Spent)                                               // Fully tested
 	r.HandleFunc("/bca/reportes/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) // Trouble reading URL parameters
 
-	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems) // Fully tested
-	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers)
+	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems)  // Fully tested
+	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers) // Fully tested
 	r.HandleFunc("/bca/configuracion/proyectos", s.Projects)
 	r.HandleFunc("/bca/configuracion/categorias", s.Categories)
 	r.HandleFunc("/bca/configuracion/materiales", s.Materiales)
