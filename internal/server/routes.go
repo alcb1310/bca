@@ -49,7 +49,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/user/cambio", s.ChangePassword) // Fully tested
 
 	r.HandleFunc("/bca/costo-unitario/cantidades", s.UnitQuantity) // Fully tested
-	r.HandleFunc("/bca/costo-unitario/analisis", s.UnitAnalysis)
+	r.HandleFunc("/bca/costo-unitario/analisis", s.UnitAnalysis)   // Fully tested
 
 	// excel
 	r.HandleFunc("/bca/reportes/excel/cuadre", s.BalanceExcel)
