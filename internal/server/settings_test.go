@@ -49,3 +49,16 @@ func TestProjects(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Contains(t, response.Body.String(), "Proyectos")
 }
+
+func TestCategories(t *testing.T) {
+	db := mocks.NewServiceMock()
+	_, srv := server.NewServer(db)
+
+	response := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodGet, "/bca/configuracion/categorias", nil)
+
+	srv.Categories(response, request)
+
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Categorias")
+}
