@@ -139,3 +139,13 @@ func TestBudgetItemsTable(t *testing.T) {
 		})
 	})
 }
+
+func TestBudgetItemsAdd(t *testing.T) {
+	srv, db := server.MakeServer()
+	db.On("GetBudgetItemsByAccumulate", uuid.UUID{}, true).Return([]types.BudgetItem{})
+
+	request, response := server.MakeRequest(http.MethodGet, "/bca/partials/budget-items", nil)
+	srv.BudgetItemAdd(response, request)
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Agregar Partida")
+}
