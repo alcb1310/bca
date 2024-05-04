@@ -18,6 +18,11 @@ import (
 func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		x := r.Form.Get("accumulate") == "accumulate"
@@ -35,13 +40,12 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 			}
 			u = &z
 		}
-		acc := sql.NullBool{Valid: true, Bool: x}
 		bi := &types.BudgetItem{
 			CompanyId:  ctxPayload.CompanyId,
 			Code:       r.Form.Get("code"),
 			Name:       r.Form.Get("name"),
 			ParentId:   u,
-			Accumulate: acc,
+			Accumulate: sql.NullBool{Valid: true, Bool: x},
 		}
 		if bi.Code == "" {
 			w.WriteHeader(http.StatusBadRequest)
