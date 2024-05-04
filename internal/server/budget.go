@@ -119,13 +119,13 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPut:
 		r.ParseForm()
 
-		b, _ := s.DB.GetBudgets(ctx.CompanyId, uuid.Nil, "")
 		err := updateBudget(r.Form, projectId, budgetItemId, ctx.CompanyId, bd, s)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
+		b, _ := s.DB.GetBudgets(ctx.CompanyId, uuid.Nil, "")
 		component := partials.BudgetTable(b)
 		component.Render(r.Context(), w)
 
