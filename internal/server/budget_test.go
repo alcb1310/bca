@@ -218,3 +218,14 @@ func TestBudgetsTable(t *testing.T) {
 		})
 	})
 }
+
+func TestBudgetsAdd(t *testing.T) {
+	srv, db := server.MakeServer()
+	db.On("GetBudgetItemsByAccumulate", uuid.UUID{}, false).Return([]types.BudgetItem{}, nil)
+	db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{})
+
+	request, response := server.MakeRequest(http.MethodPost, "/bca/budgets/add", nil)
+	srv.BudgetAdd(response, request)
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Agregar Presupuesto")
+}
