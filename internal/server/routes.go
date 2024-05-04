@@ -64,7 +64,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/partials/users/edit/{id}", s.UserEdit) // Fully tested
 	r.HandleFunc("/bca/partials/users/{id}", s.SingleUser)    // Fully tested
 
-	r.HandleFunc("/bca/partials/projects", s.ProjectsTable)
+	r.HandleFunc("/bca/partials/projects", s.ProjectsTable) // Fully tested
 	r.HandleFunc("/bca/partials/projects/add", s.ProjectAdd)
 	r.HandleFunc("/bca/partials/projects/edit/{id}", s.ProjectEditSave)
 	r.HandleFunc("/bca/partials/projects/{id}", s.ProjectEdit)
