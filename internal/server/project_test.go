@@ -241,3 +241,20 @@ func TestProjectEditSave(t *testing.T) {
 		})
 	})
 }
+
+func TestProjectEdit(t *testing.T) {
+	projectId := uuid.New()
+	srv, db := server.MakeServer()
+	muxVars := make(map[string]string)
+	muxVars["id"] = projectId.String()
+
+	db.On("GetProject", projectId, uuid.UUID{}).Return(types.Project{}, nil)
+
+	request, response := server.MakeRequest(http.MethodGet, "/bca/projects/edit", nil)
+	request = mux.SetURLVars(request, muxVars)
+
+	srv.ProjectEdit(response, request)
+
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Editar Proyecto")
+}
