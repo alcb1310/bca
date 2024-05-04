@@ -169,3 +169,125 @@ func TestSuppliersEdit(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Contains(t, response.Body.String(), "Editar Proveedor")
 }
+
+func TestSuppliersEditSave(t *testing.T) {
+	supplierId := uuid.New()
+	testURL := fmt.Sprintf("/bca/partials/suppliers/%s/save", supplierId.String())
+	muxVars := make(map[string]string)
+	supplier := types.Supplier{
+		ID:           uuid.UUID{},
+		SupplierId:   "12345678",
+		Name:         "test",
+		ContactName:  sql.NullString{String: "test", Valid: true},
+		ContactEmail: sql.NullString{String: "test", Valid: true},
+		ContactPhone: sql.NullString{String: "test", Valid: true},
+		CompanyId:    uuid.UUID{},
+	}
+	muxVars["id"] = supplierId.String()
+
+	t.Run("data validation", func(t *testing.T) {
+		t.Run("supplier_id", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			form := url.Values{}
+
+			db.On("GetOneSupplier", supplierId, uuid.UUID{}).Return(types.Supplier{}, nil)
+			request, response := server.MakeRequest(http.MethodPost, testURL, strings.NewReader(form.Encode()))
+			request = mux.SetURLVars(request, muxVars)
+
+			srv.SuppliersEditSave(response, request)
+
+			assert.Equal(t, http.StatusBadRequest, response.Code)
+			assert.Equal(t, response.Body.String(), "Ingrese un valor para el RUC")
+		})
+
+		t.Run("name", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			form := url.Values{}
+			form.Add("supplier_id", supplier.SupplierId)
+			form.Add("name", "")
+			form.Add("contact_email", supplier.ContactEmail.String)
+			form.Add("contact_name", supplier.ContactName.String)
+			form.Add("contact_phone", supplier.ContactPhone.String)
+			buf := strings.NewReader(form.Encode())
+
+			db.On("GetOneSupplier", supplierId, uuid.UUID{}).Return(types.Supplier{}, nil)
+
+			request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+			request = mux.SetURLVars(request, muxVars)
+
+			srv.SuppliersEditSave(response, request)
+
+			assert.Equal(t, http.StatusBadRequest, response.Code)
+			assert.Equal(t, response.Body.String(), "Ingrese un valor para el nombre")
+		})
+	})
+
+	t.Run("valid data", func(t *testing.T) {
+		t.Run("create supplier", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			form := url.Values{}
+			form.Add("supplier_id", supplier.SupplierId)
+			form.Add("name", supplier.Name)
+			form.Add("contact_email", supplier.ContactEmail.String)
+			form.Add("contact_name", supplier.ContactName.String)
+			form.Add("contact_phone", supplier.ContactPhone.String)
+			buf := strings.NewReader(form.Encode())
+
+			db.On("GetOneSupplier", supplierId, uuid.UUID{}).Return(types.Supplier{}, nil)
+			db.On("UpdateSupplier", &supplier).Return(nil)
+			db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+
+			request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+			request = mux.SetURLVars(request, muxVars)
+
+			srv.SuppliersEditSave(response, request)
+
+			assert.Equal(t, http.StatusOK, response.Code)
+		})
+
+		t.Run("conflict", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			form := url.Values{}
+			form.Add("supplier_id", supplier.SupplierId)
+			form.Add("name", supplier.Name)
+			form.Add("contact_email", supplier.ContactEmail.String)
+			form.Add("contact_name", supplier.ContactName.String)
+			form.Add("contact_phone", supplier.ContactPhone.String)
+			buf := strings.NewReader(form.Encode())
+
+			db.On("GetOneSupplier", supplierId, uuid.UUID{}).Return(types.Supplier{}, nil)
+			db.On("UpdateSupplier", &supplier).Return(errors.New("duplicate"))
+
+			request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+			request = mux.SetURLVars(request, muxVars)
+
+			srv.SuppliersEditSave(response, request)
+
+			assert.Equal(t, http.StatusConflict, response.Code)
+			assert.Equal(t, response.Body.String(), fmt.Sprintf("Proveedor con ruc %s y/o nombre %s ya existe", supplier.SupplierId, supplier.Name))
+		})
+
+		t.Run("unknown error", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			form := url.Values{}
+			form.Add("supplier_id", supplier.SupplierId)
+			form.Add("name", supplier.Name)
+			form.Add("contact_email", supplier.ContactEmail.String)
+			form.Add("contact_name", supplier.ContactName.String)
+			form.Add("contact_phone", supplier.ContactPhone.String)
+			buf := strings.NewReader(form.Encode())
+
+			db.On("GetOneSupplier", supplierId, uuid.UUID{}).Return(types.Supplier{}, nil)
+			db.On("UpdateSupplier", &supplier).Return(UnknownError)
+
+			request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+			request = mux.SetURLVars(request, muxVars)
+
+			srv.SuppliersEditSave(response, request)
+
+			assert.Equal(t, http.StatusInternalServerError, response.Code)
+			assert.Contains(t, response.Body.String(), UnknownError.Error())
+
+		})
+	})
+}

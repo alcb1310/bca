@@ -118,7 +118,7 @@ func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 	if err := s.DB.UpdateSupplier(&sup); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("El ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
+			w.Write([]byte(fmt.Sprintf("Proveedor con ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
 			return
 		}
 		log.Println(fmt.Sprintf("ERROR: %s", err.Error()))
