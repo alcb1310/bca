@@ -138,3 +138,14 @@ func TestSuppliersTable(t *testing.T) {
 		})
 	})
 }
+
+func TestSupplierAdd(t *testing.T) {
+	srv, _ := server.MakeServer()
+
+	request, response := server.MakeRequest(http.MethodGet, "/bca/partials/suppliers/add", nil)
+
+	srv.SupplierAdd(response, request)
+
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Agregar Proveedor")
+}
