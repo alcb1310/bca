@@ -168,6 +168,7 @@ func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 	budgetItemId, err := utils.ValidateUUID(mux.Vars(r)["budgetItemId"], "partida")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error al extraer el budgetItemId"))
 		log.Println(err)
 		return
 	}
@@ -175,6 +176,7 @@ func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 	parsedProjectId, err := utils.ValidateUUID(mux.Vars(r)["projectId"], "proyecto")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error al extraer el projectId"))
 		log.Println(err)
 		return
 	}

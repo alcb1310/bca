@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	"bca-go-final/internal/server"
@@ -235,7 +236,7 @@ func TestSpent(t *testing.T) {
 		budgetItemArray := []types.BudgetItem{budgetItem}
 
 		db.On("GetBudgetItemsByLevel", uuid.UUID{}, uint8(2)).Return(budgetItemArray)
-		db.On("GetNonAccumulateChildren", &uuid.UUID{}, &projectId, budgetItemArray, []uuid.UUID{}).Return([]uuid.UUID{}).Return([]uuid.UUID{responseUUID})
+		db.On("GetNonAccumulateChildren", &uuid.UUID{}, &projectId, budgetItemArray, []uuid.UUID{}).Return([]uuid.UUID{responseUUID})
 		db.On("GetSpentByBudgetItem", uuid.UUID{}, projectId, budgetItem.ID, time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC), []uuid.UUID{responseUUID}).Return(1.0)
 
 		request, response := server.MakeRequest(http.MethodGet, url, nil)
@@ -243,10 +244,81 @@ func TestSpent(t *testing.T) {
 		srv.Spent(response, request)
 
 		assert.Equal(t, http.StatusOK, response.Code)
-
 	})
 }
 
 func TestSpentByBudgetItem(t *testing.T) {
-	t.Skip()
+	srv, db := server.MakeServer()
+	projectId := uuid.New()
+	budgetItemId := uuid.New()
+	date := time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC)
+	urlVars := map[string]string{}
+
+	t.Run("invalid parameters", func(t *testing.T) {
+		t.Run("Budget Item", func(t *testing.T) {
+			testURL := fmt.Sprintf("/bca/reportes/gastado/%s/%s/%s", projectId.String(), "invalid", date.Format("2022-02-13"))
+			clear(urlVars)
+			urlVars["projectId"] = projectId.String()
+			urlVars["date"] = date.Format("2022-02-13")
+			urlVars["budgetItemId"] = "invalid"
+
+			request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+			request = mux.SetURLVars(request, urlVars)
+
+			srv.SpentByBudgetItem(response, request)
+
+			assert.Equal(t, http.StatusInternalServerError, response.Code)
+			assert.Equal(t, response.Body.String(), "Error al extraer el budgetItemId")
+		})
+
+		t.Run("Project", func(t *testing.T) {
+			testURL := fmt.Sprintf("/bca/reportes/gastado/%s/%s/%s", "invalid", budgetItemId.String(), date.Format("2022-02-13"))
+			clear(urlVars)
+			urlVars["projectId"] = "invalid"
+			urlVars["budgetItemId"] = budgetItemId.String()
+			urlVars["date"] = date.Format("2022-02-13")
+
+			request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+			request = mux.SetURLVars(request, urlVars)
+
+			srv.SpentByBudgetItem(response, request)
+
+			assert.Equal(t, http.StatusInternalServerError, response.Code)
+			assert.Equal(t, response.Body.String(), "Error al extraer el projectId")
+		})
+	})
+
+	t.Run("valid parameters", func(t *testing.T) {
+		trueVal := sql.NullBool{Bool: true, Valid: true}
+		budgetItem := types.BudgetItem{
+			ID:         uuid.UUID{},
+			Code:       "1",
+			Name:       "1",
+			Level:      1,
+			CompanyId:  companyId,
+			ParentId:   nil,
+			Accumulate: trueVal,
+		}
+		responseUUID := uuid.New()
+		testURL := fmt.Sprintf("/bca/reportes/gastado/%s/%s/%s", projectId.String(), budgetItemId.String(), date.Format("2022-02-13"))
+		clear(urlVars)
+		urlVars["projectId"] = projectId.String()
+		urlVars["budgetItemId"] = budgetItemId.String()
+		urlVars["date"] = date.Format("2022-02-13")
+
+		budgetItemArray := []types.BudgetItem{budgetItem}
+
+		var results []uuid.UUID
+
+		db.On("GetOneBudgetItem", budgetItemId, uuid.UUID{}).Return(&budgetItem, nil)
+		db.On("GetNonAccumulateChildren", &uuid.UUID{}, &projectId, budgetItemArray, results).Return([]uuid.UUID{responseUUID})
+		db.On("GetDetailsByBudgetItem", uuid.UUID{}, projectId, budgetItemId, time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC), []uuid.UUID{responseUUID}).Return([]types.InvoiceDetails{})
+
+		request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+		request = mux.SetURLVars(request, urlVars)
+
+		srv.SpentByBudgetItem(response, request)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
 }
