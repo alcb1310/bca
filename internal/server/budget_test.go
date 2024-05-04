@@ -1,0 +1,220 @@
+package server_test
+
+import (
+	"errors"
+	"fmt"
+	"net/http"
+	"net/url"
+	"strings"
+	"testing"
+
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+
+	"bca-go-final/internal/server"
+	"bca-go-final/internal/types"
+)
+
+func TestBudgetsTable(t *testing.T) {
+	testURL := "/bca/partials/budgets"
+	projectID := uuid.New()
+	budgetItemID := uuid.New()
+	budgetCreate := &types.CreateBudget{
+		ProjectId:    projectID,
+		BudgetItemId: budgetItemID,
+		Quantity:     10,
+		Cost:         0.5,
+		CompanyId:    uuid.UUID{},
+	}
+
+	t.Run("method not allowed", func(t *testing.T) {
+		srv, _ := server.MakeServer()
+		request, response := server.MakeRequest(http.MethodPut, testURL, nil)
+		srv.BudgetsTable(response, request)
+		assert.Equal(t, http.StatusMethodNotAllowed, response.Code)
+	})
+
+	t.Run("method get", func(t *testing.T) {
+		projectId := uuid.New()
+		srv, db := server.MakeServer()
+		db.On("GetBudgets", uuid.UUID{}, projectId, "").Return([]types.GetBudget{}, nil)
+
+		testQuery := testURL + "?proyecto=" + projectId.String()
+
+		request, response := server.MakeRequest(http.MethodGet, testQuery, nil)
+		srv.BudgetsTable(response, request)
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+	t.Run("method post", func(t *testing.T) {
+		t.Run("data validation", func(t *testing.T) {
+			t.Run("project", func(t *testing.T) {
+				t.Run("empty project", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("project", "")
+					buf := strings.NewReader(form.Encode())
+					srv, _ := server.MakeServer()
+
+					request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+					srv.BudgetsTable(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Contains(t, response.Body.String(), "Seleccione un proyecto")
+				})
+
+				t.Run("invalid project", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("project", "invalid")
+					buf := strings.NewReader(form.Encode())
+					srv, _ := server.MakeServer()
+
+					request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+					srv.BudgetsTable(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Contains(t, response.Body.String(), "invalid UUID length: 7")
+				})
+			})
+
+			t.Run("budgetItem", func(t *testing.T) {
+				t.Run("empty budgetItem", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("project", budgetCreate.ProjectId.String())
+					form.Add("budgetItem", "")
+					buf := strings.NewReader(form.Encode())
+					srv, _ := server.MakeServer()
+
+					request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+					srv.BudgetsTable(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Contains(t, response.Body.String(), "Seleccione un partida")
+				})
+
+				t.Run("invalid budgetItem", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("project", budgetCreate.ProjectId.String())
+					form.Add("budgetItem", "invalid")
+					buf := strings.NewReader(form.Encode())
+					srv, _ := server.MakeServer()
+
+					request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+					srv.BudgetsTable(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Contains(t, response.Body.String(), "invalid UUID length: 7")
+				})
+			})
+
+			t.Run("quantity", func(t *testing.T) {
+				t.Run("empty quantity", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("project", budgetCreate.ProjectId.String())
+					form.Add("budgetItem", budgetCreate.BudgetItemId.String())
+					form.Add("quantity", "")
+					buf := strings.NewReader(form.Encode())
+					srv, _ := server.MakeServer()
+
+					request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+					srv.BudgetsTable(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Contains(t, response.Body.String(), "cantidad es requerido")
+				})
+
+				t.Run("invalid quantity", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("project", budgetCreate.ProjectId.String())
+					form.Add("budgetItem", budgetCreate.BudgetItemId.String())
+					form.Add("quantity", "invalid")
+					buf := strings.NewReader(form.Encode())
+					srv, _ := server.MakeServer()
+
+					request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+					srv.BudgetsTable(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Contains(t, response.Body.String(), "cantidad debe ser un número válido")
+				})
+			})
+
+			t.Run("cost", func(t *testing.T) {
+				t.Run("empty cost", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("project", budgetCreate.ProjectId.String())
+					form.Add("budgetItem", budgetCreate.BudgetItemId.String())
+					form.Add("quantity", fmt.Sprintf("%f", budgetCreate.Quantity))
+					form.Add("cost", "")
+					buf := strings.NewReader(form.Encode())
+					srv, _ := server.MakeServer()
+
+					request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+					srv.BudgetsTable(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Contains(t, response.Body.String(), "costo es requerido")
+				})
+
+				t.Run("invalid cost", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("project", budgetCreate.ProjectId.String())
+					form.Add("budgetItem", budgetCreate.BudgetItemId.String())
+					form.Add("quantity", fmt.Sprintf("%f", budgetCreate.Quantity))
+					form.Add("cost", "invalid")
+					buf := strings.NewReader(form.Encode())
+					srv, _ := server.MakeServer()
+
+					request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+					srv.BudgetsTable(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Contains(t, response.Body.String(), "costo debe ser un número válido")
+				})
+			})
+		})
+
+		t.Run("valid data", func(t *testing.T) {
+			t.Run("success", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("project", budgetCreate.ProjectId.String())
+				form.Add("budgetItem", budgetCreate.BudgetItemId.String())
+				form.Add("quantity", fmt.Sprintf("%f", budgetCreate.Quantity))
+				form.Add("cost", fmt.Sprintf("%f", budgetCreate.Cost))
+				buf := strings.NewReader(form.Encode())
+				srv, db := server.MakeServer()
+				db.On("CreateBudget", budgetCreate).Return(types.Budget{}, nil)
+				db.On("GetBudgets", uuid.UUID{}, uuid.UUID{}, "").Return([]types.GetBudget{}, nil)
+
+				request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+				srv.BudgetsTable(response, request)
+				assert.Equal(t, http.StatusOK, response.Code)
+			})
+
+			t.Run("fail", func(t *testing.T) {
+				t.Run("duplicate", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("project", budgetCreate.ProjectId.String())
+					form.Add("budgetItem", budgetCreate.BudgetItemId.String())
+					form.Add("quantity", fmt.Sprintf("%f", budgetCreate.Quantity))
+					form.Add("cost", fmt.Sprintf("%f", budgetCreate.Cost))
+					buf := strings.NewReader(form.Encode())
+					srv, db := server.MakeServer()
+					db.On("CreateBudget", budgetCreate).Return(types.Budget{}, errors.New("duplicate"))
+
+					request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+					srv.BudgetsTable(response, request)
+					assert.Equal(t, http.StatusConflict, response.Code)
+					assert.Contains(t, response.Body.String(), fmt.Sprintf("Ya existe partida %s en el proyecto %s", budgetCreate.BudgetItemId.String(), budgetCreate.ProjectId.String()))
+				})
+
+				t.Run("unknown", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("project", budgetCreate.ProjectId.String())
+					form.Add("budgetItem", budgetCreate.BudgetItemId.String())
+					form.Add("quantity", fmt.Sprintf("%f", budgetCreate.Quantity))
+					form.Add("cost", fmt.Sprintf("%f", budgetCreate.Cost))
+					buf := strings.NewReader(form.Encode())
+					srv, db := server.MakeServer()
+					db.On("CreateBudget", budgetCreate).Return(types.Budget{}, UnknownError)
+
+					request, response := server.MakeRequest(http.MethodPost, testURL, buf)
+					srv.BudgetsTable(response, request)
+					assert.Equal(t, http.StatusInternalServerError, response.Code)
+					assert.Contains(t, response.Body.String(), UnknownError.Error())
+				})
+			})
+		})
+	})
+}
