@@ -132,3 +132,14 @@ func TestProjectsTable(t *testing.T) {
 		})
 	})
 }
+
+func TestProjectAdd(t *testing.T) {
+	srv, _ := server.MakeServer()
+
+	request, response := server.MakeRequest(http.MethodGet, "/bca/projects/add", nil)
+
+	srv.ProjectAdd(response, request)
+
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Agregar Proyecto")
+}
