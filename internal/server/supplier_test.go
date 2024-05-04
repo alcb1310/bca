@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	"bca-go-final/internal/server"
@@ -148,4 +149,23 @@ func TestSupplierAdd(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Contains(t, response.Body.String(), "Agregar Proveedor")
+}
+
+func TestSuppliersEdit(t *testing.T) {
+	supplierId := uuid.New()
+	testURL := fmt.Sprintf("/bca/partials/suppliers/%s", supplierId.String())
+	muxVars := make(map[string]string)
+	muxVars["id"] = supplierId.String()
+
+	srv, db := server.MakeServer()
+
+	db.On("GetOneSupplier", supplierId, uuid.UUID{}).Return(types.Supplier{}, nil)
+
+	request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+	request = mux.SetURLVars(request, muxVars)
+
+	srv.SuppliersEdit(response, request)
+
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Editar Proveedor")
 }

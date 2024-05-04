@@ -72,7 +72,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/partials/suppliers", s.SuppliersTable)  // Fully tested
 	r.HandleFunc("/bca/partials/suppliers/add", s.SupplierAdd) // Fully tested
 	r.HandleFunc("/bca/partials/suppliers/edit/{id}", s.SuppliersEditSave)
-	r.HandleFunc("/bca/partials/suppliers/{id}", s.SuppliersEdit)
+	r.HandleFunc("/bca/partials/suppliers/{id}", s.SuppliersEdit) // Fully tested
 
 	r.HandleFunc("/bca/partials/budget-item", s.BudgetItemsTable)
 	r.HandleFunc("/bca/partials/budget-item/add", s.BudgetItemAdd)
