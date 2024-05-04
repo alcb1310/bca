@@ -13,6 +13,8 @@ func (s *ServiceMock) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse,
 
 func (s *ServiceMock) CreateInvoice(invoice *types.InvoiceCreate) error {
 	args := s.Called(invoice)
+	id := uuid.MustParse("cdefa321-9f2d-4673-9949-7cac744e941a")
+	invoice.Id = &id
 	return args.Error(0)
 }
 

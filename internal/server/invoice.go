@@ -80,11 +80,11 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 		err = s.DB.CreateInvoice(i)
 		if err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte("La Factura ya existe"))
 				return
 			}
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
