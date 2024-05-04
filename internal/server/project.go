@@ -113,6 +113,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		log.Println(err)
 		return
 	}

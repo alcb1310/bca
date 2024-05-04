@@ -1,6 +1,7 @@
 package server_test
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -8,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	"bca-go-final/internal/server"
@@ -142,4 +144,100 @@ func TestProjectAdd(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Contains(t, response.Body.String(), "Agregar Proyecto")
+}
+
+func TestProjectEditSave(t *testing.T) {
+	falseValue := false
+	srv, db := server.MakeServer()
+	project := types.Project{
+		ID:        uuid.New(),
+		Name:      "proyecto",
+		CompanyId: uuid.UUID{},
+		IsActive:  &falseValue,
+		GrossArea: 100.0,
+		NetArea:   80.0,
+	}
+	muxVars := make(map[string]string)
+	muxVars["id"] = project.ID.String()
+
+	db.On("GetProject", project.ID, uuid.UUID{}).Return(project, nil)
+
+	t.Run("validate data", func(t *testing.T) {
+		t.Run("Gross area", func(t *testing.T) {
+			form := url.Values{}
+			form.Add("gross_area", "invalid")
+
+			request, response := server.MakeRequest(http.MethodPost, "/bca/projects/edit-save", strings.NewReader(form.Encode()))
+			request = mux.SetURLVars(request, muxVars)
+
+			srv.ProjectEditSave(response, request)
+
+			assert.Equal(t, http.StatusBadRequest, response.Code)
+			assert.Equal(t, response.Body.String(), "área bruta debe ser un número válido")
+		})
+
+		t.Run("Net area", func(t *testing.T) {
+			form := url.Values{}
+			form.Add("net_area", "invalid")
+
+			request, response := server.MakeRequest(http.MethodPost, "/bca/projects/edit-save", strings.NewReader(form.Encode()))
+			request = mux.SetURLVars(request, muxVars)
+
+			srv.ProjectEditSave(response, request)
+
+			assert.Equal(t, http.StatusBadRequest, response.Code)
+			assert.Equal(t, response.Body.String(), "área útil debe ser un número válido")
+		})
+	})
+
+	t.Run("valid data", func(t *testing.T) {
+		t.Run("successfull update", func(t *testing.T) {
+			form := url.Values{}
+			form.Add("name", project.Name)
+			form.Add("gross_area", fmt.Sprintf("%f", project.GrossArea))
+			form.Add("net_area", fmt.Sprintf("%f", project.NetArea))
+
+			db.On("UpdateProject", project, project.ID, uuid.UUID{}).Return(nil)
+			db.On("GetAllProjects", uuid.UUID{}).Return([]types.Project{}, nil)
+
+			request, response := server.MakeRequest(http.MethodPost, "/bca/projects/edit-save", strings.NewReader(form.Encode()))
+			request = mux.SetURLVars(request, muxVars)
+
+			srv.ProjectEditSave(response, request)
+
+			assert.Equal(t, http.StatusOK, response.Code)
+		})
+
+		t.Run("failed update", func(t *testing.T) {
+			t.Run("duplicate", func(t *testing.T) {
+				form := url.Values{}
+				srv, db := server.MakeServer()
+				db.On("GetProject", project.ID, uuid.UUID{}).Return(project, nil)
+				db.On("UpdateProject", project, project.ID, uuid.UUID{}).Return(errors.New("duplicate"))
+
+				request, response := server.MakeRequest(http.MethodPost, "/bca/projects/edit-save", strings.NewReader(form.Encode()))
+				request = mux.SetURLVars(request, muxVars)
+
+				srv.ProjectEditSave(response, request)
+
+				assert.Equal(t, http.StatusConflict, response.Code)
+				assert.Equal(t, response.Body.String(), fmt.Sprintf("El nombre %s ya existe", project.Name))
+			})
+
+			t.Run("unknown error", func(t *testing.T) {
+				form := url.Values{}
+				srv, db := server.MakeServer()
+				db.On("GetProject", project.ID, uuid.UUID{}).Return(project, nil)
+				db.On("UpdateProject", project, project.ID, uuid.UUID{}).Return(UnknownError)
+
+				request, response := server.MakeRequest(http.MethodPost, "/bca/projects/edit-save", strings.NewReader(form.Encode()))
+				request = mux.SetURLVars(request, muxVars)
+
+				srv.ProjectEditSave(response, request)
+
+				assert.Equal(t, http.StatusInternalServerError, response.Code)
+				assert.Equal(t, response.Body.String(), UnknownError.Error())
+			})
+		})
+	})
 }
