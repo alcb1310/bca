@@ -100,6 +100,7 @@ func (s *Server) DetailsEdit(w http.ResponseWriter, r *http.Request) {
 
 	if err := s.DB.DeleteDetail(parsedInvoiceId, parsedBudgetItemId, ctx.CompanyId); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		log.Println(err)
 		return
 	}
@@ -107,6 +108,7 @@ func (s *Server) DetailsEdit(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 

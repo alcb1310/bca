@@ -240,3 +240,49 @@ func TestDetailsAdd(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Contains(t, response.Body.String(), "Agregar Detalles")
 }
+
+func TestDetailsEdit(t *testing.T) {
+	invoiceId := uuid.New()
+	budgetItemId := uuid.New()
+
+	testURL := fmt.Sprintf("/bca/partials/invoices/%s/details/%s", invoiceId, budgetItemId)
+	muxVars := make(map[string]string)
+	muxVars["invoiceId"] = invoiceId.String()
+	muxVars["budgetItemId"] = budgetItemId.String()
+
+	t.Run("successful delete", func(t *testing.T) {
+		srv, db := server.MakeServer()
+		db.On("DeleteDetail", invoiceId, budgetItemId, uuid.UUID{}).Return(nil)
+		db.On("GetAllDetails", invoiceId, uuid.UUID{}).Return([]types.InvoiceDetailsResponse{}, nil)
+
+		request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+		request = mux.SetURLVars(request, muxVars)
+		srv.DetailsEdit(response, request)
+		assert.Equal(t, http.StatusOK, response.Code)
+	})
+
+	t.Run("error", func(t *testing.T) {
+		t.Run("delete error", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("DeleteDetail", invoiceId, budgetItemId, uuid.UUID{}).Return(UnknownError)
+
+			request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+			request = mux.SetURLVars(request, muxVars)
+			srv.DetailsEdit(response, request)
+			assert.Equal(t, http.StatusInternalServerError, response.Code)
+			assert.Equal(t, response.Body.String(), UnknownError.Error())
+		})
+
+		t.Run("get error", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("DeleteDetail", invoiceId, budgetItemId, uuid.UUID{}).Return(nil)
+			db.On("GetAllDetails", invoiceId, uuid.UUID{}).Return([]types.InvoiceDetailsResponse{}, UnknownError)
+
+			request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+			request = mux.SetURLVars(request, muxVars)
+			srv.DetailsEdit(response, request)
+			assert.Equal(t, http.StatusInternalServerError, response.Code)
+			assert.Equal(t, response.Body.String(), UnknownError.Error())
+		})
+	})
+}
