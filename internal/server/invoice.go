@@ -118,6 +118,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 		if err := s.DB.BalanceInvoice(in); err != nil {
 			log.Printf("error updating invoice: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			return
 		}
 		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
@@ -130,6 +131,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 		if err := s.DB.DeleteInvoice(parsedId, ctx.CompanyId); err != nil {
 			log.Printf("error deleting invoice: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -175,7 +177,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 
 		if err := s.DB.UpdateInvoice(i); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte("La Factura ya existe"))
 				return
 			}

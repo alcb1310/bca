@@ -2,6 +2,7 @@ package server_test
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	"bca-go-final/internal/server"
@@ -28,14 +30,30 @@ func TestInvoicesTable(t *testing.T) {
 func TestInvoiceAdd(t *testing.T) {
 	testURL := "/bca/transacciones/facturas/crear"
 	t.Run("method GET", func(t *testing.T) {
-		srv, db := server.MakeServer()
-		db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
-		db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+		t.Run("no query parameters", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+			db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
 
-		request, response := server.MakeRequest(http.MethodGet, testURL, nil)
-		srv.InvoiceAdd(response, request)
-		assert.Equal(t, http.StatusOK, response.Code)
-		assert.Contains(t, response.Body.String(), "Nueva Factura")
+			request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+			srv.InvoiceAdd(response, request)
+			assert.Equal(t, http.StatusOK, response.Code)
+			assert.Contains(t, response.Body.String(), "Nueva Factura")
+		})
+
+		t.Run("with query parameters", func(t *testing.T) {
+			invoiceId := uuid.New()
+			newTestURL := fmt.Sprintf("%s?id=%s", testURL, invoiceId.String())
+			srv, db := server.MakeServer()
+			db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+			db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+			db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+
+			request, response := server.MakeRequest(http.MethodGet, newTestURL, nil)
+			srv.InvoiceAdd(response, request)
+			assert.Equal(t, http.StatusOK, response.Code)
+			assert.Contains(t, response.Body.String(), "Editar Factura")
+		})
 	})
 
 	t.Run("method POST", func(t *testing.T) {
@@ -246,6 +264,265 @@ func TestInvoiceAdd(t *testing.T) {
 
 				})
 			})
+		})
+	})
+}
+
+func TestInvoiceEdit(t *testing.T) {
+	invoiceId := uuid.New()
+	testURL := fmt.Sprintf("/bca/partials/invoices/%s", invoiceId.String())
+	muxVars := make(map[string]string)
+	muxVars["id"] = invoiceId.String()
+
+	supplierResponse := types.InvoiceResponse{
+		Id:            uuid.UUID{},
+		CompanyId:     uuid.UUID{},
+		Project:       types.Project{},
+		Supplier:      types.Supplier{},
+		InvoiceNumber: "",
+	}
+
+	t.Run("method GET", func(t *testing.T) {
+		srv, db := server.MakeServer()
+		db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+		db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+		db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+
+		request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+		request = mux.SetURLVars(request, muxVars)
+		srv.InvoiceEdit(response, request)
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Contains(t, response.Body.String(), "Editar Factura")
+	})
+
+	t.Run("method DELETE", func(t *testing.T) {
+		t.Run("successful delete", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+			db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+			db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+			db.On("DeleteInvoice", invoiceId, uuid.UUID{}).Return(nil)
+			db.On("GetInvoices", uuid.UUID{}).Return([]types.InvoiceResponse{}, nil)
+
+			request, response := server.MakeRequest(http.MethodDelete, testURL, nil)
+			request = mux.SetURLVars(request, muxVars)
+			srv.InvoiceEdit(response, request)
+			assert.Equal(t, http.StatusOK, response.Code)
+		})
+
+		t.Run("failed delete", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+			db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+			db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+			db.On("DeleteInvoice", invoiceId, uuid.UUID{}).Return(UnknownError)
+			db.On("GetInvoices", uuid.UUID{}).Return([]types.InvoiceResponse{}, nil)
+
+			request, response := server.MakeRequest(http.MethodDelete, testURL, nil)
+			request = mux.SetURLVars(request, muxVars)
+			srv.InvoiceEdit(response, request)
+			assert.Equal(t, http.StatusInternalServerError, response.Code)
+			assert.Equal(t, UnknownError.Error(), response.Body.String())
+		})
+	})
+
+	t.Run("method PUT", func(t *testing.T) {
+		t.Run("data validation", func(t *testing.T) {
+			t.Run("supplier", func(t *testing.T) {
+				t.Run("empty supplier", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("supplier", "")
+					buf := strings.NewReader(form.Encode())
+
+					srv, db := server.MakeServer()
+					db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+					db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+					db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+
+					request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+					request = mux.SetURLVars(request, muxVars)
+					srv.InvoiceEdit(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Equal(t, response.Body.String(), "Seleccione un proveedor")
+				})
+
+				t.Run("invalid supplier", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("supplier", "invalid")
+					buf := strings.NewReader(form.Encode())
+
+					srv, db := server.MakeServer()
+					db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+					db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+					db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+
+					request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+					request = mux.SetURLVars(request, muxVars)
+					srv.InvoiceEdit(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Equal(t, response.Body.String(), "invalid UUID length: 7")
+				})
+			})
+
+			t.Run("invoice number", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("supplier", uuid.UUID{}.String())
+				form.Add("invoiceNumber", "")
+				buf := strings.NewReader(form.Encode())
+
+				srv, db := server.MakeServer()
+				db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+				db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+				db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+
+				request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+				request = mux.SetURLVars(request, muxVars)
+				srv.InvoiceEdit(response, request)
+				assert.Equal(t, http.StatusBadRequest, response.Code)
+				assert.Equal(t, response.Body.String(), "Ingrese un número de factura")
+			})
+
+			t.Run("invoice date", func(t *testing.T) {
+				t.Run("empty date", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("supplier", uuid.UUID{}.String())
+					form.Add("invoiceNumber", "S/N")
+					form.Add("invoiceDate", "")
+					buf := strings.NewReader(form.Encode())
+
+					srv, db := server.MakeServer()
+					db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+					db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+					db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+
+					request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+					request = mux.SetURLVars(request, muxVars)
+					srv.InvoiceEdit(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Equal(t, response.Body.String(), "Ingrese una fecha válida")
+				})
+
+				t.Run("invalid date", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("supplier", uuid.UUID{}.String())
+					form.Add("invoiceNumber", "S/N")
+					form.Add("invoiceDate", "invalid")
+					buf := strings.NewReader(form.Encode())
+
+					srv, db := server.MakeServer()
+					db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+					db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+					db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+
+					request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+					request = mux.SetURLVars(request, muxVars)
+					srv.InvoiceEdit(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Equal(t, response.Body.String(), "Ingrese una fecha válida")
+				})
+			})
+		})
+
+		t.Run("valid data", func(t *testing.T) {
+			invoiceNumber := "S/N"
+			date, _ := time.Parse("2006-01-02", "2020-10-10")
+			invoiceCreate := types.InvoiceCreate{
+				Id:            &invoiceId,
+				ProjectId:     &uuid.UUID{},
+				SupplierId:    &uuid.UUID{},
+				InvoiceNumber: &invoiceNumber,
+				InvoiceDate:   &date,
+			}
+
+			t.Run("successful update", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("supplier", uuid.UUID{}.String())
+				form.Add("invoiceNumber", "S/N")
+				form.Add("invoiceDate", "2020-10-10")
+				buf := strings.NewReader(form.Encode())
+
+				srv, db := server.MakeServer()
+				db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+				db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+				db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+				db.On("UpdateInvoice", invoiceCreate).Return(nil)
+
+				request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+				request = mux.SetURLVars(request, muxVars)
+				srv.InvoiceEdit(response, request)
+				assert.Equal(t, http.StatusOK, response.Code)
+			})
+
+			t.Run("failed update", func(t *testing.T) {
+				t.Run("duplicate", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("supplier", uuid.UUID{}.String())
+					form.Add("invoiceNumber", "S/N")
+					form.Add("invoiceDate", "2020-10-10")
+					buf := strings.NewReader(form.Encode())
+
+					srv, db := server.MakeServer()
+					db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+					db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+					db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+					db.On("UpdateInvoice", invoiceCreate).Return(errors.New("duplicate"))
+
+					request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+					request = mux.SetURLVars(request, muxVars)
+					srv.InvoiceEdit(response, request)
+					assert.Equal(t, http.StatusConflict, response.Code)
+					assert.Equal(t, response.Body.String(), "La Factura ya existe")
+				})
+
+				t.Run("unknown error", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("supplier", uuid.UUID{}.String())
+					form.Add("invoiceNumber", "S/N")
+					form.Add("invoiceDate", "2020-10-10")
+					buf := strings.NewReader(form.Encode())
+
+					srv, db := server.MakeServer()
+					db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+					db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+					db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+					db.On("UpdateInvoice", invoiceCreate).Return(UnknownError)
+
+					request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+					request = mux.SetURLVars(request, muxVars)
+					srv.InvoiceEdit(response, request)
+					assert.Equal(t, http.StatusInternalServerError, response.Code)
+					assert.Equal(t, response.Body.String(), UnknownError.Error())
+				})
+			})
+		})
+	})
+
+	t.Run("method PATCH", func(t *testing.T) {
+		t.Run("successful update", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+			db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+			db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+			db.On("BalanceInvoice", supplierResponse).Return(nil)
+
+			request, response := server.MakeRequest(http.MethodPatch, testURL, nil)
+			request = mux.SetURLVars(request, muxVars)
+			srv.InvoiceEdit(response, request)
+			assert.Equal(t, http.StatusOK, response.Code)
+		})
+
+		t.Run("failed update", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("GetAllSuppliers", uuid.UUID{}, "").Return([]types.Supplier{}, nil)
+			db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{}, nil)
+			db.On("GetOneInvoice", invoiceId, uuid.UUID{}).Return(types.InvoiceResponse{}, nil)
+			db.On("BalanceInvoice", supplierResponse).Return(UnknownError)
+
+			request, response := server.MakeRequest(http.MethodPatch, testURL, nil)
+			request = mux.SetURLVars(request, muxVars)
+			srv.InvoiceEdit(response, request)
+			assert.Equal(t, http.StatusInternalServerError, response.Code)
+			assert.Equal(t, UnknownError.Error(), response.Body.String())
 		})
 	})
 }
