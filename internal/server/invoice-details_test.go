@@ -224,3 +224,19 @@ func TestDetailsTable(t *testing.T) {
 		})
 	})
 }
+
+func TestDetailsAdd(t *testing.T) {
+	invoiceId := uuid.New()
+	testURL := fmt.Sprintf("/bca/partials/invoices/%s/details", invoiceId)
+	muxVars := make(map[string]string)
+	muxVars["invoiceId"] = invoiceId.String()
+
+	srv, db := server.MakeServer()
+	db.On("GetBudgetItemsByAccumulate", uuid.UUID{}, false).Return([]types.BudgetItem{})
+
+	request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+	request = mux.SetURLVars(request, muxVars)
+	srv.DetailsAdd(response, request)
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Agregar Detalles")
+}
