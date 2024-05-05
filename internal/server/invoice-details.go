@@ -55,12 +55,12 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 
 		if err := s.DB.AddDetail(d); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte("Ya existe una partida con ese nombre en la factura"))
 				return
 			}
 			if strings.Contains(err.Error(), "no rows") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusNotFound)
 				w.Write([]byte("No existe presupuesto para esa partida"))
 				return
 			}
@@ -75,6 +75,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
