@@ -164,3 +164,14 @@ func TestMaterialsTable(t *testing.T) {
 		})
 	})
 }
+
+func TestMaterialsAdd(t *testing.T) {
+	testURL := "/bca/partials/materiales/add"
+	srv, db := server.MakeServer()
+	db.On("GetAllCategories", uuid.UUID{}).Return([]types.Category{}, nil)
+
+	request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+	srv.MaterialsAdd(response, request)
+	assert.Equal(t, http.StatusOK, response.Code)
+	assert.Contains(t, response.Body.String(), "Agregar Material")
+}
