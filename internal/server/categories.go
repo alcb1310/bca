@@ -73,6 +73,12 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 			CompanyId: ctxPayload.CompanyId,
 		}
 
+		if cat.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("nombre es requerido"))
+			return
+		}
+
 		if err := s.DB.UpdateCategory(cat); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
 				w.WriteHeader(http.StatusConflict)
@@ -80,6 +86,7 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			log.Println(err)
 			return
 		}
