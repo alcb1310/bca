@@ -23,6 +23,13 @@ func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 			Name:      r.Form.Get("name"),
 			CompanyId: ctxPayload.CompanyId,
 		}
+
+		if c.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("nombre es requerido"))
+			return
+		}
+
 		err = s.DB.CreateCategory(c)
 		if err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
@@ -31,6 +38,7 @@ func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			log.Println(err)
 			return
 		}
