@@ -38,9 +38,10 @@ func (s *Server) MaterialsByItem(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "material")
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "rubro")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -70,7 +71,7 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -89,7 +90,7 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	default:
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
 
