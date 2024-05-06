@@ -92,6 +92,7 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "material")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
