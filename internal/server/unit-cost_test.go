@@ -2,7 +2,6 @@ package server_test
 
 import (
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/google/uuid"
@@ -10,15 +9,11 @@ import (
 
 	"bca-go-final/internal/server"
 	"bca-go-final/internal/types"
-	"bca-go-final/mocks"
 )
 
 func TestUnitQuantity(t *testing.T) {
-	db := mocks.NewServiceMock()
-	_, srv := server.NewServer(db)
-
-	response := httptest.NewRecorder()
-	request := httptest.NewRequest(http.MethodGet, "/bca/costo-unitario/cantidades", nil)
+	srv, _ := server.MakeServer()
+	request, response := server.MakeRequest(http.MethodGet, "/bca/costo-unitario/analisis", nil)
 
 	srv.UnitQuantity(response, request)
 
@@ -27,23 +22,25 @@ func TestUnitQuantity(t *testing.T) {
 }
 
 func TestUnitAnalysis(t *testing.T) {
-	db := mocks.NewServiceMock()
-	_, srv := server.NewServer(db)
+	srv, db := server.MakeServer()
+	request, response := server.MakeRequest(http.MethodGet, "/bca/costo-unitario/analisis", nil)
 
-	response := httptest.NewRecorder()
-	request := httptest.NewRequest(http.MethodGet, "/bca/costo-unitario/analisis", nil)
-
-	db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{
-		{
-			ID:        uuid.New(),
-			Name:      "Project 1",
-			IsActive:  &trueValue,
-			CompanyId: uuid.New(),
-		},
-	})
+	db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{})
 
 	srv.UnitAnalysis(response, request)
-
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Contains(t, response.Body.String(), "Analisis")
 }
+
+// r.HandleFunc("/bca/partials/cantidades", s.CantidadesTable)
+func TestCantidadesTable(t *testing.T) {
+	srv, db := server.MakeServer()
+	db.On("CantidadesTable", uuid.UUID{}).Return([]types.Quantity{})
+
+	request, response := server.MakeRequest(http.MethodGet, "/bca/partials/cantidades", nil)
+	srv.CantidadesTable(response, request)
+	assert.Equal(t, http.StatusOK, response.Code)
+}
+
+// r.HandleFunc("/bca/partials/cantidades/add", s.CantidadesAdd)
+// r.HandleFunc("/bca/partials/cantidades/{id}", s.CantidadesEdit)
