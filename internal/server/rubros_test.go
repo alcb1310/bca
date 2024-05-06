@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/google/uuid"
@@ -210,4 +211,148 @@ func TestMaterialByItemForm(t *testing.T) {
 	})
 }
 
-// TEST: r.HandleFunc("/bca/partials/rubros/{id}/material/{materialId}", s.MaterialItemsOperations)
+func TestMaterialItemsOperations(t *testing.T) {
+	rubroId := uuid.New()
+	materialId := uuid.New()
+	testURL := fmt.Sprintf("/bca/partials/rubros/%s/material/%s", rubroId, materialId)
+	_ = testURL
+
+	muxVars := make(map[string]string)
+	muxVars["id"] = rubroId.String()
+	muxVars["materialId"] = materialId.String()
+
+	quantity := 1.0
+
+	t.Run("Invalid rubro id", func(t *testing.T) {
+		muxVars := make(map[string]string)
+		muxVars["id"] = "invalid"
+		muxVars["materialId"] = materialId.String()
+		srv, _ := server.MakeServer()
+		request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+		request = mux.SetURLVars(request, muxVars)
+		srv.MaterialItemsOperations(response, request)
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "invalid UUID length: 7", response.Body.String())
+	})
+
+	t.Run("Invalid material id", func(t *testing.T) {
+		muxVars := make(map[string]string)
+		muxVars["id"] = rubroId.String()
+		muxVars["materialId"] = "invalid"
+		srv, _ := server.MakeServer()
+		request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+		request = mux.SetURLVars(request, muxVars)
+		srv.MaterialItemsOperations(response, request)
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "invalid UUID length: 7", response.Body.String())
+	})
+
+	t.Run("method DELETE", func(t *testing.T) {
+		t.Run("Successful delete", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("DeleteMaterialsByItem", rubroId, materialId, uuid.UUID{}).Return(nil)
+			db.On("GetMaterialsByItem", rubroId, uuid.UUID{}).Return([]types.ACU{}, nil)
+
+			request, response := server.MakeRequest(http.MethodDelete, testURL, nil)
+			request = mux.SetURLVars(request, muxVars)
+			srv.MaterialItemsOperations(response, request)
+			assert.Equal(t, http.StatusOK, response.Code)
+		})
+
+		t.Run("Failed delete", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("DeleteMaterialsByItem", rubroId, materialId, uuid.UUID{}).Return(UnknownError)
+
+			request, response := server.MakeRequest(http.MethodDelete, testURL, nil)
+			request = mux.SetURLVars(request, muxVars)
+			srv.MaterialItemsOperations(response, request)
+			assert.Equal(t, http.StatusInternalServerError, response.Code)
+			assert.Equal(t, UnknownError.Error(), response.Body.String())
+		})
+	})
+
+	t.Run("method GET", func(t *testing.T) {
+		srv, db := server.MakeServer()
+		db.On("GetQuantityByMaterialAndItem", rubroId, materialId, uuid.UUID{}).Return(types.ItemMaterialType{})
+		db.On("GetAllMaterials", uuid.UUID{}).Return([]types.Material{}, nil)
+
+		request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+		request = mux.SetURLVars(request, muxVars)
+		srv.MaterialItemsOperations(response, request)
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Contains(t, response.Body.String(), "Editar Material")
+	})
+
+	t.Run("method PUT", func(t *testing.T) {
+		t.Run("data validation", func(t *testing.T) {
+			t.Run("quantity", func(t *testing.T) {
+				t.Run("empty", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("quantity", "")
+					buf := strings.NewReader(form.Encode())
+
+					srv, _ := server.MakeServer()
+					request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+					request = mux.SetURLVars(request, muxVars)
+					srv.MaterialItemsOperations(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Equal(t, response.Body.String(), "cantidad es requerido")
+				})
+
+				t.Run("invalid", func(t *testing.T) {
+					form := url.Values{}
+					form.Add("quantity", "invalid")
+					buf := strings.NewReader(form.Encode())
+
+					srv, _ := server.MakeServer()
+					request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+					request = mux.SetURLVars(request, muxVars)
+					srv.MaterialItemsOperations(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Equal(t, response.Body.String(), "cantidad debe ser un número válido")
+				})
+			})
+		})
+
+		t.Run("valid data", func(t *testing.T) {
+			t.Run("success", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("quantity", fmt.Sprintf("%f", quantity))
+				buf := strings.NewReader(form.Encode())
+
+				srv, db := server.MakeServer()
+				db.On("UpdateMaterialByItem", rubroId, materialId, quantity, uuid.UUID{}).Return(nil)
+				db.On("GetMaterialsByItem", rubroId, uuid.UUID{}).Return([]types.ACU{}, nil)
+
+				request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+				request = mux.SetURLVars(request, muxVars)
+				srv.MaterialItemsOperations(response, request)
+				assert.Equal(t, http.StatusOK, response.Code)
+			})
+
+			t.Run("error", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("quantity", fmt.Sprintf("%f", quantity))
+				buf := strings.NewReader(form.Encode())
+
+				srv, db := server.MakeServer()
+				db.On("UpdateMaterialByItem", rubroId, materialId, quantity, uuid.UUID{}).Return(UnknownError)
+
+				request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+				request = mux.SetURLVars(request, muxVars)
+				srv.MaterialItemsOperations(response, request)
+				assert.Equal(t, http.StatusInternalServerError, response.Code)
+				assert.Equal(t, UnknownError.Error(), response.Body.String())
+			})
+		})
+	})
+
+	t.Run("method not allowed", func(t *testing.T) {
+		srv, _ := server.MakeServer()
+
+		request, response := server.MakeRequest(http.MethodPost, testURL, nil)
+		request = mux.SetURLVars(request, muxVars)
+		srv.MaterialItemsOperations(response, request)
+		assert.Equal(t, http.StatusMethodNotAllowed, response.Code)
+	})
+}

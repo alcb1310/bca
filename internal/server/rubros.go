@@ -100,19 +100,21 @@ func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request)
 	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "rubro")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
-	parsedMaterialId, err := utils.ValidateUUID(mux.Vars(r)["materialId"], "rubro")
+	parsedMaterialId, err := utils.ValidateUUID(mux.Vars(r)["materialId"], "material")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	switch r.Method {
 	case http.MethodDelete:
 		if err := s.DB.DeleteMaterialsByItem(parsedId, parsedMaterialId, ctxPayload.CompanyId); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -135,7 +137,7 @@ func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request)
 		}
 
 		if err := s.DB.UpdateMaterialByItem(parsedId, parsedMaterialId, quantity, ctxPayload.CompanyId); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -154,7 +156,7 @@ func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request)
 		component := partials.MaterialsItemsForm(&im, parsedId, materials)
 		component.Render(r.Context(), w)
 	default:
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 
 }
