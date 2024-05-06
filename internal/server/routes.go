@@ -102,8 +102,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/partials/rubros/{id}/material", s.MaterialByItemForm)                   // Fully tested
 	r.HandleFunc("/bca/partials/rubros/{id}/material/{materialId}", s.MaterialItemsOperations) // Fully tested
 
-	r.HandleFunc("/bca/partials/cantidades", s.CantidadesTable) // Fully tested
-	r.HandleFunc("/bca/partials/cantidades/add", s.CantidadesAdd)
+	r.HandleFunc("/bca/partials/cantidades", s.CantidadesTable)   // Fully tested
+	r.HandleFunc("/bca/partials/cantidades/add", s.CantidadesAdd) // Fully tested
 	r.HandleFunc("/bca/partials/cantidades/{id}", s.CantidadesEdit)
 
 	r.HandleFunc("/bca/partials/analisis", s.AnalysisTable)

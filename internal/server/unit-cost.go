@@ -71,13 +71,13 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 
 		if err := s.DB.CreateCantidades(parsedProjectId, parsedRubroId, quantity, ctx.CompanyId); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte("La cantidad ya existe"))
 				return
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Error al crear la cantidad"))
+			w.Write([]byte(err.Error()))
 			log.Println(err.Error())
 			return
 		}
