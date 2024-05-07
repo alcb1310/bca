@@ -37,7 +37,6 @@ func TestUnitAnalysis(t *testing.T) {
 	assert.Contains(t, response.Body.String(), "Analisis")
 }
 
-// r.HandleFunc("/bca/partials/cantidades", s.CantidadesTable)
 func TestCantidadesTable(t *testing.T) {
 	srv, db := server.MakeServer()
 	db.On("CantidadesTable", uuid.UUID{}).Return([]types.Quantity{})
@@ -47,7 +46,6 @@ func TestCantidadesTable(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.Code)
 }
 
-// r.HandleFunc("/bca/partials/cantidades/add", s.CantidadesAdd)
 func TestCantidadesAdd(t *testing.T) {
 	testURL := "/bca/partials/cantidades/add"
 
@@ -215,7 +213,6 @@ func TestCantidadesAdd(t *testing.T) {
 	})
 }
 
-// r.HandleFunc("/bca/partials/cantidades/{id}", s.CantidadesEdit)
 func TestCantidadesEdit(t *testing.T) {
 	cantidadesId := uuid.New()
 	quantity := 1.0
@@ -384,5 +381,50 @@ func TestCantidadesEdit(t *testing.T) {
 				assert.Equal(t, UnknownError.Error(), response.Body.String())
 			})
 		})
+	})
+}
+
+func TestAnalysisTable(t *testing.T) {
+	testURL := "/bca/partials/analisis"
+
+	t.Run("projects", func(t *testing.T) {
+		t.Run("empty", func(t *testing.T) {
+			srv, _ := server.MakeServer()
+
+			request, response := server.MakeRequest(http.MethodGet, fmt.Sprintf("%s?project=", testURL), nil)
+			srv.AnalysisTable(response, request)
+			assert.Equal(t, http.StatusBadRequest, response.Code)
+			assert.Contains(t, response.Body.String(), "Seleccione un proyecto")
+		})
+
+		t.Run("invalid", func(t *testing.T) {
+			srv, _ := server.MakeServer()
+
+			request, response := server.MakeRequest(http.MethodGet, fmt.Sprintf("%s?project=invalid", testURL), nil)
+			srv.AnalysisTable(response, request)
+			assert.Equal(t, http.StatusBadRequest, response.Code)
+			assert.Contains(t, response.Body.String(), "invalid UUID length: 7")
+		})
+	})
+
+	t.Run("success", func(t *testing.T) {
+		report := make(map[string][]types.AnalysisReport)
+		report["rubros"] = []types.AnalysisReport{
+			{
+				ProjectName:  "project",
+				CategoryName: "rubro",
+				MaterialName: "material",
+				Quantity:     1.0,
+			},
+		}
+
+		projectId := uuid.New()
+
+		srv, db := server.MakeServer()
+		db.On("AnalysisReport", projectId, uuid.UUID{}).Return(report)
+
+		request, response := server.MakeRequest(http.MethodGet, fmt.Sprintf("%s?project=%s", testURL, projectId), nil)
+		srv.AnalysisTable(response, request)
+		assert.Equal(t, http.StatusOK, response.Code)
 	})
 }
