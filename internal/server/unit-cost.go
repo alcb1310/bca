@@ -137,7 +137,7 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 		if err := s.DB.DeleteCantidades(parsedId, ctx.CompanyId); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Error al borrar la cantidad"))
+			w.Write([]byte(err.Error()))
 			log.Println(err.Error())
 			return
 		}
@@ -175,7 +175,7 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 
 		if err := s.DB.UpdateQuantity(quan, ctx.CompanyId); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Error al actualizar la cantidad"))
+			w.Write([]byte(err.Error()))
 			log.Println(err.Error())
 			return
 		}

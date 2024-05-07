@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 
 	"bca-go-final/internal/server"
@@ -213,4 +214,175 @@ func TestCantidadesAdd(t *testing.T) {
 		})
 	})
 }
+
 // r.HandleFunc("/bca/partials/cantidades/{id}", s.CantidadesEdit)
+func TestCantidadesEdit(t *testing.T) {
+	cantidadesId := uuid.New()
+	quantity := 1.0
+	testURL := fmt.Sprintf("/bca/partials/cantidades/%s", cantidadesId.String())
+	muxVars := make(map[string]string)
+	muxVars["id"] = cantidadesId.String()
+
+	t.Run("invalid id", func(t *testing.T) {
+		testURL := fmt.Sprintf("/bca/partials/cantidades/invalid")
+		muxVars := make(map[string]string)
+		muxVars["id"] = "invalid"
+
+		srv, _ := server.MakeServer()
+		request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+		request = mux.SetURLVars(request, muxVars)
+		srv.CantidadesEdit(response, request)
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+		assert.Equal(t, "invalid UUID length: 7", response.Body.String())
+	})
+
+	t.Run("method not allowed", func(t *testing.T) {
+		srv, _ := server.MakeServer()
+		request, response := server.MakeRequest(http.MethodPatch, testURL, nil)
+		request = mux.SetURLVars(request, muxVars)
+		srv.CantidadesEdit(response, request)
+		assert.Equal(t, http.StatusMethodNotAllowed, response.Code)
+	})
+
+	t.Run("method DELETE", func(t *testing.T) {
+		t.Run("success", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("DeleteCantidades", cantidadesId, uuid.UUID{}).Return(nil)
+			db.On("CantidadesTable", uuid.UUID{}).Return([]types.Quantity{})
+
+			request, response := server.MakeRequest(http.MethodDelete, testURL, nil)
+			request = mux.SetURLVars(request, muxVars)
+			srv.CantidadesEdit(response, request)
+			assert.Equal(t, http.StatusOK, response.Code)
+		})
+
+		t.Run("error", func(t *testing.T) {
+			srv, db := server.MakeServer()
+			db.On("DeleteCantidades", cantidadesId, uuid.UUID{}).Return(UnknownError)
+
+			request, response := server.MakeRequest(http.MethodDelete, testURL, nil)
+			request = mux.SetURLVars(request, muxVars)
+			srv.CantidadesEdit(response, request)
+			assert.Equal(t, http.StatusInternalServerError, response.Code)
+			assert.Equal(t, UnknownError.Error(), response.Body.String())
+		})
+	})
+
+	t.Run("method GET", func(t *testing.T) {
+		srv, db := server.MakeServer()
+		db.On("GetActiveProjects", uuid.UUID{}, true).Return([]types.Project{})
+		db.On("GetAllRubros", uuid.UUID{}).Return([]types.Rubro{}, nil)
+		db.On("GetOneQuantityById", cantidadesId, uuid.UUID{}).Return(types.Quantity{
+			Id: cantidadesId,
+			Project: types.Project{
+				ID:   uuid.UUID{},
+				Name: "project",
+			},
+			Rubro: types.Rubro{
+				Id:   uuid.UUID{},
+				Name: "rubro",
+			},
+			Quantity: 0,
+		}, nil)
+
+		request, response := server.MakeRequest(http.MethodGet, testURL, nil)
+		request = mux.SetURLVars(request, muxVars)
+		srv.CantidadesEdit(response, request)
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Contains(t, response.Body.String(), "Editar Cantidad")
+	})
+
+	t.Run("method PUT", func(t *testing.T) {
+		t.Run("validate data", func(t *testing.T) {
+			t.Run("quantity", func(t *testing.T) {
+				t.Run("empty", func(t *testing.T) {
+					srv, _ := server.MakeServer()
+
+					form := url.Values{}
+					form.Add("quantity", "")
+					buf := bytes.NewBufferString(form.Encode())
+
+					request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+					request = mux.SetURLVars(request, muxVars)
+					srv.CantidadesEdit(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Contains(t, response.Body.String(), "cantidad es requerido")
+				})
+
+				t.Run("invalid", func(t *testing.T) {
+					srv, _ := server.MakeServer()
+
+					form := url.Values{}
+					form.Add("quantity", "invalid")
+					buf := bytes.NewBufferString(form.Encode())
+
+					request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+					request = mux.SetURLVars(request, muxVars)
+					srv.CantidadesEdit(response, request)
+					assert.Equal(t, http.StatusBadRequest, response.Code)
+					assert.Contains(t, response.Body.String(), "cantidad debe ser un número válido")
+				})
+			})
+		})
+
+		t.Run("valid data", func(t *testing.T) {
+			t.Run("success", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("quantity", fmt.Sprintf("%f", quantity))
+				buf := bytes.NewBufferString(form.Encode())
+
+				quan := types.Quantity{
+					Id: cantidadesId,
+					Project: types.Project{
+						ID:   uuid.UUID{},
+						Name: "project",
+					},
+					Rubro: types.Rubro{
+						Id:   uuid.UUID{},
+						Name: "rubro",
+					},
+					Quantity: 0,
+				}
+				srv, db := server.MakeServer()
+				db.On("GetOneQuantityById", cantidadesId, uuid.UUID{}).Return(quan)
+				quan.Quantity = quantity
+				db.On("UpdateQuantity", quan, uuid.UUID{}).Return(nil)
+				db.On("CantidadesTable", uuid.UUID{}).Return([]types.Quantity{})
+
+				request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+				request = mux.SetURLVars(request, muxVars)
+				srv.CantidadesEdit(response, request)
+				assert.Equal(t, http.StatusOK, response.Code)
+			})
+
+			t.Run("error", func(t *testing.T) {
+				form := url.Values{}
+				form.Add("quantity", fmt.Sprintf("%f", quantity))
+				buf := bytes.NewBufferString(form.Encode())
+
+				quan := types.Quantity{
+					Id: cantidadesId,
+					Project: types.Project{
+						ID:   uuid.UUID{},
+						Name: "project",
+					},
+					Rubro: types.Rubro{
+						Id:   uuid.UUID{},
+						Name: "rubro",
+					},
+					Quantity: 0,
+				}
+				srv, db := server.MakeServer()
+				db.On("GetOneQuantityById", cantidadesId, uuid.UUID{}).Return(quan)
+				quan.Quantity = quantity
+				db.On("UpdateQuantity", quan, uuid.UUID{}).Return(UnknownError)
+
+				request, response := server.MakeRequest(http.MethodPut, testURL, buf)
+				request = mux.SetURLVars(request, muxVars)
+				srv.CantidadesEdit(response, request)
+				assert.Equal(t, http.StatusInternalServerError, response.Code)
+				assert.Equal(t, UnknownError.Error(), response.Body.String())
+			})
+		})
+	})
+}
