@@ -30,11 +30,11 @@ docker-down:
 	fi
 
 # Test the application
-test:
+unit-test:
 	@echo "Testing..."
 	@go clean -testcache
 	@echo "Cache cleaned..."
-	@go test `go list ./... | grep -v ./internal/database | grep -v ./mocks | grep -v ./internal/excel | grep -v ./internal/views | grep -v ./internal/types | grep -v ./cmd/api` -cover
+	@go test `go list ./... | grep -v ./internal/database | grep -v ./mocks | grep -v ./internal/excel | grep -v ./internal/views | grep -v ./internal/types | grep -v ./cmd/api | grep -v ./tests` -cover
 
 # Clean the binary
 clean:
