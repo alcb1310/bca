@@ -2,7 +2,7 @@ package components
 
 templ ButtonGroup() {
 	<div class="flex justify-between">
-		<button type="submit" class="btn" id="save-button">Grabar</button>
-		<button type="button" class="btn" id="close-button" onclick="resetClose()">Cancelar</button>
+		<button type="submit" class="btn" id="save-button" data-testid="save-button">Grabar</button>
+		<button type="button" class="btn" id="close-button" onclick="resetClose()" data-testid="cancel-button">Cancelar</button>
 	</div>
 }

@@ -17,50 +17,36 @@ import (
 )
 
 func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := utils.GetMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
-
-	levels := s.DB.Levels(ctx.CompanyId)
+	data := []string{"projects", "levels"}
+	results := s.returnAllSelects(data, ctxPayload.CompanyId)
+	projects := results["projects"]
+	levels := results["levels"]
 
 	component := reports.ActualView(projects, levels)
 	component.Render(r.Context(), w)
 }
 
 func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := utils.GetMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 
 	switch r.Method {
 	case http.MethodPost:
 		r.ParseForm()
 		pId := r.Form.Get("project")
-		parsedProjectId, _ := uuid.Parse(pId)
+		parsedProjectId, _ := utils.ValidateUUID(pId, "proyecto")
+
 		d := r.Form.Get("date")
 		date, _ := time.Parse("2006-01-02", d)
 
-		invoices := s.DB.GetBalance(ctx.CompanyId, parsedProjectId, date)
+		invoices := s.DB.GetBalance(ctxPayload.CompanyId, parsedProjectId, date)
 
 		component := partials.BalanceView(invoices)
 		component.Render(r.Context(), w)
 
 	case http.MethodGet:
-		p, _ := s.DB.GetAllProjects(ctx.CompanyId)
-		projects := []types.Select{}
-		for _, v := range p {
-			x := types.Select{
-				Key:   v.ID.String(),
-				Value: v.Name,
-			}
-			projects = append(projects, x)
-		}
+		projects := s.returnAllSelects([]string{"projects"}, ctxPayload.CompanyId)["projects"]
 
 		component := reports.BalanceView(projects)
 		component.Render(r.Context(), w)
@@ -69,29 +55,23 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := utils.GetMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
-
-	levels := s.DB.Levels(ctx.CompanyId)
+	data := []string{"projects", "levels"}
+	results := s.returnAllSelects(data, ctxPayload.CompanyId)
+	projects := results["projects"]
+	levels := results["levels"]
 
 	if r.URL.Query().Get("proyecto") != "" && r.URL.Query().Get("fecha") != "" && r.URL.Query().Get("nivel") != "" {
 		pId := r.URL.Query().Get("proyecto")
-		parsedProjectId, _ := uuid.Parse(pId)
+		parsedProjectId, _ := utils.ValidateUUID(pId, "proyecto")
+
 		d := r.URL.Query().Get("fecha")
 		date, _ := time.Parse("2006-01-02", d)
 		l, _ := strconv.ParseUint(r.URL.Query().Get("nivel"), 10, 64)
 		nivel := uint8(l)
 
-		budgets := s.DB.GetHistoricByProject(ctx.CompanyId, parsedProjectId, date, nivel)
+		budgets := s.DB.GetHistoricByProject(ctxPayload.CompanyId, parsedProjectId, date, nivel)
 		component := partials.BudgetView(budgets)
 		component.Render(r.Context(), w)
 		return
@@ -102,35 +82,32 @@ func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := utils.GetMyPaload(r)
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
+	ctxPayload, _ := utils.GetMyPaload(r)
+
+	data := []string{"projects", "levels"}
+	results := s.returnAllSelects(data, ctxPayload.CompanyId)
+	projects := results["projects"]
+	levels := results["levels"]
 
 	if r.URL.Query().Get("proyecto") != "" && r.URL.Query().Get("fecha") != "" && r.URL.Query().Get("nivel") != "" {
 		pId := r.URL.Query().Get("proyecto")
-		parsedProjectId, _ := uuid.Parse(pId)
+		parsedProjectId, _ := utils.ValidateUUID(pId, "proyecto")
+
 		d := r.URL.Query().Get("fecha")
 		date, _ := time.Parse("2006-01-02", d)
 		l, _ := strconv.ParseUint(r.URL.Query().Get("nivel"), 10, 64)
 		nivel := uint8(l)
 
-		budgetItems := s.DB.GetBudgetItemsByLevel(ctx.CompanyId, nivel)
+		budgetItems := s.DB.GetBudgetItemsByLevel(ctxPayload.CompanyId, nivel)
 		reportData := []types.Spent{}
 		var grandTotal float64 = 0
 
 		for _, bi := range budgetItems {
 			x := []types.BudgetItem{bi}
 			res := []uuid.UUID{}
-			res = s.DB.GetNonAccumulateChildren(&ctx.CompanyId, &parsedProjectId, x, res)
+			res = s.DB.GetNonAccumulateChildren(&ctxPayload.CompanyId, &parsedProjectId, x, res)
 
-			total := s.DB.GetSpentByBudgetItem(ctx.CompanyId, parsedProjectId, bi.ID, date, res)
+			total := s.DB.GetSpentByBudgetItem(ctxPayload.CompanyId, parsedProjectId, bi.ID, date, res)
 			grandTotal += total
 			if total > 0 {
 				reportData = append(reportData, types.Spent{
@@ -151,16 +128,15 @@ func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	levels := s.DB.Levels(ctx.CompanyId)
 	component := reports.SpentView(projects, levels)
 	component.Render(r.Context(), w)
 }
 
 func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := utils.GetMyPaload(r)
+	ctxPayload, _ := utils.GetMyPaload(r)
 	r.ParseForm()
 	p := r.Form.Get("proyecto")
-	projectId, _ := uuid.Parse(p)
+	projectId, _ := utils.ValidateUUID(p, "proyecto")
 	z := r.Form.Get("nivel")
 	var l uint64
 	var err error
@@ -169,14 +145,15 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 	} else {
 		l, err = strconv.ParseUint(z, 10, 64)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
 			log.Println(err)
+			w.Write([]byte("nivel debe ser un número válido"))
 			return
 		}
 	}
 	level := uint8(l)
 
-	budgets, err := s.DB.GetBudgetsByProjectId(ctx.CompanyId, projectId, &level)
+	budgets, err := s.DB.GetBudgetsByProjectId(ctxPayload.CompanyId, projectId, &level)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
@@ -187,19 +164,19 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["budgetItemId"]
-	budgetItemId, err := uuid.Parse(id)
+	ctxPayload, _ := utils.GetMyPaload(r)
+	budgetItemId, err := utils.ValidateUUID(mux.Vars(r)["budgetItemId"], "partida")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error al extraer el budgetItemId"))
 		log.Println(err)
 		return
 	}
 
-	pId := mux.Vars(r)["projectId"]
-	parsedProjectId, err := uuid.Parse(pId)
+	parsedProjectId, err := utils.ValidateUUID(mux.Vars(r)["projectId"], "proyecto")
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error al extraer el projectId"))
 		log.Println(err)
 		return
 	}
@@ -207,13 +184,13 @@ func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 	d := mux.Vars(r)["date"]
 	date, _ := time.Parse("2006-01-02", d)
 
-	budgetItem, _ := s.DB.GetOneBudgetItem(budgetItemId, ctx.CompanyId)
+	budgetItem, _ := s.DB.GetOneBudgetItem(budgetItemId, ctxPayload.CompanyId)
 
 	x := []types.BudgetItem{*budgetItem}
 	var res []uuid.UUID
-	res = s.DB.GetNonAccumulateChildren(&ctx.CompanyId, &parsedProjectId, x, res)
+	res = s.DB.GetNonAccumulateChildren(&ctxPayload.CompanyId, &parsedProjectId, x, res)
 
-	spent := s.DB.GetDetailsByBudgetItem(ctx.CompanyId, parsedProjectId, budgetItemId, date, res)
+	spent := s.DB.GetDetailsByBudgetItem(ctxPayload.CompanyId, parsedProjectId, budgetItemId, date, res)
 
 	component := partials.SpentDetails(spent, *budgetItem)
 	component.Render(r.Context(), w)

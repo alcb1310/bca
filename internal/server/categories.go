@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -24,6 +23,13 @@ func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 			Name:      r.Form.Get("name"),
 			CompanyId: ctxPayload.CompanyId,
 		}
+
+		if c.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("nombre es requerido"))
+			return
+		}
+
 		err = s.DB.CreateCategory(c)
 		if err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
@@ -32,6 +38,7 @@ func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			log.Println(err)
 			return
 		}
@@ -50,8 +57,7 @@ func (s *Server) CategoryAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "categoria")
 	c, _ := s.DB.GetCategory(parsedId, ctxPayload.CompanyId)
 
 	switch r.Method {
@@ -67,6 +73,12 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 			CompanyId: ctxPayload.CompanyId,
 		}
 
+		if cat.Name == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("nombre es requerido"))
+			return
+		}
+
 		if err := s.DB.UpdateCategory(cat); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
 				w.WriteHeader(http.StatusConflict)
@@ -74,6 +86,7 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			log.Println(err)
 			return
 		}

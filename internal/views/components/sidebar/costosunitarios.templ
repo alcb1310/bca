@@ -11,18 +11,20 @@ templ CostosUnitarios(active string) {
       <a
         href="/bca/costo-unitario/cantidades"
         class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "cantidad"), templ.KV("text-blue-gray-300", active != "cantidad") }
+        data-testid="menu-cantidad"
       >
         @icons.QuantityIcon()
-        <span>Cantidades</span>
+        <span data-testid="text-cantidad">Cantidades</span>
       </a>
     </li>
     <li>
       <a
         href="/bca/costo-unitario/analisis"
         class={ "flex py-2 px-0 gap-3 item-center text-xs hover:text-blue-gray-200 no-underline", templ.KV("text-blue-gray-100", active == "analisis"), templ.KV("text-blue-gray-300", active != "analisis") }
+        data-testid="menu-analisis"
       >
         @icons.AnalysisIcon()
-        <span>Analisis</span>
+        <span data-testid="text-analisis">Analisis</span>
       </a>
     </li>
   </ul>

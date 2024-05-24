@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -17,46 +15,32 @@ import (
 
 func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["invoiceId"]
-	parsedInvoiceId, _ := uuid.Parse(id)
+	parsedInvoiceId, _ := utils.ValidateUUID(mux.Vars(r)["invoiceId"], "factura")
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		biId := r.Form.Get("item")
-		if biId == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una partida"))
-			return
-		}
-		parsedBudgetItemId, err := uuid.Parse(biId)
+		parsedBudgetItemId, err := utils.ValidateUUID(biId, "partida")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
 			log.Println("Error parsing budgetItemId. Err: ", err)
 			return
 		}
-		q := r.Form.Get("quantity")
-		c := r.Form.Get("cost")
 
-		if q == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una cantidad"))
-			return
-		}
-		if c == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un costo"))
-			return
-		}
-		quantity, err := strconv.ParseFloat(q, 64)
+		q := r.Form.Get("quantity")
+		quantity, err := utils.ConvertFloat(q, "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Cantidad debe ser un número válido"))
+			w.Write([]byte(err.Error()))
 			return
 		}
-		cost, err := strconv.ParseFloat(c, 64)
+
+		c := r.Form.Get("cost")
+		cost, err := utils.ConvertFloat(c, "costo", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Costo debe ser un número válido"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -71,12 +55,12 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 
 		if err := s.DB.AddDetail(d); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte("Ya existe una partida con ese nombre en la factura"))
 				return
 			}
 			if strings.Contains(err.Error(), "no rows") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusNotFound)
 				w.Write([]byte("No existe presupuesto para esa partida"))
 				return
 			}
@@ -91,6 +75,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -100,20 +85,9 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
+	parsedInvoiceId, _ := utils.ValidateUUID(mux.Vars(r)["invoiceId"], "factura")
 
-	id := mux.Vars(r)["invoiceId"]
-	parsedInvoiceId, _ := uuid.Parse(id)
-
-	budgetItems := []types.Select{}
-	bi := s.DB.GetBudgetItemsByAccumulate(ctx.CompanyId, false)
-
-	for _, v := range bi {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		budgetItems = append(budgetItems, x)
-	}
+	budgetItems := s.returnAllSelects([]string{"budgetitems"}, ctx.CompanyId)["budgetitems"]
 
 	component := details.EditDetails(budgetItems, parsedInvoiceId.String())
 	component.Render(r.Context(), w)
@@ -121,14 +95,12 @@ func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) DetailsEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	iId := mux.Vars(r)["invoiceId"]
-	bId := mux.Vars(r)["budgetItemId"]
-	parsedInvoiceId, _ := uuid.Parse(iId)
-	parsedBudgetItemId, _ := uuid.Parse(bId)
-	_ = parsedBudgetItemId
+	parsedInvoiceId, _ := utils.ValidateUUID(mux.Vars(r)["invoiceId"], "factura")
+	parsedBudgetItemId, _ := utils.ValidateUUID(mux.Vars(r)["budgetItemId"], "partida")
 
 	if err := s.DB.DeleteDetail(parsedInvoiceId, parsedBudgetItemId, ctx.CompanyId); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		log.Println(err)
 		return
 	}
@@ -136,6 +108,7 @@ func (s *Server) DetailsEdit(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println(err)
+		w.Write([]byte(err.Error()))
 		return
 	}
 

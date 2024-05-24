@@ -1,9 +1,6 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
 	"database/sql"
 	"fmt"
 	"log"
@@ -12,10 +9,19 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/settings/partials"
 )
 
 func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
+
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
@@ -25,22 +31,21 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 		if p == "" {
 			u = nil
 		} else {
-			z, err := uuid.Parse(p)
+			z, err := utils.ValidateUUID(p, "proveedor")
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				log.Println(err)
 				w.Write([]byte("Código de la partida padre es inválido"))
+				w.Write([]byte(err.Error()))
 				return
 			}
 			u = &z
 		}
-		acc := sql.NullBool{Valid: true, Bool: x}
 		bi := &types.BudgetItem{
 			CompanyId:  ctxPayload.CompanyId,
 			Code:       r.Form.Get("code"),
 			Name:       r.Form.Get("name"),
 			ParentId:   u,
-			Accumulate: acc,
+			Accumulate: sql.NullBool{Valid: true, Bool: x},
 		}
 		if bi.Code == "" {
 			w.WriteHeader(http.StatusBadRequest)
@@ -82,7 +87,7 @@ func (s *Server) BudgetItemAdd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(id, "partida")
 	budgetItem, _ := s.DB.GetOneBudgetItem(parsedId, ctxPayload.CompanyId)
 
 	switch r.Method {
@@ -98,7 +103,7 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 		if p == "" {
 			u = nil
 		} else {
-			z, err := uuid.Parse(p)
+			z, err := utils.ValidateUUID(p, "partida")
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write([]byte("Código de la partida padre es inválido"))

@@ -2,13 +2,10 @@ package server
 
 import (
 	"net/http"
-	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
-	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/settings/partials"
 )
@@ -25,8 +22,7 @@ func (s *Server) RubrosTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialsByItem(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "rubro")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -42,10 +38,10 @@ func (s *Server) MaterialsByItem(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "rubro")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -53,36 +49,18 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		r.ParseForm()
 
-		materialId := r.Form.Get("material")
-		if materialId == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Seleccione un Material"))
-			return
-		}
-		parsedMaterialId, err := uuid.Parse(materialId)
+		parsedMaterialId, err := utils.ValidateUUID(r.Form.Get("material"), "material")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Material Incorrecto"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
 		quantityText := r.Form.Get("quantity")
-		if quantityText == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una Cantidad"))
-			return
-		}
-
-		quantity, err := strconv.ParseFloat(quantityText, 64)
+		quantity, err := utils.ConvertFloat(quantityText, "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Cantidad debe ser un valor numérico"))
-			return
-		}
-
-		if quantity <= 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La Cantidad debe ser mayor a 0"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -93,7 +71,7 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -105,42 +83,38 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	case http.MethodGet:
-		materials := s.DB.GetAllMaterials(ctxPayload.CompanyId)
-		materialsSelect := []types.Select{}
-		for _, m := range materials {
-			materialsSelect = append(materialsSelect, types.Select{Key: m.Id.String(), Value: m.Name})
-		}
+		materials := s.returnAllSelects([]string{"materials"}, ctxPayload.CompanyId)["materials"]
 
 		w.WriteHeader(http.StatusOK)
-		component := partials.MaterialsItemsForm(nil, parsedId, materialsSelect)
+		component := partials.MaterialsItemsForm(nil, parsedId, materials)
 		component.Render(r.Context(), w)
 
 	default:
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
 
 func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "rubro")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
-	materialId := mux.Vars(r)["materialId"]
-	parsedMaterialId, err := uuid.Parse(materialId)
+	parsedMaterialId, err := utils.ValidateUUID(mux.Vars(r)["materialId"], "material")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
 	switch r.Method {
 	case http.MethodDelete:
 		if err := s.DB.DeleteMaterialsByItem(parsedId, parsedMaterialId, ctxPayload.CompanyId); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -155,27 +129,15 @@ func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request)
 		r.ParseForm()
 
 		quantityText := r.Form.Get("quantity")
-		if quantityText == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una Cantidad"))
-			return
-		}
-
-		quantity, err := strconv.ParseFloat(quantityText, 64)
+		quantity, err := utils.ConvertFloat(quantityText, "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Cantidad debe ser un valor numérico"))
-			return
-		}
-
-		if quantity <= 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La Cantidad debe ser mayor a 0"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
 		if err := s.DB.UpdateMaterialByItem(parsedId, parsedMaterialId, quantity, ctxPayload.CompanyId); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -188,18 +150,13 @@ func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request)
 
 	case http.MethodGet:
 		im := s.DB.GetQuantityByMaterialAndItem(parsedId, parsedMaterialId, ctxPayload.CompanyId)
-
-		materials := s.DB.GetAllMaterials(ctxPayload.CompanyId)
-		materialsSelect := []types.Select{}
-		for _, m := range materials {
-			materialsSelect = append(materialsSelect, types.Select{Key: m.Id.String(), Value: m.Name})
-		}
+		materials := s.returnAllSelects([]string{"materials"}, ctxPayload.CompanyId)["materials"]
 
 		w.WriteHeader(http.StatusOK)
-		component := partials.MaterialsItemsForm(&im, parsedId, materialsSelect)
+		component := partials.MaterialsItemsForm(&im, parsedId, materials)
 		component.Render(r.Context(), w)
 	default:
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 
 }

@@ -6,6 +6,7 @@ templ Input(t, p, i, n, v string) {
 			<label
 				for={ i }
 				class="absolute block top-[-0.4rem] px-2 left-4 bg-blue-gray-700 text-blue-gray-50 rounded-lg text-[0.6rem]"
+                data-testid="label"
 			>{ p }</label>
 		}
 		<input
@@ -15,6 +16,7 @@ templ Input(t, p, i, n, v string) {
 			id={ i }
 			name={ n }
 			value={ v }
+            data-testid="input"
 		/>
 	</div>
 }

@@ -5,7 +5,7 @@ import "bca-go-final/internal/views/base"
 templ LandingPage(user string) {
 	@base.AuthenticatedLayout("") {
 		<div>
-			<p>Bienvenido <span class="text-green-300 font-bold tracking-wide">{ user }</span></p>
+			<p>Bienvenido <span class="text-green-300 font-bold tracking-wide" data-testid="welcome">{ user }</span></p>
 		</div>
 	}
 }

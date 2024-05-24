@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/google/uuid"
-
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/settings"
@@ -17,7 +15,6 @@ import (
 func (s *Server) BudgetItems(w http.ResponseWriter, r *http.Request) {
 	component := settings.BudgetItems()
 	component.Render(r.Context(), w)
-
 }
 
 func (s *Server) Suppliers(w http.ResponseWriter, r *http.Request) {
@@ -53,7 +50,7 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 
 	if id != "" {
-		parsedId, err := uuid.Parse(id)
+		parsedId, err := utils.ValidateUUID(id, "rubro")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
@@ -120,7 +117,7 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 		rubro.Id = id
 
 	} else if r.Method == "PUT" {
-		rubro.Id, _ = uuid.Parse(id)
+		rubro.Id, _ = utils.ValidateUUID(id, "rubro")
 
 		if err := s.DB.UpdateRubro(*rubro); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {

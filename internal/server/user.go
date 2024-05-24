@@ -2,8 +2,8 @@ package server
 
 import (
 	"net/http"
+	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -33,8 +33,7 @@ func (s *Server) ChangePassword(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "usuario")
 
 	if ctx.Id == parsedId {
 		w.WriteHeader(http.StatusForbidden)
@@ -78,6 +77,7 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 
 		if pass == "" {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("contraseña inválida"))
 			return
 		}
 
@@ -93,7 +93,7 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 		u := &types.UserCreate{}
 		err := r.ParseForm()
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
@@ -103,16 +103,19 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 		u.RoleId = r.Form.Get("role")
 		u.CompanyId = ctx.CompanyId
 
-		if u.Email != "" && !utils.IsValidEmail(u.Email) {
+		if u.Email == "" || !utils.IsValidEmail(u.Email) {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid email"))
 			return
 		}
 		if u.Password == "" {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid password"))
 			return
 		}
 		if u.Name == "" {
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("invalid name"))
 			return
 		}
 		if u.RoleId == "" {
@@ -121,7 +124,14 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 
 		_, err = s.DB.CreateUser(u)
 		if err != nil {
+			if strings.Contains(err.Error(), "duplicate") {
+				w.WriteHeader(http.StatusConflict)
+				w.Write([]byte("Usuario ya existe"))
+				return
+			}
+
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Error al crear usuario"))
 			return
 		}
 	}
@@ -138,8 +148,7 @@ func (s *Server) UserAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) UserEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "usuario")
 	u, _ := s.DB.GetUser(parsedId, ctx.CompanyId)
 
 	component := partials.EditUser(&u)

@@ -30,16 +30,22 @@ docker-down:
 	fi
 
 # Test the application
-test:
+unit-test:
 	@echo "Testing..."
 	@go clean -testcache
 	@echo "Cache cleaned..."
-	@go test ./tests -v
+	@go test `go list ./... | grep -v ./internal/database | grep -v ./mocks | grep -v ./internal/excel | grep -v ./internal/views | grep -v ./internal/types | grep -v ./cmd/api | grep -v ./tests` -cover
 
 # Clean the binary
 clean:
 	@echo "Cleaning..."
 	@rm -f main
+
+# Coverage report
+cover: 
+	@go clean -testcache
+	@go test `go list ./... | grep -v ./internal/database | grep -v ./mocks | grep -v ./internal/excel | grep -v ./internal/views | grep -v ./internal/types | grep -v ./cmd/api` -coverprofile=coverage.out
+	@go tool cover -html=coverage.out
 
 # Live Reload
 watch:

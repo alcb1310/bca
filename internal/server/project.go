@@ -1,22 +1,26 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/settings/partials"
 )
 
 func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctxPayload, _ := utils.GetMyPaload(r)
+
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
 
 	if r.Method == http.MethodPost {
 		r.ParseForm()
@@ -28,22 +32,22 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 		}
 		if p.Name == "" {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para el nombre"))
+			w.Write([]byte("El nombre del proyecto es requerido"))
 			return
 		}
 		if r.Form.Get("gross_area") != "" {
-			p.GrossArea, err = strconv.ParseFloat(r.Form.Get("gross_area"), 64)
+			p.GrossArea, err = utils.ConvertFloat(r.Form.Get("gross_area"), "área bruta", false)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("El área bruta debe ser un número válido"))
+				w.Write([]byte(err.Error()))
 				return
 			}
 		}
 		if r.Form.Get("net_area") != "" {
-			p.NetArea, err = strconv.ParseFloat(r.Form.Get("net_area"), 64)
+			p.NetArea, err = utils.ConvertFloat(r.Form.Get("net_area"), "área útil", false)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("El área neta debe ser un número válido"))
+				w.Write([]byte(err.Error()))
 				return
 			}
 		}
@@ -55,6 +59,7 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			log.Println(err)
 			return
 		}
@@ -73,8 +78,7 @@ func (s *Server) ProjectAdd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "proyecto")
 	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)
 
 	r.ParseForm()
@@ -85,19 +89,19 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 	p.IsActive = &x
 
 	if r.Form.Get("gross_area") != "" {
-		p.GrossArea, err = strconv.ParseFloat(r.Form.Get("gross_area"), 64)
+		p.GrossArea, err = utils.ConvertFloat(r.Form.Get("gross_area"), "área bruta", false)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("El área bruta debe ser un número válido"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 	}
 
 	if r.Form.Get("net_area") != "" {
-		p.NetArea, err = strconv.ParseFloat(r.Form.Get("net_area"), 64)
+		p.NetArea, err = utils.ConvertFloat(r.Form.Get("net_area"), "área útil", false)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("El área neta debe ser un número válido"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 	}
@@ -109,6 +113,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		log.Println(err)
 		return
 	}
@@ -120,8 +125,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) ProjectEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "proyecto")
 	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)
 
 	component := partials.EditProject(&p)

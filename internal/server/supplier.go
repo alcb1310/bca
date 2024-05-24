@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -16,6 +15,11 @@ import (
 )
 
 func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
 	ctxPayload, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
@@ -74,12 +78,7 @@ func (s *Server) SupplierAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SuppliersEdit(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "proveedor")
 
 	sup, _ := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
 	component := partials.EditSupplier(&sup)
@@ -88,12 +87,7 @@ func (s *Server) SuppliersEdit(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "proyecto")
 
 	sup, _ := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
 	r.ParseForm()
@@ -124,7 +118,7 @@ func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 	if err := s.DB.UpdateSupplier(&sup); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("El ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
+			w.Write([]byte(fmt.Sprintf("Proveedor con ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
 			return
 		}
 		log.Println(fmt.Sprintf("ERROR: %s", err.Error()))

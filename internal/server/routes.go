@@ -14,41 +14,42 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Use(s.authVerify)
 
 	r.HandleFunc("/", s.HelloWorldHandler)
-	r.HandleFunc("/api/login", s.Login)
-	r.HandleFunc("/api/register", s.Register)
+	r.HandleFunc("/api/login", s.Login)       // Fully tested
+	r.HandleFunc("/api/register", s.Register) // Fully tested
 	r.HandleFunc("/bca/dummy", s.loadDummyDataHandler)
 
 	// views
 
-	r.HandleFunc("/login", s.LoginView)
-	r.HandleFunc("/bca", s.BcaView)
-	r.HandleFunc("/bca/logout", s.Logout)
-	r.HandleFunc("/bca/transacciones/presupuesto", s.Budget)
-	r.HandleFunc("/bca/transacciones/facturas", s.Invoice)
-	r.HandleFunc("/bca/transacciones/facturas/crear", s.InvoiceAdd)
-	r.HandleFunc("/bca/transacciones/cierre", s.Closure)
+	r.HandleFunc("/login", s.LoginView)   // Fully tested
+	r.HandleFunc("/bca", s.BcaView)       // Fully tested
+	r.HandleFunc("/bca/logout", s.Logout) // Fully tested
 
-	r.HandleFunc("/bca/reportes/actual", s.Actual)
-	r.HandleFunc("/bca/reportes/actual/generar", s.ActualGenerate)
-	r.HandleFunc("/bca/reportes/cuadre", s.Balance)
-	r.HandleFunc("/bca/reportes/historico", s.Historic)
-	r.HandleFunc("/bca/reportes/gastado", s.Spent)
-	r.HandleFunc("/bca/reportes/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem)
+	r.HandleFunc("/bca/transacciones/presupuesto", s.Budget)        // Fully tested
+	r.HandleFunc("/bca/transacciones/facturas", s.Invoice)          // Fully tested
+	r.HandleFunc("/bca/transacciones/facturas/crear", s.InvoiceAdd) // Fully tested
+	r.HandleFunc("/bca/transacciones/cierre", s.Closure)            // Fully tested
 
-	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems)
-	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers)
-	r.HandleFunc("/bca/configuracion/proyectos", s.Projects)
-	r.HandleFunc("/bca/configuracion/categorias", s.Categories)
-	r.HandleFunc("/bca/configuracion/materiales", s.Materiales)
-	r.HandleFunc("/bca/configuracion/rubros", s.Rubros)
-	r.HandleFunc("/bca/configuracion/rubros/crear", s.RubrosAdd)
+	r.HandleFunc("/bca/reportes/actual", s.Actual)                                               // Fully tested
+	r.HandleFunc("/bca/reportes/actual/generar", s.ActualGenerate)                               // Fully tested
+	r.HandleFunc("/bca/reportes/cuadre", s.Balance)                                              // Fully tested
+	r.HandleFunc("/bca/reportes/historico", s.Historic)                                          // Fully tested
+	r.HandleFunc("/bca/reportes/gastado", s.Spent)                                               // Fully tested
+	r.HandleFunc("/bca/reportes/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) // Fully tested
 
-	r.HandleFunc("/bca/user/perfil", s.Profile)
-	r.HandleFunc("/bca/user/admin", s.Admin)
-	r.HandleFunc("/bca/user/cambio", s.ChangePassword)
+	r.HandleFunc("/bca/configuracion/partidas", s.BudgetItems)   // Fully tested
+	r.HandleFunc("/bca/configuracion/proveedores", s.Suppliers)  // Fully tested
+	r.HandleFunc("/bca/configuracion/proyectos", s.Projects)     // Fully tested
+	r.HandleFunc("/bca/configuracion/categorias", s.Categories)  // Fully tested
+	r.HandleFunc("/bca/configuracion/materiales", s.Materiales)  // Fully tested
+	r.HandleFunc("/bca/configuracion/rubros", s.Rubros)          // Fully tested
+	r.HandleFunc("/bca/configuracion/rubros/crear", s.RubrosAdd) // Fully tested
 
-	r.HandleFunc("/bca/costo-unitario/cantidades", s.UnitQuantity)
-	r.HandleFunc("/bca/costo-unitario/analisis", s.UnitAnalysis)
+	r.HandleFunc("/bca/user/perfil", s.Profile)        // Fully tested
+	r.HandleFunc("/bca/user/admin", s.Admin)           // Fully tested
+	r.HandleFunc("/bca/user/cambio", s.ChangePassword) // Fully tested
+
+	r.HandleFunc("/bca/costo-unitario/cantidades", s.UnitQuantity) // Fully tested
+	r.HandleFunc("/bca/costo-unitario/analisis", s.UnitAnalysis)   // Fully tested
 
 	// excel
 	r.HandleFunc("/bca/reportes/excel/cuadre", s.BalanceExcel)
@@ -58,54 +59,54 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// partials
 
-	r.HandleFunc("/bca/partials/users", s.UsersTable)
-	r.HandleFunc("/bca/partials/users/add", s.UserAdd)
-	r.HandleFunc("/bca/partials/users/edit/{id}", s.UserEdit)
-	r.HandleFunc("/bca/partials/users/{id}", s.SingleUser)
+	r.HandleFunc("/bca/partials/users", s.UsersTable)         // Fully tested
+	r.HandleFunc("/bca/partials/users/add", s.UserAdd)        // Fully tested
+	r.HandleFunc("/bca/partials/users/edit/{id}", s.UserEdit) // Fully tested
+	r.HandleFunc("/bca/partials/users/{id}", s.SingleUser)    // Fully tested
 
-	r.HandleFunc("/bca/partials/projects", s.ProjectsTable)
-	r.HandleFunc("/bca/partials/projects/add", s.ProjectAdd)
-	r.HandleFunc("/bca/partials/projects/edit/{id}", s.ProjectEditSave)
-	r.HandleFunc("/bca/partials/projects/{id}", s.ProjectEdit)
+	r.HandleFunc("/bca/partials/projects", s.ProjectsTable)             // Fully tested
+	r.HandleFunc("/bca/partials/projects/add", s.ProjectAdd)            // Fully tested
+	r.HandleFunc("/bca/partials/projects/edit/{id}", s.ProjectEditSave) // Fully tested
+	r.HandleFunc("/bca/partials/projects/{id}", s.ProjectEdit)          // Fully tested
 
-	r.HandleFunc("/bca/partials/suppliers", s.SuppliersTable)
-	r.HandleFunc("/bca/partials/suppliers/add", s.SupplierAdd)
-	r.HandleFunc("/bca/partials/suppliers/edit/{id}", s.SuppliersEditSave)
-	r.HandleFunc("/bca/partials/suppliers/{id}", s.SuppliersEdit)
+	r.HandleFunc("/bca/partials/suppliers", s.SuppliersTable)              // Fully tested
+	r.HandleFunc("/bca/partials/suppliers/add", s.SupplierAdd)             // Fully tested
+	r.HandleFunc("/bca/partials/suppliers/edit/{id}", s.SuppliersEditSave) // Fully tested
+	r.HandleFunc("/bca/partials/suppliers/{id}", s.SuppliersEdit)          // Fully tested
 
-	r.HandleFunc("/bca/partials/budget-item", s.BudgetItemsTable)
-	r.HandleFunc("/bca/partials/budget-item/add", s.BudgetItemAdd)
-	r.HandleFunc("/bca/partials/budget-item/{id}", s.BudgetItemEdit)
+	r.HandleFunc("/bca/partials/budget-item", s.BudgetItemsTable)    // Fully tested
+	r.HandleFunc("/bca/partials/budget-item/add", s.BudgetItemAdd)   // Fully tested
+	r.HandleFunc("/bca/partials/budget-item/{id}", s.BudgetItemEdit) // Fully tested
 
-	r.HandleFunc("/bca/partials/budgets", s.BudgetsTable)
-	r.HandleFunc("/bca/partials/budgets/add", s.BudgetAdd)
-	r.HandleFunc("/bca/partials/budgets/{projectId}/{budgetItemId}", s.BudgetEdit)
+	r.HandleFunc("/bca/partials/budgets", s.BudgetsTable)                          // Fully tested
+	r.HandleFunc("/bca/partials/budgets/add", s.BudgetAdd)                         // Fully tested
+	r.HandleFunc("/bca/partials/budgets/{projectId}/{budgetItemId}", s.BudgetEdit) // Fully tested
 
-	r.HandleFunc("/bca/partials/invoices", s.InvoicesTable)
-	r.HandleFunc("/bca/partials/invoices/{id}", s.InvoiceEdit)
+	r.HandleFunc("/bca/partials/invoices", s.InvoicesTable)    // Fully tested
+	r.HandleFunc("/bca/partials/invoices/{id}", s.InvoiceEdit) // Fully tested
 
-	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details", s.DetailsTable)
-	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details/add", s.DetailsAdd)
-	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details/{budgetItemId}", s.DetailsEdit)
+	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details", s.DetailsTable)               // Fully tested
+	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details/add", s.DetailsAdd)             // Fully tested
+	r.HandleFunc("/bca/partials/invoices/{invoiceId}/details/{budgetItemId}", s.DetailsEdit) // Fully tested
 
-	r.HandleFunc("/bca/partials/categories", s.CategoriesTable)
-	r.HandleFunc("/bca/partials/categories/add", s.CategoryAdd)
-	r.HandleFunc("/bca/partials/categories/{id}", s.EditCategory)
+	r.HandleFunc("/bca/partials/categories", s.CategoriesTable)   // Fully tested
+	r.HandleFunc("/bca/partials/categories/add", s.CategoryAdd)   // Fully tested
+	r.HandleFunc("/bca/partials/categories/{id}", s.EditCategory) // Fully tested
 
-	r.HandleFunc("/bca/partials/materiales", s.MaterialsTable)
-	r.HandleFunc("/bca/partials/materiales/add", s.MaterialsAdd)
-	r.HandleFunc("/bca/partials/materiales/{id}", s.MaterialsEdit)
+	r.HandleFunc("/bca/partials/materiales", s.MaterialsTable)     // Fully tested
+	r.HandleFunc("/bca/partials/materiales/add", s.MaterialsAdd)   // Fully tested
+	r.HandleFunc("/bca/partials/materiales/{id}", s.MaterialsEdit) // Fully tested
 
-	r.HandleFunc("/bca/partials/rubros", s.RubrosTable)
-	r.HandleFunc("/bca/partials/rubros/{id}", s.MaterialsByItem)
-	r.HandleFunc("/bca/partials/rubros/{id}/material", s.MaterialByItemForm)
-	r.HandleFunc("/bca/partials/rubros/{id}/material/{materialId}", s.MaterialItemsOperations)
+	r.HandleFunc("/bca/partials/rubros", s.RubrosTable)                                        // Fully tested
+	r.HandleFunc("/bca/partials/rubros/{id}", s.MaterialsByItem)                               // Fully tested
+	r.HandleFunc("/bca/partials/rubros/{id}/material", s.MaterialByItemForm)                   // Fully tested
+	r.HandleFunc("/bca/partials/rubros/{id}/material/{materialId}", s.MaterialItemsOperations) // Fully tested
 
-	r.HandleFunc("/bca/partials/cantidades", s.CantidadesTable)
-	r.HandleFunc("/bca/partials/cantidades/add", s.CantidadesAdd)
-	r.HandleFunc("/bca/partials/cantidades/{id}", s.CantidadesEdit)
+	r.HandleFunc("/bca/partials/cantidades", s.CantidadesTable)     // Fully tested
+	r.HandleFunc("/bca/partials/cantidades/add", s.CantidadesAdd)   // Fully tested
+	r.HandleFunc("/bca/partials/cantidades/{id}", s.CantidadesEdit) // Fully tested
 
-	r.HandleFunc("/bca/partials/analisis", s.AnalysisTable)
+	r.HandleFunc("/bca/partials/analisis", s.AnalysisTable) // Fully tested
 
 	// This should be the last route for static files
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))

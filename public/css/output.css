@@ -859,6 +859,10 @@ i:disabled {
   overflow-x: hidden;
 }
 
+.text-balance {
+  text-wrap: balance;
+}
+
 .rounded-lg {
   border-radius: 0.5rem;
 }
@@ -1003,14 +1007,6 @@ i:disabled {
 
 .pt-4 {
   padding-top: 1rem;
-}
-
-.pb-3 {
-  padding-bottom: 0.75rem;
-}
-
-.pt-2 {
-  padding-top: 0.5rem;
 }
 
 .text-left {

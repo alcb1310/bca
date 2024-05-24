@@ -4,13 +4,10 @@ import (
 	"log"
 	"net/http"
 	"slices"
-	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
-	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views/bca/unit_cost"
 	"bca-go-final/internal/views/bca/unit_cost/partials"
@@ -35,88 +32,52 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		rub, _ := s.DB.GetAllRubros(ctx.CompanyId)
-		rubSelect := []types.Select{}
-		for _, v := range rub {
-			x := types.Select{
-				Key:   v.Id.String(),
-				Value: v.Name,
-			}
-			rubSelect = append(rubSelect, x)
-		}
+		data := []string{"rubros", "projects"}
+		results := s.returnAllSelects(data, ctx.CompanyId)
+		rubros := results["rubros"]
+		projects := results["projects"]
 
-		p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-		projects := []types.Select{}
-		for _, v := range p {
-			x := types.Select{
-				Key:   v.ID.String(),
-				Value: v.Name,
-			}
-			projects = append(projects, x)
-		}
-
-		component := partials.EditCantidades(nil, projects, rubSelect)
+		component := partials.EditCantidades(nil, projects, rubros)
 		component.Render(r.Context(), w)
 
 	case http.MethodPost:
 		r.ParseForm()
 
 		pId := r.Form.Get("project")
-		parsedProjectId, err := uuid.Parse(pId)
+		parsedProjectId, err := utils.ValidateUUID(pId, "proyecto")
 		if err != nil {
-			if strings.Contains(err.Error(), "length: 0") {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Seleccione un proyecto"))
-				return
-			}
-
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Seleccione un proyecto"))
 			log.Println(err)
 			return
 		}
 
 		rubroId := r.Form.Get("item")
-		parsedRubroId, err := uuid.Parse(rubroId)
+		parsedRubroId, err := utils.ValidateUUID(rubroId, "rubro")
 		if err != nil {
-			if strings.Contains(err.Error(), "length: 0") {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("Seleccione un rubro"))
-				return
-			}
-
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Seleccione un rubro"))
 			log.Println(err)
 			return
 		}
 
 		q := r.Form.Get("quantity")
-		if q == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad es requerida"))
-			return
-		}
-
-		quantity, err := strconv.ParseFloat(q, 64)
+		quantity, err := utils.ConvertFloat(q, "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad debe ser un número"))
-			return
-		}
-		if quantity <= 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad debe ser mayor a 0"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
 		if err := s.DB.CreateCantidades(parsedProjectId, parsedRubroId, quantity, ctx.CompanyId); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte("La cantidad ya existe"))
 				return
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Error al crear la cantidad"))
+			w.Write([]byte(err.Error()))
 			log.Println(err.Error())
 			return
 		}
@@ -134,16 +95,7 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) UnitAnalysis(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-
-	p := s.DB.GetActiveProjects(ctxPayload.CompanyId, true)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
+	projects := s.returnAllSelects([]string{"projects"}, ctxPayload.CompanyId)["projects"]
 
 	component := unit_cost.Analysis(projects)
 	component.Render(r.Context(), w)
@@ -153,10 +105,10 @@ func (s *Server) AnalysisTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
 	p := r.URL.Query().Get("project")
-	projectId, err := uuid.Parse(p)
+	projectId, err := utils.ValidateUUID(p, "proyecto")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Seleccione un proyecto"))
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -174,11 +126,10 @@ func (s *Server) AnalysisTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "cantidad")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Error al parsear el ID"))
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -186,7 +137,7 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 		if err := s.DB.DeleteCantidades(parsedId, ctx.CompanyId); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Error al borrar la cantidad"))
+			w.Write([]byte(err.Error()))
 			log.Println(err.Error())
 			return
 		}
@@ -197,44 +148,24 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	case http.MethodGet:
-		rub, _ := s.DB.GetAllRubros(ctx.CompanyId)
-		rubSelect := []types.Select{}
-		for _, v := range rub {
-			x := types.Select{
-				Key:   v.Id.String(),
-				Value: v.Name,
-			}
-			rubSelect = append(rubSelect, x)
-		}
-
-		p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-		projects := []types.Select{}
-		for _, v := range p {
-			x := types.Select{
-				Key:   v.ID.String(),
-				Value: v.Name,
-			}
-			projects = append(projects, x)
-		}
+		data := []string{"rubros", "projects"}
+		results := s.returnAllSelects(data, ctx.CompanyId)
+		rubros := results["rubros"]
+		projects := results["projects"]
 
 		quantity := s.DB.GetOneQuantityById(parsedId, ctx.CompanyId)
 
-		component := partials.EditCantidades(&quantity, projects, rubSelect)
+		component := partials.EditCantidades(&quantity, projects, rubros)
 		component.Render(r.Context(), w)
 
 	case http.MethodPut:
 		r.ParseForm()
 
 		q := r.Form.Get("quantity")
-		if q == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una cantidad"))
-			return
-		}
-		quantity, err := strconv.ParseFloat(q, 64)
+		quantity, err := utils.ConvertFloat(q, "cantidad", true)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Cantidad debe ser numérica"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -244,7 +175,7 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 
 		if err := s.DB.UpdateQuantity(quan, ctx.CompanyId); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Error al actualizar la cantidad"))
+			w.Write([]byte(err.Error()))
 			log.Println(err.Error())
 			return
 		}

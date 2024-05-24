@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -40,11 +39,10 @@ func (s *Server) MaterialsTable(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		categoryId := r.Form.Get("category")
-		categoryIdParsed, err := uuid.Parse(categoryId)
+		categoryIdParsed, err := utils.ValidateUUID(r.Form.Get("category"), "categoria")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para la Categoría"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -82,24 +80,19 @@ func (s *Server) MaterialsTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialsAdd(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	categories, _ := s.DB.GetAllCategories(ctxPayload.CompanyId)
+	categories := s.returnAllSelects([]string{"categories"}, ctxPayload.CompanyId)["categories"]
 
-	categoriesSelect := []types.Select{}
-	for _, c := range categories {
-		categoriesSelect = append(categoriesSelect, types.Select{Key: c.Id.String(), Value: c.Name})
-	}
-
-	component := partials.EditMaterial(nil, categoriesSelect)
+	component := partials.EditMaterial(nil, categories)
 	component.Render(r.Context(), w)
 }
 
 func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
-	parsedId, err := uuid.Parse(id)
+	parsedId, err := utils.ValidateUUID(mux.Vars(r)["id"], "material")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -107,14 +100,9 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodGet:
-		categories, _ := s.DB.GetAllCategories(ctxPayload.CompanyId)
+		categories := s.returnAllSelects([]string{"categories"}, ctxPayload.CompanyId)["categories"]
 
-		categoriesSelect := []types.Select{}
-		for _, c := range categories {
-			categoriesSelect = append(categoriesSelect, types.Select{Key: c.Id.String(), Value: c.Name})
-		}
-
-		component := partials.EditMaterial(&material, categoriesSelect)
+		component := partials.EditMaterial(&material, categories)
 		component.Render(r.Context(), w)
 
 	case http.MethodPut:
@@ -141,11 +129,10 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		categoryId := r.Form.Get("category")
-		categoryIdParsed, err := uuid.Parse(categoryId)
+		categoryIdParsed, err := utils.ValidateUUID(r.Form.Get("category"), "categoria")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para la Categoría"))
+			w.Write([]byte(err.Error()))
 			return
 		}
 

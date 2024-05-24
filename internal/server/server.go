@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	"bca-go-final/internal/database"
-
 	_ "github.com/joho/godotenv/autoload"
+
+	"bca-go-final/internal/database"
 )
 
 type Server struct {
@@ -17,11 +17,11 @@ type Server struct {
 	DB   database.Service
 }
 
-func NewServer() *http.Server {
+func NewServer(db database.Service) (*http.Server, *Server) {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	NewServer := &Server{
 		port: port,
-		DB:   database.New(),
+		DB:   db,
 	}
 
 	// Declare Server config
@@ -33,5 +33,5 @@ func NewServer() *http.Server {
 		WriteTimeout: 30 * time.Second,
 	}
 
-	return server
+	return server, NewServer
 }

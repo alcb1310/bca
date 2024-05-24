@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
@@ -28,50 +27,34 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 	redirectURL := "/bca/transacciones/facturas/crear"
 	invoice = nil
 
-	projects := []types.Select{}
-	suppliers := []types.Select{}
+	data := []string{"projects", "suppliers"}
+	res := s.returnAllSelects(data, ctx.CompanyId)
+	projects := res["projects"]
+	suppliers := res["suppliers"]
 
 	id := r.URL.Query().Get("id")
 	if id != "" {
-		parsedId, _ := uuid.Parse(id)
+		parsedId, _ := utils.ValidateUUID(id, "factura")
 		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 		invoice = &in
 	}
 
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
-
-	sx, _ := s.DB.GetAllSuppliers(ctx.CompanyId, "")
-	for _, v := range sx {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		suppliers = append(suppliers, x)
-	}
-
 	if r.Method == http.MethodPost {
 		r.ParseForm()
-		pId := r.Form.Get("project")
-		if pId == "" {
+		projectId, err := utils.ValidateUUID(r.Form.Get("project"), "proyecto")
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un proyecto"))
+			w.Write([]byte(err.Error()))
 			return
 		}
-		projectId, _ := uuid.Parse(pId)
-		sId := r.Form.Get("supplier")
-		if sId == "" {
+
+		supplierId, err := utils.ValidateUUID(r.Form.Get("supplier"), "proveedor")
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un proveedor"))
+			w.Write([]byte(err.Error()))
 			return
 		}
-		supplierId, _ := uuid.Parse(sId)
+
 		iNumber := r.Form.Get("invoiceNumber")
 		if iNumber == "" {
 			w.WriteHeader(http.StatusBadRequest)
@@ -97,11 +80,11 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 		err = s.DB.CreateInvoice(i)
 		if err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte("La Factura ya existe"))
 				return
 			}
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -119,40 +102,23 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 	redirectURL := "/bca/transacciones/facturas/crear"
-	id := mux.Vars(r)["id"]
-	parsedId, _ := uuid.Parse(id)
+	parsedId, _ := utils.ValidateUUID(mux.Vars(r)["id"], "factura")
 	invoice := &types.InvoiceResponse{}
 
-	projects := []types.Select{}
-	suppliers := []types.Select{}
-	// projects := make(map[string]string)
-	// suppliers := make(map[string]string)
+	data := []string{"projects", "suppliers"}
+	res := s.returnAllSelects(data, ctx.CompanyId)
+	projects := res["projects"]
+	suppliers := res["suppliers"]
+
 	in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 	invoice = &in
-
-	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		projects = append(projects, x)
-	}
-
-	sx, _ := s.DB.GetAllSuppliers(ctx.CompanyId, "")
-	for _, v := range sx {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
-		}
-		suppliers = append(suppliers, x)
-	}
 
 	switch r.Method {
 	case http.MethodPatch:
 		if err := s.DB.BalanceInvoice(in); err != nil {
 			log.Printf("error updating invoice: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			return
 		}
 		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
@@ -165,6 +131,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 		if err := s.DB.DeleteInvoice(parsedId, ctx.CompanyId); err != nil {
 			log.Printf("error deleting invoice: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
 			return
 		}
 
@@ -179,12 +146,13 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		pId := invoice.Project.ID
 
-		sId, err := uuid.Parse(r.Form.Get("supplier"))
+		sId, err := utils.ValidateUUID(r.Form.Get("supplier"), "proveedor")
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un proveedor"))
+			w.Write([]byte(err.Error()))
 			return
 		}
+
 		iNumber := r.Form.Get("invoiceNumber")
 		if iNumber == "" {
 			w.WriteHeader(http.StatusBadRequest)
@@ -209,7 +177,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 
 		if err := s.DB.UpdateInvoice(i); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte("La Factura ya existe"))
 				return
 			}
