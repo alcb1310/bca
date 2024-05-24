@@ -28,6 +28,7 @@ require (
 require (
 	github.com/PuerkitoBio/goquery v1.9.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/go-chi/chi/v5 v5.0.12
 	github.com/google/uuid v1.4.0
 	github.com/gorilla/sessions v1.2.2
 	github.com/jackc/pgpassfile v1.0.0 // indirect
