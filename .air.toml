@@ -21,7 +21,10 @@ tmp_dir = "tmp"
   poll = false
   poll_interval = 0
   post_cmd = []
-  pre_cmd = []
+  pre_cmd = [
+    "templ generate",
+    "npx tailwindcss -i ./internal/views/css/input.css -o ./public/css/output.css"
+  ]
   rerun = false
   rerun_delay = 500
   send_interrupt = false
