@@ -3,17 +3,20 @@ package server
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 
 	"bca-go-final/internal/views"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
-	r := mux.NewRouter()
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
 
 	r.Use(s.authVerify)
 
-	r.HandleFunc("/", s.HelloWorldHandler)
+	// r.HandleFunc("/", s.HelloWorldHandler)
+	r.Get("/", s.HelloWorldHandler)
 	r.HandleFunc("/api/login", s.Login)       // Fully tested
 	r.HandleFunc("/api/register", s.Register) // Fully tested
 	r.HandleFunc("/bca/dummy", s.loadDummyDataHandler)
@@ -109,7 +112,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/partials/analisis", s.AnalysisTable) // Fully tested
 
 	// This should be the last route for static files
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
+	// r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
+	r.Mount("/public", http.StripPrefix("/public", http.FileServer(http.Dir("./public/"))))
 	return r
 }
 

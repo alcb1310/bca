@@ -1,6 +1,5 @@
 package integration_test
 
-//
 // import (
 // 	"context"
 // 	"database/sql"
@@ -10,8 +9,8 @@ package integration_test
 // 	"time"
 //
 // 	"github.com/jackc/pgx/v5/pgconn"
-// 	. "github.com/onsi/ginkgo/v2"
-// 	. "github.com/onsi/gomega"
+// 	_ "github.com/onsi/ginkgo/v2"
+// 	_ "github.com/onsi/gomega"
 // 	"github.com/testcontainers/testcontainers-go"
 // 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 // 	"github.com/testcontainers/testcontainers-go/wait"

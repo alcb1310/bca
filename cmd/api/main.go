@@ -1,5 +1,12 @@
 package main
 
+import (
+	"log/slog"
+
+	"bca-go-final/internal/database"
+	"bca-go-final/internal/server"
+)
+
 func main() {
 	db := database.New()
 	server, _ := server.NewServer(db)
