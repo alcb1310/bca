@@ -2,6 +2,7 @@ package database
 
 import (
 	"errors"
+	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
@@ -158,11 +159,25 @@ func (s *service) DeleteInvoice(invoiceId, companyId uuid.UUID) error {
 }
 
 func (s *service) BalanceInvoice(invoice types.InvoiceResponse) error {
-	query := `
+	var bal bool
+	var num string
+	query := "select is_balanced, invoice_number from invoice where id = $1 and company_id = $2"
+
+	err := s.db.QueryRow(query, invoice.Id, invoice.CompanyId).Scan(&bal, &num)
+	if err != nil {
+		return err
+	}
+
+	newBal := !bal
+
+	slog.Error("balance", "newBal", newBal, "bal", bal, "num", num)
+
+	query = `
 		update invoice
 		set is_balanced = $3 
 		where id = $1 and company_id = $2
 	`
-	_, err := s.db.Exec(query, invoice.Id, invoice.CompanyId, true)
+	_, err = s.db.Exec(query, invoice.Id, invoice.CompanyId, newBal)
+	slog.Error("balance", "err", err)
 	return err
 }

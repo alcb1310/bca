@@ -15,6 +15,7 @@ func saveURL(id string) string {
 }
 
 templ BalanceView(invoices types.BalanceResponse) {
+    <h1 class="text-red-500">Balance</h1>
 	<table class="mt-2">
 		<caption class="text-left">Total gastado: <span class="text-green-500 font-bold tracking-wider pl-8">{ utils.PrintFloat(invoices.Total) }</span></caption>
 		<thead>
@@ -29,11 +30,11 @@ templ BalanceView(invoices types.BalanceResponse) {
 		<tbody>
 			for _, invoice := range invoices.Invoices {
 				<tr>
-					if invoice.IsBalanced {
-						<td><input type="checkbox" checked disabled/></td>
-					} else {
-						<td align="center"><input type="checkbox" hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) } hx-target="closest tr" hx-swap="outerHTML"/></td>
-					}
+                    if invoice.IsBalanced {
+                        <td><input type="checkbox" checked hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) } hx-target="closest tr" hx-swap="outerHTML" /></td>
+                    } else {
+                        <td align="center"><input type="checkbox" hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) } hx-target="closest tr" hx-swap="outerHTML"/></td>
+                    }
 					<td align="center">{ utils.ConvertDate(invoice.InvoiceDate) }</td>
 					<td>{ invoice.Supplier.Name }</td>
 					<td>{ invoice.InvoiceNumber }</td>
