@@ -10,7 +10,7 @@ func saveURL(id string) string {
 templ BudgetRow(invoice types.InvoiceResponse) {
 	<tr>
 		if invoice.IsBalanced {
-			<td><input type="checkbox" checked disabled/></td>
+			<td><input type="checkbox" checked hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) } hx-target="closest tr" hx-swap="outerHTML" /></td>
 		} else {
 			<td align="center"><input type="checkbox" hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) } hx-target="closest tr" hx-swap="outerHTML"/></td>
 		}

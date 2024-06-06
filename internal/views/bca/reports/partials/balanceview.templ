@@ -4,48 +4,52 @@ import "bca-go-final/internal/types"
 import "bca-go-final/internal/utils"
 
 css highlight() {
-	color: var(--green-500);
-	font-weight: bold;
-	letter-spacing: 1px;
-	padding-left: 2rem;
+color: var(--green-500);
+font-weight: bold;
+letter-spacing: 1px;
+padding-left: 2rem;
 }
 
 func saveURL(id string) string {
-	return "/bca/partials/invoices/" + id
+return "/bca/partials/invoices/" + id
 }
 
 templ BalanceView(invoices types.BalanceResponse) {
-	<table class="mt-2">
-		<caption class="text-left">Total gastado: <span class="text-green-500 font-bold tracking-wider pl-8">{ utils.PrintFloat(invoices.Total) }</span></caption>
-		<thead>
-			<tr>
-				<th></th>
-				<th width="100px">Fecha</th>
-				<th width="400px">Proveedor</th>
-				<th width="200px">Factura</th>
-				<th width="150px">Total</th>
-			</tr>
-		</thead>
-		<tbody>
-			for _, invoice := range invoices.Invoices {
-				<tr>
-					if invoice.IsBalanced {
-						<td><input type="checkbox" checked disabled/></td>
-					} else {
-						<td align="center"><input type="checkbox" hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) } hx-target="closest tr" hx-swap="outerHTML"/></td>
-					}
-					<td align="center">{ utils.ConvertDate(invoice.InvoiceDate) }</td>
-					<td>{ invoice.Supplier.Name }</td>
-					<td>{ invoice.InvoiceNumber }</td>
-					<td align="right">{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
-				</tr>
-			}
-		</tbody>
-		<tfoot>
-			<tr>
-				<td colspan="4">Total gastado</td>
-				<td align="right" class="text-green-500 font-bold tracking-wider pl-8">{ utils.PrintFloat(invoices.Total) }</td>
-			</tr>
-		</tfoot>
-	</table>
+<table class="mt-2">
+    <caption class="text-left">Total gastado: <span class="text-green-500 font-bold tracking-wider pl-8">{
+            utils.PrintFloat(invoices.Total) }</span></caption>
+    <thead>
+        <tr>
+            <th></th>
+            <th width="100px">Fecha</th>
+            <th width="400px">Proveedor</th>
+            <th width="200px">Factura</th>
+            <th width="150px">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        for _, invoice := range invoices.Invoices {
+        <tr>
+            if invoice.IsBalanced {
+            <td><input type="checkbox" checked hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) }
+                    hx-target="closest tr" hx-swap="outerHTML" /></td>
+            } else {
+            <td align="center"><input type="checkbox" hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) }
+                    hx-target="closest tr" hx-swap="outerHTML" /></td>
+            }
+            <td align="center">{ utils.ConvertDate(invoice.InvoiceDate) }</td>
+            <td>{ invoice.Supplier.Name }</td>
+            <td>{ invoice.InvoiceNumber }</td>
+            <td align="right">{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
+        </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4">Total gastado</td>
+            <td align="right" class="text-green-500 font-bold tracking-wider pl-8">{ utils.PrintFloat(invoices.Total) }
+            </td>
+        </tr>
+    </tfoot>
+</table>
 }
