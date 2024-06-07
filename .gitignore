@@ -28,3 +28,4 @@ tmp/
 node_modules
 data
 backup
+bin
