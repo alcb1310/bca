@@ -1,0 +1,22 @@
+package components
+
+type ButtonType int
+
+const (
+    Primary ButtonType = iota
+    Secondary
+)
+
+templ Button(
+    title string,
+    buttonType ButtonType,
+) {
+    <button
+        class={
+            "block w-full border rounded px-3 py-2 uppercase tracking-wider",
+            templ.KV("bg-green-800 border-green-800 text-blue-gray-100 hover:bg-green-900", buttonType == Primary),
+            templ.KV("bg-blue-gray-500 border-blue-gray-500 text-blue-gray-100 hover:bg-blue-gray-600", buttonType == Secondary),
+        }
+    >{title}</button>
+}
+
