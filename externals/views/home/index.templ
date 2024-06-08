@@ -2,10 +2,19 @@ package home
 
 import (
     "github.com/alcb1310/bca/externals/views/layouts"
+    "github.com/alcb1310/bca/externals/views/components"
 )
 
 templ HomeIndex() {
     @layouts.BaseLayout("BCA") {
-        <h1 class="text-2xl font-bold">Home Page</h1>
+        <div
+            class="h-screen w-3/4 ms-auto me-auto flex flex-col items-center justify-center gap-3"
+        >
+            <h1 class="text-2xl font-bold">Login</h1>
+
+            @components.Input("email", components.Email, "E-mail", "", "")
+            @components.Input("password", components.Password, "Contraseña", "", "")
+            @components.Button("Ingresar", components.Primary)
+        </div>
     }
 }

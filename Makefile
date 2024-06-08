@@ -11,7 +11,7 @@ clean:
 
 unit-test:
 	@go clean -testcache
-	@go test `go list ./... | grep -v ./cmd/app | grep -v ./internals/database | grep -v ./mocks | grep -v ./tests`
+	@go test `go list ./... | grep -v ./cmd/app | grep -v ./internals/database | grep -v ./mocks | grep -v ./tests | grep -v ./externals`
 
 coverage:
 	@go clean -testcache
