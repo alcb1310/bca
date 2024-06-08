@@ -1,0 +1,46 @@
+package components
+
+type InputType int
+
+const (
+    Text InputType = iota
+    Password
+    Email
+    Submit
+)
+
+func (i InputType) String() string {
+    switch i {
+    case Text:
+        return "text"
+    case Email:
+        return "email"
+    case Password:
+        return "password"
+    case Submit:
+            return "submit"
+    default:
+        return ""
+    }
+}
+
+
+templ Input(
+    name string,
+    inputType InputType,
+    placeholder string,
+    value string,
+    errorValue string,
+) {
+    <input 
+        name={name}
+        type={inputType.String()}
+        placeholder={placeholder}
+        class={
+            "block w-full border rounded px-3 py-2 placeholder-slate-700 placeholder-opacity-40 text-slate-700",
+            templ.KV(" border-2 border-red-500", errorValue != ""),
+            templ.KV("border-gray-400", errorValue == "")
+        }
+
+    />
+}
