@@ -12,5 +12,5 @@ func TestHome(t *testing.T) {
 
 	rr := executeRequest(t, s, http.MethodGet, "/", nil)
 	assert.Equal(t, http.StatusOK, rr.Code)
-	assert.Equal(t, "Hello World", rr.Body.String())
+	assert.Contains(t, rr.Body.String(), "Home Page")
 }

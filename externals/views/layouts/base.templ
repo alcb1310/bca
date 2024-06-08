@@ -1,0 +1,14 @@
+package layouts
+
+templ BaseLayout(title string) {
+    <!DOCTYPE html>
+    <html lang="es">
+        <head>
+            <title>{ title } </title>
+            <link rel="stylesheet" href="/public/css/output.css" />
+        </head>
+        <body class="bg-slate-800 text-slate-100">
+            { children... }
+        </body>
+    </html>
+}
