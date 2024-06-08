@@ -6,18 +6,24 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	"github.com/alcb1310/bca/internals/database"
 )
 
 type Service struct {
 	Logger *slog.Logger
 	Router *chi.Mux
-	// DB     database.Service
+	DB     database.DatabaseService
 }
 
-func New(logger *slog.Logger) *Service {
+func New(
+	logger *slog.Logger,
+	db database.DatabaseService,
+) *Service {
 	s := &Service{
 		Logger: logger,
 		Router: chi.NewRouter(),
+		DB:     db,
 	}
 
 	// INFO: Define all middlewares before mounting the handlers

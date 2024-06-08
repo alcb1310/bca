@@ -8,13 +8,15 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
+	"github.com/alcb1310/bca/internals/database"
 	"github.com/alcb1310/bca/internals/server"
 )
 
 var log *slog.Logger
 
 func main() {
-	s := server.New(log)
+	db := database.CreateConnection()
+	s := server.New(log, db)
 
 	port := os.Getenv("PORT")
 	if port == "" {
