@@ -16,6 +16,7 @@ var log *slog.Logger
 
 func main() {
 	db := database.CreateConnection()
+	db.LoadScript()
 	s := server.New(log, db)
 
 	port := os.Getenv("PORT")
