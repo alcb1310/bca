@@ -14,7 +14,7 @@ templ HomeIndex() {
 
             @components.Input("email", components.Email, "E-mail", "", "")
             @components.Input("password", components.Password, "Contraseña", "", "")
-            @components.Button("Ingresar", components.Primary)
+            @components.ButtonComponent("Ingresar", components.Primary, components.Submit)
         </div>
     }
 }
