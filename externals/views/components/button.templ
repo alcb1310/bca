@@ -1,21 +1,41 @@
 package components
 
+type ButtonFormat int
 type ButtonType int
 
 const (
-    Primary ButtonType = iota
+    Primary ButtonFormat = iota
     Secondary
 )
 
-templ Button(
+const (
+    Button ButtonType = iota
+    Submit
+    Reset
+)
+
+func (b ButtonType) String() string {
+    switch b{
+    case Submit:
+        return "submit"
+    case Reset:
+        return "reset"
+    default:
+        return "button"
+    }
+}
+
+templ ButtonComponent(
     title string,
+    buttonFormat ButtonFormat,
     buttonType ButtonType,
 ) {
     <button
+        type={buttonType.String()}
         class={
             "block w-full border rounded px-3 py-2 uppercase tracking-wider",
-            templ.KV("bg-green-800 border-green-800 text-blue-gray-100 hover:bg-green-900", buttonType == Primary),
-            templ.KV("bg-blue-gray-500 border-blue-gray-500 text-blue-gray-100 hover:bg-blue-gray-600", buttonType == Secondary),
+            templ.KV("bg-green-800 border-green-800 text-blue-gray-100 hover:bg-green-900", buttonFormat == Primary),
+            templ.KV("bg-blue-gray-500 border-blue-gray-500 text-blue-gray-100 hover:bg-blue-gray-600", buttonFormat == Secondary),
         }
     >{title}</button>
 }
