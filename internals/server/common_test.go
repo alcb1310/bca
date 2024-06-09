@@ -10,11 +10,13 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/alcb1310/bca/internals/server"
+	"github.com/alcb1310/bca/mocks"
 )
 
 // mount a test server
 func mount() *server.Service {
-	return server.New(&slog.Logger{})
+	db := &mocks.DatabaseService{}
+	return server.New(&slog.Logger{}, db)
 }
 
 // executeRequest executes a request against a test server
