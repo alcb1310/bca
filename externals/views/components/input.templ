@@ -6,7 +6,7 @@ const (
     Text InputType = iota
     Password
     Email
-    Submit
+    Number
 )
 
 func (i InputType) String() string {
@@ -17,10 +17,10 @@ func (i InputType) String() string {
         return "email"
     case Password:
         return "password"
-    case Submit:
-            return "submit"
+    case Number:
+        return "number"
     default:
-        return ""
+        return "text"
     }
 }
 
@@ -32,15 +32,21 @@ templ Input(
     value string,
     errorValue string,
 ) {
-    <input 
-        name={name}
-        type={inputType.String()}
-        placeholder={placeholder}
-        class={
-            "block w-full border rounded px-3 py-2 placeholder-slate-700 placeholder-opacity-40 text-slate-700",
-            templ.KV(" border-2 border-red-500", errorValue != ""),
-            templ.KV("border-gray-400", errorValue == "")
-        }
+    <div>
+        <input 
+            name={name}
+            type={inputType.String()}
+            placeholder={placeholder}
+            value={value}
+            class={
+                "block w-full border rounded px-3 py-2 placeholder-blue-gray-400 placeholder-opacity-40 text-blue-gray-700",
+                templ.KV(" border-2 border-red-500", errorValue != ""),
+                templ.KV("border-blue-gray-400", errorValue == "")
+            }
 
-    />
+        />
+        if errorValue != "" {
+            <p class="text-red-500 text-sm">{errorValue}</p>
+        }
+    </div>
 }
