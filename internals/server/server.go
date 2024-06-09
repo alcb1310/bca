@@ -37,17 +37,16 @@ func New(
 	s.Router.Mount("/public", http.StripPrefix("/public", http.FileServer(http.Dir("./public"))))
 
 	s.Router.Get("/", handleErrors(s.Home))
+	s.Router.Get("/register", handleErrors(s.Register))
+	s.Router.Post("/register", handleErrors(s.RegisterForm))
 	s.MountHandlers()
 
 	return s
 }
 
 func (s *Service) MountHandlers() {
-	// s.Router.Get("/", handleErrors(s.Home))
-	//
 	// s.Router.Post("/login", handleErrors(s.Login))
 	// s.Router.Post("/register", handleErrors(s.CreateCompany))
-	// s.Router.Get("/register", handleErrors(s.Register))
 	//
 	// s.Router.Group(func(r chi.Router) {
 	// 	sr := &BCAService{Service: *s, Router: r}

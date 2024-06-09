@@ -1,0 +1,15 @@
+package register
+
+import (
+    "github.com/alcb1310/bca/externals/views/layouts"
+)
+
+templ Register(fields, formError map[string]string) {
+    @layouts.BaseLayout("BCA - Register") {
+        <div id="register" class="w-3/4 ms-auto me-auto">
+            <h1>Register</h1>
+
+            @RegisterForm(fields, formError)
+        </div>
+    }
+}
