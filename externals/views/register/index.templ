@@ -2,14 +2,42 @@ package register
 
 import (
     "github.com/alcb1310/bca/externals/views/layouts"
+    "github.com/alcb1310/bca/externals/views/components"
 )
 
 templ Register(fields, formError map[string]string) {
     @layouts.BaseLayout("BCA - Register") {
-        <div id="register" class="w-3/4 ms-auto me-auto">
+        <div
+            id="register"
+            class="w-3/4 ms-auto me-auto"
+            hx-ext="response-targets"
+        >
             <h1>Register</h1>
+            <div id="error"></div>
 
-            @RegisterForm(fields, formError)
+            <form
+                class="flex flex-col gap-3"
+                hx-target="#register"
+                hx-post="/register"
+                hx-swap="outerHTML"
+                hx-push-url="true"
+                hx-target-error="#error"
+            >
+                <p class="text-green-600 font-bold">Datos de la compañia</p>
+                @components.Input("ruc", components.Text, "RUC", fields["ruc"], formError["ruc"])
+                @components.Input("name", components.Text, "Nombre", fields["name"], formError["name"])
+                @components.Input("employees", components.Number, "Número Empleados", fields["employees"], formError["employees"])
+
+                <p class="text-green-600 font-bold">Datos del administrador</p>
+                @components.Input("email", components.Email, "E-mail", fields["email"], formError["email"])
+                @components.Input("password", components.Password, "Contraseña", fields["password"], formError["password"])
+                @components.Input("username", components.Text, "Nombre", fields["username"], formError["username"])
+
+                <div class="flex gap-3">
+                    @components.ButtonComponent("Crear", components.Primary, components.Submit)
+                    @components.ButtonComponent("Resetear", components.Secondary, components.Reset)
+                </div>
+            </form>
         </div>
     }
 }

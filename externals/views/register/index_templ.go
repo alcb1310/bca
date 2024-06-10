@@ -11,6 +11,7 @@ import "io"
 import "bytes"
 
 import (
+	"github.com/alcb1310/bca/externals/views/components"
 	"github.com/alcb1310/bca/externals/views/layouts"
 )
 
@@ -33,15 +34,51 @@ func Register(fields, formError map[string]string) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"register\" class=\"w-3/4 ms-auto me-auto\"><h1>Register</h1>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"register\" class=\"w-3/4 ms-auto me-auto\" hx-ext=\"response-targets\"><h1>Register</h1><div id=\"error\"></div><form class=\"flex flex-col gap-3\" hx-target=\"#register\" hx-post=\"/register\" hx-swap=\"outerHTML\" hx-push-url=\"true\" hx-target-error=\"#error\"><p class=\"text-green-600 font-bold\">Datos de la compañia</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = RegisterForm(fields, formError).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Input("ruc", components.Text, "RUC", fields["ruc"], formError["ruc"]).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+			templ_7745c5c3_Err = components.Input("name", components.Text, "Nombre", fields["name"], formError["name"]).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("employees", components.Number, "Número Empleados", fields["employees"], formError["employees"]).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p class=\"text-green-600 font-bold\">Datos del administrador</p>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("email", components.Email, "E-mail", fields["email"], formError["email"]).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("password", components.Password, "Contraseña", fields["password"], formError["password"]).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.Input("username", components.Text, "Nombre", fields["username"], formError["username"]).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex gap-3\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.ButtonComponent("Crear", components.Primary, components.Submit).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = components.ButtonComponent("Resetear", components.Secondary, components.Reset).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
