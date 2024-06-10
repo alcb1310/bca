@@ -10,10 +10,17 @@ import (
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
+
+	"github.com/alcb1310/bca/internals/types"
 )
 
 type DatabaseService interface {
 	LoadScript()
+
+	// Creates a new company with its admin user, this function assumes that
+	// all data is validated and transformed, will return an error if either the
+	// company or the user couldn't be created
+	CreateCompany(c *types.Company, u *types.CreateUser) error
 }
 
 type service struct {

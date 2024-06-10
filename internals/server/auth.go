@@ -39,6 +39,11 @@ func (s *Service) RegisterForm(w http.ResponseWriter, r *http.Request) error {
 		return renderPage(w, r, register.Register(fields, formErrors))
 	}
 
+	if err := s.DB.CreateCompany(company, user); err != nil {
+		renderPage(w, r, register.Register(fields, formErrors))
+		return err
+	}
+
 	http.Redirect(w, r, "/", http.StatusFound)
 	return nil
 }
