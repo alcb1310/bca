@@ -9,12 +9,21 @@ templ HomeIndex() {
     @layouts.BaseLayout("BCA") {
         <div
             class="h-screen w-3/4 ms-auto me-auto flex flex-col items-center justify-center gap-3"
+            hx-ext="response-targets"
         >
             <h1 class="text-2xl font-bold">Login</h1>
+            <p id="auth-error" class="text-red-500 text-sm"></p>
 
-            @components.Input("email", components.Email, "E-mail", "", "")
-            @components.Input("password", components.Password, "Contraseña", "", "")
-            @components.ButtonComponent("Ingresar", components.Primary, components.Submit)
+            <form
+                class="w-full flex flex-col gap-3"
+                hx-post="/login"
+                hx-target="body"
+                hx-target-4*="#auth-error"
+            >
+                @components.Input("email", components.Email, "E-mail", "", "")
+                @components.Input("password", components.Password, "Contraseña", "", "")
+                @components.ButtonComponent("Ingresar", components.Primary, components.Submit)
+            </form>
         </div>
     }
 }

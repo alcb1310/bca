@@ -21,6 +21,12 @@ type DatabaseService interface {
 	// all data is validated and transformed, will return an error if either the
 	// company or the user couldn't be created
 	CreateCompany(c *types.Company, u *types.CreateUser) error
+
+	// Logs in to the application, it receives a validated email address as the
+	// user's name and a un hashed password, then it will validate that the
+	// email - password convination is correct and on success it will login and
+	// on failure it will return an "Invalid Credentials" message
+	Login(email, password string) (types.User, error)
 }
 
 type service struct {

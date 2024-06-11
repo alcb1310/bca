@@ -39,6 +39,7 @@ func New(
 	s.Router.Get("/", handleErrors(s.Home))
 	s.Router.Get("/register", handleErrors(s.Register))
 	s.Router.Post("/register", handleErrors(s.RegisterForm))
+	s.Router.Post("/login", handleErrors(s.Login))
 	s.MountHandlers()
 
 	return s

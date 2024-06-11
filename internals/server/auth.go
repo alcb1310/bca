@@ -31,9 +31,6 @@ func (s *Service) RegisterForm(w http.ResponseWriter, r *http.Request) error {
 	user := &types.CreateUser{}
 	formErrors := validation.ValidateRegisterForm(fields, company, user)
 
-	slog.Debug("Register", "company", company)
-	slog.Debug("Register", "user", user)
-
 	if len(formErrors) > 0 {
 		slog.Debug("RegisterForm: if", "formErrors", formErrors)
 		return renderPage(w, r, register.Register(fields, formErrors))
@@ -45,5 +42,34 @@ func (s *Service) RegisterForm(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	http.Redirect(w, r, "/", http.StatusFound)
+	return nil
+}
+
+func (s *Service) Login(w http.ResponseWriter, r *http.Request) error {
+	user := types.User{}
+	var err error
+
+	r.ParseForm()
+	fields := make(map[string]string)
+	fields["email"] = r.Form.Get("email")
+	fields["password"] = r.Form.Get("password")
+
+	formErrors := validation.ValidateLogin(fields)
+	if len(formErrors) > 0 {
+		slog.Debug("Login Process", "formErrors", formErrors)
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Credenciales inválidas"))
+		return nil
+	}
+
+	if user, err = s.DB.Login(fields["email"], fields["password"]); err != nil {
+		slog.Debug("Login", "error", "invalid credentials")
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Credenciales inválidas"))
+		return nil
+	}
+
+	slog.Debug("Login", "user", user)
+	w.WriteHeader(http.StatusOK)
 	return nil
 }

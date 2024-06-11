@@ -99,6 +99,63 @@ func (_c *DatabaseService_LoadScript_Call) RunAndReturn(run func()) *DatabaseSer
 	return _c
 }
 
+// Login provides a mock function with given fields: email, password
+func (_m *DatabaseService) Login(email string, password string) (types.User, error) {
+	ret := _m.Called(email, password)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Login")
+	}
+
+	var r0 types.User
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, string) (types.User, error)); ok {
+		return rf(email, password)
+	}
+	if rf, ok := ret.Get(0).(func(string, string) types.User); ok {
+		r0 = rf(email, password)
+	} else {
+		r0 = ret.Get(0).(types.User)
+	}
+
+	if rf, ok := ret.Get(1).(func(string, string) error); ok {
+		r1 = rf(email, password)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// DatabaseService_Login_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Login'
+type DatabaseService_Login_Call struct {
+	*mock.Call
+}
+
+// Login is a helper method to define mock.On call
+//   - email string
+//   - password string
+func (_e *DatabaseService_Expecter) Login(email interface{}, password interface{}) *DatabaseService_Login_Call {
+	return &DatabaseService_Login_Call{Call: _e.mock.On("Login", email, password)}
+}
+
+func (_c *DatabaseService_Login_Call) Run(run func(email string, password string)) *DatabaseService_Login_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *DatabaseService_Login_Call) Return(_a0 types.User, _a1 error) *DatabaseService_Login_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *DatabaseService_Login_Call) RunAndReturn(run func(string, string) (types.User, error)) *DatabaseService_Login_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // NewDatabaseService creates a new instance of DatabaseService. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewDatabaseService(t interface {

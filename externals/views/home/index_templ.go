@@ -34,7 +34,7 @@ func HomeIndex() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-screen w-3/4 ms-auto me-auto flex flex-col items-center justify-center gap-3\"><h1 class=\"text-2xl font-bold\">Login</h1>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-screen w-3/4 ms-auto me-auto flex flex-col items-center justify-center gap-3\" hx-ext=\"response-targets\"><h1 class=\"text-2xl font-bold\">Login</h1><p id=\"auth-error\" class=\"text-red-500 text-sm\"></p><form class=\"w-full flex flex-col gap-3\" hx-post=\"/login\" hx-target=\"body\" hx-target-4*=\"#auth-error\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -50,7 +50,7 @@ func HomeIndex() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</form></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
