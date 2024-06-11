@@ -2,15 +2,13 @@ package validation
 
 import (
 	"fmt"
-	"log/slog"
 
 	"github.com/alcb1310/bca/internals/types"
+	"github.com/alcb1310/bca/internals/utils"
 )
 
 func ValidateRegisterForm(fields map[string]string, company *types.Company, user *types.CreateUser) map[string]string {
 	validationErrors := make(map[string]string)
-
-	slog.Debug("ValidateRegisterForm", "fields", fields)
 
 	if e := IdValidation(fields["ruc"], true); e != "" {
 		validationErrors["ruc"] = e
@@ -39,7 +37,7 @@ func ValidateRegisterForm(fields map[string]string, company *types.Company, user
 	if e := PasswordValidator(fields["password"], true); e != "" {
 		validationErrors["password"] = e
 	}
-	user.Password = fields["password"]
+	user.Password = utils.EncryptPassword(fields["password"])
 
 	if e := NameValidation(fields["username"], true); e != "" {
 		validationErrors["username"] = fmt.Sprintf("El nombre %s", e)
