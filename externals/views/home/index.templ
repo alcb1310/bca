@@ -19,6 +19,7 @@ templ HomeIndex() {
                 hx-post="/login"
                 hx-target="body"
                 hx-target-4*="#auth-error"
+                hx-push-url="true"
             >
                 @components.Input("email", components.Email, "E-mail", "", "")
                 @components.Input("password", components.Password, "Contraseña", "", "")
