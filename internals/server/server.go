@@ -16,6 +16,12 @@ type Service struct {
 	DB     database.DatabaseService
 }
 
+type BCAService struct {
+	Service
+
+	Router chi.Router
+}
+
 func New(
 	logger *slog.Logger,
 	db database.DatabaseService,
@@ -46,15 +52,10 @@ func New(
 }
 
 func (s *Service) MountHandlers() {
-	// s.Router.Post("/login", handleErrors(s.Login))
-	// s.Router.Post("/register", handleErrors(s.CreateCompany))
-	//
-	// s.Router.Group(func(r chi.Router) {
-	// 	sr := &BCAService{Service: *s, Router: r}
-	//
-	// 	sr.Router.Use(sr.AuthMiddleware)
-	//
-	// 	sr.Router.Get("/bca", handleErrors(sr.BCAHome))
-	// 	sr.Router.Get("/logout", handleErrors(sr.Logout))
-	// })
+	s.Router.Group(func(r chi.Router) {
+		sr := &BCAService{Service: *s, Router: r}
+		sr.Router.Use(sr.AuthMiddleware)
+		sr.Router.Get("/bca", handleErrors(sr.BCAHome))
+		// 	sr.Router.Get("/logout", handleErrors(sr.Logout))
+	})
 }

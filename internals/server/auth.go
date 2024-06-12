@@ -6,6 +6,7 @@ import (
 
 	"github.com/alcb1310/bca/externals/views/register"
 	"github.com/alcb1310/bca/internals/types"
+	"github.com/alcb1310/bca/internals/utils"
 	"github.com/alcb1310/bca/internals/validation"
 )
 
@@ -69,7 +70,14 @@ func (s *Service) Login(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
-	slog.Debug("Login", "user", user)
-	w.WriteHeader(http.StatusOK)
+	jwtToken, err := utils.GenerateJWT(user)
+	if err != nil {
+		slog.Error("Login: Unable to generate JWT Token", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return err
+	}
+
+	http.SetCookie(w, utils.GenerateCookie(jwtToken))
+	http.Redirect(w, r, "/bca", http.StatusFound)
 	return nil
 }
