@@ -6,10 +6,13 @@ css MaincontentHeight() {
 
 templ NavBar() {
     <nav class={
-        "bg-blue-gray-900 col-span-2 p-5 h-full overflow-x-hidden overflow-y-auto text-sm",
+        "bg-blue-gray-900 col-span-2 p-5 h-full overflow-x-hidden overflow-y-auto text-xs",
         MaincontentHeight()
     }
     >
-        <p>Navigation</p>
+        @Transactions()
+        @Reports()
+        @Parametros()
+        @Unitary()
     </nav>
 }
