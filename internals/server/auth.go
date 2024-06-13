@@ -3,6 +3,7 @@ package server
 import (
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/alcb1310/bca/externals/views/register"
 	"github.com/alcb1310/bca/internals/types"
@@ -79,5 +80,22 @@ func (s *Service) Login(w http.ResponseWriter, r *http.Request) error {
 
 	http.SetCookie(w, utils.GenerateCookie(jwtToken))
 	http.Redirect(w, r, "/bca", http.StatusFound)
+	return nil
+}
+
+func (s *Service) Logout(w http.ResponseWriter, r *http.Request) error {
+	cookie := &http.Cookie{
+		Name:     "bca",
+		Value:    "",
+		Path:     "/",
+		Expires:  time.Now(),
+		MaxAge:   -1,
+		Raw:      "",
+		HttpOnly: true,
+		Secure:   true,
+	}
+
+	http.SetCookie(w, cookie)
+	http.Redirect(w, r, "/", http.StatusFound)
 	return nil
 }
