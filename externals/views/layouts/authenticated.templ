@@ -1,7 +1,10 @@
 package layouts
 
+import "github.com/alcb1310/bca/externals/views/components"
+
 templ AuthenticatedLayout(title string) {
     @BaseLayout(title) {
+        @components.Header()
         { children... }
     }
 }
