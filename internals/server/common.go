@@ -1,12 +1,15 @@
 package server
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/jackc/pgx/v5/pgconn"
+
+	"github.com/alcb1310/bca/internals/types"
 )
 
 // Handler is a type alias for a function that handles an HTTP request that returns an error.
@@ -41,4 +44,16 @@ func handleErrors(h Handler) http.HandlerFunc {
 
 func renderPage(w http.ResponseWriter, r *http.Request, c templ.Component) error {
 	return c.Render(r.Context(), w)
+}
+
+func getUserFromContext(r *http.Request) (types.User, error) {
+	ctx := r.Context()
+	ctxValue := ctx.Value("user")
+
+	user, ok := ctxValue.(types.User)
+	if !ok {
+		return user, errors.New("Invalid context")
+	}
+
+	return user, nil
 }
