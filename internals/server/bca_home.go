@@ -7,5 +7,10 @@ import (
 )
 
 func (s *BCAService) BCAHome(w http.ResponseWriter, r *http.Request) error {
-	return renderPage(w, r, bca.Index())
+	user, err := getUserFromContext(r)
+	if err != nil {
+		return err
+	}
+
+	return renderPage(w, r, bca.Index(user))
 }

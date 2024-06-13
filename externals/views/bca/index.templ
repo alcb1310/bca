@@ -1,9 +1,12 @@
 package bca
 
-import "github.com/alcb1310/bca/externals/views/layouts"
+import (
+    "github.com/alcb1310/bca/externals/views/layouts"
+    "github.com/alcb1310/bca/internals/types"
+)
 
-templ Index() {
+templ Index(user types.User) {
     @layouts.AuthenticatedLayout("BCA") {
-        <h1>BCA Home</h1>
+        <p class="p-5">Bienvenido <span class="text-green-500 font-bold tracking-wider">{ user.Name } </span></p>
     }
 }
