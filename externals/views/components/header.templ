@@ -1,18 +1,22 @@
 package components
 
+import "github.com/alcb1310/bca/externals/views/icons"
+
+// TODO: Add links to the user and help icons
+
 templ Header() {
     <nav
-        class="bg-blue-gray-900 flex justify-between align-middle px-5 py-4"
+        class="bg-blue-gray-900 flex justify-between items-center px-5 py-4"
     >
         <h1 class="font-bold text-xl">
             <a href="/bca">Sistema Control Presupuestario</a>
         </h1>
         <ul
-            class="flex justify-end gap-3"
+            class="flex justify-end gap-3 items-center"
         >
-            <li>Usuarios</li>
-            <li>Ayuda</li>
-            <li><a href="/bca/logout">Salir</a></li>
+            <li>@icons.User()</li>
+            <li>@icons.Help()</li>
+            <li><a href="/bca/logout">@icons.Logout()</a></li>
         </ul>
     </nav>
 }
