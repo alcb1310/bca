@@ -1,10 +1,19 @@
 package layouts
 
-import "github.com/alcb1310/bca/externals/views/components"
+import (
+    "github.com/alcb1310/bca/externals/views/components"
+    "github.com/alcb1310/bca/externals/views/navigation"
+)
 
 templ AuthenticatedLayout(title string) {
     @BaseLayout(title) {
         @components.Header()
-        { children... }
+        <div class="grid grid-cols-12 gap-1">
+            @navigation.NavBar()
+
+            <div class="col-span-10 overflow-x-hidden overflow-y-auto">
+                { children... }
+            </div>
+        </div>
     }
 }

@@ -1,0 +1,15 @@
+package navigation
+
+css MaincontentHeight() {
+	height: calc(100vh - 4rem);
+}
+
+templ NavBar() {
+    <nav class={
+        "bg-blue-gray-900 col-span-2 p-5 h-full overflow-x-hidden overflow-y-auto text-sm",
+        MaincontentHeight()
+    }
+    >
+        <p>Navigation</p>
+    </nav>
+}

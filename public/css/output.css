@@ -560,6 +560,14 @@ html {
   --tw-contain-style:  ;
 }
 
+.col-span-10{
+  grid-column: span 10 / span 10;
+}
+
+.col-span-2{
+  grid-column: span 2 / span 2;
+}
+
 .me-auto{
   margin-inline-end: auto;
 }
@@ -576,6 +584,14 @@ html {
   display: flex;
 }
 
+.grid{
+  display: grid;
+}
+
+.h-full{
+  height: 100%;
+}
+
 .h-screen{
   height: 100vh;
 }
@@ -586,6 +602,10 @@ html {
 
 .w-full{
   width: 100%;
+}
+
+.grid-cols-12{
+  grid-template-columns: repeat(12, minmax(0, 1fr));
 }
 
 .flex-col{
@@ -608,8 +628,20 @@ html {
   justify-content: space-between;
 }
 
+.gap-1{
+  gap: 0.25rem;
+}
+
 .gap-3{
   gap: 0.75rem;
+}
+
+.overflow-y-auto{
+  overflow-y: auto;
+}
+
+.overflow-x-hidden{
+  overflow-x: hidden;
 }
 
 .rounded{
