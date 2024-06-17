@@ -1,0 +1,8 @@
+package components
+
+templ Drawer() {
+	<div class="hidden absolute top-0 left-0 w-full h-full z-10 opacity-70 bg-blue-gray-900" id="opaque"></div>
+	<div class="hidden absolute py-2 px-4 top-0 right-0 left-auto w-[400px] h-full overflow-x-hidden oveflow-y-auto z-20 flex-col gap-4 bg-blue-gray-50 text-blue-gray-900" id="drawer">
+		{ children... }
+	</div>
+}
