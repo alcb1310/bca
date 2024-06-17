@@ -36,7 +36,7 @@ func BaseLayout(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link rel=\"stylesheet\" href=\"/public/css/output.css\"><link rel=\"icon\" type=\"image/x-icon\" href=\"/public/images/favicon.ico\"><script defer src=\"/public/js/htmx.min.js\"></script><script src=\"https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js\"></script></head><body class=\"bg-blue-gray-800 text-blue-gray-50\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link rel=\"stylesheet\" href=\"/public/css/output.css\"><link rel=\"icon\" type=\"image/x-icon\" href=\"/public/images/favicon.ico\"><script defer src=\"/public/js/htmx.min.js\"></script><script defer src=\"https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js\"></script><script defer src=\"/public/js/main.js\"></script></head><body class=\"bg-blue-gray-800 text-blue-gray-50\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

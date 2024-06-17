@@ -11,9 +11,11 @@ templ AuthenticatedLayout(title string) {
         <div class="grid grid-cols-12 gap-1">
             @navigation.NavBar()
 
-            <div class="col-span-10 overflow-x-hidden overflow-y-auto">
+            <div class="col-span-10 overflow-x-hidden overflow-y-auto px-5 pt-5">
                 { children... }
             </div>
         </div>
+
+        @components.Drawer()
     }
 }
