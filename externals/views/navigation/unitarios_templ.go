@@ -23,7 +23,7 @@ func Unitary() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h5 class=\"text-blue-gray-300 uppercase font-bold tracking-wider leading-8\">Costros Unitarios</h5><ul class=\"ps-2 text-blue-gray-400 \"><li class=\"hover:text-blue-gray-100 hover:cursor-pointer leading-6\">Cantidades</li><li class=\"hover:text-blue-gray-100 hover:cursor-pointer leading-6\">Análisis</li></ul>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h5 class=\"text-blue-gray-300 uppercase font-bold tracking-wider leading-8\">Costos Unitarios</h5><ul class=\"ps-2 text-blue-gray-400 \"><li class=\"hover:text-blue-gray-100 hover:cursor-pointer leading-6\">Cantidades</li><li class=\"hover:text-blue-gray-100 hover:cursor-pointer leading-6\">Análisis</li></ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
