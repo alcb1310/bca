@@ -7,6 +7,6 @@ import (
 
 templ Index(user types.User) {
     @layouts.AuthenticatedLayout("BCA") {
-        <p class="p-5">Bienvenido <span class="text-green-500 font-bold tracking-wider">{ user.Name } </span></p>
+        <p>Bienvenido <span class="text-green-500 font-bold tracking-wider">{ user.Name } </span></p>
     }
 }

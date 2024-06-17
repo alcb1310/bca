@@ -34,14 +34,14 @@ func Index(user types.User) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p class=\"p-5\">Bienvenido <span class=\"text-green-500 font-bold tracking-wider\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p>Bienvenido <span class=\"text-green-500 font-bold tracking-wider\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(user.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `externals/views/bca/index.templ`, Line: 10, Col: 99}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `externals/views/bca/index.templ`, Line: 10, Col: 87}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
