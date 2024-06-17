@@ -1,0 +1,18 @@
+package projects
+
+import "github.com/alcb1310/bca/externals/views/components"
+
+templ ProjectForm() {
+    <form>
+        <div class="flex flex-col gap-5">
+            @components.DrawerTitle("Crear Proyecto")
+
+            @components.Input("name", components.Text, "Nombre", "", "")
+
+            <div class="flex justify-between">
+                @components.SubmitButton()
+                @components.CancelButton()
+            </div>
+        </div>
+    </form>
+}

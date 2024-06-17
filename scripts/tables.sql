@@ -30,3 +30,14 @@ create table if not exists "user" (
 
     unique (email)
 );
+
+create table if not exists project (
+    id uuid primary key default gen_random_uuid(),
+    name text not null,
+    is_active boolean default true,
+
+    company_id uuid not null references company (id) on delete restrict,
+    created_at timestamp with time zone default now(),
+
+    unique (name, company_id)
+);

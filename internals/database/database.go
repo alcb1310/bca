@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
 
@@ -27,6 +28,9 @@ type DatabaseService interface {
 	// email - password convination is correct and on success it will login and
 	// on failure it will return an "Invalid Credentials" message
 	Login(email, password string) (types.User, error)
+
+	// Gets all the projects of a specific company
+	GetAllProjects(companyID uuid.UUID) []types.Project
 }
 
 type service struct {
@@ -55,8 +59,6 @@ func CreateConnection() DatabaseService {
 		slog.Error("Error connecting to the database", "error", err)
 		os.Exit(1)
 	}
-
-	slog.Debug("Connected to database", "name", database)
 
 	return db
 }
@@ -101,8 +103,6 @@ func (s *service) LoadScript() {
 		os.Exit(1)
 	}
 
-	slog.Debug("Total", "res", res)
-
 	if res == 0 {
 		q = "insert into role (id, name) values ('a', 'admin')"
 		if _, err := tx.Exec(q); err != nil {
@@ -114,5 +114,4 @@ func (s *service) LoadScript() {
 
 	tx.Commit()
 	slog.Info("Tables created successfully")
-
 }

@@ -1,0 +1,31 @@
+package projects
+
+import (
+    "github.com/alcb1310/bca/externals/views/layouts"
+    "github.com/alcb1310/bca/externals/views/components"
+)
+
+templ ProjectLanding() {
+    @layouts.AuthenticatedLayout("BCA - Proyectos"){
+        <div class="mb-3 flex justify-between items-center">
+            @components.PageTitle("Proyectos")
+            <button
+                class="py-2 px-4 bg-green-500 text-blue-gray-50 rounded-lg"
+                hx-get="/bca/proyectos/form"
+                hx-target="#drawer"
+                hx-swap="innerHTML"
+                hx-trigger="click"
+                hx-on:click="openDrawer()"
+            >Agregar</button>
+        </div>
+
+        <div
+            id="project-table"
+            class="w-full"
+            hx-get="/bca/proyectos/table"
+            hx-trigger="load"
+            hx-target="this"
+            hx-swap="innerHTML"
+        ></div>
+    }
+}

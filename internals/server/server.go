@@ -57,5 +57,8 @@ func (s *Service) MountHandlers() {
 		sr.Router.Use(sr.AuthMiddleware)
 		sr.Router.Get("/bca", handleErrors(sr.BCAHome))
 		sr.Router.Get("/bca/logout", handleErrors(sr.Logout))
+		sr.Router.Get("/bca/proyectos", handleErrors(sr.ProjectsPage))
+		sr.Router.Get("/bca/proyectos/table", handleErrors(sr.ProjectsTable))
+		sr.Router.Get("/bca/proyectos/form", handleErrors(sr.ProjectsForm))
 	})
 }
