@@ -21,3 +21,17 @@ func (s *BCAService) ProjectsTable(w http.ResponseWriter, r *http.Request) error
 func (s *BCAService) ProjectsForm(w http.ResponseWriter, r *http.Request) error {
 	return renderPage(w, r, projects.ProjectForm())
 }
+
+func (s *BCAService) CreateProject(w http.ResponseWriter, r *http.Request) error {
+	user, _ := getUserFromContext(r)
+	project := types.Project{
+		CompanyID: user.CompanyID,
+	}
+
+	project, err := s.DB.CreateProject(project)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -31,3 +31,12 @@ func (s *service) GetAllProjects(companyID uuid.UUID) []types.Project {
 
 	return projects
 }
+
+func (s *service) CreateProject(project types.Project) (types.Project, error) {
+    query := "insert into project (name, is_active, company_id) values ($1, $2, $3) returning id"
+    if err := s.DB.QueryRow(query, project.Name, project.IsActive, project.CompanyID).Scan(&project.ID); err != nil {
+        return project, err
+    }
+
+    return project, nil
+}

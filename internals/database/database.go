@@ -31,6 +31,9 @@ type DatabaseService interface {
 
 	// Gets all the projects of a specific company
 	GetAllProjects(companyID uuid.UUID) []types.Project
+
+	// Creates a new project
+	CreateProject(project types.Project) (types.Project, error)
 }
 
 type service struct {
