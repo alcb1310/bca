@@ -3,7 +3,7 @@ module bca-go-final
 go 1.21
 
 require (
-	github.com/a-h/templ v0.2.707
+	github.com/a-h/templ v0.2.747
 	github.com/gorilla/mux v1.8.1
 	github.com/jackc/pgx/v5 v5.5.0
 	github.com/joho/godotenv v1.5.1
@@ -29,6 +29,6 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/xuri/excelize/v2 v2.8.0
 	golang.org/x/crypto v0.22.0
-	golang.org/x/sync v0.1.0 // indirect
+	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/text v0.14.0
 )
