@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -32,6 +33,9 @@ func NewServer(db database.Service) *http.Server {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
+
+	log.Println("Starting server...")
+	log.Printf("Listening on port %d", NewServer.port)
 
 	return server
 }
