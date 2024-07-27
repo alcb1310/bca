@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log/slog"
 	"os"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -17,6 +18,7 @@ var (
 	host         = os.Getenv("DB_HOST")
 	port         = os.Getenv("PORT")
 	secretKey    = os.Getenv("SECRET")
+	env          = os.Getenv("APP_ENV")
 )
 
 func init() {
@@ -41,6 +43,23 @@ func init() {
 	if secretKey == "" || len(secretKey) < 8 {
 		panic("SECRET must be set and of at least 8 characters")
 	}
+
+	handlerOptions := &slog.HandlerOptions{}
+
+	switch env {
+	case "debug":
+		handlerOptions.Level = slog.LevelDebug
+	case "info":
+		handlerOptions.Level = slog.LevelInfo
+	case "warn":
+		handlerOptions.Level = slog.LevelWarn
+	default:
+		handlerOptions.Level = slog.LevelError
+	}
+
+	loggerHandler := slog.NewJSONHandler(os.Stdout, handlerOptions)
+	logger := slog.New(loggerHandler)
+	slog.SetDefault(logger)
 }
 
 func main() {
