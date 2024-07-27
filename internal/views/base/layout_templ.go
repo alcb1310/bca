@@ -26,7 +26,7 @@ func Layout() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta name=\"description\" content=\"\n                Author: Andrés Court\n                Github: https://github.com/alcb1310\n                Year:  2024\n                Sistema que administra el control presupuestario de empresas constructoras\n            \"><title>BCA</title><link rel=\"stylesheet\" href=\"/css/output.css\"><script src=\"/js/htmx.min.js\"></script><script src=\"https://unpkg.com/hyperscript.org@0.9.12\"></script></head><body class=\"m-0 p-0 bg-blue-gray-800 text-gray-50 text-sm font-normal\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"es\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><meta name=\"description\" content=\"\n                Author: Andrés Court\n                Github: https://github.com/alcb1310\n                Year:  2024\n                Sistema que administra el control presupuestario de empresas constructoras\n            \"><title>BCA</title><link rel=\"icon\" type=\"image/x-icon\" href=\"/images/favicon.ico\"><link rel=\"stylesheet\" href=\"/css/output.css\"><script src=\"/js/htmx.min.js\"></script><script src=\"https://unpkg.com/hyperscript.org@0.9.12\"></script></head><body class=\"m-0 p-0 bg-blue-gray-800 text-gray-50 text-sm font-normal\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
