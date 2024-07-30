@@ -1,41 +1,27 @@
 package server
 
 import (
-	"fmt"
-	"log"
 	"net/http"
-	"os"
-	"strconv"
-	"time"
 
-	_ "github.com/joho/godotenv/autoload"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 
 	"bca-go-final/internal/database"
 )
 
 type Server struct {
-	port int
-	DB   database.Service
+	DB     database.Service
+	Router *chi.Mux
 }
 
-func NewServer(db database.Service) *http.Server {
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
+func NewServer(db database.Service) *Server {
 	NewServer := &Server{
-		port: port,
-		DB:   db,
+		DB:     db,
+		Router: chi.NewRouter(),
 	}
+  NewServer.Router.Use(middleware.Logger)
 
-	// Declare Server config
-	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", NewServer.port),
-		Handler:      NewServer.RegisterRoutes(),
-		IdleTimeout:  time.Minute,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 30 * time.Second,
-	}
+  NewServer.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
 
-	log.Println("Starting server...")
-	log.Printf("Listening on port %d", NewServer.port)
-
-	return server
+	return NewServer
 }

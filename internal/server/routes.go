@@ -3,13 +3,11 @@ package server
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
-
 	"bca-go-final/internal/views"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
-	r := mux.NewRouter()
+	r := s.Router
 
 	r.Use(s.authVerify)
 
@@ -108,7 +106,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandleFunc("/bca/partials/analisis", s.AnalysisTable)
 
 	// This should be the last route for static files
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
+	// r.PathPrefix("/").Handler(http.FileServer(http.Dir("./public/")))
 	return r
 }
 
