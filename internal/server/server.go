@@ -141,9 +141,9 @@ func NewServer(db database.Service) *Server {
 
 			r.Route("/rubros", func(r chi.Router) {
 				r.HandleFunc("/", s.RubrosTable)
-				r.HandleFunc("/{id}", s.MaterialsByItem)
-				r.HandleFunc("/{id}/material", s.MaterialByItemForm)
-				r.HandleFunc("/{id}/material/{materialId}", s.MaterialItemsOperations)
+				r.HandleFunc("/{id}", s.MaterialsByItem)                               // convert
+				r.HandleFunc("/{id}/material", s.MaterialByItemForm)                   // convert
+				r.HandleFunc("/{id}/material/{materialId}", s.MaterialItemsOperations) // convert
 			})
 
 			r.Route("/cantidades", func(r chi.Router) {

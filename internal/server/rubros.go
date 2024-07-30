@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -25,7 +25,7 @@ func (s *Server) RubrosTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialsByItem(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -42,7 +42,7 @@ func (s *Server) MaterialsByItem(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -123,14 +123,14 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	materialId := mux.Vars(r)["materialId"]
+	materialId := chi.URLParam(r, "materialId")
 	parsedMaterialId, err := uuid.Parse(materialId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -201,5 +201,4 @@ func (s *Server) MaterialItemsOperations(w http.ResponseWriter, r *http.Request)
 	default:
 		w.WriteHeader(http.StatusBadRequest)
 	}
-
 }
