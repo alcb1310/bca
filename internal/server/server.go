@@ -100,8 +100,8 @@ func NewServer(db database.Service) *Server {
 			r.Route("/suppliers", func(r chi.Router) {
 				r.HandleFunc("/", s.SuppliersTable)
 				r.HandleFunc("/add", s.SupplierAdd)
-				r.HandleFunc("/edit/{id}", s.SuppliersEditSave)
-				r.HandleFunc("/{id}", s.SuppliersEdit)
+				r.HandleFunc("/edit/{id}", s.SuppliersEditSave) // convert
+				r.HandleFunc("/{id}", s.SuppliersEdit)          // convert
 			})
 
 			r.Route("/budget-item", func(r chi.Router) {
