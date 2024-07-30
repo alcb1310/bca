@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -66,8 +68,8 @@ func main() {
 	db := database.New(databaseName, username, password, host, databasePort)
 	server := server.NewServer(db)
 
-	err := server.ListenAndServe()
-	if err != nil {
-		panic("cannot start server")
+	slog.Info("Listening on port", "port", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server.Router); err != nil {
+		panic(err)
 	}
 }
