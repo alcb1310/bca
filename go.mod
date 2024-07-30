@@ -4,7 +4,6 @@ go 1.21
 
 require (
 	github.com/a-h/templ v0.2.747
-	github.com/gorilla/mux v1.8.1
 	github.com/jackc/pgx/v5 v5.5.0
 	github.com/joho/godotenv v1.5.1
 	github.com/stretchr/testify v1.8.4
