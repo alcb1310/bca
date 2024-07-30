@@ -130,7 +130,7 @@ func NewServer(db database.Service) *Server {
 			r.Route("/categories", func(r chi.Router) {
 				r.HandleFunc("/", s.CategoriesTable)
 				r.HandleFunc("/add", s.CategoryAdd)
-				r.HandleFunc("/{id}", s.EditCategory)
+				r.HandleFunc("/{id}", s.EditCategory) // convert
 			})
 
 			r.Route("/materiales", func(r chi.Router) {
