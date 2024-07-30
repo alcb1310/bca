@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -65,7 +65,6 @@ func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 		component := reports.BalanceView(projects)
 		component.Render(r.Context(), w)
 	}
-
 }
 
 func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
@@ -188,7 +187,7 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["budgetItemId"]
+	id := chi.URLParam(r, "budgetItemId")
 	budgetItemId, err := uuid.Parse(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -196,7 +195,7 @@ func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pId := mux.Vars(r)["projectId"]
+	pId := chi.URLParam(r, "projectId")
 	parsedProjectId, err := uuid.Parse(pId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -204,7 +203,7 @@ func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d := mux.Vars(r)["date"]
+	d := chi.URLParam(r, "date")
 	date, _ := time.Parse("2006-01-02", d)
 
 	budgetItem, _ := s.DB.GetOneBudgetItem(budgetItemId, ctx.CompanyId)
