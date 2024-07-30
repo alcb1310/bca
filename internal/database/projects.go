@@ -1,8 +1,6 @@
 package database
 
 import (
-	"log/slog"
-
 	"github.com/google/uuid"
 
 	"bca-go-final/internal/types"
@@ -25,8 +23,6 @@ func (s *service) GetAllProjects(companyId uuid.UUID) ([]types.Project, error) {
 		}
 		projects = append(projects, p)
 	}
-
-	slog.Info("GetAllProjects", "projects", projects)
 	return projects, nil
 }
 
