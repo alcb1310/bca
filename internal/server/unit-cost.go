@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -129,7 +129,6 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
-
 }
 
 func (s *Server) UnitAnalysis(w http.ResponseWriter, r *http.Request) {
@@ -174,7 +173,7 @@ func (s *Server) AnalysisTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

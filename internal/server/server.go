@@ -149,7 +149,7 @@ func NewServer(db database.Service) *Server {
 			r.Route("/cantidades", func(r chi.Router) {
 				r.HandleFunc("/", s.CantidadesTable)
 				r.HandleFunc("/add", s.CantidadesAdd)
-				r.HandleFunc("/{id}", s.CantidadesEdit)
+				r.HandleFunc("/{id}", s.CantidadesEdit) // convert
 			})
 
 			r.HandleFunc("/analisis", s.AnalysisTable)
