@@ -51,7 +51,7 @@ func NewServer(db database.Service) *Server {
 			r.HandleFunc("/cuadre", s.Balance)
 			r.HandleFunc("/historico", s.Historic)
 			r.HandleFunc("/gastado", s.Spent)
-			r.HandleFunc("/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem)
+			r.HandleFunc("/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) //convert
 
 			r.Route("/excel", func(r chi.Router) {
 				r.HandleFunc("/cuadre", s.BalanceExcel)
