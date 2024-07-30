@@ -9,18 +9,16 @@ import (
 func (s *Server) RegisterRoutes() http.Handler {
 	r := s.Router
 
-	r.Use(s.authVerify)
+	// r.Use(s.authVerify)
 
-	r.HandleFunc("/", s.HelloWorldHandler)
 	r.HandleFunc("/api/login", s.Login)
 	r.HandleFunc("/api/register", s.Register)
-	r.HandleFunc("/bca/dummy", s.loadDummyDataHandler)
+	// r.HandleFunc("/bca/dummy", s.loadDummyDataHandler)
 
 	// views
 
-	r.HandleFunc("/login", s.LoginView)
-	r.HandleFunc("/bca", s.BcaView)
-	r.HandleFunc("/bca/logout", s.Logout)
+  r.HandleFunc("/bca", s.BcaView)
+  r.HandleFunc("/bca/logout", s.Logout)
 	r.HandleFunc("/bca/transacciones/presupuesto", s.Budget)
 	r.HandleFunc("/bca/transacciones/facturas", s.Invoice)
 	r.HandleFunc("/bca/transacciones/facturas/crear", s.InvoiceAdd)

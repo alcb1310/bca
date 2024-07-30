@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -9,7 +10,6 @@ import (
 	"bca-go-final/internal/utils"
 	"bca-go-final/internal/views"
 	"bca-go-final/internal/views/bca"
-	"bca-go-final/internal/views/derrors"
 )
 
 var (
@@ -24,52 +24,41 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 
 	session, _ := store.Get(r, "bca")
 	resp := make(map[string]string)
-	switch r.Method {
-	case http.MethodPost:
-		l := &types.Login{}
-		_ = l
-		err := r.ParseForm()
+	l := &types.Login{}
+	err := r.ParseForm()
+  slog.Info("Parsing form", "error", err)
+	if err != nil {
+    slog.Error("Error parsing form", "error", err)
+		w.WriteHeader(http.StatusBadRequest)
+		resp["error"] = err.Error()
+		component := views.LoginView(resp)
+		component.Render(r.Context(), w)
+		return
+	}
+
+	l.Email = r.PostFormValue("email")
+	l.Password = r.PostFormValue("password")
+
+	if !utils.IsValidEmail(l.Email) {
+		resp["error"] = "credenciales inválidas"
+    slog.Error("Invalid email", "email", l.Email)
+	}
+
+	if l.Password == "" {
+		resp["error"] = "credenciales inválidas"
+	}
+
+	if len(resp) == 0 {
+		token, err := s.DB.Login(l)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			resp["error"] = err.Error()
-			component := views.LoginView(resp)
-			component.Render(r.Context(), w)
+			resp["error"] = "credenciales inválidas"
+		} else {
+			session.Values["bca"] = token
+			session.Save(r, w)
+			resp["token"] = token
+			http.Redirect(w, r, "/bca", http.StatusSeeOther)
 			return
 		}
-
-		l.Email = r.PostFormValue("email")
-		l.Password = r.PostFormValue("password")
-
-		if !utils.IsValidEmail(l.Email) {
-			resp["error"] = "credenciales inválidas"
-		}
-
-		if l.Password == "" {
-			resp["error"] = "credenciales inválidas"
-		}
-
-		if len(resp) == 0 {
-			token, err := s.DB.Login(l)
-			if err != nil {
-				resp["error"] = "credenciales inválidas"
-			} else {
-				session.Values["bca"] = token
-				session.Save(r, w)
-				resp["token"] = token
-				http.Redirect(w, r, "/bca", http.StatusSeeOther)
-				return
-			}
-		}
-
-	case http.MethodGet:
-		resp = nil
-
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		resp["method"] = r.Method
-		resp["url"] = r.RequestURI
-		component := derrors.NotImplemented(resp)
-		component.Render(r.Context(), w)
 	}
 
 	if len(resp) == 0 {
@@ -77,6 +66,14 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
 	}
+	component := views.LoginView(resp)
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) DisplayLogin(w http.ResponseWriter, r *http.Request) {
+	resp := make(map[string]string)
+
+	w.WriteHeader(http.StatusOK)
 	component := views.LoginView(resp)
 	component.Render(r.Context(), w)
 }

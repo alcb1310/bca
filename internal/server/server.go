@@ -15,13 +15,21 @@ type Server struct {
 }
 
 func NewServer(db database.Service) *Server {
-	NewServer := &Server{
+	s := &Server{
 		DB:     db,
 		Router: chi.NewRouter(),
 	}
-  NewServer.Router.Use(middleware.Logger)
+	s.Router.Use(middleware.Logger)
+	s.Router.Use(s.authVerify)
 
-  NewServer.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
+	s.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
 
-	return NewServer
+	s.Router.Get("/", s.HelloWorldHandler)
+
+	s.Router.Get("/login", s.DisplayLogin)
+	s.Router.Post("/login", s.LoginView) // TODO: test form validation
+	s.RegisterRoutes()
+  // TODO: properly migrate to chi router
+
+	return s
 }
