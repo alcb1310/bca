@@ -1,17 +1,18 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/settings/partials"
 )
 
 func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
@@ -81,7 +82,7 @@ func (s *Server) BudgetItemAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 	budgetItem, _ := s.DB.GetOneBudgetItem(parsedId, ctxPayload.CompanyId)
 
