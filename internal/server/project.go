@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -74,7 +74,8 @@ func (s *Server) ProjectAdd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
+	// id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)
 
@@ -121,7 +122,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) ProjectEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)
 

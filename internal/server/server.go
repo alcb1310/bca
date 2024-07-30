@@ -51,7 +51,7 @@ func NewServer(db database.Service) *Server {
 			r.HandleFunc("/cuadre", s.Balance)
 			r.HandleFunc("/historico", s.Historic)
 			r.HandleFunc("/gastado", s.Spent)
-			r.HandleFunc("/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) //convert
+			r.HandleFunc("/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) // convert
 
 			r.Route("/excel", func(r chi.Router) {
 				r.HandleFunc("/cuadre", s.BalanceExcel)
@@ -93,8 +93,8 @@ func NewServer(db database.Service) *Server {
 			r.Route("/projects", func(r chi.Router) {
 				r.HandleFunc("/", s.ProjectsTable)
 				r.HandleFunc("/add", s.ProjectAdd)
-				r.HandleFunc("/edit/{id}", s.ProjectEditSave)
-				r.HandleFunc("/{id}", s.ProjectEdit)
+				r.HandleFunc("/edit/{id}", s.ProjectEditSave) // convert
+				r.HandleFunc("/{id}", s.ProjectEdit)          // convert
 			})
 
 			r.Route("/suppliers", func(r chi.Router) {
