@@ -1,17 +1,18 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction/partials"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/transaction/partials"
 )
 
 func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
@@ -117,8 +118,10 @@ func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	projectId, _ := uuid.Parse(mux.Vars(r)["projectId"])
-	budgetItemId, _ := uuid.Parse(mux.Vars(r)["budgetItemId"])
+	pId := chi.URLParam(r, "id")
+	bId := chi.URLParam(r, "budgetItemId")
+	projectId, _ := uuid.Parse(pId)
+	budgetItemId, _ := uuid.Parse(bId)
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
 	projectMap := []types.Select{}
@@ -208,5 +211,4 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 		component := partials.EditBudget(budget, projectMap, budgetItemMap)
 		component.Render(r.Context(), w)
 	}
-
 }
