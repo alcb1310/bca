@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -119,16 +119,13 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 	redirectURL := "/bca/transacciones/facturas/crear"
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
-	invoice := &types.InvoiceResponse{}
+	// invoice := &types.InvoiceResponse{}
 
 	projects := []types.Select{}
 	suppliers := []types.Select{}
-	// projects := make(map[string]string)
-	// suppliers := make(map[string]string)
-	in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
-	invoice = &in
+	invoice, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
 	for _, v := range p {
@@ -150,7 +147,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodPatch:
-		if err := s.DB.BalanceInvoice(in); err != nil {
+		if err := s.DB.BalanceInvoice(invoice); err != nil {
 			log.Printf("error updating invoice: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -219,12 +216,11 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
-		invoice = &in
-		redirectURL += "?id=" + in.Id.String()
+		invoice, _ = s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
+		redirectURL += "?id=" + invoice.Id.String()
 	}
 
-	components := partials.EditInvoice(invoice, projects, suppliers)
+	components := partials.EditInvoice(&invoice, projects, suppliers)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
 	components.Render(r.Context(), w)

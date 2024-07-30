@@ -118,12 +118,12 @@ func NewServer(db database.Service) *Server {
 
 			r.Route("/invoices", func(r chi.Router) {
 				r.HandleFunc("/", s.InvoicesTable)
-				r.HandleFunc("/{id}", s.InvoiceEdit)
+				r.HandleFunc("/{id}", s.InvoiceEdit) // convert
 
 				r.Route("/{invoiceId}/details", func(r chi.Router) {
-					r.HandleFunc("/", s.DetailsTable)
-					r.HandleFunc("/add", s.DetailsAdd)
-					r.HandleFunc("/{budgetItemId}", s.DetailsEdit)
+					r.HandleFunc("/", s.DetailsTable)              // convert
+					r.HandleFunc("/add", s.DetailsAdd)             // convert
+					r.HandleFunc("/{budgetItemId}", s.DetailsEdit) // convert
 				})
 			})
 

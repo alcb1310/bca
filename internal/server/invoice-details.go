@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -17,7 +17,7 @@ import (
 
 func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["invoiceId"]
+	id := chi.URLParam(r, "invoiceId")
 	parsedInvoiceId, _ := uuid.Parse(id)
 
 	if r.Method == http.MethodPost {
@@ -101,7 +101,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["invoiceId"]
+	id := chi.URLParam(r, "invoiceId")
 	parsedInvoiceId, _ := uuid.Parse(id)
 
 	budgetItems := []types.Select{}
@@ -121,8 +121,8 @@ func (s *Server) DetailsAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) DetailsEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	iId := mux.Vars(r)["invoiceId"]
-	bId := mux.Vars(r)["budgetItemId"]
+	iId := chi.URLParam(r, "invoiceId")
+	bId := chi.URLParam(r, "budgetItemId")
 	parsedInvoiceId, _ := uuid.Parse(iId)
 	parsedBudgetItemId, _ := uuid.Parse(bId)
 	_ = parsedBudgetItemId
