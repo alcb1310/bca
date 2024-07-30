@@ -3,8 +3,8 @@ package server
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -33,7 +33,7 @@ func (s *Server) ChangePassword(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 
 	if ctx.Id == parsedId {
@@ -138,7 +138,7 @@ func (s *Server) UserAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) UserEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 	u, _ := s.DB.GetUser(parsedId, ctx.CompanyId)
 
