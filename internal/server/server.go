@@ -1,23 +1,32 @@
 package server
 
 import (
+	"context"
+	"encoding/json"
+	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/jwtauth/v5"
+	_ "github.com/joho/godotenv/autoload"
 
 	"bca-go-final/internal/database"
 )
 
 type Server struct {
-	DB     database.Service
-	Router *chi.Mux
+	DB        database.Service
+	Router    *chi.Mux
+	TokenAuth *jwtauth.JWTAuth
 }
 
 func NewServer(db database.Service) *Server {
+	secret := os.Getenv("SECRET")
 	s := &Server{
-		DB:     db,
-		Router: chi.NewRouter(),
+		DB:        db,
+		Router:    chi.NewRouter(),
+		TokenAuth: jwtauth.New("HS256", []byte(secret), nil),
 	}
 	s.Router.Use(middleware.Logger)
 	// s.Router.Use(s.authVerify)
@@ -33,7 +42,10 @@ func NewServer(db database.Service) *Server {
 	// TODO: change all mux.Vars(r)["id"] to chi.URLParam(r, "id")
 
 	s.Router.Route("/bca", func(r chi.Router) {
-		r.Use(s.authVerify)
+		r.Use(jwtauth.Verifier(s.TokenAuth))
+		// r.Use(jwtauth.Authenticator(s.TokenAuth))
+		r.Use(authenticator(s.TokenAuth))
+
 		r.Get("/dummy-data", s.loadDummyDataHandler)
 		r.HandleFunc("/", s.BcaView)
 		r.HandleFunc("/logout", s.Logout)
@@ -157,4 +169,26 @@ func NewServer(db database.Service) *Server {
 	})
 
 	return s
+}
+
+func authenticator(ja *jwtauth.JWTAuth) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			token, _, err := jwtauth.FromContext(r.Context())
+			_ = ja
+
+			if err != nil {
+				slog.Info("authenticator", "error", err)
+				http.Error(w, err.Error(), http.StatusUnauthorized)
+				return
+			}
+
+      marshalStr, _ := json.Marshal(token.PrivateClaims())
+
+			ctx := context.WithValue(r.Context(), "token", marshalStr)
+			r = r.Clone(ctx)
+
+			next.ServeHTTP(w, r)
+		})
+	}
 }

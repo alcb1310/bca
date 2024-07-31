@@ -44,29 +44,29 @@ func (s *service) CreateCompany(company *types.CompanyCreate) error {
 	return nil
 }
 
-func (s *service) Login(l *types.Login) (string, error) {
+func (s *service) Login(l *types.Login) (string, *types.User, error) {
 	sql := "select password, id, name, email, company_id, role_id from \"user\" where email = $1"
 	u := &types.User{}
 	var password string
 	if err := s.db.QueryRowContext(context.Background(), sql, l.Email).Scan(&password, &u.Id, &u.Name, &u.Email, &u.CompanyId, &u.RoleId); err != nil {
-		return "", errors.New("invalid credentials")
+		return "", nil, errors.New("invalid credentials")
 	}
 
 	if _, err := utils.ComparePassword(password, l.Password); err != nil {
-		return "", errors.New("invalid credentials")
+		return "", nil, errors.New("invalid credentials")
 	}
 
 	token, err := utils.GenerateToken(*u)
 	if err != nil {
-		return "", errors.New("server error")
+		return "", nil, errors.New("server error")
 	}
 
 	sql = "insert into logged_in (user_id, token) values ($1, $2) on conflict (user_id) do update set token = $2"
 	if _, err := s.db.ExecContext(context.Background(), sql, u.Id, token); err != nil {
-		return "", errors.New("server error")
+		return "", nil, errors.New("server error")
 	}
 
-	return token, nil
+	return token, u, nil
 }
 
 func (s *service) RegenerateToken(token string, user uuid.UUID) error {

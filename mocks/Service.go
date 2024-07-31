@@ -2984,7 +2984,7 @@ func (_c *Service_LoadDummyData_Call) RunAndReturn(run func(uuid.UUID) error) *S
 }
 
 // Login provides a mock function with given fields: l
-func (_m *Service) Login(l *types.Login) (string, error) {
+func (_m *Service) Login(l *types.Login) (string, *types.User, error) {
 	ret := _m.Called(l)
 
 	if len(ret) == 0 {
@@ -2992,8 +2992,9 @@ func (_m *Service) Login(l *types.Login) (string, error) {
 	}
 
 	var r0 string
-	var r1 error
-	if rf, ok := ret.Get(0).(func(*types.Login) (string, error)); ok {
+	var r1 *types.User
+	var r2 error
+	if rf, ok := ret.Get(0).(func(*types.Login) (string, *types.User, error)); ok {
 		return rf(l)
 	}
 	if rf, ok := ret.Get(0).(func(*types.Login) string); ok {
@@ -3002,13 +3003,21 @@ func (_m *Service) Login(l *types.Login) (string, error) {
 		r0 = ret.Get(0).(string)
 	}
 
-	if rf, ok := ret.Get(1).(func(*types.Login) error); ok {
+	if rf, ok := ret.Get(1).(func(*types.Login) *types.User); ok {
 		r1 = rf(l)
 	} else {
-		r1 = ret.Error(1)
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(*types.User)
+		}
 	}
 
-	return r0, r1
+	if rf, ok := ret.Get(2).(func(*types.Login) error); ok {
+		r2 = rf(l)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // Service_Login_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Login'
@@ -3029,12 +3038,12 @@ func (_c *Service_Login_Call) Run(run func(l *types.Login)) *Service_Login_Call 
 	return _c
 }
 
-func (_c *Service_Login_Call) Return(_a0 string, _a1 error) *Service_Login_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *Service_Login_Call) Return(_a0 string, _a1 *types.User, _a2 error) *Service_Login_Call {
+	_c.Call.Return(_a0, _a1, _a2)
 	return _c
 }
 
-func (_c *Service_Login_Call) RunAndReturn(run func(*types.Login) (string, error)) *Service_Login_Call {
+func (_c *Service_Login_Call) RunAndReturn(run func(*types.Login) (string, *types.User, error)) *Service_Login_Call {
 	_c.Call.Return(run)
 	return _c
 }
