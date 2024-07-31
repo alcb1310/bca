@@ -5,12 +5,10 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
-	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
-	_ "github.com/joho/godotenv/autoload"
 
 	"bca-go-final/internal/database"
 )
@@ -21,15 +19,13 @@ type Server struct {
 	TokenAuth *jwtauth.JWTAuth
 }
 
-func NewServer(db database.Service) *Server {
-	secret := os.Getenv("SECRET")
+func NewServer(db database.Service, secret string) *Server {
 	s := &Server{
 		DB:        db,
 		Router:    chi.NewRouter(),
 		TokenAuth: jwtauth.New("HS256", []byte(secret), nil),
 	}
 	s.Router.Use(middleware.Logger)
-	// s.Router.Use(s.authVerify)
 
 	s.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
 
@@ -38,13 +34,11 @@ func NewServer(db database.Service) *Server {
 
 	s.Router.Get("/login", s.DisplayLogin)
 	s.Router.Post("/login", s.LoginView) // TODO: test form validation
-	// TODO: properly migrate to chi router
-	// TODO: change all mux.Vars(r)["id"] to chi.URLParam(r, "id")
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
-		// r.Use(jwtauth.Authenticator(s.TokenAuth))
-		r.Use(authenticator(s.TokenAuth))
+		r.Use(jwtauth.Authenticator(s.TokenAuth))
+		r.Use(authenticator())
 
 		r.Get("/dummy-data", s.loadDummyDataHandler)
 		r.HandleFunc("/", s.BcaView)
@@ -171,20 +165,17 @@ func NewServer(db database.Service) *Server {
 	return s
 }
 
-func authenticator(ja *jwtauth.JWTAuth) func(http.Handler) http.Handler {
+func authenticator() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token, _, err := jwtauth.FromContext(r.Context())
-			_ = ja
-
 			if err != nil {
 				slog.Info("authenticator", "error", err)
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 				return
 			}
 
-      marshalStr, _ := json.Marshal(token.PrivateClaims())
-
+			marshalStr, _ := json.Marshal(token.PrivateClaims())
 			ctx := context.WithValue(r.Context(), "token", marshalStr)
 			r = r.Clone(ctx)
 

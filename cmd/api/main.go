@@ -66,7 +66,7 @@ func init() {
 
 func main() {
 	db := database.New(databaseName, username, password, host, databasePort)
-	server := server.NewServer(db)
+	server := server.NewServer(db, secretKey)
 
 	slog.Info("Listening on port", "port", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server.Router); err != nil {
