@@ -7,11 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
 )
 
-func (s *Server) authVerify(next http.Handler) http.Handler {
+func (s *Server) AuthVerify(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !strings.Contains(r.RequestURI, "/bca") {
 			next.ServeHTTP(w, r)
@@ -23,13 +22,8 @@ func (s *Server) authVerify(next http.Handler) http.Handler {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
-		session, _ := store.Get(r, "bca")
-		token, ok := session.Values["bca"].(string)
-
-		if !ok || token == "" {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
-			return
-		}
+		session, _ := r.Cookie("bca")
+		token := session.Value
 
 		tokenData, err := maker.VerifyToken(token)
 		if err != nil {
@@ -47,26 +41,27 @@ func (s *Server) authVerify(next http.Handler) http.Handler {
 			return
 		}
 
-		u := &types.User{
-			Id:        tokenData.ID,
-			Name:      tokenData.Name,
-			Email:     tokenData.Email,
-			CompanyId: tokenData.CompanyId,
-			RoleId:    tokenData.Role,
-		}
+		// u := &types.User{
+		// 	Id:        tokenData.ID,
+		// 	Name:      tokenData.Name,
+		// 	Email:     tokenData.Email,
+		// 	CompanyId: tokenData.CompanyId,
+		// 	RoleId:    tokenData.Role,
+		// }
 
-		token, err = utils.GenerateToken(*u)
-		if err != nil {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
-			return
-		}
-		session.Values["bca"] = token
-		session.Save(r, w)
+		// token, err = utils.GenerateToken(*u)
+		// if err != nil {
+		// 	http.Redirect(w, r, "/login", http.StatusSeeOther)
+		// 	return
+		// }
+		// session.Value = token
+		// // session.Save(r, w)
+		// http.SetCookie(w, session)
 
-		if err := s.DB.RegenerateToken(token, u.Id); err != nil {
-			http.Redirect(w, r, "/login", http.StatusSeeOther)
-			return
-		}
+		// if err := s.DB.RegenerateToken(token, u.Id); err != nil {
+		// 	http.Redirect(w, r, "/login", http.StatusSeeOther)
+		// 	return
+		// }
 
 		next.ServeHTTP(w, r)
 	})

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -54,7 +55,7 @@ func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte(fmt.Sprintf("Proveedor con ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
 				return
 			}
-			log.Println(fmt.Sprintf("ERROR: %s", err.Error()))
+			slog.Error("Error creating supplier", "error", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(fmt.Sprintf("<p>%s</p>", err.Error())))
 			return
