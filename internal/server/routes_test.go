@@ -13,7 +13,7 @@ import (
 
 func TestHelloWorldHandler(t *testing.T) {
 	db := mocks.NewService(t)
-	s := server.NewServer(db)
+	s := server.NewServer(db, "supersecret")
 
 	t.Run("should open the home page", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/", nil)
