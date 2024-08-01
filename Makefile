@@ -12,7 +12,7 @@ run:
 	@go run cmd/api/main.go
 
 # Test the application
-test:
+unit-test:
 	@echo "Testing..."
 	@go clean -testcache
 	@echo "Cache cleaned..."
