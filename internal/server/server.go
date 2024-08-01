@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"encoding/json"
-	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -33,7 +32,7 @@ func NewServer(db database.Service, secret string) *Server {
 	s.RegisterRoutes(s.Router)
 
 	s.Router.Get("/login", s.DisplayLogin)
-	s.Router.Post("/login", s.LoginView) // TODO: test form validation
+	s.Router.Post("/login", s.LoginView) // fully tested
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
@@ -104,7 +103,7 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/suppliers", func(r chi.Router) {
-				r.HandleFunc("/", s.SuppliersTable)
+				r.HandleFunc("/", s.SuppliersTable) // fully tested
 				r.HandleFunc("/add", s.SupplierAdd)
 				r.HandleFunc("/edit/{id}", s.SuppliersEditSave) // convert
 				r.HandleFunc("/{id}", s.SuppliersEdit)          // convert
@@ -170,7 +169,6 @@ func authenticator() func(http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token, _, err := jwtauth.FromContext(r.Context())
 			if err != nil {
-				slog.Info("authenticator", "error", err)
 				http.Error(w, err.Error(), http.StatusUnauthorized)
 				return
 			}

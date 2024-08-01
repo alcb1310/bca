@@ -103,7 +103,7 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 		u.RoleId = r.Form.Get("role")
 		u.CompanyId = ctx.CompanyId
 
-		if u.Email != "" && !utils.IsValidEmail(u.Email) {
+		if u.Email == "" || !utils.IsValidEmail(u.Email) {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
