@@ -89,7 +89,7 @@ func NewServer(db database.Service, secret string) *Server {
 
 		r.Route("/partials", func(r chi.Router) {
 			r.Route("/users", func(r chi.Router) {
-				r.HandleFunc("/", s.UsersTable)
+				r.HandleFunc("/", s.UsersTable) // fully tested
 				r.HandleFunc("/add", s.UserAdd)
 				r.HandleFunc("/edit/{id}", s.UserEdit) // convert
 				r.HandleFunc("/{id}", s.SingleUser)    // convert
@@ -103,7 +103,7 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/suppliers", func(r chi.Router) {
-				r.HandleFunc("/", s.SuppliersTable) // fully tested
+				r.HandleFunc("/", s.SuppliersTable)
 				r.HandleFunc("/add", s.SupplierAdd)
 				r.HandleFunc("/edit/{id}", s.SuppliersEditSave) // convert
 				r.HandleFunc("/{id}", s.SuppliersEdit)          // convert

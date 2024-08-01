@@ -116,3 +116,60 @@ func TestCreateUser(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdatePassword(t *testing.T) {
+	db := mocks.NewService(t)
+	s := server.NewServer(db, "supersecret")
+	token := createToken(s.TokenAuth)
+
+	testData := []struct {
+		name           string
+		form           url.Values
+		status         int
+		body           []string
+		updatePassword *mocks.Service_UpdatePassword_Call
+	}{
+		{
+			name:           "should pass a form",
+			form:           nil,
+			status:         http.StatusBadRequest,
+			body:           []string{},
+			updatePassword: nil,
+		},
+		{
+			name:           "should pass a password",
+			form:           url.Values{},
+			status:         http.StatusBadRequest,
+			body:           []string{},
+			updatePassword: nil,
+		},
+		{
+			name:   "should update password",
+			form:   url.Values{"password": {"test"}},
+			status: http.StatusOK,
+			updatePassword: db.EXPECT().UpdatePassword("test", uuid.UUID{}, uuid.UUID{}).Return(types.User{
+				Id:        uuid.UUID{},
+				Email:     "test@test.com",
+				Name:      "test",
+				CompanyId: uuid.UUID{},
+				RoleId:    "a",
+			}, nil),
+		},
+	}
+
+	for _, tt := range testData {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.updatePassword != nil {
+				tt.updatePassword.Times(1)
+			}
+			req, res := createRequest(token, http.MethodPut, "/bca/partials/users", strings.NewReader(tt.form.Encode()))
+			s.Router.ServeHTTP(res, req)
+			assert.Equal(t, tt.status, res.Code)
+			if len(tt.body) > 0 {
+				for _, b := range tt.body {
+					assert.Contains(t, res.Body.String(), b)
+				}
+			}
+		})
+	}
+}
