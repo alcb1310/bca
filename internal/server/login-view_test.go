@@ -2,7 +2,6 @@ package server_test
 
 import (
 	"net/http"
-	"net/http/httptest"
 	"net/url"
 	"strings"
 	"testing"
@@ -21,9 +20,7 @@ func TestLoginView(t *testing.T) {
 
 	t.Run("should validate login form", func(t *testing.T) {
 		t.Run("must pass a form", func(t *testing.T) {
-			req, _ := http.NewRequest("POST", "/login", nil)
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-			res := httptest.NewRecorder()
+      req, res := createRequest("", "POST", "/login", nil)
 			s.Router.ServeHTTP(res, req)
 			assert.Equal(t, http.StatusBadRequest, res.Code)
 			assert.Contains(t, res.Body.String(), "missing form body")
@@ -31,9 +28,7 @@ func TestLoginView(t *testing.T) {
 
 		t.Run("must pass an email", func(t *testing.T) {
 			form := url.Values{}
-			req, _ := http.NewRequest("POST", "/login", strings.NewReader(form.Encode()))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-			res := httptest.NewRecorder()
+      req, res := createRequest("", "POST", "/login", strings.NewReader(form.Encode()))
 			s.Router.ServeHTTP(res, req)
 			assert.Equal(t, http.StatusBadRequest, res.Code)
 			assert.Contains(t, res.Body.String(), "credenciales inválidas")
@@ -42,9 +37,7 @@ func TestLoginView(t *testing.T) {
 		t.Run("must pass a valid email", func(t *testing.T) {
 			form := url.Values{}
 			form.Add("email", "test")
-			req, _ := http.NewRequest("POST", "/login", strings.NewReader(form.Encode()))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-			res := httptest.NewRecorder()
+      req, res := createRequest("", "POST", "/login", strings.NewReader(form.Encode()))
 			s.Router.ServeHTTP(res, req)
 			assert.Equal(t, http.StatusBadRequest, res.Code)
 			assert.Contains(t, res.Body.String(), "credenciales inválidas")
@@ -53,9 +46,7 @@ func TestLoginView(t *testing.T) {
 		t.Run("must pass a password", func(t *testing.T) {
 			form := url.Values{}
 			form.Add("email", "test@test.com")
-			req, _ := http.NewRequest("POST", "/login", strings.NewReader(form.Encode()))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-			res := httptest.NewRecorder()
+      req, res := createRequest("", "POST", "/login", strings.NewReader(form.Encode()))
 			s.Router.ServeHTTP(res, req)
 			assert.Equal(t, http.StatusBadRequest, res.Code)
 			assert.Contains(t, res.Body.String(), "credenciales inválidas")
@@ -72,9 +63,7 @@ func TestLoginView(t *testing.T) {
 			form := url.Values{}
 			form.Add("email", "test@test.com")
 			form.Add("password", "test")
-			req, _ := http.NewRequest("POST", "/login", strings.NewReader(form.Encode()))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-			res := httptest.NewRecorder()
+      req, res := createRequest("", "POST", "/login", strings.NewReader(form.Encode()))
 			s.Router.ServeHTTP(res, req)
 			assert.Equal(t, http.StatusSeeOther, res.Code)
 		})
