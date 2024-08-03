@@ -55,6 +55,10 @@ func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
 			u.Name = r.Form.Get("name")
 		}
 		if r.Form.Get("email") != "" {
+      if !utils.IsValidEmail(r.Form.Get("name")) {
+        w.WriteHeader(http.StatusBadRequest)
+        return
+      }
 			u.Email = r.Form.Get("email")
 		}
 		if _, err := s.DB.UpdateUser(u, parsedId, ctx.CompanyId); err != nil {

@@ -1,6 +1,7 @@
 package server_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -170,6 +171,88 @@ func TestUpdatePassword(t *testing.T) {
 					assert.Contains(t, res.Body.String(), b)
 				}
 			}
+		})
+	}
+}
+
+func TestUpdateUser(t *testing.T) {
+	db := mocks.NewService(t)
+	s := server.NewServer(db, "supersecret")
+	token := createToken(s.TokenAuth)
+	id := uuid.New()
+
+	testData := []struct {
+		name            string
+		id              uuid.UUID
+		getUserMock     *mocks.Service_GetUser_Call
+		updateUserMock  *mocks.Service_UpdateUser_Call
+		getAllUsersMock *mocks.Service_GetAllUsers_Call
+		form            url.Values
+		status          int
+	}{
+		{
+			name:           "should pass an id",
+			id:             uuid.UUID{},
+			getUserMock:    nil,
+			updateUserMock: nil,
+			form:           nil,
+			status:         http.StatusForbidden,
+		},
+		{
+			name: "should get user",
+			id:   id,
+			getUserMock: db.EXPECT().GetUser(id, uuid.UUID{}).Return(types.User{
+				Id:        id,
+				Email:     "test@test.com",
+				Name:      "test",
+				CompanyId: uuid.UUID{},
+				RoleId:    "a",
+			}, nil),
+			updateUserMock: db.EXPECT().UpdateUser(types.User{
+				Id:        id,
+				Email:     "test@test.com",
+				Name:      "test",
+				CompanyId: uuid.UUID{},
+				RoleId:    "a",
+			}, id, uuid.UUID{}).Return(types.User{
+				Id:        id,
+				Email:     "test@test.com",
+				Name:      "test",
+				CompanyId: uuid.UUID{},
+				RoleId:    "a",
+			}, nil),
+			getAllUsersMock: db.EXPECT().GetAllUsers(uuid.UUID{}).Return([]types.User{
+				{
+					Id:        id,
+					Email:     "test@test.com",
+					Name:      "test",
+					CompanyId: uuid.UUID{},
+					RoleId:    "a",
+				},
+			}, nil),
+			form:   nil,
+			status: http.StatusOK,
+		},
+		{
+			name: "Invalid email",
+			id:   id,
+			form: url.Values{"email": {"test"}},
+			getUserMock: db.EXPECT().GetUser(id, uuid.UUID{}).Return(types.User{
+				Id:        id,
+				Email:     "test@test.com",
+				Name:      "test",
+				CompanyId: uuid.UUID{},
+				RoleId:    "a",
+			}, nil),
+			status: http.StatusBadRequest,
+		},
+	}
+
+	for _, tt := range testData {
+		t.Run(tt.name, func(t *testing.T) {
+			req, res := createRequest(token, http.MethodPut, fmt.Sprintf("/bca/partials/users/%s", tt.id.String()), strings.NewReader(tt.form.Encode()))
+			s.Router.ServeHTTP(res, req)
+			assert.Equal(t, tt.status, res.Code)
 		})
 	}
 }
