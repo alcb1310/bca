@@ -103,7 +103,7 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/suppliers", func(r chi.Router) {
-				r.HandleFunc("/", s.SuppliersTable)
+				r.HandleFunc("/", s.SuppliersTable) // fully unit tested
 				r.HandleFunc("/add", s.SupplierAdd)
 				r.HandleFunc("/edit/{id}", s.SuppliersEditSave) // convert
 				r.HandleFunc("/{id}", s.SuppliersEdit)          // convert

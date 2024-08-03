@@ -22,6 +22,12 @@ func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		e := r.Form.Get("contact_email")
+    if e != "" && !utils.IsValidEmail(e) {
+      w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Ingrese un correo válido"))
+      return
+    }
+
 		email := sql.NullString{Valid: true, String: e}
 		n := r.Form.Get("contact_name")
 		name := sql.NullString{Valid: true, String: n}
