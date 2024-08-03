@@ -32,7 +32,7 @@ func NewServer(db database.Service, secret string) *Server {
 	s.RegisterRoutes(s.Router)
 
 	s.Router.Get("/login", s.DisplayLogin)
-	s.Router.Post("/login", s.LoginView) // fully tested
+	s.Router.Post("/login", s.LoginView) // fully unit tested
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
@@ -89,14 +89,14 @@ func NewServer(db database.Service, secret string) *Server {
 
 		r.Route("/partials", func(r chi.Router) {
 			r.Route("/users", func(r chi.Router) {
-				r.HandleFunc("/", s.UsersTable) // fully tested
+				r.HandleFunc("/", s.UsersTable) // fully unit tested
 				r.HandleFunc("/add", s.UserAdd)
 				r.HandleFunc("/edit/{id}", s.UserEdit) // convert
 				r.HandleFunc("/{id}", s.SingleUser)    // convert
 			})
 
 			r.Route("/projects", func(r chi.Router) {
-				r.HandleFunc("/", s.ProjectsTable)
+				r.HandleFunc("/", s.ProjectsTable) // fully unit tested
 				r.HandleFunc("/add", s.ProjectAdd)
 				r.HandleFunc("/edit/{id}", s.ProjectEditSave) // convert
 				r.HandleFunc("/{id}", s.ProjectEdit)          // convert
