@@ -19,27 +19,45 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
-		r.ParseForm()
+		if err := r.ParseForm(); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
 		p := r.Form.Get("project")
 		if p == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Seleccione un proyecto"))
 			return
 		}
-		pId, _ := uuid.Parse(p)
+		pId, err := uuid.Parse(p)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Código del proyecto inválido"))
+			return
+		}
+
 		bi := r.Form.Get("budgetItem")
 		if bi == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Seleccione una partida"))
 			return
 		}
-		bId, _ := uuid.Parse(bi)
+		bId, err := uuid.Parse(bi)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Código de la partida inválido"))
+			return
+		}
+
 		q, err := strconv.ParseFloat(r.Form.Get("quantity"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("La cantidad debe ser un número"))
 			return
 		}
+
 		c, err := strconv.ParseFloat(r.Form.Get("cost"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
