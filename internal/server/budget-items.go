@@ -96,8 +96,16 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPut:
 		r.ParseForm()
-		budgetItem.Code = r.Form.Get("code")
-		budgetItem.Name = r.Form.Get("name")
+    biCode := r.Form.Get("code")
+    if biCode != "" {
+      budgetItem.Code = biCode
+    }
+
+    biName := r.Form.Get("name")
+    if biName != "" {
+      budgetItem.Name = biName
+    }
+
 		x := r.Form.Get("accumulate") == "accumulate"
 		acc := sql.NullBool{Valid: true, Bool: x}
 		budgetItem.Accumulate = acc
