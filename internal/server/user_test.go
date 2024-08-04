@@ -103,9 +103,11 @@ func TestCreateUser(t *testing.T) {
 			if tt.createUserMock != nil {
 				tt.createUserMock.Times(1)
 			}
+
 			if tt.getAllUsersMock != nil {
 				tt.getAllUsersMock.Times(1)
 			}
+
 			req, res := createRequest(token, http.MethodPost, "/bca/partials/users", strings.NewReader(tt.form.Encode()))
 			s.Router.ServeHTTP(res, req)
 			assert.Equal(t, tt.status, res.Code)
@@ -163,6 +165,7 @@ func TestUpdatePassword(t *testing.T) {
 			if tt.updatePassword != nil {
 				tt.updatePassword.Times(1)
 			}
+
 			req, res := createRequest(token, http.MethodPut, "/bca/partials/users", strings.NewReader(tt.form.Encode()))
 			s.Router.ServeHTTP(res, req)
 			assert.Equal(t, tt.status, res.Code)
@@ -250,6 +253,17 @@ func TestUpdateUser(t *testing.T) {
 
 	for _, tt := range testData {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.getUserMock != nil {
+				tt.getUserMock.Times(1)
+			}
+
+			if tt.updateUserMock != nil {
+				tt.updateUserMock.Times(1)
+			}
+
+			if tt.getAllUsersMock != nil {
+				tt.getAllUsersMock.Times(1)
+			}
 			req, res := createRequest(token, http.MethodPut, fmt.Sprintf("/bca/partials/users/%s", tt.id.String()), strings.NewReader(tt.form.Encode()))
 			s.Router.ServeHTTP(res, req)
 			assert.Equal(t, tt.status, res.Code)

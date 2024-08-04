@@ -111,6 +111,13 @@ func TestCreateProject(t *testing.T) {
 
 	for _, tt := range testData {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.createProject != nil {
+				tt.createProject.Times(1)
+			}
+
+			if tt.getAllProjects != nil {
+				tt.getAllProjects.Times(1)
+			}
 			req, res := createRequest(token, http.MethodPost, "/bca/partials/projects", strings.NewReader(tt.form.Encode()))
 
 			s.Router.ServeHTTP(res, req)
@@ -207,6 +214,18 @@ func TestEditProject(t *testing.T) {
 
 	for _, tt := range testData {
 		t.Run(tt.name, func(t *testing.T) {
+			if tt.getProject != nil {
+				tt.getProject.Times(1)
+			}
+
+			if tt.updateProject != nil {
+				tt.updateProject.Times(1)
+			}
+
+			if tt.getAllProjects != nil {
+				tt.getAllProjects.Times(1)
+			}
+
 			req, res := createRequest(
 				token,
 				http.MethodPut,
