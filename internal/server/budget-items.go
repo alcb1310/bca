@@ -19,7 +19,14 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
-		r.ParseForm()
+
+		if err := r.ParseForm(); err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
 		x := r.Form.Get("accumulate") == "accumulate"
 		p := r.Form.Get("parent")
 		var u *uuid.UUID
