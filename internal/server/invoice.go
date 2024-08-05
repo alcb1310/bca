@@ -64,21 +64,40 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Ingrese un proyecto"))
 			return
 		}
-		projectId, _ := uuid.Parse(pId)
+		projectId, err := uuid.Parse(pId)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Código del proyecto inválido"))
+			return
+		}
+
 		sId := r.Form.Get("supplier")
 		if sId == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Ingrese un proveedor"))
 			return
 		}
-		supplierId, _ := uuid.Parse(sId)
+		supplierId, err := uuid.Parse(sId)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Código del proveedor inválido"))
+			return
+		}
+
 		iNumber := r.Form.Get("invoiceNumber")
 		if iNumber == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Ingrese un número de factura"))
 			return
 		}
+
 		iD := r.Form.Get("invoiceDate")
+		if iD == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese una fecha"))
+			return
+		}
+
 		iDate, err := time.Parse("2006-01-02", iD)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)

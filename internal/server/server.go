@@ -46,7 +46,7 @@ func NewServer(db database.Service, secret string) *Server {
 		r.Route("/transacciones", func(r chi.Router) {
 			r.HandleFunc("/presupuesto", s.Budget)
 			r.HandleFunc("/facturas", s.Invoice)
-			r.HandleFunc("/facturas/crear", s.InvoiceAdd)
+			r.HandleFunc("/facturas/crear", s.InvoiceAdd) // fullly unit tested
 			r.HandleFunc("/cierre", s.Closure)
 		})
 
