@@ -136,7 +136,7 @@ func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	pId := chi.URLParam(r, "id")
+	pId := chi.URLParam(r, "projectId")
 	bId := chi.URLParam(r, "budgetItemId")
 	projectId, _ := uuid.Parse(pId)
 	budgetItemId, _ := uuid.Parse(bId)
@@ -165,18 +165,34 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodPut:
-		r.ParseForm()
-		q, err := strconv.ParseFloat(r.Form.Get("quantity"), 10)
-		if err != nil {
+		var (
+			q, c float64
+			err  error
+		)
+		if err := r.ParseForm(); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad debe ser un número"))
+			w.Write([]byte(err.Error()))
 			return
 		}
-		c, err := strconv.ParseFloat(r.Form.Get("cost"), 10)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("El costo debe ser un número"))
-			return
+
+		fQuan := r.Form.Get("quantity")
+		if fQuan != "" {
+			q, err = strconv.ParseFloat(fQuan, 64)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("La cantidad debe ser un número"))
+				return
+			}
+		}
+
+		fCost := r.Form.Get("cost")
+		if fCost != "" {
+			c, err = strconv.ParseFloat(r.Form.Get("cost"), 64)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("El costo debe ser un número"))
+				return
+			}
 		}
 
 		budget := types.CreateBudget{
