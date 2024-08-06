@@ -119,46 +119,46 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 
 	case http.MethodPut:
 		r.ParseForm()
+		updatedMaterial := types.Material{
+			Id:        parsedId,
+			CompanyId: ctxPayload.CompanyId,
+		}
 
 		code := r.Form.Get("code")
 		if code == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para el Código"))
-			return
+			updatedMaterial.Code = material.Code
+		} else {
+			updatedMaterial.Code = code
 		}
 
 		name := r.Form.Get("name")
 		if name == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para el Nombre"))
-			return
+			updatedMaterial.Name = material.Name
+		} else {
+			updatedMaterial.Name = name
 		}
 
 		unit := r.Form.Get("unit")
 		if unit == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para la Unidad"))
-			return
+			updatedMaterial.Unit = material.Unit
+		} else {
+			updatedMaterial.Unit = unit
 		}
 
 		categoryId := r.Form.Get("category")
-		categoryIdParsed, err := uuid.Parse(categoryId)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para la Categoría"))
-			return
+		if categoryId == "" {
+      updatedMaterial.Category = material.Category
+		} else {
+			categoryIdParsed, err := uuid.Parse(categoryId)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Ingrese un valor para la Categoría"))
+				return
+			}
+      updatedMaterial.Category = types.Category{Id: categoryIdParsed}
 		}
 
-		material := types.Material{
-			Id:        parsedId,
-			Code:      code,
-			Name:      name,
-			Unit:      unit,
-			Category:  types.Category{Id: categoryIdParsed},
-			CompanyId: ctxPayload.CompanyId,
-		}
-
-		if err := s.DB.UpdateMaterial(material); err != nil {
+		if err := s.DB.UpdateMaterial(updatedMaterial); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
 				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte(fmt.Sprintf("El material con código: %s o nombre: %s ya existe", material.Code, material.Name)))
