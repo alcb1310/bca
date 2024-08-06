@@ -57,7 +57,11 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
-		r.ParseForm()
+		if err := r.ParseForm(); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
 		pId := r.Form.Get("project")
 		if pId == "" {
 			w.WriteHeader(http.StatusBadRequest)
@@ -207,12 +211,12 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-    fDate :=r.Form.Get("invoiceDate")
-    if fDate == "" {
-      w.WriteHeader(http.StatusBadRequest)
-      w.Write([]byte("Ingrese una fecha"))
-      return
-    }
+		fDate := r.Form.Get("invoiceDate")
+		if fDate == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese una fecha"))
+			return
+		}
 
 		iDate, err := time.Parse("2006-01-02", fDate)
 		if err != nil {
