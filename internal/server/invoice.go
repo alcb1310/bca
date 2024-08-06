@@ -140,7 +140,6 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	redirectURL := "/bca/transacciones/facturas/crear"
 	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
-	// invoice := &types.InvoiceResponse{}
 
 	projects := []types.Select{}
 	suppliers := []types.Select{}
@@ -198,7 +197,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 		sId, err := uuid.Parse(r.Form.Get("supplier"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un proveedor"))
+			w.Write([]byte("Código del proveedor inválido"))
 			return
 		}
 		iNumber := r.Form.Get("invoiceNumber")
@@ -207,7 +206,15 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Ingrese un número de factura"))
 			return
 		}
-		iDate, err := time.Parse("2006-01-02", r.Form.Get("invoiceDate"))
+
+    fDate :=r.Form.Get("invoiceDate")
+    if fDate == "" {
+      w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Ingrese una fecha"))
+      return
+    }
+
+		iDate, err := time.Parse("2006-01-02", fDate)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Ingrese una fecha válida"))
