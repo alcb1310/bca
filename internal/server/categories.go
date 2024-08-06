@@ -16,16 +16,27 @@ import (
 
 func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 	var err error
+  var n string
 	ctxPayload, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
-		r.ParseForm()
+		if err := r.ParseForm(); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte(err.Error()))
+			return
+		}
+
+    if n = r.Form.Get("name"); n == "" {
+      w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Ingrese un nombre de categoría"))
+      return
+    }
+
 		c := types.Category{
-			Name:      r.Form.Get("name"),
+			Name:      n,
 			CompanyId: ctxPayload.CompanyId,
 		}
-		err = s.DB.CreateCategory(c)
-		if err != nil {
+    if err = s.DB.CreateCategory(c); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
 				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte(fmt.Sprintf("La categoria %s ya existe", c.Name)))
