@@ -70,8 +70,8 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Código de proyecto inválido"))
 			return
 		}
 
@@ -84,8 +84,8 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Código de rubro inválido"))
 			return
 		}
 
