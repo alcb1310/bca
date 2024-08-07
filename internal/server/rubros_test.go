@@ -114,3 +114,74 @@ func TestCreateRubros(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdateRubros(t *testing.T) {
+	rubroId := uuid.New()
+	materialId := uuid.New()
+	testUrl := fmt.Sprintf("/bca/partials/rubros/%s/material/%s", rubroId.String(), materialId.String())
+
+	db := mocks.NewService(t)
+	s := server.NewServer(db, "supersecret")
+	token := createToken(s.TokenAuth)
+
+	testData := []struct {
+		name            string
+		form            url.Values
+		status          int
+		body            []string
+		updateRubro     *mocks.Service_UpdateMaterialByItem_Call
+		getAllMaterials *mocks.Service_GetMaterialsByItem_Call
+	}{
+		{
+			name:            "should have a quantity",
+			form:            url.Values{},
+			status:          http.StatusBadRequest,
+			body:            []string{"Ingrese una Cantidad"},
+			updateRubro:     nil,
+			getAllMaterials: nil,
+		},
+		{
+			name:            "should pass a number for quantity",
+			form:            url.Values{"quantity": {"invalid"}},
+			status:          http.StatusBadRequest,
+			body:            []string{"Cantidad debe ser un valor numérico"},
+			updateRubro:     nil,
+			getAllMaterials: nil,
+		},
+		{
+			name:            "should pass a number greater than 0 for quantity",
+			form:            url.Values{"quantity": {"-1.35"}},
+			status:          http.StatusBadRequest,
+			body:            []string{"La Cantidad debe ser mayor a 0"},
+			updateRubro:     nil,
+			getAllMaterials: nil,
+		},
+		{
+			name:            "should update a rubro",
+			form:            url.Values{"quantity": {"1.35"}},
+			status:          http.StatusOK,
+			body:            []string{""},
+			updateRubro:     db.EXPECT().UpdateMaterialByItem(rubroId, materialId, 1.35, uuid.UUID{}).Return(nil),
+			getAllMaterials: db.EXPECT().GetMaterialsByItem(rubroId, uuid.UUID{}).Return([]types.ACU{}),
+		},
+	}
+
+	for _, tt := range testData {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.updateRubro != nil {
+				tt.updateRubro.Times(1)
+			}
+
+			if tt.getAllMaterials != nil {
+				tt.getAllMaterials.Times(1)
+			}
+
+			req, res := createRequest(token, http.MethodPut, testUrl, strings.NewReader(tt.form.Encode()))
+			s.Router.ServeHTTP(res, req)
+			assert.Equal(t, tt.status, res.Code)
+			for _, b := range tt.body {
+				assert.Contains(t, res.Body.String(), b)
+			}
+		})
+	}
+}

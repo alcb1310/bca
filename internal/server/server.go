@@ -148,7 +148,7 @@ func NewServer(db database.Service, secret string) *Server {
 				r.HandleFunc("/", s.RubrosTable)
 				r.HandleFunc("/{id}", s.MaterialsByItem)                               // convert
 				r.HandleFunc("/{id}/material", s.MaterialByItemForm)                   // convert fully unit tested
-				r.HandleFunc("/{id}/material/{materialId}", s.MaterialItemsOperations) // convert
+				r.HandleFunc("/{id}/material/{materialId}", s.MaterialItemsOperations) // convert fully unit tested
 			})
 
 			r.Route("/cantidades", func(r chi.Router) {
