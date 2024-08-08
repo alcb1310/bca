@@ -68,9 +68,12 @@ func (s *Server) DisplayLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Logout(w http.ResponseWriter, r *http.Request) {
-	// session, _ := store.Get(r, "bca")
-	// session.Values["bca"] = nil
-	// session.Save(r, w)
+	http.SetCookie(w, &http.Cookie{
+		Name:   "jwt",
+		Value:  "",
+		MaxAge: -1,
+		Path:   "/",
+	})
 	w.Header().Set("HX-Redirect", "/")
 	w.WriteHeader(http.StatusOK)
 }
