@@ -237,6 +237,12 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+    if quantity < 0 {
+      w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("La cantidad debe ser mayor a 0"))
+      return
+    }
+
 		quan := s.DB.GetOneQuantityById(parsedId, ctx.CompanyId)
 
 		quan.Quantity = quantity
