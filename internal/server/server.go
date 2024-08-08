@@ -40,15 +40,15 @@ func NewServer(db database.Service, secret string) *Server {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
 		r.Use(authenticator())
 
-		r.Get("/dummy-data", s.loadDummyDataHandler)
 		r.HandleFunc("/", s.BcaView)
 		r.HandleFunc("/logout", s.Logout)
+		r.Post("/dummy-data", s.loadDummyDataHandler)
 
 		r.Route("/transacciones", func(r chi.Router) {
 			r.HandleFunc("/presupuesto", s.Budget)
 			r.HandleFunc("/facturas", s.Invoice)
 			r.HandleFunc("/facturas/crear", s.InvoiceAdd) // fullly unit tested
-			r.HandleFunc("/cierre", s.Closure)
+			r.HandleFunc("/cierre", s.Closure) // fullly unit tested
 		})
 
 		r.Route("/reportes", func(r chi.Router) {
