@@ -8,8 +8,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 
 	"bca-go-final/internal/database"
+	"bca-go-final/internal/utils"
 )
 
 type Server struct {
@@ -36,7 +38,6 @@ func NewServer(db database.Service, secret string) *Server {
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
-		r.Use(jwtauth.Authenticator(s.TokenAuth))
 		r.Use(authenticator())
 
 		r.Get("/dummy-data", s.loadDummyDataHandler)
@@ -166,18 +167,26 @@ func NewServer(db database.Service, secret string) *Server {
 
 func authenticator() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hfn := func(w http.ResponseWriter, r *http.Request) {
 			token, _, err := jwtauth.FromContext(r.Context())
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusUnauthorized)
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
 				return
 			}
 
+			if token == nil || jwt.Validate(token) != nil {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
+
+			// Token is authenticated, pass it through
 			marshalStr, _ := json.Marshal(token.PrivateClaims())
-			ctx := context.WithValue(r.Context(), "token", marshalStr)
+      ctxKey := utils.ContextKey("token")
+			ctx := context.WithValue(r.Context(), ctxKey, marshalStr)
 			r = r.Clone(ctx)
 
 			next.ServeHTTP(w, r)
-		})
+		}
+		return http.HandlerFunc(hfn)
 	}
 }
