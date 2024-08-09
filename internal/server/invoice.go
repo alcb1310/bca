@@ -1,6 +1,9 @@
 package server
 
 import (
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/transaction/partials"
 	"log"
 	"net/http"
 	"strings"
@@ -8,10 +11,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction/partials"
 )
 
 func (s *Server) InvoicesTable(w http.ResponseWriter, r *http.Request) {

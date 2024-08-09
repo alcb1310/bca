@@ -1,6 +1,8 @@
 package server
 
 import (
+	"bca-go-final/internal/database"
+	"bca-go-final/internal/utils"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -9,9 +11,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/lestrrat-go/jwx/v2/jwt"
-
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/utils"
 )
 
 type Server struct {
@@ -48,7 +47,7 @@ func NewServer(db database.Service, secret string) *Server {
 			r.HandleFunc("/presupuesto", s.Budget)
 			r.HandleFunc("/facturas", s.Invoice)
 			r.HandleFunc("/facturas/crear", s.InvoiceAdd) // fullly unit tested
-			r.HandleFunc("/cierre", s.Closure) // fullly unit tested
+			r.HandleFunc("/cierre", s.Closure)            // fullly unit tested
 		})
 
 		r.Route("/reportes", func(r chi.Router) {
@@ -181,7 +180,7 @@ func authenticator() func(http.Handler) http.Handler {
 
 			// Token is authenticated, pass it through
 			marshalStr, _ := json.Marshal(token.PrivateClaims())
-      ctxKey := utils.ContextKey("token")
+			ctxKey := utils.ContextKey("token")
 			ctx := context.WithValue(r.Context(), ctxKey, marshalStr)
 			r = r.Clone(ctx)
 
