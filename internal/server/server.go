@@ -32,8 +32,8 @@ func NewServer(db database.Service, secret string) *Server {
 	s.Router.Get("/", s.HelloWorldHandler)
 	s.RegisterRoutes(s.Router)
 
-	s.Router.Get("/login", s.DisplayLogin)
-	s.Router.Post("/login", s.LoginView) // fully unit tested
+	s.Router.Get("/login", s.DisplayLogin) // fully tested
+	s.Router.Post("/login", s.LoginView) // fully tested
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
@@ -69,7 +69,7 @@ func NewServer(db database.Service, secret string) *Server {
 		r.Route("/configuracion", func(r chi.Router) {
 			r.HandleFunc("/partidas", s.BudgetItems)
 			r.HandleFunc("/proveedores", s.Suppliers)
-			r.HandleFunc("/proyectos", s.Projects)
+			r.HandleFunc("/proyectos", s.Projects) // fully tested
 			r.HandleFunc("/categorias", s.Categories)
 			r.HandleFunc("/materiales", s.Materiales)
 			r.HandleFunc("/rubros", s.Rubros)
@@ -96,10 +96,10 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/projects", func(r chi.Router) {
-				r.HandleFunc("/", s.ProjectsTable) // fully unit tested
+				r.HandleFunc("/", s.ProjectsTable) // fully tested
 				r.HandleFunc("/add", s.ProjectAdd)
-				r.HandleFunc("/edit/{id}", s.ProjectEditSave) // convert fully unit tested
-				r.HandleFunc("/{id}", s.ProjectEdit)          // convert
+				r.HandleFunc("/edit/{id}", s.ProjectEditSave) // convert fully tested
+				r.HandleFunc("/{id}", s.ProjectEdit)          // convert fully tested
 			})
 
 			r.Route("/suppliers", func(r chi.Router) {

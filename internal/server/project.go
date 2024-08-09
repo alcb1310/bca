@@ -103,7 +103,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := s.DB.UpdateProject(p, parsedId, ctx.CompanyId); err != nil {
-		if strings.Contains(err.Error(), "duplicate") {
+	if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
 			w.Write([]byte(fmt.Sprintf("El nombre %s ya existe", p.Name)))
 			return
@@ -122,7 +122,13 @@ func (s *Server) ProjectEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
-	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)
+	p, err := s.DB.GetProject(parsedId, ctx.CompanyId)
+
+  if err != nil {
+    w.WriteHeader(http.StatusNotFound)
+    w.Write([]byte("Proyecto no encontrado"))
+    return
+  }
 
 	component := partials.EditProject(&p)
 	component.Render(r.Context(), w)
