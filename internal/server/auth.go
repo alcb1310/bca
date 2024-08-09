@@ -1,13 +1,14 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"strings"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
 )
 
 func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
@@ -196,7 +197,7 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		token, err := s.DB.Login(l)
+		token, _, err := s.DB.Login(l)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			resp["error"] = err.Error()

@@ -1,17 +1,16 @@
 package server
 
 import (
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/transaction/partials"
 	"log"
 	"net/http"
 	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
-
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction/partials"
 )
 
 func (s *Server) InvoicesTable(w http.ResponseWriter, r *http.Request) {
@@ -57,28 +56,51 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
-		r.ParseForm()
+		if err := r.ParseForm(); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
 		pId := r.Form.Get("project")
 		if pId == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Ingrese un proyecto"))
 			return
 		}
-		projectId, _ := uuid.Parse(pId)
+		projectId, err := uuid.Parse(pId)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Código del proyecto inválido"))
+			return
+		}
+
 		sId := r.Form.Get("supplier")
 		if sId == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Ingrese un proveedor"))
 			return
 		}
-		supplierId, _ := uuid.Parse(sId)
+		supplierId, err := uuid.Parse(sId)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Código del proveedor inválido"))
+			return
+		}
+
 		iNumber := r.Form.Get("invoiceNumber")
 		if iNumber == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Ingrese un número de factura"))
 			return
 		}
+
 		iD := r.Form.Get("invoiceDate")
+		if iD == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese una fecha"))
+			return
+		}
+
 		iDate, err := time.Parse("2006-01-02", iD)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -119,16 +141,12 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 	redirectURL := "/bca/transacciones/facturas/crear"
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
-	invoice := &types.InvoiceResponse{}
 
 	projects := []types.Select{}
 	suppliers := []types.Select{}
-	// projects := make(map[string]string)
-	// suppliers := make(map[string]string)
-	in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
-	invoice = &in
+	invoice, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
 	for _, v := range p {
@@ -150,7 +168,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodPatch:
-		if err := s.DB.BalanceInvoice(in); err != nil {
+		if err := s.DB.BalanceInvoice(invoice); err != nil {
 			log.Printf("error updating invoice: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -182,7 +200,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 		sId, err := uuid.Parse(r.Form.Get("supplier"))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un proveedor"))
+			w.Write([]byte("Código del proveedor inválido"))
 			return
 		}
 		iNumber := r.Form.Get("invoiceNumber")
@@ -191,7 +209,15 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Ingrese un número de factura"))
 			return
 		}
-		iDate, err := time.Parse("2006-01-02", r.Form.Get("invoiceDate"))
+
+		fDate := r.Form.Get("invoiceDate")
+		if fDate == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese una fecha"))
+			return
+		}
+
+		iDate, err := time.Parse("2006-01-02", fDate)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Ingrese una fecha válida"))
@@ -219,12 +245,11 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
-		invoice = &in
-		redirectURL += "?id=" + in.Id.String()
+		invoice, _ = s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
+		redirectURL += "?id=" + invoice.Id.String()
 	}
 
-	components := partials.EditInvoice(invoice, projects, suppliers)
+	components := partials.EditInvoice(&invoice, projects, suppliers)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
 	components.Render(r.Context(), w)

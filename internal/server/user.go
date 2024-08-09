@@ -3,8 +3,8 @@ package server
 import (
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -33,7 +33,7 @@ func (s *Server) ChangePassword(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 
 	if ctx.Id == parsedId {
@@ -55,6 +55,10 @@ func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
 			u.Name = r.Form.Get("name")
 		}
 		if r.Form.Get("email") != "" {
+      if !utils.IsValidEmail(r.Form.Get("name")) {
+        w.WriteHeader(http.StatusBadRequest)
+        return
+      }
 			u.Email = r.Form.Get("email")
 		}
 		if _, err := s.DB.UpdateUser(u, parsedId, ctx.CompanyId); err != nil {
@@ -103,7 +107,7 @@ func (s *Server) UsersTable(w http.ResponseWriter, r *http.Request) {
 		u.RoleId = r.Form.Get("role")
 		u.CompanyId = ctx.CompanyId
 
-		if u.Email != "" && !utils.IsValidEmail(u.Email) {
+		if u.Email == "" || !utils.IsValidEmail(u.Email) {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -138,7 +142,7 @@ func (s *Server) UserAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) UserEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 	u, _ := s.DB.GetUser(parsedId, ctx.CompanyId)
 

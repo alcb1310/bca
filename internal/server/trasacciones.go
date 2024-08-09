@@ -53,25 +53,25 @@ func (s *Server) Closure(w http.ResponseWriter, r *http.Request) {
 		parsedProjectId, err := uuid.Parse(pId)
 		success := "true"
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
 			if strings.Contains(err.Error(), "length: 0") {
-				log.Println("Seleccione un proyecto")
+				w.Write([]byte("Seleccione un proyecto"))
 				return
 			}
-			log.Println(err)
+			w.Write([]byte("Proyecto inválido"))
 			return
 		}
 
 		d := r.Form.Get("date")
 		if d == "" {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("Seleccione una fecha")
+			w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Ingrese una fecha"))
 			return
 		}
 		date, err := time.Parse("2006-01-02", d)
 		if err != nil {
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Ingrese una fecha válida"))
 			return
 		}
 

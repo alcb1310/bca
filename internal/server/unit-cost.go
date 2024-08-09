@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -70,8 +70,8 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Código de proyecto inválido"))
 			return
 		}
 
@@ -84,8 +84,8 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Código de rubro inválido"))
 			return
 		}
 
@@ -129,7 +129,6 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
-
 }
 
 func (s *Server) UnitAnalysis(w http.ResponseWriter, r *http.Request) {
@@ -174,7 +173,7 @@ func (s *Server) AnalysisTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, err := uuid.Parse(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -237,6 +236,12 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Cantidad debe ser numérica"))
 			return
 		}
+
+    if quantity < 0 {
+      w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("La cantidad debe ser mayor a 0"))
+      return
+    }
 
 		quan := s.DB.GetOneQuantityById(parsedId, ctx.CompanyId)
 

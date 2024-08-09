@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 
 	"bca-go-final/internal/types"
 	"bca-go-final/internal/utils"
@@ -16,16 +16,27 @@ import (
 
 func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 	var err error
+	var n string
 	ctxPayload, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
-		r.ParseForm()
+		if err := r.ParseForm(); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
+		if n = r.Form.Get("name"); n == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese un nombre de categoría"))
+			return
+		}
+
 		c := types.Category{
-			Name:      r.Form.Get("name"),
+			Name:      n,
 			CompanyId: ctxPayload.CompanyId,
 		}
-		err = s.DB.CreateCategory(c)
-		if err != nil {
+		if err = s.DB.CreateCategory(c); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
 				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte(fmt.Sprintf("La categoria %s ya existe", c.Name)))
@@ -50,7 +61,7 @@ func (s *Server) CategoryAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 	c, _ := s.DB.GetCategory(parsedId, ctxPayload.CompanyId)
 
@@ -60,12 +71,24 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 		component.Render(r.Context(), w)
 
 	case http.MethodPut:
-		r.ParseForm()
+		if err := r.ParseForm(); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
 		cat := types.Category{
 			Id:        parsedId,
-			Name:      r.Form.Get("name"),
 			CompanyId: ctxPayload.CompanyId,
 		}
+
+		n := r.Form.Get("name")
+		if n == "" {
+			cat.Name = c.Name
+		} else {
+      cat.Name = n
+    }
+
 
 		if err := s.DB.UpdateCategory(cat); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
@@ -86,5 +109,4 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
-
 }

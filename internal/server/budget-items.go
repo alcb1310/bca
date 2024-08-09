@@ -1,24 +1,32 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/settings/partials"
 )
 
 func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
-		r.ParseForm()
+
+		if err := r.ParseForm(); err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
 		x := r.Form.Get("accumulate") == "accumulate"
 		p := r.Form.Get("parent")
 		var u *uuid.UUID
@@ -81,15 +89,23 @@ func (s *Server) BudgetItemAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
-	id := mux.Vars(r)["id"]
+	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 	budgetItem, _ := s.DB.GetOneBudgetItem(parsedId, ctxPayload.CompanyId)
 
 	switch r.Method {
 	case http.MethodPut:
 		r.ParseForm()
-		budgetItem.Code = r.Form.Get("code")
-		budgetItem.Name = r.Form.Get("name")
+    biCode := r.Form.Get("code")
+    if biCode != "" {
+      budgetItem.Code = biCode
+    }
+
+    biName := r.Form.Get("name")
+    if biName != "" {
+      budgetItem.Name = biName
+    }
+
 		x := r.Form.Get("accumulate") == "accumulate"
 		acc := sql.NullBool{Valid: true, Bool: x}
 		budgetItem.Accumulate = acc
