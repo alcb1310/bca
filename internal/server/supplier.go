@@ -22,6 +22,12 @@ func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		r.ParseForm()
 		e := r.Form.Get("contact_email")
+		if e != "" && !utils.IsValidEmail(e) {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese un correo válido"))
+			return
+		}
+
 		email := sql.NullString{Valid: true, String: e}
 		n := r.Form.Get("contact_name")
 		name := sql.NullString{Valid: true, String: n}
@@ -98,29 +104,33 @@ func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 
 	sup, _ := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
 	r.ParseForm()
-	sup.SupplierId = r.Form.Get("supplier_id")
-	sup.Name = r.Form.Get("name")
+  sp := r.Form.Get("supplier_id")
+  if sp != "" {
+    sup.SupplierId = sp
+  }
+
+  nm := r.Form.Get("name")
+  if nm != "" {
+    sup.Name = nm
+  }
+
 	e := r.Form.Get("contact_email")
+	if e != "" && !utils.IsValidEmail(e) {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un correo válido"))
+		return
+	}
 	email := sql.NullString{Valid: true, String: e}
+
 	n := r.Form.Get("contact_name")
 	name := sql.NullString{Valid: true, String: n}
+
 	p := r.Form.Get("contact_phone")
 	phone := sql.NullString{Valid: true, String: p}
+
 	sup.ContactEmail = email
 	sup.ContactName = name
 	sup.ContactPhone = phone
-
-	if sup.SupplierId == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para el RUC"))
-		return
-	}
-
-	if sup.Name == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para el nombre"))
-		return
-	}
 
 	if err := s.DB.UpdateSupplier(&sup); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {

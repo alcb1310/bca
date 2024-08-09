@@ -1,16 +1,16 @@
 package server
 
 import (
+	"bca-go-final/internal/database"
+	"bca-go-final/internal/utils"
 	"context"
 	"encoding/json"
-	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
-
-	"bca-go-final/internal/database"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
 type Server struct {
@@ -33,22 +33,21 @@ func NewServer(db database.Service, secret string) *Server {
 	s.RegisterRoutes(s.Router)
 
 	s.Router.Get("/login", s.DisplayLogin)
-	s.Router.Post("/login", s.LoginView) // TODO: test form validation
+	s.Router.Post("/login", s.LoginView) // fully unit tested
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
-		r.Use(jwtauth.Authenticator(s.TokenAuth))
 		r.Use(authenticator())
 
-		r.Get("/dummy-data", s.loadDummyDataHandler)
 		r.HandleFunc("/", s.BcaView)
 		r.HandleFunc("/logout", s.Logout)
+		r.Post("/dummy-data", s.loadDummyDataHandler)
 
 		r.Route("/transacciones", func(r chi.Router) {
 			r.HandleFunc("/presupuesto", s.Budget)
 			r.HandleFunc("/facturas", s.Invoice)
-			r.HandleFunc("/facturas/crear", s.InvoiceAdd)
-			r.HandleFunc("/cierre", s.Closure)
+			r.HandleFunc("/facturas/crear", s.InvoiceAdd) // fullly unit tested
+			r.HandleFunc("/cierre", s.Closure)            // fullly unit tested
 		})
 
 		r.Route("/reportes", func(r chi.Router) {
@@ -90,72 +89,72 @@ func NewServer(db database.Service, secret string) *Server {
 
 		r.Route("/partials", func(r chi.Router) {
 			r.Route("/users", func(r chi.Router) {
-				r.HandleFunc("/", s.UsersTable)
+				r.HandleFunc("/", s.UsersTable) // fully unit tested
 				r.HandleFunc("/add", s.UserAdd)
 				r.HandleFunc("/edit/{id}", s.UserEdit) // convert
 				r.HandleFunc("/{id}", s.SingleUser)    // convert
 			})
 
 			r.Route("/projects", func(r chi.Router) {
-				r.HandleFunc("/", s.ProjectsTable)
+				r.HandleFunc("/", s.ProjectsTable) // fully unit tested
 				r.HandleFunc("/add", s.ProjectAdd)
-				r.HandleFunc("/edit/{id}", s.ProjectEditSave) // convert
+				r.HandleFunc("/edit/{id}", s.ProjectEditSave) // convert fully unit tested
 				r.HandleFunc("/{id}", s.ProjectEdit)          // convert
 			})
 
 			r.Route("/suppliers", func(r chi.Router) {
-				r.HandleFunc("/", s.SuppliersTable)
+				r.HandleFunc("/", s.SuppliersTable) // fully unit tested
 				r.HandleFunc("/add", s.SupplierAdd)
-				r.HandleFunc("/edit/{id}", s.SuppliersEditSave) // convert
+				r.HandleFunc("/edit/{id}", s.SuppliersEditSave) // convert fully unit tested
 				r.HandleFunc("/{id}", s.SuppliersEdit)          // convert
 			})
 
 			r.Route("/budget-item", func(r chi.Router) {
-				r.HandleFunc("/", s.BudgetItemsTable)
+				r.HandleFunc("/", s.BudgetItemsTable) // fully unit tested
 				r.HandleFunc("/add", s.BudgetItemAdd)
-				r.HandleFunc("/{id}", s.BudgetItemEdit) // convert
+				r.HandleFunc("/{id}", s.BudgetItemEdit) // convert fully unit tested
 			})
 
 			r.Route("/budgets", func(r chi.Router) {
-				r.HandleFunc("/", s.BudgetsTable)
+				r.HandleFunc("/", s.BudgetsTable) // fully unit tested
 				r.HandleFunc("/add", s.BudgetAdd)
-				r.HandleFunc("/{projectId}/{budgetItemId}", s.BudgetEdit) // convert
+				r.HandleFunc("/{projectId}/{budgetItemId}", s.BudgetEdit) // convert fully unit tested
 			})
 
 			r.Route("/invoices", func(r chi.Router) {
 				r.HandleFunc("/", s.InvoicesTable)
-				r.HandleFunc("/{id}", s.InvoiceEdit) // convert
+				r.HandleFunc("/{id}", s.InvoiceEdit) // convert fully unit tested
 
 				r.Route("/{invoiceId}/details", func(r chi.Router) {
-					r.HandleFunc("/", s.DetailsTable)              // convert
+					r.HandleFunc("/", s.DetailsTable)              // convert fully unit tested
 					r.HandleFunc("/add", s.DetailsAdd)             // convert
 					r.HandleFunc("/{budgetItemId}", s.DetailsEdit) // convert
 				})
 			})
 
 			r.Route("/categories", func(r chi.Router) {
-				r.HandleFunc("/", s.CategoriesTable)
+				r.HandleFunc("/", s.CategoriesTable) // fully unit tested
 				r.HandleFunc("/add", s.CategoryAdd)
-				r.HandleFunc("/{id}", s.EditCategory) // convert
+				r.HandleFunc("/{id}", s.EditCategory) // convert fully unit tested
 			})
 
 			r.Route("/materiales", func(r chi.Router) {
-				r.HandleFunc("/", s.MaterialsTable)
+				r.HandleFunc("/", s.MaterialsTable) // fully unit tested
 				r.HandleFunc("/add", s.MaterialsAdd)
-				r.HandleFunc("/{id}", s.MaterialsEdit) // convert
+				r.HandleFunc("/{id}", s.MaterialsEdit) // convert fully unit tested
 			})
 
 			r.Route("/rubros", func(r chi.Router) {
 				r.HandleFunc("/", s.RubrosTable)
 				r.HandleFunc("/{id}", s.MaterialsByItem)                               // convert
-				r.HandleFunc("/{id}/material", s.MaterialByItemForm)                   // convert
-				r.HandleFunc("/{id}/material/{materialId}", s.MaterialItemsOperations) // convert
+				r.HandleFunc("/{id}/material", s.MaterialByItemForm)                   // convert fully unit tested
+				r.HandleFunc("/{id}/material/{materialId}", s.MaterialItemsOperations) // convert fully unit tested
 			})
 
 			r.Route("/cantidades", func(r chi.Router) {
 				r.HandleFunc("/", s.CantidadesTable)
-				r.HandleFunc("/add", s.CantidadesAdd)
-				r.HandleFunc("/{id}", s.CantidadesEdit) // convert
+				r.HandleFunc("/add", s.CantidadesAdd)   // fully unit tested
+				r.HandleFunc("/{id}", s.CantidadesEdit) // convert fully unit tested
 			})
 
 			r.HandleFunc("/analisis", s.AnalysisTable)
@@ -167,19 +166,26 @@ func NewServer(db database.Service, secret string) *Server {
 
 func authenticator() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hfn := func(w http.ResponseWriter, r *http.Request) {
 			token, _, err := jwtauth.FromContext(r.Context())
 			if err != nil {
-				slog.Info("authenticator", "error", err)
-				http.Error(w, err.Error(), http.StatusUnauthorized)
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
 				return
 			}
 
+			if token == nil || jwt.Validate(token) != nil {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
+
+			// Token is authenticated, pass it through
 			marshalStr, _ := json.Marshal(token.PrivateClaims())
-			ctx := context.WithValue(r.Context(), "token", marshalStr)
+			ctxKey := utils.ContextKey("token")
+			ctx := context.WithValue(r.Context(), ctxKey, marshalStr)
 			r = r.Clone(ctx)
 
 			next.ServeHTTP(w, r)
-		})
+		}
+		return http.HandlerFunc(hfn)
 	}
 }

@@ -8,9 +8,11 @@ import (
 	"bca-go-final/internal/types"
 )
 
+type ContextKey string
+
 func GetMyPaload(r *http.Request) (types.ContextPayload, error) {
 	ctx := r.Context()
-	val := ctx.Value("token")
+	val := ctx.Value(ContextKey("token"))
 
 	x, ok := val.([]byte)
 	if !ok {

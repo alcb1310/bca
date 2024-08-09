@@ -1,6 +1,9 @@
 package server
 
 import (
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/transaction/partials"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,37 +12,51 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction/partials"
 )
 
 func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
-		r.ParseForm()
+		if err := r.ParseForm(); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
 		p := r.Form.Get("project")
 		if p == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Seleccione un proyecto"))
 			return
 		}
-		pId, _ := uuid.Parse(p)
+		pId, err := uuid.Parse(p)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Código del proyecto inválido"))
+			return
+		}
+
 		bi := r.Form.Get("budgetItem")
 		if bi == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Seleccione una partida"))
 			return
 		}
-		bId, _ := uuid.Parse(bi)
+		bId, err := uuid.Parse(bi)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Código de la partida inválido"))
+			return
+		}
+
 		q, err := strconv.ParseFloat(r.Form.Get("quantity"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("La cantidad debe ser un número"))
 			return
 		}
+
 		c, err := strconv.ParseFloat(r.Form.Get("cost"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -118,7 +135,7 @@ func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	pId := chi.URLParam(r, "id")
+	pId := chi.URLParam(r, "projectId")
 	bId := chi.URLParam(r, "budgetItemId")
 	projectId, _ := uuid.Parse(pId)
 	budgetItemId, _ := uuid.Parse(bId)
@@ -147,18 +164,34 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodPut:
-		r.ParseForm()
-		q, err := strconv.ParseFloat(r.Form.Get("quantity"), 10)
-		if err != nil {
+		var (
+			q, c float64
+			err  error
+		)
+		if err := r.ParseForm(); err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad debe ser un número"))
+			w.Write([]byte(err.Error()))
 			return
 		}
-		c, err := strconv.ParseFloat(r.Form.Get("cost"), 10)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("El costo debe ser un número"))
-			return
+
+		fQuan := r.Form.Get("quantity")
+		if fQuan != "" {
+			q, err = strconv.ParseFloat(fQuan, 64)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("La cantidad debe ser un número"))
+				return
+			}
+		}
+
+		fCost := r.Form.Get("cost")
+		if fCost != "" {
+			c, err = strconv.ParseFloat(r.Form.Get("cost"), 64)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("El costo debe ser un número"))
+				return
+			}
 		}
 
 		budget := types.CreateBudget{

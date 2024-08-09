@@ -70,8 +70,8 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Código de proyecto inválido"))
 			return
 		}
 
@@ -84,8 +84,8 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("Código de rubro inválido"))
 			return
 		}
 
@@ -236,6 +236,12 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("Cantidad debe ser numérica"))
 			return
 		}
+
+    if quantity < 0 {
+      w.WriteHeader(http.StatusBadRequest)
+      w.Write([]byte("La cantidad debe ser mayor a 0"))
+      return
+    }
 
 		quan := s.DB.GetOneQuantityById(parsedId, ctx.CompanyId)
 

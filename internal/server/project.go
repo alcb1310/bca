@@ -1,6 +1,9 @@
 package server
 
 import (
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/settings/partials"
 	"fmt"
 	"log"
 	"net/http"
@@ -9,10 +12,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
 )
 
 func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +73,6 @@ func (s *Server) ProjectAdd(w http.ResponseWriter, r *http.Request) {
 func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx, _ := utils.GetMyPaload(r)
-	// id := mux.Vars(r)["id"]
 	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)

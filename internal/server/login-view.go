@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log/slog"
 	"net/http"
 
 	"bca-go-final/internal/types"
@@ -15,7 +14,6 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 	l := &types.Login{}
 	err := r.ParseForm()
 	if err != nil {
-		slog.Error("Error parsing form", "error", err)
 		w.WriteHeader(http.StatusBadRequest)
 		resp["error"] = err.Error()
 		component := views.LoginView(resp)
@@ -28,7 +26,6 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 
 	if !utils.IsValidEmail(l.Email) {
 		resp["error"] = "credenciales inválidas"
-		slog.Error("Invalid email", "email", l.Email)
 	}
 
 	if l.Password == "" {
@@ -71,9 +68,12 @@ func (s *Server) DisplayLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Logout(w http.ResponseWriter, r *http.Request) {
-	// session, _ := store.Get(r, "bca")
-	// session.Values["bca"] = nil
-	// session.Save(r, w)
+	http.SetCookie(w, &http.Cookie{
+		Name:   "jwt",
+		Value:  "",
+		MaxAge: -1,
+		Path:   "/",
+	})
 	w.Header().Set("HX-Redirect", "/")
 	w.WriteHeader(http.StatusOK)
 }

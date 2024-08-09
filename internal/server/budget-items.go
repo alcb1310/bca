@@ -19,7 +19,14 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
 	if r.Method == http.MethodPost {
-		r.ParseForm()
+
+		if err := r.ParseForm(); err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+
 		x := r.Form.Get("accumulate") == "accumulate"
 		p := r.Form.Get("parent")
 		var u *uuid.UUID
@@ -89,8 +96,16 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPut:
 		r.ParseForm()
-		budgetItem.Code = r.Form.Get("code")
-		budgetItem.Name = r.Form.Get("name")
+    biCode := r.Form.Get("code")
+    if biCode != "" {
+      budgetItem.Code = biCode
+    }
+
+    biName := r.Form.Get("name")
+    if biName != "" {
+      budgetItem.Name = biName
+    }
+
 		x := r.Form.Get("accumulate") == "accumulate"
 		acc := sql.NullBool{Valid: true, Bool: x}
 		budgetItem.Accumulate = acc

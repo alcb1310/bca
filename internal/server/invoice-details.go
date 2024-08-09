@@ -31,26 +31,26 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 		parsedBudgetItemId, err := uuid.Parse(biId)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			log.Println("Error parsing budgetItemId. Err: ", err)
+      w.Write([]byte("Ingrese una partida válida"))
 			return
 		}
 		q := r.Form.Get("quantity")
-		c := r.Form.Get("cost")
-
 		if q == "" {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Ingrese una cantidad"))
-			return
-		}
-		if c == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un costo"))
 			return
 		}
 		quantity, err := strconv.ParseFloat(q, 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Cantidad debe ser un número válido"))
+			return
+		}
+
+		c := r.Form.Get("cost")
+		if c == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Ingrese un costo"))
 			return
 		}
 		cost, err := strconv.ParseFloat(c, 64)
