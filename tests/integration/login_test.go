@@ -2,7 +2,6 @@ package integration
 
 import (
 	"context"
-	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -22,8 +21,8 @@ import (
 
 func TestLogin(t *testing.T) {
 	ctx := context.Background()
-	pgContainer, err := postgres.RunContainer(ctx,
-		testcontainers.WithImage("postgres:16.4-alpine"),
+	pgContainer, err := postgres.Run(ctx,
+		"postgres:16.4-alpine",
 		postgres.WithDatabase("test"),
 		postgres.WithUsername("test"),
 		postgres.WithPassword("test"),
@@ -35,9 +34,7 @@ func TestLogin(t *testing.T) {
 		postgres.WithInitScripts(filepath.Join("..", "..", "internal", "database", "tables.sql")),
 		postgres.WithInitScripts(filepath.Join("scripts", "u000-company.sql")),
 	)
-	if err != nil {
-		t.Fatal(err)
-	}
+  assert.NoError(t, err)
 
 	t.Cleanup(func() {
 		if err := pgContainer.Terminate(ctx); err != nil {
@@ -54,7 +51,6 @@ func TestLogin(t *testing.T) {
 
 	h := db.Health()
 	assert.Equal(t, "It's healthy", h["message"])
-	slog.Info("Database is healthy")
 
 	s := server.NewServer(db, "supersecretpassword")
 	assert.NotNil(t, s)
