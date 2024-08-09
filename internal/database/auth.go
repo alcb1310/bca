@@ -56,17 +56,7 @@ func (s *service) Login(l *types.Login) (string, *types.User, error) {
 		return "", nil, errors.New("invalid credentials")
 	}
 
-	token, err := utils.GenerateToken(*u)
-	if err != nil {
-		return "", nil, errors.New("server error")
-	}
-
-	sql = "insert into logged_in (user_id, token) values ($1, $2) on conflict (user_id) do update set token = $2"
-	if _, err := s.db.ExecContext(context.Background(), sql, u.Id, token); err != nil {
-		return "", nil, errors.New("server error")
-	}
-
-	return token, u, nil
+	return "", u, nil
 }
 
 func (s *service) RegenerateToken(token string, user uuid.UUID) error {

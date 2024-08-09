@@ -122,8 +122,7 @@ type service struct {
 	db *sql.DB
 }
 
-func New(databaseName, username, password, host, port string) Service {
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, port, databaseName)
+func New(connStr string) Service {
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
 		log.Fatal(err)
