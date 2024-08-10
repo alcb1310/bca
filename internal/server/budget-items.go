@@ -91,7 +91,12 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
-	budgetItem, _ := s.DB.GetOneBudgetItem(parsedId, ctxPayload.CompanyId)
+	budgetItem, err := s.DB.GetOneBudgetItem(parsedId, ctxPayload.CompanyId)
+  if err != nil {
+    w.WriteHeader(http.StatusNotFound)
+    w.Write([]byte("Partida no encontrada"))
+    return
+  }
 
 	switch r.Method {
 	case http.MethodPut:
@@ -109,10 +114,11 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 		x := r.Form.Get("accumulate") == "accumulate"
 		acc := sql.NullBool{Valid: true, Bool: x}
 		budgetItem.Accumulate = acc
-		p := r.Form.Get("parent")
+
 		var u *uuid.UUID
+		p := r.Form.Get("parent")
 		if p == "" {
-			u = nil
+			u = budgetItem.ParentId
 		} else {
 			z, err := uuid.Parse(p)
 			if err != nil {
@@ -142,6 +148,13 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte(fmt.Sprintf("Ya existe una partida con el mismo código: %s y/o el mismo nombre: %s", budgetItem.Code, budgetItem.Name)))
 				return
 			}
+
+      if strings.Contains(err.Error(), "partida padre") {
+        w.WriteHeader(http.StatusBadRequest)
+        w.Write([]byte(err.Error()))
+        return
+      }
+
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 			log.Println(err)

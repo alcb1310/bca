@@ -64,6 +64,7 @@ func (s *service) UpdateBudgetItem(bi *types.BudgetItem) error {
 	if err != nil {
 		return err
 	}
+
 	if *bi.ParentId != parentId {
 		return errors.New("No se puede cambiar la partida padre")
 	}
@@ -162,7 +163,6 @@ func (s *service) GetBudgetItemsByLevel(companyId uuid.UUID, level uint8) []type
 }
 
 func (s *service) GetNonAccumulateChildren(companyId, id *uuid.UUID, budgetItems []types.BudgetItem, results []uuid.UUID) []uuid.UUID {
-
 	if len(budgetItems) == 0 {
 		return results
 	}
