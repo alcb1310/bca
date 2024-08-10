@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -9,7 +10,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/testcontainers/testcontainers-go/modules/postgres"
 
+	"bca-go-final/internal/database"
 	"bca-go-final/internal/server"
 )
 
@@ -42,4 +45,28 @@ func login(t *testing.T, s *server.Server) ([]*http.Cookie, error) {
 	assert.NotEmpty(t, cookies[0].Value)
 
 	return cookies, nil
+}
+
+func createServer(t *testing.T, ctx context.Context, pgContainer *postgres.PostgresContainer) (*server.Server, []*http.Cookie, error) {
+	connStr, err := pgContainer.ConnectionString(ctx, "sslmode=disable")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	db := database.New(connStr)
+	if db == nil {
+		return nil, nil, err
+	}
+
+	s := server.NewServer(db, "supersecretpassword")
+	if s == nil {
+		return nil, nil, err
+	}
+
+	cookies, err := login(t, s)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return s, cookies, nil
 }

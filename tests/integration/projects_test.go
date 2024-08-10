@@ -15,9 +15,6 @@ import (
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
-
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/server"
 )
 
 func TestProjects(t *testing.T) {
@@ -43,24 +40,8 @@ func TestProjects(t *testing.T) {
 		}
 	})
 
-	connStr, err := pgContaineer.ConnectionString(ctx, "sslmode=disable")
-	assert.NoError(t, err)
-	assert.NotEmpty(t, connStr)
-
-	db := database.New(connStr)
-	assert.NotNil(t, db)
-
-	h := db.Health()
-	assert.Equal(t, "It's healthy", h["message"])
-
-	s := server.NewServer(db, "supersecretpassword")
-	assert.NotNil(t, s)
-
-	cookies, err := login(t, s)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, len(cookies))
-	assert.Equal(t, "jwt", cookies[0].Name)
-	assert.NotEmpty(t, cookies[0].Value)
+  s, cookies, err := createServer(t, ctx, pgContaineer)
+  assert.NoError(t, err)
 
 	t.Run("should have no projects", func(t *testing.T) {
 		req, err := http.NewRequest("GET", "/bca/partials/projects", nil)
@@ -151,24 +132,8 @@ func TestSingleProject(t *testing.T) {
 		}
 	})
 
-	connStr, err := pgContaineer.ConnectionString(ctx, "sslmode=disable")
-	assert.NoError(t, err)
-	assert.NotEmpty(t, connStr)
-
-	db := database.New(connStr)
-	assert.NotNil(t, db)
-
-	h := db.Health()
-	assert.Equal(t, "It's healthy", h["message"])
-
-	s := server.NewServer(db, "supersecretpassword")
-	assert.NotNil(t, s)
-
-	cookies, err := login(t, s)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, len(cookies))
-	assert.Equal(t, "jwt", cookies[0].Name)
-	assert.NotEmpty(t, cookies[0].Value)
+  s, cookies, err := createServer(t, ctx, pgContaineer)
+  assert.NoError(t, err)
 
 	t.Run("should be able to get a project by id", func(t *testing.T) {
 		req, err := http.NewRequest(http.MethodGet, testUrl, nil)
