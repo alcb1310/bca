@@ -25,6 +25,11 @@ integration-test: clean
 	@echo "Integration Tests..."
 	@go test ./tests/integration
 
+coverage: clean
+	@echo "Coverage..."
+	@go test ./... -coverprofile=coverage.out
+	@go tool cover -html=coverage.out
+
 # Live Reload
 watch:
 	@air
