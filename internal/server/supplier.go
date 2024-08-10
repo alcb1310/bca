@@ -88,7 +88,13 @@ func (s *Server) SuppliersEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sup, _ := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
+	sup, err := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Proveedor no encontrado"))
+		return
+	}
+
 	component := partials.EditSupplier(&sup)
 	component.Render(r.Context(), w)
 }
@@ -104,15 +110,15 @@ func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 
 	sup, _ := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
 	r.ParseForm()
-  sp := r.Form.Get("supplier_id")
-  if sp != "" {
-    sup.SupplierId = sp
-  }
+	sp := r.Form.Get("supplier_id")
+	if sp != "" {
+		sup.SupplierId = sp
+	}
 
-  nm := r.Form.Get("name")
-  if nm != "" {
-    sup.Name = nm
-  }
+	nm := r.Form.Get("name")
+	if nm != "" {
+		sup.Name = nm
+	}
 
 	e := r.Form.Get("contact_email")
 	if e != "" && !utils.IsValidEmail(e) {
