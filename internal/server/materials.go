@@ -59,7 +59,7 @@ func (s *Server) MaterialsTable(w http.ResponseWriter, r *http.Request) {
 		if err := s.DB.CreateMaterial(material); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
 				w.WriteHeader(http.StatusConflict)
-				w.Write([]byte(fmt.Sprintf("El Código %s ya existe", material.Code)))
+				w.Write([]byte(fmt.Sprintf("El material con código %s y/o nombre %s ya existe", material.Code, material.Name)))
 				return
 			}
 
