@@ -90,78 +90,52 @@ func TestCategories(t *testing.T) {
 		assert.Equal(t, http.StatusConflict, resp.Code)
 		assert.Contains(t, resp.Body.String(), "La categoría test ya existe")
 	})
-}
 
-func TestSingleCategory(t *testing.T) {
-  categoryId := "a0f9b5b0-7f9b-4a9e-9f9b-7f9b5b0a9e7f"
-  testUrl := fmt.Sprintf("/bca/partials/categories/%s", categoryId)
+	t.Run("single category", func(t *testing.T) {
+		companyId := getCompanyId(t, s, cookie)
+		categories, err := s.DB.GetAllCategories(companyId)
+		assert.NoError(t, err)
+		assert.Equal(t, 1, len(categories))
+		categoryId := categories[0].Id
+		testUrl := fmt.Sprintf("/bca/partials/categories/%s", categoryId)
 
-	ctx := context.Background()
-	pgContainer, err := postgres.Run(ctx,
-		"postgres:14.1-alpine",
-		postgres.WithDatabase("testcategories"),
-		postgres.WithUsername("test"),
-		postgres.WithPassword("test"),
-		testcontainers.WithWaitStrategy(
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
-				WithStartupTimeout(5*time.Second),
-		),
-		postgres.WithInitScripts(filepath.Join("..", "..", "internal", "database", "tables.sql")),
-		postgres.WithInitScripts(filepath.Join("scripts", "u000-company.sql")),
-		postgres.WithInitScripts(filepath.Join("scripts", "u001-category.sql")),
-	)
-	assert.NoError(t, err)
+		t.Run("it should get a single category", func(t *testing.T) {
+			req, err := http.NewRequest(http.MethodGet, testUrl, nil)
+			assert.NoError(t, err)
+			req.AddCookie(cookie[0])
+			resp := httptest.NewRecorder()
+			s.Router.ServeHTTP(resp, req)
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusOK, resp.Code)
+			assert.Contains(t, resp.Body.String(), "Editar Categoría")
+			assert.Contains(t, resp.Body.String(), "test")
+		})
 
-	t.Cleanup(func() {
-		if err := pgContainer.Terminate(ctx); err != nil {
-			t.Fatalf("failed to terminate pgContainer: %s", err.Error())
-		}
+		t.Run("it should return 404 if not found", func(t *testing.T) {
+			testUrl := "/bca/partials/categories/00000000-0000-0000-0000-000000000000"
+			req, err := http.NewRequest(http.MethodGet, testUrl, nil)
+			assert.NoError(t, err)
+			req.AddCookie(cookie[0])
+			resp := httptest.NewRecorder()
+			s.Router.ServeHTTP(resp, req)
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusNotFound, resp.Code)
+			assert.Equal(t, resp.Body.String(), "Categoría no encontrada")
+		})
+
+		t.Run("it should update a category", func(t *testing.T) {
+			form := url.Values{
+				"name": {"CATEGORÍA 2"},
+			}
+			req, err := http.NewRequest(http.MethodPut, testUrl, strings.NewReader(form.Encode()))
+			assert.NoError(t, err)
+			req.AddCookie(cookie[0])
+			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+			resp := httptest.NewRecorder()
+			s.Router.ServeHTTP(resp, req)
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusOK, resp.Code)
+			assert.Contains(t, resp.Body.String(), "CATEGORÍA 2")
+		})
 	})
-
-	s, cookie, err := createServer(t, ctx, pgContainer)
-	assert.NoError(t, err)
-	assert.NotNil(t, s)
-	assert.Equal(t, 1, len(cookie))
-	assert.Equal(t, "jwt", cookie[0].Name)
-	assert.NotEmpty(t, cookie[0].Value)
-
-  t.Run("it should get a single category", func(t *testing.T) {
-    req, err := http.NewRequest(http.MethodGet, testUrl, nil)
-    assert.NoError(t, err)
-    req.AddCookie(cookie[0])
-    resp := httptest.NewRecorder()
-    s.Router.ServeHTTP(resp, req)
-    assert.NoError(t, err)
-    assert.Equal(t, http.StatusOK, resp.Code)
-    assert.Contains(t, resp.Body.String(), "Editar Categoría")
-    assert.Contains(t, resp.Body.String(), "CATEGORÍA 1")
-  })
-
-  t.Run("it should return 404 if not found", func(t *testing.T) {
-    testUrl := "/bca/partials/categories/00000000-0000-0000-0000-000000000000"
-    req, err := http.NewRequest(http.MethodGet, testUrl, nil)
-    assert.NoError(t, err)
-    req.AddCookie(cookie[0])
-    resp := httptest.NewRecorder()
-    s.Router.ServeHTTP(resp, req)
-    assert.NoError(t, err)
-    assert.Equal(t, http.StatusNotFound, resp.Code)
-    assert.Equal(t, resp.Body.String(), "Categoría no encontrada")
-  })
-
-  t.Run("it should update a category", func(t *testing.T) {
-    form := url.Values{
-      "name": {"CATEGORÍA 2"},
-    }
-    req, err := http.NewRequest(http.MethodPut, testUrl, strings.NewReader(form.Encode()))
-    assert.NoError(t, err)
-    req.AddCookie(cookie[0])
-    req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-    resp := httptest.NewRecorder()
-    s.Router.ServeHTTP(resp, req)
-    assert.NoError(t, err)
-    assert.Equal(t, http.StatusOK, resp.Code)
-    assert.Contains(t, resp.Body.String(), "CATEGORÍA 2")
-  })
 }
