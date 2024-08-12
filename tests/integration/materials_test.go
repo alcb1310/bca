@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
@@ -116,76 +115,48 @@ func TestMaterials(t *testing.T) {
 		assert.Equal(t, http.StatusConflict, resp.Code)
 		assert.Contains(t, resp.Body.String(), "El material con código mat002 y/o nombre Material 001 ya existe")
 	})
-}
 
-func TestSingleMaterial(t *testing.T) {
-	materialId := uuid.MustParse("7f9b5b0a-7f9b-4a9e-9f9b-7f9b5b0a9e7f")
-	testUrl := fmt.Sprintf("/bca/partials/materiales/%s", materialId.String())
+	t.Run("single material", func(t *testing.T) {
+		companyId := getCompanyId(t, s, cookie)
+		materials := s.DB.GetAllMaterials(companyId)
+		assert.Equal(t, 1, len(materials))
+		materialId := materials[0].Id
+		testUrl := fmt.Sprintf("/bca/partials/materiales/%s", materialId.String())
 
-	ctx := context.Background()
-	pgContainer, err := postgres.Run(ctx,
-		"postgres:14.1-alpine",
-		postgres.WithDatabase("testsinglematerial"),
-		postgres.WithUsername("test"),
-		postgres.WithPassword("test"),
-		testcontainers.WithWaitStrategy(
-			wait.ForLog("database system is ready to accept connections").
-				WithOccurrence(2).
-				WithStartupTimeout(5*time.Second),
-		),
-		postgres.WithInitScripts(filepath.Join("..", "..", "internal", "database", "tables.sql")),
-		postgres.WithInitScripts(filepath.Join("scripts", "u000-company.sql")),
-		postgres.WithInitScripts(filepath.Join("scripts", "u001-category.sql")),
-		postgres.WithInitScripts(filepath.Join("scripts", "u002-material.sql")),
-	)
-	assert.NoError(t, err)
+		t.Run("it should be able to display a single material", func(t *testing.T) {
+			req, err := http.NewRequest(http.MethodGet, testUrl, nil)
+			assert.NoError(t, err)
+			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+			req.AddCookie(cookie[0])
+			resp := httptest.NewRecorder()
+			s.Router.ServeHTTP(resp, req)
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusOK, resp.Code)
+			assert.Contains(t, resp.Body.String(), "mat001")
+			assert.Contains(t, resp.Body.String(), "Material 001")
+			assert.Contains(t, resp.Body.String(), "Unidad")
+			assert.Contains(t, resp.Body.String(), "CATEGORÍA 1")
+		})
 
-	t.Cleanup(func() {
-		if err := pgContainer.Terminate(ctx); err != nil {
-			t.Fatalf("failed to terminate pgContainer: %s", err.Error())
-		}
+		t.Run("it should be able to update a material", func(t *testing.T) {
+			form := url.Values{
+				"code":     []string{"mat002"},
+				"name":     []string{"Material 002 Updated"},
+				"unit":     []string{"Unidad Updated"},
+				"category": []string{"a0f9b5b0-7f9b-4a9e-9f9b-7f9b5b0a9e7f"},
+			}
+			req, err := http.NewRequest(http.MethodPut, testUrl, strings.NewReader(form.Encode()))
+			assert.NoError(t, err)
+			req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+			req.AddCookie(cookie[0])
+			resp := httptest.NewRecorder()
+			s.Router.ServeHTTP(resp, req)
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusOK, resp.Code)
+			assert.Contains(t, resp.Body.String(), "mat002")
+			assert.Contains(t, resp.Body.String(), "Material 002 Updated")
+			assert.Contains(t, resp.Body.String(), "Unidad Updated")
+			assert.Contains(t, resp.Body.String(), "CATEGORÍA 1")
+		})
 	})
-
-	s, cookie, err := createServer(t, ctx, pgContainer)
-	assert.NoError(t, err)
-	assert.NotNil(t, s)
-	assert.Equal(t, 1, len(cookie))
-	assert.Equal(t, "jwt", cookie[0].Name)
-	assert.NotEmpty(t, cookie[0].Value)
-
-	t.Run("it should be able to display a single material", func(t *testing.T) {
-		req, err := http.NewRequest(http.MethodGet, testUrl, nil)
-		assert.NoError(t, err)
-		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-		req.AddCookie(cookie[0])
-		resp := httptest.NewRecorder()
-		s.Router.ServeHTTP(resp, req)
-		assert.NoError(t, err)
-		assert.Equal(t, http.StatusOK, resp.Code)
-		assert.Contains(t, resp.Body.String(), "0001")
-		assert.Contains(t, resp.Body.String(), "PRODUCTO 1")
-		assert.Contains(t, resp.Body.String(), "UN")
-		assert.Contains(t, resp.Body.String(), "CATEGORÍA 1")
-	})
-
-  t.Run("it should be able to update a material", func(t *testing.T) {
-    form := url.Values{
-      "code":     []string{"mat001"},
-      "name":     []string{"Material 001 Updated"},
-      "unit":     []string{"Unidad Updated"},
-      "category": []string{"a0f9b5b0-7f9b-4a9e-9f9b-7f9b5b0a9e7f"},
-    }
-    req, err := http.NewRequest(http.MethodPut, testUrl, strings.NewReader(form.Encode()))
-    assert.NoError(t, err)
-    req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-    req.AddCookie(cookie[0])
-    resp := httptest.NewRecorder()
-    s.Router.ServeHTTP(resp, req)
-    assert.NoError(t, err)
-    assert.Equal(t, http.StatusOK, resp.Code)
-    assert.Contains(t, resp.Body.String(), "mat001")
-    assert.Contains(t, resp.Body.String(), "Material 001 Updated")
-    assert.Contains(t, resp.Body.String(), "Unidad Updated")
-    assert.Contains(t, resp.Body.String(), "CATEGORÍA 1")
-  })
 }
