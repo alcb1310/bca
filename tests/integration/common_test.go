@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 
@@ -69,4 +70,14 @@ func createServer(t *testing.T, ctx context.Context, pgContainer *postgres.Postg
 	}
 
 	return s, cookies, nil
+}
+
+func getCompanyId(t *testing.T, s *server.Server, cookies []*http.Cookie) uuid.UUID {
+	assert.Equal(t, 1, len(cookies))
+	token, err := s.TokenAuth.Decode(cookies[0].Value)
+	assert.NoError(t, err)
+
+	companyId, err := uuid.Parse(token.PrivateClaims()["company_id"].(string))
+	assert.NoError(t, err)
+	return companyId
 }

@@ -1,8 +1,6 @@
 package server
 
 import (
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/utils"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -11,6 +9,9 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/lestrrat-go/jwx/v2/jwt"
+
+	"bca-go-final/internal/database"
+	"bca-go-final/internal/utils"
 )
 
 type Server struct {
@@ -33,7 +34,7 @@ func NewServer(db database.Service, secret string) *Server {
 	s.RegisterRoutes(s.Router)
 
 	s.Router.Get("/login", s.DisplayLogin) // fully tested
-	s.Router.Post("/login", s.LoginView) // fully tested
+	s.Router.Post("/login", s.LoginView)   // fully tested
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
@@ -104,7 +105,7 @@ func NewServer(db database.Service, secret string) *Server {
 
 			r.Route("/suppliers", func(r chi.Router) {
 				r.HandleFunc("/", s.SuppliersTable) // fully tested
-				r.HandleFunc("/add", s.SupplierAdd) 
+				r.HandleFunc("/add", s.SupplierAdd)
 				r.HandleFunc("/edit/{id}", s.SuppliersEditSave) // convert fully tested
 				r.HandleFunc("/{id}", s.SuppliersEdit)          // convert fully tested
 			})
@@ -145,7 +146,7 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/rubros", func(r chi.Router) {
-				r.HandleFunc("/", s.RubrosTable) // fully tested
+				r.HandleFunc("/", s.RubrosTable)                                       // fully tested
 				r.HandleFunc("/{id}", s.MaterialsByItem)                               // convert
 				r.HandleFunc("/{id}/material", s.MaterialByItemForm)                   // convert fully unit tested
 				r.HandleFunc("/{id}/material/{materialId}", s.MaterialItemsOperations) // convert fully unit tested
