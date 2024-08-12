@@ -65,8 +65,10 @@ func (s *service) UpdateBudgetItem(bi *types.BudgetItem) error {
 		return err
 	}
 
-	if *bi.ParentId != parentId {
-		return errors.New("No se puede cambiar la partida padre")
+	if bi.ParentId != nil {
+		if *bi.ParentId != parentId {
+			return errors.New("No se puede cambiar la partida padre")
+		}
 	}
 
 	var level uint8 = 1
