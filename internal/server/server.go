@@ -73,7 +73,7 @@ func NewServer(db database.Service, secret string) *Server {
 			r.HandleFunc("/categorias", s.Categories)
 			r.HandleFunc("/materiales", s.Materiales)
 			r.HandleFunc("/rubros", s.Rubros)
-			r.HandleFunc("/rubros/crear", s.RubrosAdd)
+			r.HandleFunc("/rubros/crear", s.RubrosAdd) // fully integration tested
 		})
 
 		r.Route("/user", func(r chi.Router) {
@@ -145,7 +145,7 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/rubros", func(r chi.Router) {
-				r.HandleFunc("/", s.RubrosTable)
+				r.HandleFunc("/", s.RubrosTable) // fully tested
 				r.HandleFunc("/{id}", s.MaterialsByItem)                               // convert
 				r.HandleFunc("/{id}/material", s.MaterialByItemForm)                   // convert fully unit tested
 				r.HandleFunc("/{id}/material/{materialId}", s.MaterialItemsOperations) // convert fully unit tested

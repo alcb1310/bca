@@ -17,7 +17,6 @@ import (
 func (s *Server) BudgetItems(w http.ResponseWriter, r *http.Request) {
 	component := settings.BudgetItems()
 	component.Render(r.Context(), w)
-
 }
 
 func (s *Server) Suppliers(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +105,7 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
 				w.WriteHeader(http.StatusConflict)
-				w.Write([]byte(fmt.Sprintf("El Código %s ya existe", rubro.Code)))
+				w.Write([]byte(fmt.Sprintf("El rubro con código %s y/o nombre %s ya existe", rubro.Code, rubro.Name)))
 				return
 			}
 
