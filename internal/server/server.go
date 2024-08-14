@@ -113,13 +113,13 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Route("/budget-item", func(r chi.Router) {
 				r.HandleFunc("/", s.BudgetItemsTable) // fully tested
 				r.HandleFunc("/add", s.BudgetItemAdd)
-				r.HandleFunc("/{id}", s.BudgetItemEdit) // convert fully unit tested
+				r.HandleFunc("/{id}", s.BudgetItemEdit) // convert fully tested
 			})
 
 			r.Route("/budgets", func(r chi.Router) {
-				r.HandleFunc("/", s.BudgetsTable) // fully unit tested
+				r.HandleFunc("/", s.BudgetsTable) // fully tested
 				r.HandleFunc("/add", s.BudgetAdd)
-				r.HandleFunc("/{projectId}/{budgetItemId}", s.BudgetEdit) // convert fully unit tested
+				r.HandleFunc("/{projectId}/{budgetItemId}", s.BudgetEdit) // convert fully tested
 			})
 
 			r.Route("/invoices", func(r chi.Router) {

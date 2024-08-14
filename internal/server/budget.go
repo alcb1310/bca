@@ -1,9 +1,6 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction/partials"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +9,10 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/transaction/partials"
 )
 
 func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +75,7 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 
 		if _, err := s.DB.CreateBudget(b); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte(fmt.Sprintf("Ya existe partida %s en el proyecto %s", b.BudgetItemId, b.ProjectId)))
 				return
 			}
