@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
 )
 
 func (s *Server) Register(w http.ResponseWriter, r *http.Request) {

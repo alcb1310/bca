@@ -15,8 +15,8 @@ import (
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/server"
+	"github.com/alcb1310/bca/internal/database"
+	"github.com/alcb1310/bca/internal/server"
 )
 
 func TestLogin(t *testing.T) {
@@ -34,7 +34,7 @@ func TestLogin(t *testing.T) {
 		postgres.WithInitScripts(filepath.Join("..", "..", "internal", "database", "tables.sql")),
 		postgres.WithInitScripts(filepath.Join("scripts", "u000-company.sql")),
 	)
-  assert.NoError(t, err)
+	assert.NoError(t, err)
 
 	t.Cleanup(func() {
 		if err := pgContainer.Terminate(ctx); err != nil {

@@ -11,9 +11,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"bca-go-final/internal/server"
-	"bca-go-final/internal/types"
-	"bca-go-final/mocks"
+	"github.com/alcb1310/bca/internal/server"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/mocks"
 )
 
 func TestCreateSupplier(t *testing.T) {
@@ -97,12 +97,12 @@ func TestCreateSupplier(t *testing.T) {
 	}
 
 	for _, tt := range testData {
-    if tt.createSupplier != nil {
-      tt.createSupplier.Times(1)
-    }
-    if tt.getAllSuppliers != nil {
-      tt.getAllSuppliers.Times(1)
-    }
+		if tt.createSupplier != nil {
+			tt.createSupplier.Times(1)
+		}
+		if tt.getAllSuppliers != nil {
+			tt.getAllSuppliers.Times(1)
+		}
 
 		t.Run(tt.name, func(t *testing.T) {
 			req, res := createRequest(token, http.MethodPost, "/bca/partials/suppliers", strings.NewReader(tt.form.Encode()))
@@ -121,7 +121,7 @@ func TestEditSupplier(t *testing.T) {
 	s := server.NewServer(db, "supersecret")
 	token := createToken(s.TokenAuth)
 	getOne := db.EXPECT().GetOneSupplier(id, uuid.UUID{}).Return(types.Supplier{
-    ID:           id,
+		ID:           id,
 		SupplierId:   "test",
 		Name:         "test",
 		ContactEmail: sql.NullString{Valid: true, String: ""},
@@ -166,7 +166,7 @@ func TestEditSupplier(t *testing.T) {
 			body:           []string{},
 			getOneSupplier: getOne,
 			updateSupplier: db.EXPECT().UpdateSupplier(&types.Supplier{
-        ID:           id,
+				ID:           id,
 				SupplierId:   "test",
 				Name:         "test",
 				ContactEmail: sql.NullString{Valid: true, String: ""},
@@ -176,7 +176,7 @@ func TestEditSupplier(t *testing.T) {
 			}).Return(nil),
 			getAllSuppliers: db.EXPECT().GetAllSuppliers(uuid.UUID{}, "").Return([]types.Supplier{
 				{
-          ID:           id,
+					ID:           id,
 					SupplierId:   "test",
 					Name:         "test",
 					ContactEmail: sql.NullString{Valid: true, String: ""},

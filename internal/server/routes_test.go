@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"bca-go-final/internal/server"
-	"bca-go-final/mocks"
+	"github.com/alcb1310/bca/internal/server"
+	"github.com/alcb1310/bca/mocks"
 )
 
 func TestHelloWorldHandler(t *testing.T) {

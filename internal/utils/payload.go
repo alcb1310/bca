@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 type ContextKey string

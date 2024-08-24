@@ -18,7 +18,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func TestBudget(t *testing.T) {

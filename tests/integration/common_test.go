@@ -13,8 +13,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/server"
+	"github.com/alcb1310/bca/internal/database"
+	"github.com/alcb1310/bca/internal/server"
 )
 
 func login(t *testing.T, s *server.Server) ([]*http.Cookie, error) {

@@ -8,9 +8,11 @@ package details
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/utils"
-import "bca-go-final/internal/views/components/icons"
+import (
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/components/icons"
+)
 
 func getUrl(invoiceId, detailId string) string {
 	return "/bca/partials/invoices/" + invoiceId + "/details/" + detailId
@@ -42,7 +44,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(details[0].InvoiceTotal))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 13, Col: 91}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 15, Col: 89}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -65,7 +67,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(detail.BudgetItemCode)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 29, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 31, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -78,7 +80,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(detail.BudgetItemName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 30, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 32, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -91,7 +93,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(detail.Quantity))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 31, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 33, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -104,7 +106,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(detail.Cost))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 32, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 34, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -117,7 +119,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(detail.Total))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 33, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 35, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -130,7 +132,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(getUrl(detail.Id.String(), detail.BudgetItemId.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 37, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/detailstable.templ`, Line: 37, Col: 110}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -149,7 +151,7 @@ func InvoiceDetailsTable(details []types.InvoiceDetailsResponse) templ.Component
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</tbody></table><script>\n         var invoiceTotal = document.getElementById(\"invoice-total\");\n         if (invoiceTotal) {\n             total.value = invoiceTotal.value;\n         } else {\n             total.value = \"0.00\";\n         }\n    </script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</tbody></table><script>\n  var invoiceTotal = document.getElementById(\"invoice-total\");\n  if (invoiceTotal) {\n    total.value = invoiceTotal.value;\n  } else {\n    total.value = \"0.00\";\n  }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

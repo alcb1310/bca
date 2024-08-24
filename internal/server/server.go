@@ -10,8 +10,8 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/lestrrat-go/jwx/v2/jwt"
 
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/utils"
+	"github.com/alcb1310/bca/internal/database"
+	"github.com/alcb1310/bca/internal/utils"
 )
 
 type Server struct {

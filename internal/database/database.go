@@ -11,7 +11,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 type Service interface {

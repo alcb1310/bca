@@ -8,8 +8,10 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/utils"
+import (
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+)
 
 func BudgetView(budgets []types.GetBudget) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -41,7 +43,7 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(budgets[0].Project.GrossArea))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 10, Col: 112}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 12, Col: 112}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -54,7 +56,7 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(budgets[0].Project.NetArea))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 12, Col: 109}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 14, Col: 109}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -83,7 +85,7 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(budget.BudgetItem.Code)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 39, Col: 34}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 41, Col: 34}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -96,7 +98,7 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(budget.BudgetItem.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 40, Col: 34}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 42, Col: 34}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -110,7 +112,7 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 					var templ_7745c5c3_Var6 string
 					templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(budget.SpentQuantity.Float64))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 43, Col: 56}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 45, Col: 56}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 					if templ_7745c5c3_Err != nil {
@@ -124,7 +126,7 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(budget.SpentTotal))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 46, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 48, Col: 61}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -138,7 +140,7 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 					var templ_7745c5c3_Var8 string
 					templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(budget.RemainingQuantity.Float64))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 49, Col: 60}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 51, Col: 60}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 					if templ_7745c5c3_Err != nil {
@@ -153,7 +155,7 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 					var templ_7745c5c3_Var9 string
 					templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(budget.RemainingCost.Float64))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 54, Col: 56}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 56, Col: 56}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 					if templ_7745c5c3_Err != nil {
@@ -167,7 +169,7 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(budget.RemainingTotal))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 57, Col: 65}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 59, Col: 65}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -180,7 +182,7 @@ func BudgetView(budgets []types.GetBudget) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(budget.UpdatedBudget))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 58, Col: 64}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/budgetview.templ`, Line: 60, Col: 64}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {

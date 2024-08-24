@@ -8,11 +8,13 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "fmt"
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/views/base"
-import "bca-go-final/internal/views/components"
-import "bca-go-final/internal/utils"
+import (
+	"fmt"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/base"
+	"github.com/alcb1310/bca/internal/views/components"
+)
 
 func setTitle(invoice *types.InvoiceResponse) string {
 	if invoice == nil {
@@ -91,9 +93,10 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var3 string
-				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/invoices/%s", invoice.Id.String()))
+				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/invoices/%s",
+					invoice.Id.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/editinvoice.templ`, Line: 48, Col: 80}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/editinvoice.templ`, Line: 45, Col: 24}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -108,15 +111,18 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoiceValText(invoice, "project"), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", invoiceValText(invoice,
+				"project"), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier", invoiceValText(invoice, "supplier"), "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.SelectComponent(suppliers, "Seleccione un Proveedor", "supplier", "supplier",
+				invoiceValText(invoice, "supplier"), "Proveedor").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoiceValText(invoice, "invoiceNumber")).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Input("text", "Número de Facura", "invoiceNumber", "invoiceNumber", invoiceValText(invoice,
+				"invoiceNumber")).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -124,7 +130,8 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", invoiceValText(invoice, "invoiceDate")).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = components.Input("date", "Fecha de Factura", "invoiceDate", "invoiceDate", invoiceValText(invoice,
+				"invoiceDate")).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -142,9 +149,10 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var4 string
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/invoices/%s/details/add", invoice.Id.String()))
+				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/invoices/%s/details/add",
+					invoice.Id.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/editinvoice.templ`, Line: 71, Col: 96}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/editinvoice.templ`, Line: 66, Col: 28}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -165,20 +173,21 @@ func EditInvoice(invoice *types.InvoiceResponse, projects, suppliers []types.Sel
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/invoices/%s/details", invoice.Id.String()))
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/invoices/%s/details",
+					invoice.Id.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/editinvoice.templ`, Line: 92, Col: 86}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/editinvoice.templ`, Line: 77, Col: 22}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"load\" hx-swap=\"innerHTML\"></div><script>\n        var project = document.getElementById(\"project\")\n\n        if (project) {\n             project.disabled = true\n        }\n      </script>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-trigger=\"load\" hx-swap=\"innerHTML\"></div><script>\n  var project = document.getElementById(\"project\")\n\n  if (project) {\n    project.disabled = true\n  }\n</script>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <script>\n        var total = document.getElementById(\"total\")\n\n        function htmxHandleError(event) {\n             document.getElementById(\"error\").innerHTML = \"\"\n             if (event.detail.xhr.status >= 400) {\n                  document.getElementById(\"error\").innerHTML = event.detail.xhr.response\n             }\n        }\n\n        if (total) {\n             total.disabled = true\n        }\n    </script>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <script>\n  var total = document.getElementById(\"total\")\n\n  function htmxHandleError(event) {\n    document.getElementById(\"error\").innerHTML = \"\"\n    if (event.detail.xhr.status >= 400) {\n      document.getElementById(\"error\").innerHTML = event.detail.xhr.response\n    }\n  }\n\n  if (total) {\n    total.disabled = true\n  }\n</script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

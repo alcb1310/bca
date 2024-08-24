@@ -3,10 +3,10 @@ package server
 import (
 	"net/http"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views"
-	"bca-go-final/internal/views/bca"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views"
+	"github.com/alcb1310/bca/internal/views/bca"
 )
 
 func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {

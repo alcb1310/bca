@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/xuri/excelize/v2"
 
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/database"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func Balance(companyId, projectId uuid.UUID, date time.Time, db database.Service) *excelize.File {

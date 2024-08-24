@@ -5,11 +5,10 @@ import (
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func (s *service) GetAllRubros(companyId uuid.UUID) ([]types.Rubro, error) {
-
 	rubros := []types.Rubro{}
 	query := "select id, code, name, unit, company_id from item where company_id = $1 order by name"
 	rows, err := s.db.Query(query, companyId)

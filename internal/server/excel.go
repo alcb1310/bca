@@ -11,9 +11,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/excel"
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
+	"github.com/alcb1310/bca/internal/excel"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
 )
 
 func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {

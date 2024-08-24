@@ -16,7 +16,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func TestUsers(t *testing.T) {
@@ -144,11 +144,11 @@ func TestUsers(t *testing.T) {
 		assert.NotContains(t, res.Body.String(), "automatedtestpassword")
 	})
 
-  t.Run("it should be able to delete a user", func(t *testing.T) {
-    var user types.User
-    companyId := getCompanyId(t, s, cookie)
-    users, err := s.DB.GetAllUsers(companyId)
-    assert.NoError(t, err)
+	t.Run("it should be able to delete a user", func(t *testing.T) {
+		var user types.User
+		companyId := getCompanyId(t, s, cookie)
+		users, err := s.DB.GetAllUsers(companyId)
+		assert.NoError(t, err)
 
 		for _, u := range users {
 			if u.Email == "updated@test.com" {
@@ -158,18 +158,18 @@ func TestUsers(t *testing.T) {
 		}
 		testUrl := fmt.Sprintf("/bca/partials/users/%s", user.Id.String())
 
-    req, err := http.NewRequest(http.MethodDelete, testUrl, nil)
-    assert.NoError(t, err)
-    req.AddCookie(cookie[0])
-    res := httptest.NewRecorder()
-    s.Router.ServeHTTP(res, req)
-    assert.Equal(t, http.StatusOK, res.Code)
-    assert.Contains(t, res.Body.String(), "<td>Test User</td>")
-    assert.Contains(t, res.Body.String(), "<td>test@test.com</td>")
-    assert.NotContains(t, res.Body.String(), "<td>Automated Test Updated</td>")
-    assert.NotContains(t, res.Body.String(), "<td>updated@test.com</td>")
-    assert.NotContains(t, res.Body.String(), "<td>Automated Test</td>")
-    assert.NotContains(t, res.Body.String(), "<td>automated@test.com</td>")
-    assert.NotContains(t, res.Body.String(), "automatedtestpassword")
-  })
+		req, err := http.NewRequest(http.MethodDelete, testUrl, nil)
+		assert.NoError(t, err)
+		req.AddCookie(cookie[0])
+		res := httptest.NewRecorder()
+		s.Router.ServeHTTP(res, req)
+		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Contains(t, res.Body.String(), "<td>Test User</td>")
+		assert.Contains(t, res.Body.String(), "<td>test@test.com</td>")
+		assert.NotContains(t, res.Body.String(), "<td>Automated Test Updated</td>")
+		assert.NotContains(t, res.Body.String(), "<td>updated@test.com</td>")
+		assert.NotContains(t, res.Body.String(), "<td>Automated Test</td>")
+		assert.NotContains(t, res.Body.String(), "<td>automated@test.com</td>")
+		assert.NotContains(t, res.Body.String(), "automatedtestpassword")
+	})
 }

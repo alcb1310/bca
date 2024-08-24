@@ -9,9 +9,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/settings/partials"
 )
 
 func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {

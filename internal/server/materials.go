@@ -9,9 +9,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/settings/partials"
 )
 
 func (s *Server) MaterialsTable(w http.ResponseWriter, r *http.Request) {
@@ -147,7 +147,7 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 
 		categoryId := r.Form.Get("category")
 		if categoryId == "" {
-      updatedMaterial.Category = material.Category
+			updatedMaterial.Category = material.Category
 		} else {
 			categoryIdParsed, err := uuid.Parse(categoryId)
 			if err != nil {
@@ -155,7 +155,7 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte("Ingrese un valor para la Categoría"))
 				return
 			}
-      updatedMaterial.Category = types.Category{Id: categoryIdParsed}
+			updatedMaterial.Category = types.Category{Id: categoryIdParsed}
 		}
 
 		if err := s.DB.UpdateMaterial(updatedMaterial); err != nil {

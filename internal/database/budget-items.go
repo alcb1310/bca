@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func (s *service) GetBudgetItems(companyId uuid.UUID, search string) ([]types.BudgetItemResponse, error) {

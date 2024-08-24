@@ -8,8 +8,8 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/server"
+	"github.com/alcb1310/bca/internal/database"
+	"github.com/alcb1310/bca/internal/server"
 )
 
 var (

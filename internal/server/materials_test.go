@@ -10,9 +10,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"bca-go-final/internal/server"
-	"bca-go-final/internal/types"
-	"bca-go-final/mocks"
+	"github.com/alcb1310/bca/internal/server"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/mocks"
 )
 
 func TestCreateMaterial(t *testing.T) {

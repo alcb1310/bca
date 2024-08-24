@@ -10,9 +10,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction/partials/details"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/transaction/partials/details"
 )
 
 func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +31,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 		parsedBudgetItemId, err := uuid.Parse(biId)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-      w.Write([]byte("Ingrese una partida válida"))
+			w.Write([]byte("Ingrese una partida válida"))
 			return
 		}
 		q := r.Form.Get("quantity")

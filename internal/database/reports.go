@@ -1,13 +1,14 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
 	"database/sql"
 	"log"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) types.BalanceResponse {
@@ -76,7 +77,6 @@ func (s *service) GetHistoricByProject(companyId, projectId uuid.UUID, date time
 		ORDER BY budget_item_code
 		`
 	rows, err = s.db.Query(query, companyId, projectId, level, date.Year(), date.Month())
-
 	if err != nil {
 		log.Println("Error in query", err)
 		return nil

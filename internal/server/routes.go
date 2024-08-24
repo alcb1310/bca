@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"bca-go-final/internal/views"
+	"github.com/alcb1310/bca/internal/views"
 )
 
 func (s *Server) RegisterRoutes(r chi.Router) http.Handler {

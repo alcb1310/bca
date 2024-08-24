@@ -1,56 +1,45 @@
 package partials
 
-import "fmt"
-import "bca-go-final/internal/types"
-import "github.com/google/uuid"
-import "bca-go-final/internal/views/components/icons"
+import (
+"fmt"
+"github.com/alcb1310/bca/internal/types"
+"github.com/alcb1310/bca/internal/views/components/icons"
+"github.com/google/uuid"
+)
 
 templ UsersTable(users []types.User, currentUser uuid.UUID) {
-	if len(users) == 0 {
-		<p>No hay usuarios</p>
-	}
-	<table>
-		<thead>
-			<tr>
-				<th width="300px">Email</th>
-				<th width="300px">Nombre</th>
-				<th width="50px">&nbsp;</th>
-			</tr>
-		</thead>
-		<tbody>
-			for _, user := range users {
-        <tr id={ fmt.Sprintf("user-%s", user.Id.String()) }>
-					<td>{ user.Email }</td>
-					<td>{ user.Name }</td>
-					<td align="left">
-            <div
-                class="flex align-middle gap-2"
-            >
-              <div
-                class="hover:cursor-pointer"
-                hx-get={ fmt.Sprintf("/bca/partials/users/edit/%s", user.Id.String()) }
-                hx-target="#drawer"
-                hx-swap="innerHTML"
-                hx-trigger="click"
-                _="on click openDrawer()"
-              >
-                  @icons.EditIcon()
-              </div>
-              if user.Id != currentUser {
-                <div
-                  class="hover cursor-pointer"
-                  hx-delete={ fmt.Sprintf("/bca/partials/users/%s", user.Id.String()) }
-                  hx-target="#users-table"
-                  hx-swap="innerHTML"
-                  _="on click toggle @disabled until htmx:afterOnLoad"
-                >
-                  @icons.TrashIcon()
-                </div>
-              }
-            </div>
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
+if len(users) == 0 {
+<p>No hay usuarios</p>
+}
+<table>
+  <thead>
+    <tr>
+      <th width="300px">Email</th>
+      <th width="300px">Nombre</th>
+      <th width="50px">&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    for _, user := range users {
+    <tr id={ fmt.Sprintf("user-%s", user.Id.String()) }>
+      <td>{ user.Email }</td>
+      <td>{ user.Name }</td>
+      <td align="left">
+        <div class="flex align-middle gap-2">
+          <div class="hover:cursor-pointer" hx-get={ fmt.Sprintf("/bca/partials/users/edit/%s", user.Id.String()) }
+            hx-target="#drawer" hx-swap="innerHTML" hx-trigger="click" _="on click openDrawer()">
+            @icons.EditIcon()
+          </div>
+          if user.Id != currentUser {
+          <div class="hover cursor-pointer" hx-delete={ fmt.Sprintf("/bca/partials/users/%s", user.Id.String()) }
+            hx-target="#users-table" hx-swap="innerHTML" _="on click toggle @disabled until htmx:afterOnLoad">
+            @icons.TrashIcon()
+          </div>
+          }
+        </div>
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>
 }

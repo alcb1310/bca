@@ -1,9 +1,6 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +9,10 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/settings/partials"
 )
 
 func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
@@ -103,7 +104,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := s.DB.UpdateProject(p, parsedId, ctx.CompanyId); err != nil {
-	if strings.Contains(err.Error(), "duplicate") {
+		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
 			w.Write([]byte(fmt.Sprintf("El nombre %s ya existe", p.Name)))
 			return
@@ -123,12 +124,11 @@ func (s *Server) ProjectEdit(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 	p, err := s.DB.GetProject(parsedId, ctx.CompanyId)
-
-  if err != nil {
-    w.WriteHeader(http.StatusNotFound)
-    w.Write([]byte("Proyecto no encontrado"))
-    return
-  }
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Proyecto no encontrado"))
+		return
+	}
 
 	component := partials.EditProject(&p)
 	component.Render(r.Context(), w)

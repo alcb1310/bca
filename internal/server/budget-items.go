@@ -10,9 +10,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/settings/partials"
 )
 
 func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
@@ -92,24 +92,24 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
 	budgetItem, err := s.DB.GetOneBudgetItem(parsedId, ctxPayload.CompanyId)
-  if err != nil {
-    w.WriteHeader(http.StatusNotFound)
-    w.Write([]byte("Partida no encontrada"))
-    return
-  }
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Partida no encontrada"))
+		return
+	}
 
 	switch r.Method {
 	case http.MethodPut:
 		r.ParseForm()
-    biCode := r.Form.Get("code")
-    if biCode != "" {
-      budgetItem.Code = biCode
-    }
+		biCode := r.Form.Get("code")
+		if biCode != "" {
+			budgetItem.Code = biCode
+		}
 
-    biName := r.Form.Get("name")
-    if biName != "" {
-      budgetItem.Name = biName
-    }
+		biName := r.Form.Get("name")
+		if biName != "" {
+			budgetItem.Name = biName
+		}
 
 		x := r.Form.Get("accumulate") == "accumulate"
 		acc := sql.NullBool{Valid: true, Bool: x}
@@ -149,11 +149,11 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-      if strings.Contains(err.Error(), "partida padre") {
-        w.WriteHeader(http.StatusBadRequest)
-        w.Write([]byte(err.Error()))
-        return
-      }
+			if strings.Contains(err.Error(), "partida padre") {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte(err.Error()))
+				return
+			}
 
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))

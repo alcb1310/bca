@@ -1,4 +1,4 @@
-module bca-go-final
+module github.com/alcb1310/bca
 
 go 1.23
 
