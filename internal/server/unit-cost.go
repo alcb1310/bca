@@ -1,7 +1,7 @@
 package server
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 	"slices"
 	"strconv"
@@ -117,7 +117,7 @@ func (s *Server) CantidadesAdd(w http.ResponseWriter, r *http.Request) {
 
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Error al crear la cantidad"))
-			log.Println(err.Error())
+			slog.Error("CreateCantidades error", "error", err)
 			return
 		}
 
@@ -186,7 +186,7 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 		if err := s.DB.DeleteCantidades(parsedId, ctx.CompanyId); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Error al borrar la cantidad"))
-			log.Println(err.Error())
+			slog.Error("DeleteCantidades error", "error", err)
 			return
 		}
 
@@ -250,7 +250,7 @@ func (s *Server) CantidadesEdit(w http.ResponseWriter, r *http.Request) {
 		if err := s.DB.UpdateQuantity(quan, ctx.CompanyId); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Error al actualizar la cantidad"))
-			log.Println(err.Error())
+			slog.Error("UpdateQuantity error", "error", err)
 			return
 		}
 

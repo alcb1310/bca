@@ -3,7 +3,6 @@ package server
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -144,7 +143,7 @@ func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(fmt.Sprintf("El ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
 			return
 		}
-		log.Println(fmt.Sprintf("ERROR: %s", err.Error()))
+		slog.Error("Error updating supplier", "error", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Sprintf("<p>%s</p>", err.Error())))
 		return

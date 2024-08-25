@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -110,7 +110,7 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error(err.Error())
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -129,7 +129,7 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error(err.Error())
 			w.Write([]byte(err.Error()))
 			return
 		}

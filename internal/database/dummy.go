@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"log"
+	"log/slog"
 
 	"github.com/google/uuid"
 
@@ -10,27 +10,24 @@ import (
 )
 
 var (
-	accumTrue  = true
-	accumFalse = false
-	cdcId      = uuid.Nil
-	ggId       = uuid.Nil
-	ogId       = uuid.Nil
-	haId       = uuid.Nil
-	chId       = uuid.Nil
+	cdcId = uuid.Nil
+	ggId  = uuid.Nil
+	ogId  = uuid.Nil
+	haId  = uuid.Nil
 )
 
 func (s *service) LoadDummyData(companyId uuid.UUID) error {
-	log.Println("Loading dummy data")
+	slog.Info("Loading dummy data")
 
 	var count int
 	query := "select count(*) from budget_item where company_id = $1"
 	err := s.db.QueryRow(query, companyId).Scan(&count)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 	if count > 0 {
-		log.Println("Dummy data already loaded")
+		slog.Info("Dummy data already loaded")
 		return nil
 	}
 
@@ -48,7 +45,7 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 
 	cdcId, err = createBudgetItem(tx, bi)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 
@@ -57,7 +54,7 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	bi.ParentId = &cdcId
 	ggId, err = createBudgetItem(tx, bi)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 
@@ -67,7 +64,7 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	bi.Accumulate = accFalse
 	_, err = createBudgetItem(tx, bi)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 
@@ -77,7 +74,7 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	bi.Accumulate = accFalse
 	_, err = createBudgetItem(tx, bi)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 
@@ -87,7 +84,7 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	bi.Accumulate = accTrue
 	ogId, err = createBudgetItem(tx, bi)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 
@@ -97,7 +94,7 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	bi.Accumulate = accTrue
 	haId, err = createBudgetItem(tx, bi)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 
@@ -107,7 +104,7 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	bi.Accumulate = accFalse
 	_, err = createBudgetItem(tx, bi)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 
@@ -117,7 +114,7 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	bi.Accumulate = accFalse
 	_, err = createBudgetItem(tx, bi)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 
@@ -127,7 +124,7 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	bi.Accumulate = accTrue
 	haId, err = createBudgetItem(tx, bi)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 
@@ -137,12 +134,12 @@ func (s *service) LoadDummyData(companyId uuid.UUID) error {
 	bi.Accumulate = accFalse
 	_, err = createBudgetItem(tx, bi)
 	if err != nil {
-		log.Println("Error loading dummy data")
+		slog.Error("Error loading dummy data")
 		return err
 	}
 
 	tx.Commit()
-	log.Println("Dummy data loaded")
+	slog.Error("Dummy data loaded")
 
 	return nil
 }

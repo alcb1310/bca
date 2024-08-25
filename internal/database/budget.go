@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"log"
+	"log/slog"
 
 	"github.com/google/uuid"
 
@@ -42,7 +42,7 @@ func (s *service) GetBudgets(companyId, project_id uuid.UUID, search string) ([]
 	}
 
 	if err != nil {
-		log.Println("Query Error: ", err.Error())
+		slog.Error("Query Error: ", "err", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -58,7 +58,7 @@ func (s *service) GetBudgets(companyId, project_id uuid.UUID, search string) ([]
 			&b.RemainingQuantity, &b.RemainingCost, &b.RemainingTotal,
 			&b.UpdatedBudget, &b.CompanyId,
 		); err != nil {
-			log.Println("Scan Error: ", err.Error())
+			slog.Error("Scan Error: ", "err", err)
 			return nil, err
 		}
 		budgets = append(budgets, b)

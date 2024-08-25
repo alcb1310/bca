@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -43,7 +43,7 @@ func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error("CategoriesTable error", "error", err)
 			return
 		}
 	}
@@ -101,7 +101,7 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error("EditCategory error", "error", err)
 			return
 		}
 

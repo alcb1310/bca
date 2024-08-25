@@ -1,8 +1,7 @@
 package server
 
 import (
-	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -76,8 +75,7 @@ func (s *Server) Closure(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if err := s.DB.CreateClosure(ctx.CompanyId, parsedProjectId, date); err != nil {
-			log.Println(err)
-			log.Println(fmt.Sprintf("No se pudo cerrar el proyecto: %s para la fecha: %s", parsedProjectId, utils.ConvertDate(date)))
+			slog.Error("No se pudo cerrar el proyecto", "err", err, "project", parsedProjectId, "date", utils.ConvertDate(date))
 			success = "false"
 		}
 		// w.WriteHeader(http.StatusOK)

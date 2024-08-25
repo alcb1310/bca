@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,7 +24,7 @@ func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) typ
 	`
 	rows, err := s.db.Query(query, date.Year(), date.Month(), companyId, projectId)
 	if err != nil {
-		log.Fatal("Error in select", err)
+		slog.Error("Error in select", "err", err)
 		return types.BalanceResponse{}
 	}
 	defer rows.Close()
@@ -50,7 +50,7 @@ func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) typ
 			&i.CompanyId,
 			&i.IsBalanced,
 		); err != nil {
-			log.Println("Error in scan", err)
+			slog.Error("Error in select", "err", err)
 			return types.BalanceResponse{}
 		}
 		invoices = append(invoices, i)
@@ -78,7 +78,7 @@ func (s *service) GetHistoricByProject(companyId, projectId uuid.UUID, date time
 		`
 	rows, err = s.db.Query(query, companyId, projectId, level, date.Year(), date.Month())
 	if err != nil {
-		log.Println("Error in query", err)
+		slog.Error("Error in query", "err", err)
 		return nil
 	}
 	defer rows.Close()
@@ -94,7 +94,7 @@ func (s *service) GetHistoricByProject(companyId, projectId uuid.UUID, date time
 			&b.RemainingQuantity, &b.RemainingCost, &b.RemainingTotal,
 			&b.UpdatedBudget, &b.CompanyId,
 		); err != nil {
-			log.Println("Error in scan", err)
+			slog.Error("Error in scan", "err", err)
 			return nil
 		}
 		budgets = append(budgets, b)
@@ -127,7 +127,7 @@ func (s *service) GetDetailsByBudgetItem(companyId, projectId, budgetItemId uuid
 	`
 	row, err := s.db.Query(query, companyId, date.Year(), date.Month(), projectId, pq.Array(ids))
 	if err != nil {
-		log.Println("Error in query", err)
+		slog.Error("Error in query", "err", err)
 		return []types.InvoiceDetails{}
 	}
 	defer row.Close()
@@ -141,7 +141,7 @@ func (s *service) GetDetailsByBudgetItem(companyId, projectId, budgetItemId uuid
 			&i.InvoiceId, &i.InvoiceNumber, &i.InvoiceTotal, &i.InvoiceDate, &i.ProjectId, &i.ProjectName, &i.SupplierId, &i.SupplierNumber,
 			&i.SupplierName, &i.BudgetItemId, &i.BudgetItemName, &i.BudgetItemCode, &i.BudgetItemLevel, &i.Quantity, &i.Cost, &i.Total, &i.CompanyId,
 		); err != nil {
-			log.Println("Error in scan", err)
+			slog.Error("Error in scan", "err", err)
 			return []types.InvoiceDetails{}
 		}
 		returnInvoiceDetails = append(returnInvoiceDetails, i)

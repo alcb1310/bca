@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -82,7 +82,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 			}
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(fmt.Sprintf("Error al insertar partida. Err: %s", err.Error())))
-			log.Println(err)
+			slog.Error(err.Error())
 			return
 		}
 	}
@@ -90,7 +90,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 	det, err := s.DB.GetAllDetails(parsedInvoiceId, ctx.CompanyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error(err.Error())
 		return
 	}
 
@@ -129,13 +129,13 @@ func (s *Server) DetailsEdit(w http.ResponseWriter, r *http.Request) {
 
 	if err := s.DB.DeleteDetail(parsedInvoiceId, parsedBudgetItemId, ctx.CompanyId); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error(err.Error())
 		return
 	}
 	det, err := s.DB.GetAllDetails(parsedInvoiceId, ctx.CompanyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error(err.Error())
 		return
 	}
 

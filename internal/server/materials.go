@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -64,7 +64,7 @@ func (s *Server) MaterialsTable(w http.ResponseWriter, r *http.Request) {
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error("MaterialsTable error", "error", err)
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -166,7 +166,7 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error("MaterialsTable error", "error", err)
 			w.Write([]byte(err.Error()))
 			return
 		}

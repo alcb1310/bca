@@ -3,7 +3,7 @@ package server
 import (
 	"database/sql"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -21,7 +21,7 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 
 		if err := r.ParseForm(); err != nil {
-			log.Println(err)
+			slog.Error("BudgetItemsTable error", "error", err)
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(err.Error()))
 			return
@@ -36,7 +36,7 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 			z, err := uuid.Parse(p)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				log.Println(err)
+				slog.Error("BudgetItemsTable error", "error", err)
 				w.Write([]byte("Código de la partida padre es inválido"))
 				return
 			}
@@ -69,7 +69,7 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 			}
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
-			log.Println(err)
+			slog.Error("BudgetItemsTable error", "error", err)
 			return
 		}
 	}
@@ -124,7 +124,7 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write([]byte("Código de la partida padre es inválido"))
-				log.Println(err)
+				slog.Error("BudgetItemEdit error", "error", err)
 				return
 			}
 			u = &z
@@ -157,7 +157,7 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
-			log.Println(err)
+			slog.Error("BudgetItemEdit error", "error", err)
 			return
 		}
 

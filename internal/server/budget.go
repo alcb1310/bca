@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -81,7 +81,7 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 			}
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
-			log.Println(err)
+			slog.Error(err.Error())
 			return
 		}
 	}
@@ -95,7 +95,7 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
-			log.Println(err)
+			slog.Error(err.Error())
 			return
 		}
 	}

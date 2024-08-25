@@ -2,7 +2,7 @@ package database
 
 import (
 	"errors"
-	"log"
+	"log/slog"
 
 	"github.com/google/uuid"
 
@@ -148,7 +148,7 @@ func (s *service) GetBudgetItemsByLevel(companyId uuid.UUID, level uint8) []type
 		  `
 	rows, err := s.db.Query(sql, companyId, level)
 	if err != nil {
-		log.Println(err)
+		slog.Error("GetBudgetItemsByLevel", "err", err)
 		return nil
 	}
 	defer rows.Close()
@@ -170,7 +170,7 @@ func (s *service) GetNonAccumulateChildren(companyId, id *uuid.UUID, budgetItems
 	}
 	res := results
 	for _, b := range budgetItems {
-		if b.Accumulate.Bool == false {
+		if !b.Accumulate.Bool {
 			res = append(res, b.ID)
 			continue
 		}
@@ -188,7 +188,7 @@ func (s *service) getFirstChildren(bi types.BudgetItem) []types.BudgetItem {
 	 `
 	rows, err := s.db.Query(sql, bi.CompanyId, bi.ID)
 	if err != nil {
-		log.Println(err)
+		slog.Error("getFirstChildren", "err", err)
 		return nil
 	}
 	defer rows.Close()
@@ -198,7 +198,7 @@ func (s *service) getFirstChildren(bi types.BudgetItem) []types.BudgetItem {
 	for rows.Next() {
 		bi := types.BudgetItem{}
 		if err := rows.Scan(&bi.ID, &bi.Code, &bi.Name, &bi.Level, &bi.Accumulate, &bi.ParentId, &bi.CompanyId); err != nil {
-			log.Println(err)
+			slog.Error("getFirstChildren", "err", err)
 			return nil
 		}
 		bis = append(bis, bi)

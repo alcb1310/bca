@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -56,7 +56,7 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error("CreateProject error", "error", err)
 			return
 		}
 
@@ -110,7 +110,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error("UpdateProject error", "error", err)
 		return
 	}
 

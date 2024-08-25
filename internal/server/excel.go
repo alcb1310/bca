@@ -1,8 +1,7 @@
 package server
 
 import (
-	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"strconv"
@@ -22,7 +21,7 @@ func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {
 	parsedProjectId, err := uuid.Parse(id)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Println("Error parsing projectId. Err: ", err)
+		slog.Error("Error parsing projectId", "err", err)
 		return
 	}
 	d := r.URL.Query().Get("date")
@@ -33,16 +32,16 @@ func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=cuadre.xlsx"))
+	w.Header().Set("Content-Disposition", "attachment; filename=cuadre.xlsx")
 	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
 	if err := f.Write(w); err != nil {
-		log.Println(err.Error())
+		slog.Error(err.Error())
 	}
 
 	go func() {
 		time.Sleep(1 * time.Second)
 		if err := os.Remove(f.Path); err != nil {
-			log.Println(err.Error())
+			slog.Error(err.Error())
 		}
 	}()
 }
@@ -52,14 +51,14 @@ func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
 	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Println("Error parsing projectId. Err: ", err)
+		slog.Error("Error parsing projectId", "Err", err)
 		return
 	}
 
 	l, err := strconv.ParseUint(r.URL.Query().Get("nivel"), 10, 8)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Println("Error parsing level. Err: ", err)
+		slog.Error("Error parsing level", "Err", err)
 		return
 	}
 	level := uint8(l)
@@ -70,16 +69,16 @@ func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=actual.xlsx"))
+	w.Header().Set("Content-Disposition", "attachment; filename=actual.xlsx")
 	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
 	if err := f.Write(w); err != nil {
-		log.Println(err.Error())
+		slog.Error(err.Error())
 	}
 
 	go func() {
 		time.Sleep(1 * time.Second)
 		if err := os.Remove(f.Path); err != nil {
-			log.Println(err.Error())
+			slog.Error(err.Error())
 		}
 	}()
 }
@@ -89,14 +88,14 @@ func (s *Server) HistoricExcel(w http.ResponseWriter, r *http.Request) {
 	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Println("Error parsing projectId. Err: ", err)
+		slog.Error("Error parsing projectId", "err", err)
 		return
 	}
 
 	l, err := strconv.ParseUint(r.URL.Query().Get("nivel"), 10, 8)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Println("Error parsing level. Err: ", err)
+		slog.Error("Error parsing level", "Err", err)
 		return
 	}
 	level := uint8(l)
@@ -110,16 +109,16 @@ func (s *Server) HistoricExcel(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=actual.xlsx"))
+	w.Header().Set("Content-Disposition", "attachment; filename=actual.xlsx")
 	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
 	if err := f.Write(w); err != nil {
-		log.Println(err.Error())
+		slog.Error(err.Error())
 	}
 
 	go func() {
 		time.Sleep(1 * time.Second)
 		if err := os.Remove(f.Path); err != nil {
-			log.Println(err.Error())
+			slog.Error(err.Error())
 		}
 	}()
 }
@@ -129,14 +128,14 @@ func (s *Server) SpentExcel(w http.ResponseWriter, r *http.Request) {
 	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Println("Error parsing projectId. Err: ", err)
+		slog.Error("Error parsing projectId", "err", err)
 		return
 	}
 
 	l, err := strconv.ParseUint(r.URL.Query().Get("nivel"), 10, 8)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Println("Error parsing level. Err: ", err)
+		slog.Error("Error parsing level", "Err", err)
 		return
 	}
 	level := uint8(l)
@@ -169,16 +168,16 @@ func (s *Server) SpentExcel(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=actual.xlsx"))
+	w.Header().Set("Content-Disposition", "attachment; filename=actual.xlsx")
 	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
 	if err := f.Write(w); err != nil {
-		log.Println(err.Error())
+		slog.Error(err.Error())
 	}
 
 	go func() {
 		time.Sleep(1 * time.Second)
 		if err := os.Remove(f.Path); err != nil {
-			log.Println(err.Error())
+			slog.Error(err.Error())
 		}
 	}()
 }

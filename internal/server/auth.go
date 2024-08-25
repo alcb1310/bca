@@ -3,7 +3,7 @@ package server
 import (
 	"encoding/json"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -30,7 +30,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			}
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -42,7 +42,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			resp["field"] = "name"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -53,7 +53,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			resp["field"] = "ruc"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -64,7 +64,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			resp["field"] = "employees"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -75,7 +75,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			resp["field"] = "email"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -87,7 +87,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			resp["field"] = "email"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -99,7 +99,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			resp["field"] = "password"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -110,14 +110,14 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 			resp["field"] = "user"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
 		}
 
 		if err := s.DB.CreateCompany(c); err != nil {
-			log.Println("Error creating company: ", err)
+			slog.Error("Error creating company: ", "err", err)
 			if strings.Contains(err.Error(), "SQLSTATE 23505") {
 				w.WriteHeader(http.StatusConflict)
 				resp["error"] = "company already exists"
@@ -128,7 +128,7 @@ func (s *Server) Register(w http.ResponseWriter, r *http.Request) {
 
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -156,7 +156,7 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 			}
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -167,7 +167,7 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 			resp["field"] = "email"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -179,7 +179,7 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 			resp["field"] = "email"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -191,7 +191,7 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 			resp["field"] = "password"
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -203,7 +203,7 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 			resp["error"] = err.Error()
 			jsonResp, err := json.Marshal(resp)
 			if err != nil {
-				log.Fatalf("error handling JSON marshal. Err: %v", err)
+				slog.Error("error handling JSON marshal", "err", err)
 			}
 			_, _ = w.Write(jsonResp)
 			return
@@ -213,7 +213,7 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 
 		jsonResp, err := json.Marshal(resp)
 		if err != nil {
-			log.Fatalf("error handling JSON marshal. Err: %v", err)
+			slog.Error("error handling JSON marshal", "err", err)
 		}
 
 		_, _ = w.Write(jsonResp)

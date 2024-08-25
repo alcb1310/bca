@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"time"
@@ -169,7 +169,7 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 		l, err = strconv.ParseUint(z, 10, 64)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error(err.Error())
 			return
 		}
 	}
@@ -178,7 +178,7 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 	budgets, err := s.DB.GetBudgetsByProjectId(ctx.CompanyId, projectId, &level)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error(err.Error())
 		return
 	}
 	component := partials.BudgetView(budgets)
@@ -191,7 +191,7 @@ func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 	budgetItemId, err := uuid.Parse(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error(err.Error())
 		return
 	}
 
@@ -199,7 +199,7 @@ func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 	parsedProjectId, err := uuid.Parse(pId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error(err.Error())
 		return
 	}
 

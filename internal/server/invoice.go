@@ -1,7 +1,7 @@
 package server
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -170,7 +170,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPatch:
 		if err := s.DB.BalanceInvoice(invoice); err != nil {
-			log.Printf("error updating invoice: %v", err)
+			slog.Error("Error updating invoice", "error", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -182,7 +182,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 
 	case http.MethodDelete:
 		if err := s.DB.DeleteInvoice(parsedId, ctx.CompanyId); err != nil {
-			log.Printf("error deleting invoice: %v", err)
+			slog.Error("Error deleting invoice", "error", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -242,7 +242,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 			}
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
-			log.Printf("error updating invoice: %v", err)
+			slog.Error("Error updating invoice", "error", err)
 			return
 		}
 
