@@ -1,6 +1,6 @@
 module github.com/alcb1310/bca
 
-go 1.22
+go 1.23.0
 
 require (
 	github.com/a-h/templ v0.2.747
