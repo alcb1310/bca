@@ -71,7 +71,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 
 		if err := s.DB.AddDetail(d); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte("Ya existe una partida con ese nombre en la factura"))
 				return
 			}
