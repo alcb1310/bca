@@ -41,7 +41,7 @@ func NewServer(db database.Service, secret string) *Server {
 		r.Use(authenticator())
 
 		r.HandleFunc("/", s.BcaView)
-		r.HandleFunc("/logout", s.Logout)
+		r.Post("/logout", s.Logout)
 		r.Post("/dummy-data", s.loadDummyDataHandler)
 
 		r.Route("/transacciones", func(r chi.Router) {
