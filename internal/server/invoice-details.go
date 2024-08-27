@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,9 +10,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction/partials/details"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/transaction/partials/details"
 )
 
 func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
@@ -31,7 +31,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 		parsedBudgetItemId, err := uuid.Parse(biId)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-      w.Write([]byte("Ingrese una partida válida"))
+			w.Write([]byte("Ingrese una partida válida"))
 			return
 		}
 		q := r.Form.Get("quantity")
@@ -71,7 +71,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 
 		if err := s.DB.AddDetail(d); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte("Ya existe una partida con ese nombre en la factura"))
 				return
 			}
@@ -82,7 +82,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 			}
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(fmt.Sprintf("Error al insertar partida. Err: %s", err.Error())))
-			log.Println(err)
+			slog.Error(err.Error())
 			return
 		}
 	}
@@ -90,7 +90,7 @@ func (s *Server) DetailsTable(w http.ResponseWriter, r *http.Request) {
 	det, err := s.DB.GetAllDetails(parsedInvoiceId, ctx.CompanyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error(err.Error())
 		return
 	}
 
@@ -129,13 +129,13 @@ func (s *Server) DetailsEdit(w http.ResponseWriter, r *http.Request) {
 
 	if err := s.DB.DeleteDetail(parsedInvoiceId, parsedBudgetItemId, ctx.CompanyId); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error(err.Error())
 		return
 	}
 	det, err := s.DB.GetAllDetails(parsedInvoiceId, ctx.CompanyId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error(err.Error())
 		return
 	}
 

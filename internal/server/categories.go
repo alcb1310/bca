@@ -2,16 +2,16 @@ package server
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/settings/partials"
 )
 
 func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
@@ -39,11 +39,11 @@ func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 		if err = s.DB.CreateCategory(c); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
 				w.WriteHeader(http.StatusConflict)
-				w.Write([]byte(fmt.Sprintf("La categoria %s ya existe", c.Name)))
+				w.Write([]byte(fmt.Sprintf("La categoría %s ya existe", c.Name)))
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error("CategoriesTable error", "error", err)
 			return
 		}
 	}
@@ -63,7 +63,12 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
-	c, _ := s.DB.GetCategory(parsedId, ctxPayload.CompanyId)
+	c, err := s.DB.GetCategory(parsedId, ctxPayload.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Categoría no encontrada"))
+		return
+	}
 
 	switch r.Method {
 	case http.MethodGet:
@@ -86,9 +91,8 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 		if n == "" {
 			cat.Name = c.Name
 		} else {
-      cat.Name = n
-    }
-
+			cat.Name = n
+		}
 
 		if err := s.DB.UpdateCategory(cat); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
@@ -97,7 +101,7 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error("EditCategory error", "error", err)
 			return
 		}
 

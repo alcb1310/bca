@@ -6,10 +6,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/users"
-	"bca-go-final/internal/views/partials"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/users"
+	"github.com/alcb1310/bca/internal/views/partials"
 )
 
 func (s *Server) Profile(w http.ResponseWriter, r *http.Request) {
@@ -55,10 +55,10 @@ func (s *Server) SingleUser(w http.ResponseWriter, r *http.Request) {
 			u.Name = r.Form.Get("name")
 		}
 		if r.Form.Get("email") != "" {
-      if !utils.IsValidEmail(r.Form.Get("name")) {
-        w.WriteHeader(http.StatusBadRequest)
-        return
-      }
+			if !utils.IsValidEmail(r.Form.Get("email")) {
+				w.WriteHeader(http.StatusBadRequest)
+				return
+			}
 			u.Email = r.Form.Get("email")
 		}
 		if _, err := s.DB.UpdateUser(u, parsedId, ctx.CompanyId); err != nil {

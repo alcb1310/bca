@@ -2,14 +2,14 @@ package excel
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/xuri/excelize/v2"
 
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/database"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func Balance(companyId, projectId uuid.UUID, date time.Time, db database.Service) *excelize.File {
@@ -17,7 +17,7 @@ func Balance(companyId, projectId uuid.UUID, date time.Time, db database.Service
 	id := uuid.New()
 	defer func() {
 		if err := f.Close(); err != nil {
-			log.Println(err)
+			slog.Error("Failed to balance", "err", err)
 		}
 	}()
 	// Create a new sheet.
@@ -95,7 +95,7 @@ func Balance(companyId, projectId uuid.UUID, date time.Time, db database.Service
 	f.SetCellFormula("cuadre", fmt.Sprintf("D%d", row), fmt.Sprintf("=SUM(D2:D%d)", row-1))
 
 	if err := f.SaveAs("./public/" + id.String() + ".xlsx"); err != nil {
-		log.Println(err)
+		slog.Error("Failed to export file", "err", err)
 	}
 
 	return f
@@ -107,7 +107,7 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 	id := uuid.New()
 	defer func() {
 		if err := f.Close(); err != nil {
-			log.Println(err)
+			slog.Error("Failed to actual", "err", err)
 		}
 	}()
 
@@ -303,18 +303,17 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 	}
 
 	if err := f.SaveAs("./public/" + id.String() + ".xlsx"); err != nil {
-		log.Println(err)
+		slog.Error("Failed to export", "err", err)
 	}
 	return f
 }
 
 func Spent(project types.Project, data []types.Spent, date time.Time) *excelize.File {
-	log.Println("Spent", len(data))
 	f := excelize.NewFile()
 	id := uuid.New()
 	defer func() {
 		if err := f.Close(); err != nil {
-			log.Println(err)
+			slog.Error("Failed to close file", "err", err)
 		}
 	}()
 
@@ -407,7 +406,7 @@ func Spent(project types.Project, data []types.Spent, date time.Time) *excelize.
 	}
 
 	if err := f.SaveAs("./public/" + id.String() + ".xlsx"); err != nil {
-		log.Println(err)
+		slog.Error("Failed to export", "err", err)
 	}
 
 	return f

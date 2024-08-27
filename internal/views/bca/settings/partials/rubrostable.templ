@@ -1,40 +1,42 @@
 package partials
 
-import "fmt"
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/views/components/icons"
+import (
+"fmt"
+"github.com/alcb1310/bca/internal/types"
+"github.com/alcb1310/bca/internal/views/components/icons"
+)
 
 templ RubrosTable(rubros []types.Rubro) {
-  <table>
-    <thead>
-      <tr>
-        <td width="200px">Código</td>
-        <td width="400px">Nombre</td>
-        <td width="200px">Unidad</td>
-        <td width="50px"></td>
-      </tr>
-    </thead>
-    <tbody>
-      if len(rubros) == 0 {
-        <tr>
-          <td colspan="4">No existen rubros</td>
-        </tr>
-      } else {
-        for _, rubro := range rubros {
-          <tr>
-            <td>{ rubro.Code }</td>
-            <td>{ rubro.Name }</td>
-            <td>{ rubro.Unit }</td>
-            <td>
-              <a href={ templ.SafeURL(fmt.Sprintf("/bca/configuracion/rubros/crear?id=%s", rubro.Id.String()))}>
-                <div class="hover:cursor-pointer">
-                    @icons.EditIcon()
-                </div>
-              </a>
-            </td>
-          </tr>
-        }
-      }
-    </tbody>
-  </table>
+<table>
+  <thead>
+    <tr>
+      <td width="200px">Código</td>
+      <td width="400px">Nombre</td>
+      <td width="200px">Unidad</td>
+      <td width="50px"></td>
+    </tr>
+  </thead>
+  <tbody>
+    if len(rubros) == 0 {
+    <tr>
+      <td colspan="4">No existen rubros</td>
+    </tr>
+    } else {
+    for _, rubro := range rubros {
+    <tr>
+      <td>{ rubro.Code }</td>
+      <td>{ rubro.Name }</td>
+      <td>{ rubro.Unit }</td>
+      <td>
+        <a href={ templ.SafeURL(fmt.Sprintf("/bca/configuracion/rubros/crear?id=%s", rubro.Id.String())) }>
+          <div class="hover:cursor-pointer">
+            @icons.EditIcon()
+          </div>
+        </a>
+      </td>
+    </tr>
+    }
+    }
+  </tbody>
+</table>
 }

@@ -1,17 +1,16 @@
 package server
 
 import (
-	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/transaction"
 )
 
 func (s *Server) Budget(w http.ResponseWriter, r *http.Request) {
@@ -65,19 +64,18 @@ func (s *Server) Closure(w http.ResponseWriter, r *http.Request) {
 		d := r.Form.Get("date")
 		if d == "" {
 			w.WriteHeader(http.StatusBadRequest)
-      w.Write([]byte("Ingrese una fecha"))
+			w.Write([]byte("Ingrese una fecha"))
 			return
 		}
 		date, err := time.Parse("2006-01-02", d)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-      w.Write([]byte("Ingrese una fecha válida"))
+			w.Write([]byte("Ingrese una fecha válida"))
 			return
 		}
 
 		if err := s.DB.CreateClosure(ctx.CompanyId, parsedProjectId, date); err != nil {
-			log.Println(err)
-			log.Println(fmt.Sprintf("No se pudo cerrar el proyecto: %s para la fecha: %s", parsedProjectId, utils.ConvertDate(date)))
+			slog.Error("No se pudo cerrar el proyecto", "err", err, "project", parsedProjectId, "date", utils.ConvertDate(date))
 			success = "false"
 		}
 		// w.WriteHeader(http.StatusOK)

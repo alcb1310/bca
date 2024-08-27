@@ -2,11 +2,11 @@ package database
 
 import (
 	"errors"
-	"log"
+	"log/slog"
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func (s *service) GetBudgetItems(companyId uuid.UUID, search string) ([]types.BudgetItemResponse, error) {
@@ -64,8 +64,11 @@ func (s *service) UpdateBudgetItem(bi *types.BudgetItem) error {
 	if err != nil {
 		return err
 	}
-	if *bi.ParentId != parentId {
-		return errors.New("No se puede cambiar la partida padre")
+
+	if bi.ParentId != nil {
+		if *bi.ParentId != parentId {
+			return errors.New("No se puede cambiar la partida padre")
+		}
 	}
 
 	var level uint8 = 1
@@ -145,7 +148,7 @@ func (s *service) GetBudgetItemsByLevel(companyId uuid.UUID, level uint8) []type
 		  `
 	rows, err := s.db.Query(sql, companyId, level)
 	if err != nil {
-		log.Println(err)
+		slog.Error("GetBudgetItemsByLevel", "err", err)
 		return nil
 	}
 	defer rows.Close()
@@ -162,13 +165,12 @@ func (s *service) GetBudgetItemsByLevel(companyId uuid.UUID, level uint8) []type
 }
 
 func (s *service) GetNonAccumulateChildren(companyId, id *uuid.UUID, budgetItems []types.BudgetItem, results []uuid.UUID) []uuid.UUID {
-
 	if len(budgetItems) == 0 {
 		return results
 	}
 	res := results
 	for _, b := range budgetItems {
-		if b.Accumulate.Bool == false {
+		if !b.Accumulate.Bool {
 			res = append(res, b.ID)
 			continue
 		}
@@ -186,7 +188,7 @@ func (s *service) getFirstChildren(bi types.BudgetItem) []types.BudgetItem {
 	 `
 	rows, err := s.db.Query(sql, bi.CompanyId, bi.ID)
 	if err != nil {
-		log.Println(err)
+		slog.Error("getFirstChildren", "err", err)
 		return nil
 	}
 	defer rows.Close()
@@ -196,7 +198,7 @@ func (s *service) getFirstChildren(bi types.BudgetItem) []types.BudgetItem {
 	for rows.Next() {
 		bi := types.BudgetItem{}
 		if err := rows.Scan(&bi.ID, &bi.Code, &bi.Name, &bi.Level, &bi.Accumulate, &bi.ParentId, &bi.CompanyId); err != nil {
-			log.Println(err)
+			slog.Error("getFirstChildren", "err", err)
 			return nil
 		}
 		bis = append(bis, bi)

@@ -8,9 +8,11 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "fmt"
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/views/components/icons"
+import (
+	"fmt"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/views/components/icons"
+)
 
 func CategoriesTable(categories []types.Category) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -48,7 +50,7 @@ func CategoriesTable(categories []types.Category) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(category.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/categoriestable.templ`, Line: 23, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/categoriestable.templ`, Line: 25, Col: 25}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -61,7 +63,7 @@ func CategoriesTable(categories []types.Category) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/categories/%s", category.Id.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/categoriestable.templ`, Line: 27, Col: 91}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/categoriestable.templ`, Line: 27, Col: 115}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {

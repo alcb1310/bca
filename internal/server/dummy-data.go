@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"bca-go-final/internal/utils"
+	"github.com/alcb1310/bca/internal/utils"
 )
 
 func (s *Server) loadDummyDataHandler(w http.ResponseWriter, r *http.Request) {

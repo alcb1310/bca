@@ -8,10 +8,12 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "fmt"
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/utils"
-import "bca-go-final/internal/views/components/icons"
+import (
+	"fmt"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/components/icons"
+)
 
 func CantidadesTable(quantities []types.Quantity) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -49,7 +51,7 @@ func CantidadesTable(quantities []types.Quantity) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(quantity.Project.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 27, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 29, Col: 33}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -62,7 +64,7 @@ func CantidadesTable(quantities []types.Quantity) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(quantity.Rubro.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 28, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 30, Col: 31}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -75,7 +77,7 @@ func CantidadesTable(quantities []types.Quantity) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(quantity.Rubro.Unit)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 29, Col: 52}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 31, Col: 46}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -88,7 +90,7 @@ func CantidadesTable(quantities []types.Quantity) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(quantity.Quantity))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 30, Col: 67}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 32, Col: 61}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -101,7 +103,7 @@ func CantidadesTable(quantities []types.Quantity) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/cantidades/%s", quantity.Id.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 34, Col: 89}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 34, Col: 115}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -122,7 +124,7 @@ func CantidadesTable(quantities []types.Quantity) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/cantidades/%s", quantity.Id.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 44, Col: 92}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 38, Col: 118}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -133,9 +135,10 @@ func CantidadesTable(quantities []types.Quantity) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("Eliminar el rubro: %s\n del proyecto: %s", quantity.Rubro.Name, quantity.Project.Name))
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("Eliminar el rubro: %s\n del proyecto: %s", quantity.Rubro.Name,
+					quantity.Project.Name))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 45, Col: 128}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/cantidadestable.templ`, Line: 40, Col: 32}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {

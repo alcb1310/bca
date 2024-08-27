@@ -8,10 +8,12 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "fmt"
-import "bca-go-final/internal/views/components"
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/utils"
+import (
+	"fmt"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/components"
+)
 
 func quantityValText(quantity *types.Quantity, text string) string {
 	if quantity == nil {
@@ -61,7 +63,7 @@ func EditCantidades(quantities *types.Quantity, projects, items []types.Select) 
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(qExists(quantities))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/editcantidades.templ`, Line: 32, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/editcantidades.templ`, Line: 34, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -82,9 +84,10 @@ func EditCantidades(quantities *types.Quantity, projects, items []types.Select) 
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/cantidades/%s", quantities.Id.String()))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(
+				fmt.Sprintf("/bca/partials/cantidades/%s", quantities.Id.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/editcantidades.templ`, Line: 38, Col: 81}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/unit_cost/partials/editcantidades.templ`, Line: 36, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -114,11 +117,13 @@ func EditCantidades(quantities *types.Quantity, projects, items []types.Select) 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", quantityValText(quantities, "project"), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", quantityValText(quantities,
+			"project"), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.SelectComponent(items, "Seleccione un Rubro", "item", "item", quantityValText(quantities, "item"), "Rubro").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.SelectComponent(items, "Seleccione un Rubro", "item", "item", quantityValText(quantities, "item"),
+			"Rubro").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -134,7 +139,7 @@ func EditCantidades(quantities *types.Quantity, projects, items []types.Select) 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n    var h = document.getElementById(\"hidden\")\n    var project = document.getElementById(\"project\")\n    var item = document.getElementById(\"item\")\n\n    if (h.value === \"false\") {\n      project.disabled = true\n      item.disabled = true\n    } else {\n      project.disabled = false\n      item.disabled = false\n    }\n\n    function handleHtmxError(event) {\n      document.getElementById(\"error\").innerHTML = \"\"\n\n      if (event.detail.xhr.status === 200) {\n        resetClose()\n        return\n      }\n\n      document.getElementById(\"error\").innerHTML = event.detail.xhr.responseText\n    }\n\n    function resetClose() {\n      closeDrawer()\n    }\n  </script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n  var h = document.getElementById(\"hidden\")\n  var project = document.getElementById(\"project\")\n  var item = document.getElementById(\"item\")\n\n  if (h.value === \"false\") {\n    project.disabled = true\n    item.disabled = true\n  } else {\n    project.disabled = false\n    item.disabled = false\n  }\n\n  function handleHtmxError(event) {\n    document.getElementById(\"error\").innerHTML = \"\"\n\n    if (event.detail.xhr.status === 200) {\n      resetClose()\n      return\n    }\n\n    document.getElementById(\"error\").innerHTML = event.detail.xhr.responseText\n  }\n\n  function resetClose() {\n    closeDrawer()\n  }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

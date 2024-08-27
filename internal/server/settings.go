@@ -2,22 +2,21 @@ package server
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings"
-	"bca-go-final/internal/views/bca/settings/partials"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/settings"
+	"github.com/alcb1310/bca/internal/views/bca/settings/partials"
 )
 
 func (s *Server) BudgetItems(w http.ResponseWriter, r *http.Request) {
 	component := settings.BudgetItems()
 	component.Render(r.Context(), w)
-
 }
 
 func (s *Server) Suppliers(w http.ResponseWriter, r *http.Request) {
@@ -106,12 +105,12 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
 				w.WriteHeader(http.StatusConflict)
-				w.Write([]byte(fmt.Sprintf("El Código %s ya existe", rubro.Code)))
+				w.Write([]byte(fmt.Sprintf("El rubro con código %s y/o nombre %s ya existe", rubro.Code, rubro.Name)))
 				return
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error(err.Error())
 			w.Write([]byte(err.Error()))
 			return
 		}
@@ -130,7 +129,7 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error(err.Error())
 			w.Write([]byte(err.Error()))
 			return
 		}

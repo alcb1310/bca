@@ -1,54 +1,50 @@
 package partials
 
-import "fmt"
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/utils"
-import "bca-go-final/internal/views/components/icons"
+import (
+"fmt"
+"github.com/alcb1310/bca/internal/types"
+"github.com/alcb1310/bca/internal/utils"
+"github.com/alcb1310/bca/internal/views/components/icons"
+)
 
 templ ProjectsTable(projects []types.Project) {
-	<table>
-		<thead>
-			<tr>
-				<th width="300px">Nombre</th>
-				<th width="150px">Area Bruta <span class="lowercase">(m2)</span></th>
-				<th width="150px">Area Util (m2)</th>
-				<th width="100px">Activo</th>
-				<th width="50px"></th>
-			</tr>
-		</thead>
-		<tbody>
-			if len(projects) == 0 {
-				<tr>
-					<td colspan="3">No existen proyectos</td>
-				</tr>
-			} else {
-				for _, project := range projects {
-					<tr>
-						<td>{ project.Name }</td>
-						<td align="right">{ utils.PrintFloat(project.GrossArea) }</td>
-						<td align="right">{ utils.PrintFloat(project.NetArea) }</td>
-						<td align="center">
-							if *project.IsActive {
-                @icons.CheckCircleIcon()
-							} else {
-                @icons.XMarkCircleIcon()
-							}
-						</td>
-						<td align="center">
-              <div
-                class="hover:cursor-pointer"
-                hx-get={ fmt.Sprintf("/bca/partials/projects/%s", project.ID.String()) }
-                hx-target="#drawer"
-                hx-swap="innerHTML"
-                hx-trigger="click"
-                _="on click openDrawer()"
-              >
-                @icons.EditIcon()
-              </div>
-						</td>
-					</tr>
-				}
-			}
-		</tbody>
-	</table>
+<table>
+  <thead>
+    <tr>
+      <th width="300px">Nombre</th>
+      <th width="150px">Area Bruta <span class="lowercase">(m2)</span></th>
+      <th width="150px">Area Util (m2)</th>
+      <th width="100px">Activo</th>
+      <th width="50px"></th>
+    </tr>
+  </thead>
+  <tbody>
+    if len(projects) == 0 {
+    <tr>
+      <td colspan="3">No existen proyectos</td>
+    </tr>
+    } else {
+    for _, project := range projects {
+    <tr>
+      <td>{ project.Name }</td>
+      <td align="right">{ utils.PrintFloat(project.GrossArea) }</td>
+      <td align="right">{ utils.PrintFloat(project.NetArea) }</td>
+      <td align="center">
+        if *project.IsActive {
+        @icons.CheckCircleIcon()
+        } else {
+        @icons.XMarkCircleIcon()
+        }
+      </td>
+      <td align="center">
+        <div class="hover:cursor-pointer" hx-get={ fmt.Sprintf("/bca/partials/projects/%s", project.ID.String()) }
+          hx-target="#drawer" hx-swap="innerHTML" hx-trigger="click" _="on click openDrawer()">
+          @icons.EditIcon()
+        </div>
+      </td>
+    </tr>
+    }
+    }
+  </tbody>
+</table>
 }

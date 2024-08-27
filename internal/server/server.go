@@ -1,8 +1,6 @@
 package server
 
 import (
-	"bca-go-final/internal/database"
-	"bca-go-final/internal/utils"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -11,6 +9,9 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/lestrrat-go/jwx/v2/jwt"
+
+	"github.com/alcb1310/bca/internal/database"
+	"github.com/alcb1310/bca/internal/utils"
 )
 
 type Server struct {
@@ -32,8 +33,8 @@ func NewServer(db database.Service, secret string) *Server {
 	s.Router.Get("/", s.HelloWorldHandler)
 	s.RegisterRoutes(s.Router)
 
-	s.Router.Get("/login", s.DisplayLogin)
-	s.Router.Post("/login", s.LoginView) // fully unit tested
+	s.Router.Get("/login", s.DisplayLogin) // fully tested
+	s.Router.Post("/login", s.LoginView)   // fully tested
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
@@ -69,15 +70,15 @@ func NewServer(db database.Service, secret string) *Server {
 		r.Route("/configuracion", func(r chi.Router) {
 			r.HandleFunc("/partidas", s.BudgetItems)
 			r.HandleFunc("/proveedores", s.Suppliers)
-			r.HandleFunc("/proyectos", s.Projects)
+			r.HandleFunc("/proyectos", s.Projects) // fully tested
 			r.HandleFunc("/categorias", s.Categories)
 			r.HandleFunc("/materiales", s.Materiales)
 			r.HandleFunc("/rubros", s.Rubros)
-			r.HandleFunc("/rubros/crear", s.RubrosAdd)
+			r.HandleFunc("/rubros/crear", s.RubrosAdd) // fully integration tested
 		})
 
 		r.Route("/user", func(r chi.Router) {
-			r.HandleFunc("/perfil", s.Profile)
+			r.HandleFunc("/perfil", s.Profile) // fully tested
 			r.HandleFunc("/admin", s.Admin)
 			r.HandleFunc("/cambio", s.ChangePassword)
 		})
@@ -89,36 +90,36 @@ func NewServer(db database.Service, secret string) *Server {
 
 		r.Route("/partials", func(r chi.Router) {
 			r.Route("/users", func(r chi.Router) {
-				r.HandleFunc("/", s.UsersTable) // fully unit tested
+				r.HandleFunc("/", s.UsersTable) // fully tested
 				r.HandleFunc("/add", s.UserAdd)
 				r.HandleFunc("/edit/{id}", s.UserEdit) // convert
-				r.HandleFunc("/{id}", s.SingleUser)    // convert
+				r.HandleFunc("/{id}", s.SingleUser)    // fully tested
 			})
 
 			r.Route("/projects", func(r chi.Router) {
-				r.HandleFunc("/", s.ProjectsTable) // fully unit tested
+				r.HandleFunc("/", s.ProjectsTable) // fully tested
 				r.HandleFunc("/add", s.ProjectAdd)
-				r.HandleFunc("/edit/{id}", s.ProjectEditSave) // convert fully unit tested
-				r.HandleFunc("/{id}", s.ProjectEdit)          // convert
+				r.HandleFunc("/edit/{id}", s.ProjectEditSave) // convert fully tested
+				r.HandleFunc("/{id}", s.ProjectEdit)          // convert fully tested
 			})
 
 			r.Route("/suppliers", func(r chi.Router) {
-				r.HandleFunc("/", s.SuppliersTable) // fully unit tested
+				r.HandleFunc("/", s.SuppliersTable) // fully tested
 				r.HandleFunc("/add", s.SupplierAdd)
-				r.HandleFunc("/edit/{id}", s.SuppliersEditSave) // convert fully unit tested
-				r.HandleFunc("/{id}", s.SuppliersEdit)          // convert
+				r.HandleFunc("/edit/{id}", s.SuppliersEditSave) // convert fully tested
+				r.HandleFunc("/{id}", s.SuppliersEdit)          // convert fully tested
 			})
 
 			r.Route("/budget-item", func(r chi.Router) {
-				r.HandleFunc("/", s.BudgetItemsTable) // fully unit tested
+				r.HandleFunc("/", s.BudgetItemsTable) // fully tested
 				r.HandleFunc("/add", s.BudgetItemAdd)
-				r.HandleFunc("/{id}", s.BudgetItemEdit) // convert fully unit tested
+				r.HandleFunc("/{id}", s.BudgetItemEdit) // convert fully tested
 			})
 
 			r.Route("/budgets", func(r chi.Router) {
-				r.HandleFunc("/", s.BudgetsTable) // fully unit tested
+				r.HandleFunc("/", s.BudgetsTable) // fully tested
 				r.HandleFunc("/add", s.BudgetAdd)
-				r.HandleFunc("/{projectId}/{budgetItemId}", s.BudgetEdit) // convert fully unit tested
+				r.HandleFunc("/{projectId}/{budgetItemId}", s.BudgetEdit) // convert fully tested
 			})
 
 			r.Route("/invoices", func(r chi.Router) {
@@ -133,19 +134,19 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/categories", func(r chi.Router) {
-				r.HandleFunc("/", s.CategoriesTable) // fully unit tested
+				r.HandleFunc("/", s.CategoriesTable) // fully tested
 				r.HandleFunc("/add", s.CategoryAdd)
-				r.HandleFunc("/{id}", s.EditCategory) // convert fully unit tested
+				r.HandleFunc("/{id}", s.EditCategory) // convert fully tested
 			})
 
 			r.Route("/materiales", func(r chi.Router) {
-				r.HandleFunc("/", s.MaterialsTable) // fully unit tested
+				r.HandleFunc("/", s.MaterialsTable) // fully tested
 				r.HandleFunc("/add", s.MaterialsAdd)
-				r.HandleFunc("/{id}", s.MaterialsEdit) // convert fully unit tested
+				r.HandleFunc("/{id}", s.MaterialsEdit) // convert fully tested
 			})
 
 			r.Route("/rubros", func(r chi.Router) {
-				r.HandleFunc("/", s.RubrosTable)
+				r.HandleFunc("/", s.RubrosTable)                                       // fully tested
 				r.HandleFunc("/{id}", s.MaterialsByItem)                               // convert
 				r.HandleFunc("/{id}/material", s.MaterialByItemForm)                   // convert fully unit tested
 				r.HandleFunc("/{id}/material/{materialId}", s.MaterialItemsOperations) // convert fully unit tested

@@ -1,11 +1,11 @@
 package database
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func (s *service) GetAllMaterials(companyId uuid.UUID) []types.Material {
@@ -20,7 +20,7 @@ func (s *service) GetAllMaterials(companyId uuid.UUID) []types.Material {
     `
 	rows, err := s.db.Query(query, companyId)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error(err.Error())
 		return materials
 	}
 	defer rows.Close()
@@ -28,7 +28,7 @@ func (s *service) GetAllMaterials(companyId uuid.UUID) []types.Material {
 	for rows.Next() {
 		var material types.Material
 		if err := rows.Scan(&material.Id, &material.Code, &material.Name, &material.Unit, &material.Category.Name, &material.Category.Id, &material.CompanyId); err != nil {
-			log.Fatal(err)
+			slog.Error(err.Error())
 			return materials
 		}
 		materials = append(materials, material)

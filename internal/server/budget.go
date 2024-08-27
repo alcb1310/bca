@@ -1,17 +1,18 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/transaction/partials"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/transaction/partials"
 )
 
 func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
@@ -74,13 +75,13 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 
 		if _, err := s.DB.CreateBudget(b); err != nil {
 			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
+				w.WriteHeader(http.StatusConflict)
 				w.Write([]byte(fmt.Sprintf("Ya existe partida %s en el proyecto %s", b.BudgetItemId, b.ProjectId)))
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
-			log.Println(err)
+			slog.Error(err.Error())
 			return
 		}
 	}
@@ -94,7 +95,7 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
-			log.Println(err)
+			slog.Error(err.Error())
 			return
 		}
 	}

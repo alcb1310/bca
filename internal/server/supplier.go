@@ -3,7 +3,6 @@ package server
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -11,9 +10,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/settings/partials"
 )
 
 func (s *Server) SuppliersTable(w http.ResponseWriter, r *http.Request) {
@@ -88,7 +87,13 @@ func (s *Server) SuppliersEdit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sup, _ := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
+	sup, err := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Proveedor no encontrado"))
+		return
+	}
+
 	component := partials.EditSupplier(&sup)
 	component.Render(r.Context(), w)
 }
@@ -104,15 +109,15 @@ func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 
 	sup, _ := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
 	r.ParseForm()
-  sp := r.Form.Get("supplier_id")
-  if sp != "" {
-    sup.SupplierId = sp
-  }
+	sp := r.Form.Get("supplier_id")
+	if sp != "" {
+		sup.SupplierId = sp
+	}
 
-  nm := r.Form.Get("name")
-  if nm != "" {
-    sup.Name = nm
-  }
+	nm := r.Form.Get("name")
+	if nm != "" {
+		sup.Name = nm
+	}
 
 	e := r.Form.Get("contact_email")
 	if e != "" && !utils.IsValidEmail(e) {
@@ -138,7 +143,7 @@ func (s *Server) SuppliersEditSave(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(fmt.Sprintf("El ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
 			return
 		}
-		log.Println(fmt.Sprintf("ERROR: %s", err.Error()))
+		slog.Error("Error updating supplier", "error", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(fmt.Sprintf("<p>%s</p>", err.Error())))
 		return

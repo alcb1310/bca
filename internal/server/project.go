@@ -1,17 +1,18 @@
 package server
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/settings/partials"
 )
 
 func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
@@ -55,7 +56,7 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			w.WriteHeader(http.StatusInternalServerError)
-			log.Println(err)
+			slog.Error("CreateProject error", "error", err)
 			return
 		}
 
@@ -109,7 +110,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Println(err)
+		slog.Error("UpdateProject error", "error", err)
 		return
 	}
 
@@ -122,7 +123,12 @@ func (s *Server) ProjectEdit(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
-	p, _ := s.DB.GetProject(parsedId, ctx.CompanyId)
+	p, err := s.DB.GetProject(parsedId, ctx.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Proyecto no encontrado"))
+		return
+	}
 
 	component := partials.EditProject(&p)
 	component.Render(r.Context(), w)

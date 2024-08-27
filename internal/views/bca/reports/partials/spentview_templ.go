@@ -8,9 +8,11 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/utils"
-import "bca-go-final/internal/views/components/icons"
+import (
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/components/icons"
+)
 
 func displayURL(budgetItemId, projectId, date string) string {
 	return "/bca/reportes/gastado/" + projectId + "/" + budgetItemId + "/" + date
@@ -46,7 +48,7 @@ func SpentView(data types.SpentResponse) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(spent.BudgetItem.Code)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/spentview.templ`, Line: 24, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/spentview.templ`, Line: 26, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -59,7 +61,7 @@ func SpentView(data types.SpentResponse) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(spent.BudgetItem.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/spentview.templ`, Line: 25, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/spentview.templ`, Line: 27, Col: 33}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -72,7 +74,7 @@ func SpentView(data types.SpentResponse) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(spent.Spent))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/spentview.templ`, Line: 26, Col: 54}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/spentview.templ`, Line: 28, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -83,9 +85,10 @@ func SpentView(data types.SpentResponse) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(displayURL(spent.BudgetItem.ID.String(), data.Project.String(), ctx.Value("date").(string)))
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(displayURL(spent.BudgetItem.ID.String(), data.Project.String(),
+				ctx.Value("date").(string)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/spentview.templ`, Line: 30, Col: 107}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/spentview.templ`, Line: 31, Col: 37}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -111,7 +114,7 @@ func SpentView(data types.SpentResponse) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(data.Total))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/spentview.templ`, Line: 44, Col: 76}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/spentview.templ`, Line: 41, Col: 77}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {

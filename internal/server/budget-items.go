@@ -3,16 +3,16 @@ package server
 import (
 	"database/sql"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views/bca/settings/partials"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/bca/settings/partials"
 )
 
 func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +21,7 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 
 		if err := r.ParseForm(); err != nil {
-			log.Println(err)
+			slog.Error("BudgetItemsTable error", "error", err)
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte(err.Error()))
 			return
@@ -36,7 +36,7 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 			z, err := uuid.Parse(p)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
-				log.Println(err)
+				slog.Error("BudgetItemsTable error", "error", err)
 				w.Write([]byte("Código de la partida padre es inválido"))
 				return
 			}
@@ -69,7 +69,7 @@ func (s *Server) BudgetItemsTable(w http.ResponseWriter, r *http.Request) {
 			}
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
-			log.Println(err)
+			slog.Error("BudgetItemsTable error", "error", err)
 			return
 		}
 	}
@@ -91,34 +91,40 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
-	budgetItem, _ := s.DB.GetOneBudgetItem(parsedId, ctxPayload.CompanyId)
+	budgetItem, err := s.DB.GetOneBudgetItem(parsedId, ctxPayload.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Partida no encontrada"))
+		return
+	}
 
 	switch r.Method {
 	case http.MethodPut:
 		r.ParseForm()
-    biCode := r.Form.Get("code")
-    if biCode != "" {
-      budgetItem.Code = biCode
-    }
+		biCode := r.Form.Get("code")
+		if biCode != "" {
+			budgetItem.Code = biCode
+		}
 
-    biName := r.Form.Get("name")
-    if biName != "" {
-      budgetItem.Name = biName
-    }
+		biName := r.Form.Get("name")
+		if biName != "" {
+			budgetItem.Name = biName
+		}
 
 		x := r.Form.Get("accumulate") == "accumulate"
 		acc := sql.NullBool{Valid: true, Bool: x}
 		budgetItem.Accumulate = acc
-		p := r.Form.Get("parent")
+
 		var u *uuid.UUID
+		p := r.Form.Get("parent")
 		if p == "" {
-			u = nil
+			u = budgetItem.ParentId
 		} else {
 			z, err := uuid.Parse(p)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write([]byte("Código de la partida padre es inválido"))
-				log.Println(err)
+				slog.Error("BudgetItemEdit error", "error", err)
 				return
 			}
 			u = &z
@@ -142,9 +148,16 @@ func (s *Server) BudgetItemEdit(w http.ResponseWriter, r *http.Request) {
 				w.Write([]byte(fmt.Sprintf("Ya existe una partida con el mismo código: %s y/o el mismo nombre: %s", budgetItem.Code, budgetItem.Name)))
 				return
 			}
+
+			if strings.Contains(err.Error(), "partida padre") {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte(err.Error()))
+				return
+			}
+
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
-			log.Println(err)
+			slog.Error("BudgetItemEdit error", "error", err)
 			return
 		}
 

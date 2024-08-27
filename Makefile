@@ -11,12 +11,24 @@ build:
 run:
 	@go run cmd/api/main.go
 
-# Test the application
-unit-test:
-	@echo "Testing..."
+clean:
+	@echo "Cleaning..."
 	@go clean -testcache
 	@echo "Cache cleaned..."
+
+# Test the application
+unit-test: clean
+	@echo "Unit Tests..."
 	@go test `go list ./... | grep -v ./cmd/api | grep -v ./internal/database | grep -v ./mocks | grep -v ./tests | grep -v ./internal/views`
+
+integration-test: clean
+	@echo "Integration Tests..."
+	@go test ./tests/integration
+
+coverage: clean
+	@echo "Coverage..."
+	@go test ./... -coverprofile=coverage.out
+	@go tool cover -html=coverage.out
 
 # Live Reload
 watch:
