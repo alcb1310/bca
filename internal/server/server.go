@@ -45,47 +45,47 @@ func NewServer(db database.Service, secret string) *Server {
 		r.Post("/dummy-data", s.loadDummyDataHandler)
 
 		r.Route("/transacciones", func(r chi.Router) {
-			r.HandleFunc("/presupuesto", s.Budget)
-			r.HandleFunc("/facturas", s.Invoice)
+			r.Get("/presupuesto", s.Budget)
+			r.Get("/facturas", s.Invoice)
 			r.HandleFunc("/facturas/crear", s.InvoiceAdd) // fullly unit tested
 			r.HandleFunc("/cierre", s.Closure)            // fullly unit tested
 		})
 
 		r.Route("/reportes", func(r chi.Router) {
-			r.HandleFunc("/actual", s.Actual)
+			r.Get("/actual", s.Actual)
 			r.HandleFunc("/actual/generar", s.ActualGenerate)
 			r.HandleFunc("/cuadre", s.Balance)
-			r.HandleFunc("/historico", s.Historic)
-			r.HandleFunc("/gastado", s.Spent)
-			r.HandleFunc("/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) // convert
+			r.Get("/historico", s.Historic)
+			r.Get("/gastado", s.Spent)
+			r.Get("/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) // convert
 
 			r.Route("/excel", func(r chi.Router) {
-				r.HandleFunc("/cuadre", s.BalanceExcel)
-				r.HandleFunc("/actual", s.ActualExcel)
-				r.HandleFunc("/historico", s.HistoricExcel)
-				r.HandleFunc("/gastado", s.SpentExcel)
+				r.Get("/cuadre", s.BalanceExcel)
+				r.Get("/actual", s.ActualExcel)
+				r.Get("/historico", s.HistoricExcel)
+				r.Get("/gastado", s.SpentExcel)
 			})
 		})
 
 		r.Route("/configuracion", func(r chi.Router) {
-			r.HandleFunc("/partidas", s.BudgetItems)
-			r.HandleFunc("/proveedores", s.Suppliers)
-			r.HandleFunc("/proyectos", s.Projects) // fully tested
-			r.HandleFunc("/categorias", s.Categories)
-			r.HandleFunc("/materiales", s.Materiales)
-			r.HandleFunc("/rubros", s.Rubros)
+			r.Get("/partidas", s.BudgetItems)
+			r.Get("/proveedores", s.Suppliers)
+			r.Get("/proyectos", s.Projects) // fully tested
+			r.Get("/categorias", s.Categories)
+			r.Get("/materiales", s.Materiales)
+			r.Get("/rubros", s.Rubros)
 			r.HandleFunc("/rubros/crear", s.RubrosAdd) // fully integration tested
 		})
 
 		r.Route("/user", func(r chi.Router) {
-			r.HandleFunc("/perfil", s.Profile) // fully tested
-			r.HandleFunc("/admin", s.Admin)
-			r.HandleFunc("/cambio", s.ChangePassword)
+			r.Get("/perfil", s.Profile) // fully tested
+			r.Get("/admin", s.Admin)
+			r.Get("/cambio", s.ChangePassword)
 		})
 
 		r.Route("/costo-unitario", func(r chi.Router) {
-			r.HandleFunc("/cantidades", s.UnitQuantity)
-			r.HandleFunc("/analisis", s.UnitAnalysis)
+			r.Get("/cantidades", s.UnitQuantity)
+			r.Get("/analisis", s.UnitAnalysis)
 		})
 
 		r.Route("/partials", func(r chi.Router) {
