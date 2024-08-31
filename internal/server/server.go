@@ -53,8 +53,9 @@ func NewServer(db database.Service, secret string) *Server {
 
 		r.Route("/reportes", func(r chi.Router) {
 			r.Get("/actual", s.Actual)
-			r.HandleFunc("/actual/generar", s.ActualGenerate)
-			r.HandleFunc("/cuadre", s.Balance)
+			r.Get("/actual/generar", s.ActualGenerate)
+			r.Post("/cuadre", s.RetreiveBalance)
+			r.Get("/cuadre", s.GetBalance)
 			r.Get("/historico", s.Historic)
 			r.Get("/gastado", s.Spent)
 			r.Get("/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) // convert
