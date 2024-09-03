@@ -106,10 +106,11 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/projects", func(r chi.Router) {
-				r.HandleFunc("/", s.ProjectsTable) // fully tested
-				r.HandleFunc("/add", s.ProjectAdd)
-				r.HandleFunc("/edit/{id}", s.ProjectEditSave) // convert fully tested
-				r.HandleFunc("/{id}", s.ProjectEdit)          // convert fully tested
+				r.Get("/", s.ProjectsTableDisplay)
+				r.Post("/", s.ProjectsTable)
+				r.Get("/add", s.ProjectAdd)
+				r.Put("/edit/{id}", s.ProjectEditSave)
+				r.Get("/{id}", s.ProyectDisplay)
 			})
 
 			r.Route("/suppliers", func(r chi.Router) {
