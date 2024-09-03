@@ -117,14 +117,16 @@ func NewServer(db database.Service, secret string) *Server {
 				r.Get("/", s.SuppliersTableDisplay)
 				r.Post("/", s.CreateSupplier)
 				r.Get("/add", s.SupplierAdd)
-				r.Put("/edit/{id}", s.EditSupplier) // convert fully tested
-				r.Get("/{id}", s.GetSupplier)          // convert fully tested
+				r.Put("/edit/{id}", s.EditSupplier)
+				r.Get("/{id}", s.GetSupplier)
 			})
 
 			r.Route("/budget-item", func(r chi.Router) {
-				r.HandleFunc("/", s.BudgetItemsTable) // fully tested
-				r.HandleFunc("/add", s.BudgetItemAdd)
-				r.HandleFunc("/{id}", s.BudgetItemEdit) // convert fully tested
+				r.Get("/", s.BudgetItemsTableDisplay)
+				r.Post("/", s.BudgetItemsTable)
+				r.Get("/add", s.BudgetItemAdd)
+				r.Put("/{id}", s.EditBudgetItem)
+				r.Get("/{id}", s.BudgetItemEdit)
 			})
 
 			r.Route("/budgets", func(r chi.Router) {
