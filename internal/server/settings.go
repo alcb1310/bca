@@ -47,6 +47,82 @@ func (s *Server) Rubros(w http.ResponseWriter, r *http.Request) {
 func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 	redirectURL := "/bca/configuracion/rubros/crear"
+	var rubro types.Rubro
+
+	id := r.URL.Query().Get("id")
+
+	if id != "" {
+		parsedId, err := uuid.Parse(id)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		rubro, err = s.DB.GetOneRubro(parsedId, ctxPayload.CompanyId)
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		redirectURL = fmt.Sprintf("%s?id=%s", redirectURL, id)
+	}
+
+	r.ParseForm()
+
+	code := r.Form.Get("code")
+	if code == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un valor para el Código"))
+		return
+	}
+
+	name := r.Form.Get("name")
+	if name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un valor para el Nombre"))
+		return
+	}
+
+	unit := r.Form.Get("unit")
+	if unit == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un valor para la Unidad"))
+		return
+	}
+
+	rubro = types.Rubro{
+		Code:      code,
+		Name:      name,
+		Unit:      unit,
+		CompanyId: ctxPayload.CompanyId,
+	}
+
+	rubroId, err := s.DB.CreateRubro(rubro)
+	if err != nil {
+		if strings.Contains(err.Error(), "duplicate") {
+			w.WriteHeader(http.StatusConflict)
+			w.Write([]byte(fmt.Sprintf("El rubro con código %s y/o nombre %s ya existe", rubro.Code, rubro.Name)))
+			return
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		slog.Error(err.Error())
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	redirectURL = fmt.Sprintf("%s?id=%s", redirectURL, rubroId)
+	rubro.Id = rubroId
+
+	component := partials.EditRubros(&rubro)
+	w.Header().Set("HX-Redirect", redirectURL)
+	w.WriteHeader(http.StatusOK)
+	component.Render(r.Context(), w)
+}
+
+func (s *Server) RubrosAddForm(w http.ResponseWriter, r *http.Request) {
+	ctxPayload, _ := utils.GetMyPaload(r)
+	redirectURL := "/bca/configuracion/rubros/crear"
 	var rubro *types.Rubro = nil
 
 	id := r.URL.Query().Get("id")
@@ -68,74 +144,80 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 		redirectURL = fmt.Sprintf("%s?id=%s", redirectURL, id)
 	}
 
-	if r.Method == "POST" || r.Method == "PUT" {
-		r.ParseForm()
+	component := partials.EditRubros(rubro)
+	w.Header().Set("HX-Redirect", redirectURL)
+	w.WriteHeader(http.StatusOK)
+	component.Render(r.Context(), w)
+}
 
-		code := r.Form.Get("code")
-		if code == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para el Código"))
-			return
-		}
+func (s *Server) RubrosEdit(w http.ResponseWriter, r *http.Request) {
+	ctxPayload, _ := utils.GetMyPaload(r)
+	redirectURL := "/bca/configuracion/rubros/crear"
+	var rubro types.Rubro
 
-		name := r.Form.Get("name")
-		if name == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para el Nombre"))
-			return
-		}
+	id := r.URL.Query().Get("id")
 
-		unit := r.Form.Get("unit")
-		if unit == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para la Unidad"))
-			return
-		}
-
-		rubro = &types.Rubro{
-			Code:      code,
-			Name:      name,
-			Unit:      unit,
-			CompanyId: ctxPayload.CompanyId,
-		}
-	}
-
-	if r.Method == "POST" {
-		id, err := s.DB.CreateRubro(*rubro)
+	if id != "" {
+		parsedId, err := uuid.Parse(id)
 		if err != nil {
-			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusConflict)
-				w.Write([]byte(fmt.Sprintf("El rubro con código %s y/o nombre %s ya existe", rubro.Code, rubro.Name)))
-				return
-			}
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 
-			w.WriteHeader(http.StatusInternalServerError)
-			slog.Error(err.Error())
-			w.Write([]byte(err.Error()))
+		rubro, err = s.DB.GetOneRubro(parsedId, ctxPayload.CompanyId)
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 
 		redirectURL = fmt.Sprintf("%s?id=%s", redirectURL, id)
-		rubro.Id = id
-
-	} else if r.Method == "PUT" {
-		rubro.Id, _ = uuid.Parse(id)
-
-		if err := s.DB.UpdateRubro(*rubro); err != nil {
-			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusConflict)
-				w.Write([]byte(fmt.Sprintf("El Código %s ya existe", rubro.Code)))
-				return
-			}
-
-			w.WriteHeader(http.StatusInternalServerError)
-			slog.Error(err.Error())
-			w.Write([]byte(err.Error()))
-			return
-		}
 	}
 
-	component := partials.EditRubros(rubro)
+	r.ParseForm()
+	code := r.Form.Get("code")
+	if code == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un valor para el Código"))
+		return
+	}
+
+	name := r.Form.Get("name")
+	if name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un valor para el Nombre"))
+		return
+	}
+
+	unit := r.Form.Get("unit")
+	if unit == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un valor para la Unidad"))
+		return
+	}
+
+	rubro = types.Rubro{
+		Code:      code,
+		Name:      name,
+		Unit:      unit,
+		CompanyId: ctxPayload.CompanyId,
+	}
+
+	rubro.Id, _ = uuid.Parse(id)
+
+	if err := s.DB.UpdateRubro(rubro); err != nil {
+		if strings.Contains(err.Error(), "duplicate") {
+			w.WriteHeader(http.StatusConflict)
+			w.Write([]byte(fmt.Sprintf("El Código %s ya existe", rubro.Code)))
+			return
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		slog.Error(err.Error())
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	component := partials.EditRubros(&rubro)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
 	component.Render(r.Context(), w)

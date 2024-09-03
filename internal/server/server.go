@@ -60,7 +60,7 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Get("/cuadre", s.GetBalance)
 			r.Get("/historico", s.Historic)
 			r.Get("/gastado", s.Spent)
-			r.Get("/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem) // convert
+			r.Get("/gastado/{projectId}/{budgetItemId}/{date}", s.SpentByBudgetItem)
 
 			r.Route("/excel", func(r chi.Router) {
 				r.Get("/cuadre", s.BalanceExcel)
@@ -73,11 +73,13 @@ func NewServer(db database.Service, secret string) *Server {
 		r.Route("/configuracion", func(r chi.Router) {
 			r.Get("/partidas", s.BudgetItems)
 			r.Get("/proveedores", s.Suppliers)
-			r.Get("/proyectos", s.Projects) // fully tested
+			r.Get("/proyectos", s.Projects)
 			r.Get("/categorias", s.Categories)
 			r.Get("/materiales", s.Materiales)
 			r.Get("/rubros", s.Rubros)
-			r.HandleFunc("/rubros/crear", s.RubrosAdd) // fully integration tested
+			r.Get("/rubros/crear", s.RubrosAddForm)
+			r.Put("/rubros/crear", s.RubrosEdit)
+			r.Post("/rubros/crear", s.RubrosAdd)
 		})
 
 		r.Route("/user", func(r chi.Router) {
