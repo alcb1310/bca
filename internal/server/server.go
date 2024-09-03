@@ -33,8 +33,8 @@ func NewServer(db database.Service, secret string) *Server {
 	s.Router.Get("/", s.HelloWorldHandler)
 	s.RegisterRoutes(s.Router)
 
-	s.Router.Get("/login", s.DisplayLogin) // fully tested
-	s.Router.Post("/login", s.LoginView)   // fully tested
+	s.Router.Get("/login", s.DisplayLogin)
+	s.Router.Post("/login", s.LoginView)
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
@@ -47,8 +47,10 @@ func NewServer(db database.Service, secret string) *Server {
 		r.Route("/transacciones", func(r chi.Router) {
 			r.Get("/presupuesto", s.Budget)
 			r.Get("/facturas", s.Invoice)
-			r.HandleFunc("/facturas/crear", s.InvoiceAdd) // fullly unit tested
-			r.HandleFunc("/cierre", s.Closure)            // fullly unit tested
+			r.Post("/facturas/crear", s.InvoiceAdd)
+			r.Get("/facturas/crear", s.InvoiceAddForm)
+			r.Get("/cierre", s.ClosureForm)
+			r.Post("/cierre", s.Closure)
 		})
 
 		r.Route("/reportes", func(r chi.Router) {

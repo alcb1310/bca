@@ -56,81 +56,119 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 		suppliers = append(suppliers, x)
 	}
 
-	if r.Method == http.MethodPost {
-		if err := r.ParseForm(); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(err.Error()))
-			return
-		}
-		pId := r.Form.Get("project")
-		if pId == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un proyecto"))
-			return
-		}
-		projectId, err := uuid.Parse(pId)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Código del proyecto inválido"))
-			return
-		}
+	if err := r.ParseForm(); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	pId := r.Form.Get("project")
+	if pId == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un proyecto"))
+		return
+	}
+	projectId, err := uuid.Parse(pId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Código del proyecto inválido"))
+		return
+	}
 
-		sId := r.Form.Get("supplier")
-		if sId == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un proveedor"))
-			return
-		}
-		supplierId, err := uuid.Parse(sId)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Código del proveedor inválido"))
-			return
-		}
+	sId := r.Form.Get("supplier")
+	if sId == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un proveedor"))
+		return
+	}
+	supplierId, err := uuid.Parse(sId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Código del proveedor inválido"))
+		return
+	}
 
-		iNumber := r.Form.Get("invoiceNumber")
-		if iNumber == "" {
+	iNumber := r.Form.Get("invoiceNumber")
+	if iNumber == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un número de factura"))
+		return
+	}
+
+	iD := r.Form.Get("invoiceDate")
+	if iD == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese una fecha"))
+		return
+	}
+
+	iDate, err := time.Parse("2006-01-02", iD)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese una fecha válida"))
+		return
+	}
+
+	i := &types.InvoiceCreate{
+		CompanyId:     ctx.CompanyId,
+		ProjectId:     &projectId,
+		SupplierId:    &supplierId,
+		InvoiceNumber: &iNumber,
+		InvoiceDate:   &iDate,
+	}
+
+	err = s.DB.CreateInvoice(i)
+	if err != nil {
+		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un número de factura"))
+			w.Write([]byte("La Factura ya existe"))
 			return
 		}
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+	in, _ := s.DB.GetOneInvoice(*i.Id, ctx.CompanyId)
+	invoice = &in
+	redirectURL += "?id=" + in.Id.String()
 
-		iD := r.Form.Get("invoiceDate")
-		if iD == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una fecha"))
-			return
-		}
+	components := partials.EditInvoice(invoice, projects, suppliers)
+	w.Header().Set("HX-Redirect", redirectURL)
+	w.WriteHeader(http.StatusOK)
+	components.Render(r.Context(), w)
+}
 
-		iDate, err := time.Parse("2006-01-02", iD)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una fecha válida"))
-			return
-		}
+func (s *Server) InvoiceAddForm(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+	var invoice *types.InvoiceResponse
+	redirectURL := "/bca/transacciones/facturas/crear"
+	invoice = nil
 
-		i := &types.InvoiceCreate{
-			CompanyId:     ctx.CompanyId,
-			ProjectId:     &projectId,
-			SupplierId:    &supplierId,
-			InvoiceNumber: &iNumber,
-			InvoiceDate:   &iDate,
-		}
+	projects := []types.Select{}
+	suppliers := []types.Select{}
 
-		err = s.DB.CreateInvoice(i)
-		if err != nil {
-			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("La Factura ya existe"))
-				return
-			}
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(err.Error()))
-			return
-		}
-		in, _ := s.DB.GetOneInvoice(*i.Id, ctx.CompanyId)
+	id := r.URL.Query().Get("id")
+	if id != "" {
+		parsedId, _ := uuid.Parse(id)
+		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 		invoice = &in
-		redirectURL += "?id=" + in.Id.String()
+	}
+
+	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
+	for _, v := range p {
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		projects = append(projects, x)
+	}
+
+	sx, _ := s.DB.GetAllSuppliers(ctx.CompanyId, "")
+	for _, v := range sx {
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		suppliers = append(suppliers, x)
 	}
 
 	components := partials.EditInvoice(invoice, projects, suppliers)

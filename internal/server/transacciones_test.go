@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/alcb1310/bca/internal/server"
-	"github.com/alcb1310/bca/internal/types"
 	"github.com/alcb1310/bca/mocks"
 )
 
@@ -76,8 +75,6 @@ func TestPostClosure(t *testing.T) {
 
 	for _, tt := range testData {
 		t.Run(tt.name, func(t *testing.T) {
-			db.EXPECT().GetActiveProjects(uuid.UUID{}, true).Return([]types.Project{})
-
 			if tt.closure != nil {
 				tt.closure.Times(1)
 			}
