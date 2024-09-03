@@ -33,3 +33,5 @@ coverage: clean
 # Live Reload
 watch:
 	@air
+
+test: unit-test integration-test
