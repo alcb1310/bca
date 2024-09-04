@@ -285,8 +285,6 @@ func TestBudgetEdit(t *testing.T) {
 
 	for _, tt := range testData {
 		t.Run(tt.name, func(t *testing.T) {
-			db.EXPECT().GetActiveProjects(uuid.UUID{}, true).Return([]types.Project{{}}).Times(1)
-			db.EXPECT().GetBudgetItemsByAccumulate(uuid.UUID{}, false).Return([]types.BudgetItem{{}}).Times(1)
 			db.EXPECT().GetOneBudget(uuid.UUID{}, projectId, budgetItemId).Return(&types.GetBudget{
 				Project: types.ProjectData{
 					ID:        projectId,
