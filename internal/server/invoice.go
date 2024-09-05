@@ -24,9 +24,8 @@ func (s *Server) InvoicesTable(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	var invoice *types.InvoiceResponse
+	var invoice types.InvoiceResponse
 	redirectURL := "/bca/transacciones/facturas/crear"
-	invoice = nil
 
 	projects := []types.Select{}
 	suppliers := []types.Select{}
@@ -34,8 +33,7 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id != "" {
 		parsedId, _ := uuid.Parse(id)
-		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
-		invoice = &in
+		invoice, _ = s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 	}
 
 	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
@@ -127,11 +125,10 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	in, _ := s.DB.GetOneInvoice(*i.Id, ctx.CompanyId)
-	invoice = &in
-	redirectURL += "?id=" + in.Id.String()
+	invoice, _ = s.DB.GetOneInvoice(*i.Id, ctx.CompanyId)
+	redirectURL += "?id=" + invoice.Id.String()
 
-	components := partials.EditInvoice(invoice, projects, suppliers)
+	components := partials.EditInvoice(&invoice, projects, suppliers)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
 	components.Render(r.Context(), w)
@@ -205,91 +202,139 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 		suppliers = append(suppliers, x)
 	}
 
-	switch r.Method {
-	case http.MethodPatch:
-		if err := s.DB.BalanceInvoice(invoice); err != nil {
-			slog.Error("Error updating invoice", "error", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
+	r.ParseForm()
+	pId := invoice.Project.ID
 
-		comp := partials.BudgetRow(in)
-		comp.Render(r.Context(), w)
+	sId, err := uuid.Parse(r.Form.Get("supplier"))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Código del proveedor inválido"))
 		return
-
-	case http.MethodDelete:
-		if err := s.DB.DeleteInvoice(parsedId, ctx.CompanyId); err != nil {
-			slog.Error("Error deleting invoice", "error", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		invoices, _ := s.DB.GetInvoices(ctx.CompanyId)
-
-		components := partials.InvoiceTable(invoices)
-		w.WriteHeader(http.StatusOK)
-		components.Render(r.Context(), w)
+	}
+	iNumber := r.Form.Get("invoiceNumber")
+	if iNumber == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese un número de factura"))
 		return
+	}
 
-	case http.MethodPut:
-		r.ParseForm()
-		pId := invoice.Project.ID
+	fDate := r.Form.Get("invoiceDate")
+	if fDate == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese una fecha"))
+		return
+	}
 
-		sId, err := uuid.Parse(r.Form.Get("supplier"))
-		if err != nil {
+	iDate, err := time.Parse("2006-01-02", fDate)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Ingrese una fecha válida"))
+		return
+	}
+
+	i := types.InvoiceCreate{
+		CompanyId:     ctx.CompanyId,
+		ProjectId:     &pId,
+		SupplierId:    &sId,
+		InvoiceNumber: &iNumber,
+		InvoiceDate:   &iDate,
+		Id:            &parsedId,
+	}
+
+	if err := s.DB.UpdateInvoice(i); err != nil {
+		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Código del proveedor inválido"))
+			w.Write([]byte("La Factura ya existe"))
 			return
 		}
-		iNumber := r.Form.Get("invoiceNumber")
-		if iNumber == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un número de factura"))
-			return
-		}
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		slog.Error("Error updating invoice", "error", err)
+		return
+	}
 
-		fDate := r.Form.Get("invoiceDate")
-		if fDate == "" {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una fecha"))
-			return
-		}
+	invoice, _ = s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
+	redirectURL += "?id=" + invoice.Id.String()
 
-		iDate, err := time.Parse("2006-01-02", fDate)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese una fecha válida"))
-			return
-		}
+	components := partials.EditInvoice(&invoice, projects, suppliers)
+	w.Header().Set("HX-Redirect", redirectURL)
+	w.WriteHeader(http.StatusOK)
+	components.Render(r.Context(), w)
+}
 
-		i := types.InvoiceCreate{
-			CompanyId:     ctx.CompanyId,
-			ProjectId:     &pId,
-			SupplierId:    &sId,
-			InvoiceNumber: &iNumber,
-			InvoiceDate:   &iDate,
-			Id:            &parsedId,
-		}
+func (s *Server) GetOneInvoice(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+	redirectURL := "/bca/transacciones/facturas/crear"
+	id := chi.URLParam(r, "id")
+	parsedId, _ := uuid.Parse(id)
 
-		if err := s.DB.UpdateInvoice(i); err != nil {
-			if strings.Contains(err.Error(), "duplicate") {
-				w.WriteHeader(http.StatusBadRequest)
-				w.Write([]byte("La Factura ya existe"))
-				return
-			}
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
-			slog.Error("Error updating invoice", "error", err)
-			return
-		}
+	projects := []types.Select{}
+	suppliers := []types.Select{}
+	invoice, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 
-		invoice, _ = s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
-		redirectURL += "?id=" + invoice.Id.String()
+	p := s.DB.GetActiveProjects(ctx.CompanyId, true)
+	for _, v := range p {
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		projects = append(projects, x)
+	}
+
+	sx, _ := s.DB.GetAllSuppliers(ctx.CompanyId, "")
+	for _, v := range sx {
+		x := types.Select{
+			Key:   v.ID.String(),
+			Value: v.Name,
+		}
+		suppliers = append(suppliers, x)
 	}
 
 	components := partials.EditInvoice(&invoice, projects, suppliers)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
 	components.Render(r.Context(), w)
+}
+
+func (s *Server) DeleteInvoice(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+	id := chi.URLParam(r, "id")
+	parsedId, _ := uuid.Parse(id)
+
+	_, err := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
+	if err != nil {
+		slog.Error("Error getting invoice", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err := s.DB.DeleteInvoice(parsedId, ctx.CompanyId); err != nil {
+		slog.Error("Error deleting invoice", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	invoices, _ := s.DB.GetInvoices(ctx.CompanyId)
+
+	components := partials.InvoiceTable(invoices)
+	w.WriteHeader(http.StatusOK)
+	components.Render(r.Context(), w)
+}
+
+func (s *Server) PatchInvoice(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+	id := chi.URLParam(r, "id")
+	parsedId, _ := uuid.Parse(id)
+
+	invoice, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
+
+	if err := s.DB.BalanceInvoice(invoice); err != nil {
+		slog.Error("Error updating invoice", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
+
+	comp := partials.BudgetRow(in)
+	comp.Render(r.Context(), w)
 }

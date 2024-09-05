@@ -138,14 +138,17 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/invoices", func(r chi.Router) {
-				r.HandleFunc("/", s.InvoicesTable)
-				r.HandleFunc("/{id}", s.InvoiceEdit) // convert fully unit tested
+				r.Get("/", s.InvoicesTable)
+				r.Get("/{id}", s.GetOneInvoice)
+				r.Delete("/{id}", s.DeleteInvoice)
+				r.Patch("/{id}", s.PatchInvoice)
+				r.Put("/{id}", s.InvoiceEdit)
 
 				r.Route("/{invoiceId}/details", func(r chi.Router) {
 					r.Get("/", s.DetailsTableDisplay)
 					r.Post("/", s.DetailsTable)
 					r.Get("/add", s.DetailsAdd)
-					r.Delete("/{budgetItemId}", s.DetailsEdit) // convert
+					r.Delete("/{budgetItemId}", s.DetailsEdit)
 				})
 			})
 
