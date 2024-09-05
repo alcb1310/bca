@@ -153,9 +153,11 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/categories", func(r chi.Router) {
-				r.HandleFunc("/", s.CategoriesTable) // fully tested
-				r.HandleFunc("/add", s.CategoryAdd)
-				r.HandleFunc("/{id}", s.EditCategory) // convert fully tested
+				r.Get("/", s.CategoriesTableDisplay)
+				r.Post("/", s.CategoriesTable)
+				r.Get("/add", s.CategoryAdd)
+				r.Get("/{id}", s.GetOneCategory)
+				r.Put("/{id}", s.EditCategory)
 			})
 
 			r.Route("/materiales", func(r chi.Router) {
