@@ -8,7 +8,7 @@ package users
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/alcb1310/bca/internal/views/components"
+import "bca-go-final/internal/views/components"
 
 func ChangePasswordView() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -40,7 +40,7 @@ func ChangePasswordView() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"btn-group\"><button type=\"submit\" class=\"btn\" id=\"save-button\">Grabar</button> <button type=\"button\" class=\"btn\" id=\"close-button\" onclick=\"resetClose()\">Cancelar</button></div></div></form><script>\n  function resetClose() {\n    closeDrawer()\n  }\n</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"btn-group\"><button type=\"submit\" class=\"btn\" id=\"save-button\">Grabar</button> <button type=\"button\" class=\"btn\" id=\"close-button\" onclick=\"resetClose()\">Cancelar</button></div></div></form><script>\n         function resetClose(){\n              closeDrawer()\n         }\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

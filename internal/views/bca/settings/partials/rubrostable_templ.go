@@ -8,11 +8,9 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"fmt"
-	"github.com/alcb1310/bca/internal/types"
-	"github.com/alcb1310/bca/internal/views/components/icons"
-)
+import "fmt"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components/icons"
 
 func RubrosTable(rubros []types.Rubro) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -50,7 +48,7 @@ func RubrosTable(rubros []types.Rubro) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(rubro.Code)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/rubrostable.templ`, Line: 27, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/rubrostable.templ`, Line: 25, Col: 28}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -63,7 +61,7 @@ func RubrosTable(rubros []types.Rubro) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(rubro.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/rubrostable.templ`, Line: 28, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/rubrostable.templ`, Line: 26, Col: 28}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -76,7 +74,7 @@ func RubrosTable(rubros []types.Rubro) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(rubro.Unit)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/rubrostable.templ`, Line: 29, Col: 22}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/rubrostable.templ`, Line: 27, Col: 28}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {

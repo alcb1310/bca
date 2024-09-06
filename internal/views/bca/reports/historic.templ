@@ -1,26 +1,34 @@
 package reports
 
-import (
-"github.com/alcb1310/bca/internal/types"
-"github.com/alcb1310/bca/internal/views/base"
-"github.com/alcb1310/bca/internal/views/components"
-)
+import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
 
 templ HistoricView(projects, levels []types.Select) {
-@base.AuthenticatedLayout("historico") {
-@components.PageTitle("Control Histórico")
-<form id="historic-form" hx-get="/bca/reportes/historico" hx-target="#results" hx-swap="innerHTML" hx-push-url="true">
-  @components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto")
-  <div class="flex flex-row gap-5 items-center">
-    @components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "", "Nivel")
-    @components.Input("date", "Fecha", "fecha", "fecha", "")
-  </div>
-  <div class="flex flex-row gap-2">
-    <button type="submit" class="btn">Generar</button>
-    <button type="button" hx-get="/bca/reportes/excel/historico" hx-include="#historic-form"
-      class="btn">Exportar</button>
-  </div>
-</form>
-<div id="results"></div>
-}
+	@base.AuthenticatedLayout("historico") {
+		@components.PageTitle("Control Histórico")
+		<form
+ 			id="historic-form"
+ 			hx-get="/bca/reportes/historico"
+ 			hx-target="#results"
+ 			hx-swap="innerHTML"
+ 			hx-push-url="true"
+		>
+			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto")
+			<div class="flex flex-row gap-5 items-center">
+				@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "", "Nivel")
+				@components.Input("date", "Fecha", "fecha", "fecha", "")
+			</div>
+			<div class="flex flex-row gap-2">
+				<button type="submit" class="btn">Generar</button>
+				<button
+ 					type="button"
+ 					hx-get="/bca/reportes/excel/historico"
+ 					hx-include="#historic-form"
+ 					class="btn"
+				>Exportar</button>
+			</div>
+		</form>
+		<div id="results"></div>
+	}
 }

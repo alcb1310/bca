@@ -2,18 +2,18 @@ package server
 
 import (
 	"context"
-	"log/slog"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 
-	"github.com/alcb1310/bca/internal/types"
-	"github.com/alcb1310/bca/internal/utils"
-	"github.com/alcb1310/bca/internal/views/bca/reports"
-	"github.com/alcb1310/bca/internal/views/bca/reports/partials"
+	"bca-go-final/internal/types"
+	"bca-go-final/internal/utils"
+	"bca-go-final/internal/views/bca/reports"
+	"bca-go-final/internal/views/bca/reports/partials"
 )
 
 func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
@@ -35,36 +35,37 @@ func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
 	component.Render(r.Context(), w)
 }
 
-func (s *Server) GetBalance(w http.ResponseWriter, r *http.Request) {
+func (s *Server) Balance(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	p, _ := s.DB.GetAllProjects(ctx.CompanyId)
-	projects := []types.Select{}
-	for _, v := range p {
-		x := types.Select{
-			Key:   v.ID.String(),
-			Value: v.Name,
+	switch r.Method {
+	case http.MethodPost:
+		r.ParseForm()
+		pId := r.Form.Get("project")
+		parsedProjectId, _ := uuid.Parse(pId)
+		d := r.Form.Get("date")
+		date, _ := time.Parse("2006-01-02", d)
+
+		invoices := s.DB.GetBalance(ctx.CompanyId, parsedProjectId, date)
+
+		component := partials.BalanceView(invoices)
+		component.Render(r.Context(), w)
+
+	case http.MethodGet:
+		p, _ := s.DB.GetAllProjects(ctx.CompanyId)
+		projects := []types.Select{}
+		for _, v := range p {
+			x := types.Select{
+				Key:   v.ID.String(),
+				Value: v.Name,
+			}
+			projects = append(projects, x)
 		}
-		projects = append(projects, x)
+
+		component := reports.BalanceView(projects)
+		component.Render(r.Context(), w)
 	}
 
-	component := reports.BalanceView(projects)
-	component.Render(r.Context(), w)
-}
-
-func (s *Server) RetreiveBalance(w http.ResponseWriter, r *http.Request) {
-	ctx, _ := utils.GetMyPaload(r)
-
-	r.ParseForm()
-	pId := r.Form.Get("project")
-	parsedProjectId, _ := uuid.Parse(pId)
-	d := r.Form.Get("date")
-	date, _ := time.Parse("2006-01-02", d)
-
-	invoices := s.DB.GetBalance(ctx.CompanyId, parsedProjectId, date)
-
-	component := partials.BalanceView(invoices)
-	component.Render(r.Context(), w)
 }
 
 func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
@@ -169,7 +170,7 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 		l, err = strconv.ParseUint(z, 10, 64)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			slog.Error(err.Error())
+			log.Println(err)
 			return
 		}
 	}
@@ -178,7 +179,7 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 	budgets, err := s.DB.GetBudgetsByProjectId(ctx.CompanyId, projectId, &level)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		slog.Error(err.Error())
+		log.Println(err)
 		return
 	}
 	component := partials.BudgetView(budgets)
@@ -187,23 +188,23 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	id := chi.URLParam(r, "budgetItemId")
+	id := mux.Vars(r)["budgetItemId"]
 	budgetItemId, err := uuid.Parse(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		slog.Error(err.Error())
+		log.Println(err)
 		return
 	}
 
-	pId := chi.URLParam(r, "projectId")
+	pId := mux.Vars(r)["projectId"]
 	parsedProjectId, err := uuid.Parse(pId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		slog.Error(err.Error())
+		log.Println(err)
 		return
 	}
 
-	d := chi.URLParam(r, "date")
+	d := mux.Vars(r)["date"]
 	date, _ := time.Parse("2006-01-02", d)
 
 	budgetItem, _ := s.DB.GetOneBudgetItem(budgetItemId, ctx.CompanyId)

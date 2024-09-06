@@ -1,25 +1,34 @@
 package reports
 
-import (
-"github.com/alcb1310/bca/internal/types"
-"github.com/alcb1310/bca/internal/views/base"
-"github.com/alcb1310/bca/internal/views/components"
-)
+import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
 
 templ SpentView(projects, levels []types.Select) {
-@base.AuthenticatedLayout("gastado") {
-@components.PageTitle("Gastado por Partida")
-<form id="spent-form" hx-get="/bca/reportes/gastado" hx-target="#results" hx-swap="innerHTML" hx-push-url="true">
-  @components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto")
-  <div class="flex flex-row gap-5 items-center">
-    @components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "", "Nivel")
-    @components.Input("date", "Fecha", "fecha", "fecha", "")
-  </div>
-  <div class="flex flex-row gap-2">
-    <button type="submit" class="btn">Generar</button>
-    <button type="button" class="btn" hx-get="/bca/reportes/excel/gastado" hx-include="#spent-form">Exportar</button>
-  </div>
-</form>
-<div id="results"></div>
-}
+	@base.AuthenticatedLayout("gastado") {
+		@components.PageTitle("Gastado por Partida")
+		<form
+			id="spent-form"
+			hx-get="/bca/reportes/gastado"
+			hx-target="#results"
+			hx-swap="innerHTML"
+			hx-push-url="true"
+		>
+			@components.SelectComponent(projects, "Seleccione un Proyecto", "proyecto", "proyecto", "", "Proyecto")
+			<div class="flex flex-row gap-5 items-center">
+				@components.SelectComponent(levels, "Seleccione un Nivel", "nivel", "nivel", "", "Nivel")
+				@components.Input("date", "Fecha", "fecha", "fecha", "")
+			</div>
+			<div class="flex flex-row gap-2">
+				<button type="submit" class="btn">Generar</button>
+				<button
+					type="button"
+					class="btn"
+					hx-get="/bca/reportes/excel/gastado"
+					hx-include="#spent-form"
+				>Exportar</button>
+			</div>
+		</form>
+		<div id="results"></div>
+	}
 }

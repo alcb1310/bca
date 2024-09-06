@@ -8,11 +8,9 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"fmt"
-	"github.com/alcb1310/bca/internal/types"
-	"github.com/alcb1310/bca/internal/views/components"
-)
+import "fmt"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
 
 func getItems(b []types.BudgetItem) []types.Select {
 	items := []types.Select{}
@@ -84,10 +82,9 @@ func EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) tem
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(
-				fmt.Sprintf("/bca/partials/budget-item/%s", budgetItem.ID.String()))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/budget-item/%s", budgetItem.ID.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/editbudgetitems.templ`, Line: 48, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/editbudgetitems.templ`, Line: 50, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -141,7 +138,7 @@ func EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) tem
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n  function handleHtmxError(event) {\n    document.getElementById(\"error\").innerHTML = \"\"\n    if (event.detail.xhr.status === 200) {\n      resetClose()\n      return\n    }\n    document.getElementById(\"error\").innerHTML = event.detail.xhr.responseText\n  }\n  function resetClose() {\n    closeDrawer()\n  }\n</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n         function handleHtmxError(event) {\n              document.getElementById(\"error\").innerHTML = \"\"\n              if (event.detail.xhr.status === 200) {\n                   resetClose()\n                   return\n              }\n              document.getElementById(\"error\").innerHTML = event.detail.xhr.responseText\n         }\n         function resetClose() {\n              closeDrawer()\n         }\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

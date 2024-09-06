@@ -1,9 +1,9 @@
 package database
 
 import (
-	"github.com/google/uuid"
+	"bca-go-final/internal/types"
 
-	"github.com/alcb1310/bca/internal/types"
+	"github.com/google/uuid"
 )
 
 func (s *service) GetAllSuppliers(companyId uuid.UUID, search string) ([]types.Supplier, error) {

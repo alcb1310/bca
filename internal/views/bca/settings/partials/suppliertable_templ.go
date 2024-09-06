@@ -8,11 +8,9 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"fmt"
-	"github.com/alcb1310/bca/internal/types"
-	"github.com/alcb1310/bca/internal/views/components/icons"
-)
+import "fmt"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components/icons"
 
 func SuppliersTable(suppliers []types.Supplier) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -50,7 +48,7 @@ func SuppliersTable(suppliers []types.Supplier) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(supplier.SupplierId)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 32, Col: 31}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 30, Col: 31}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -63,7 +61,7 @@ func SuppliersTable(suppliers []types.Supplier) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(supplier.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 33, Col: 25}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 31, Col: 25}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -76,7 +74,7 @@ func SuppliersTable(suppliers []types.Supplier) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(supplier.ContactName.String)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 35, Col: 37}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 33, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -89,7 +87,7 @@ func SuppliersTable(suppliers []types.Supplier) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(supplier.ContactEmail.String)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 38, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 36, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -102,7 +100,7 @@ func SuppliersTable(suppliers []types.Supplier) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(supplier.ContactPhone.String)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 41, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 39, Col: 37}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -115,7 +113,7 @@ func SuppliersTable(suppliers []types.Supplier) templ.Component {
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/suppliers/%s", supplier.ID.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 44, Col: 114}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/suppliertable.templ`, Line: 44, Col: 88}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {

@@ -1,26 +1,22 @@
 package partials
 
-import (
-"github.com/alcb1310/bca/internal/types"
-"github.com/alcb1310/bca/internal/utils"
-)
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
 
 func saveURL(id string) string {
-return "/bca/partials/invoices/" + id
+	return "/bca/partials/invoices/" + id
 }
 
 templ BudgetRow(invoice types.InvoiceResponse) {
-<tr>
-  if invoice.IsBalanced {
-  <td><input type="checkbox" checked hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) } hx-target="closest tr"
-      hx-swap="outerHTML" /></td>
-  } else {
-  <td align="center"><input type="checkbox" hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) }
-      hx-target="closest tr" hx-swap="outerHTML" /></td>
-  }
-  <td align="center">{ utils.ConvertDate(invoice.InvoiceDate) }</td>
-  <td>{ invoice.Supplier.Name }</td>
-  <td>{ invoice.InvoiceNumber }</td>
-  <td align="right">{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
-</tr>
+	<tr>
+		if invoice.IsBalanced {
+			<td><input type="checkbox" checked hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) } hx-target="closest tr" hx-swap="outerHTML" /></td>
+		} else {
+			<td align="center"><input type="checkbox" hx-trigger="click" hx-patch={ saveURL(invoice.Id.String()) } hx-target="closest tr" hx-swap="outerHTML"/></td>
+		}
+		<td align="center">{ utils.ConvertDate(invoice.InvoiceDate) }</td>
+		<td>{ invoice.Supplier.Name }</td>
+		<td>{ invoice.InvoiceNumber }</td>
+		<td align="right">{ utils.PrintFloat(invoice.InvoiceTotal) }</td>
+	</tr>
 }

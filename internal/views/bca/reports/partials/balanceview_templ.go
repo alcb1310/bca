@@ -8,10 +8,8 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"github.com/alcb1310/bca/internal/types"
-	"github.com/alcb1310/bca/internal/utils"
-)
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
 
 func highlight() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
@@ -56,7 +54,7 @@ func BalanceView(invoices types.BalanceResponse) templ.Component {
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(
 			utils.PrintFloat(invoices.Total))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 25, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 20, Col: 44}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -79,7 +77,7 @@ func BalanceView(invoices types.BalanceResponse) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(saveURL(invoice.Id.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 42, Col: 97}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 34, Col: 105}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -97,7 +95,7 @@ func BalanceView(invoices types.BalanceResponse) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(saveURL(invoice.Id.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 47, Col: 89}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 37, Col: 112}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -115,7 +113,7 @@ func BalanceView(invoices types.BalanceResponse) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(utils.ConvertDate(invoice.InvoiceDate))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 51, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 40, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -128,7 +126,7 @@ func BalanceView(invoices types.BalanceResponse) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(invoice.Supplier.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 52, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 41, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -141,7 +139,7 @@ func BalanceView(invoices types.BalanceResponse) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(invoice.InvoiceNumber)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 53, Col: 33}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 42, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -154,7 +152,7 @@ func BalanceView(invoices types.BalanceResponse) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(invoice.InvoiceTotal))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 54, Col: 64}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 43, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -172,7 +170,7 @@ func BalanceView(invoices types.BalanceResponse) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(invoices.Total))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 62, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/reports/partials/balanceview.templ`, Line: 50, Col: 117}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {

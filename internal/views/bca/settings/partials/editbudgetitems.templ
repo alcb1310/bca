@@ -1,79 +1,87 @@
 package partials
 
-import (
-"fmt"
-"github.com/alcb1310/bca/internal/types"
-"github.com/alcb1310/bca/internal/views/components"
-)
+import "fmt"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
 
 func getItems(b []types.BudgetItem) []types.Select {
-items := []types.Select{}
+	items := []types.Select{}
 
-for _, item := range b {
-items = append(items, types.Select{
-Key: item.ID.String(),
-Value: item.Name,
-})
-}
+	for _, item := range b {
+		items = append(items, types.Select{
+			Key:   item.ID.String(),
+			Value: item.Name,
+		})
+	}
 
-return items
+	return items
 }
 
 func budgetItemValidText(budgetItem *types.BudgetItem, text string) string {
-if budgetItem == nil {
-return ""
-}
-switch text {
-case "code":
-return budgetItem.Code
-case "name":
-return budgetItem.Name
-case "parent":
-if budgetItem.ParentId == nil {
-return ""
-}
-return budgetItem.ParentId.String()
-case "accumulate":
-if budgetItem.Accumulate.Bool {
-return "Si"
-}
-return "No"
-default:
-return ""
-}
+	if budgetItem == nil {
+		return ""
+	}
+	switch text {
+	case "code":
+		return budgetItem.Code
+	case "name":
+		return budgetItem.Name
+	case "parent":
+		if budgetItem.ParentId == nil {
+			return ""
+		}
+		return budgetItem.ParentId.String()
+	case "accumulate":
+		if budgetItem.Accumulate.Bool {
+			return "Si"
+		}
+		return "No"
+	default:
+		return ""
+	}
 }
 
 templ EditBudgetItem(budgetItem *types.BudgetItem, parent []types.BudgetItem) {
-<form id="edit-bugdet-item" if budgetItem==nil { hx-post="/bca/partials/budget-item" } else { hx-put={
-  fmt.Sprintf("/bca/partials/budget-item/%s", budgetItem.ID.String()) } } hx-target="#budget-items-table"
-  hx-target-error="#error" hx-swap="innerHTML" hx-trigger="submit" hx-on="htmx:afterOnLoad: handleHtmxError(event)">
-  <div class="flex h-full flex-col gap-8">
-    <div>
-      if budgetItem == nil {
-      @components.DrawerTitle("Agregar Partida")
-      } else {
-      @components.DrawerTitle("Editar Partida")
-      }
-      <div id="error" class="text-red-600 text-sm"></div>
-      @components.Input("text", "Código", "code", "code", budgetItemValidText(budgetItem, "code"))
-      @components.Input("text", "Nombre", "name", "name", budgetItemValidText(budgetItem, "name"))
-      @components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", budgetItemValidText(budgetItem, "parent"), "Partida")
-      @components.CheckBoxComponent("accumulate", "accumulate", "Acumula", budgetItemValidText(budgetItem, "accumulate") == "Si")
-    </div>
-    @components.ButtonGroup()
-  </div>
-</form>
-<script>
-  function handleHtmxError(event) {
-    document.getElementById("error").innerHTML = ""
-    if (event.detail.xhr.status === 200) {
-      resetClose()
-      return
-    }
-    document.getElementById("error").innerHTML = event.detail.xhr.responseText
-  }
-  function resetClose() {
-    closeDrawer()
-  }
-</script>
+	<form
+		id="edit-bugdet-item"
+		if budgetItem == nil {
+			hx-post="/bca/partials/budget-item"
+		} else {
+      hx-put={ fmt.Sprintf("/bca/partials/budget-item/%s", budgetItem.ID.String()) }
+		}
+		hx-target="#budget-items-table"
+		hx-target-error="#error"
+		hx-swap="innerHTML"
+		hx-trigger="submit"
+		hx-on="htmx:afterOnLoad: handleHtmxError(event)"
+	>
+		<div class="flex h-full flex-col gap-8">
+			<div>
+				if budgetItem == nil {
+					@components.DrawerTitle("Agregar Partida")
+				} else {
+					@components.DrawerTitle("Editar Partida")
+				}
+				<div id="error" class="text-red-600 text-sm"></div>
+				@components.Input("text", "Código", "code", "code", budgetItemValidText(budgetItem, "code"))
+				@components.Input("text", "Nombre", "name", "name", budgetItemValidText(budgetItem, "name"))
+				@components.SelectComponent(getItems(parent), "Seleccione una partida", "parent", "parent", budgetItemValidText(budgetItem, "parent"), "Partida")
+				@components.CheckBoxComponent("accumulate", "accumulate", "Acumula", budgetItemValidText(budgetItem, "accumulate") == "Si")
+			</div>
+			@components.ButtonGroup()
+		</div>
+	</form>
+	<script>
+         function handleHtmxError(event) {
+              document.getElementById("error").innerHTML = ""
+              if (event.detail.xhr.status === 200) {
+                   resetClose()
+                   return
+              }
+              document.getElementById("error").innerHTML = event.detail.xhr.responseText
+         }
+         function resetClose() {
+              closeDrawer()
+         }
+    </script>
 }

@@ -8,12 +8,10 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"fmt"
-	"github.com/alcb1310/bca/internal/types"
-	"github.com/alcb1310/bca/internal/utils"
-	"github.com/alcb1310/bca/internal/views/components/icons"
-)
+import "fmt"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+import "bca-go-final/internal/views/components/icons"
 
 func MaterialsItemsTable(acus []types.ACU) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -51,7 +49,7 @@ func MaterialsItemsTable(acus []types.ACU) templ.Component {
 				var templ_7745c5c3_Var2 string
 				templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(acu.Material.Code)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 29, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 29, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 				if templ_7745c5c3_Err != nil {
@@ -64,7 +62,7 @@ func MaterialsItemsTable(acus []types.ACU) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(acu.Material.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 30, Col: 29}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 30, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -77,7 +75,7 @@ func MaterialsItemsTable(acus []types.ACU) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(acu.Material.Unit)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 31, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 31, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -90,7 +88,7 @@ func MaterialsItemsTable(acus []types.ACU) templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(utils.PrintFloat(acu.Quantity))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 32, Col: 56}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 32, Col: 62}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -101,10 +99,9 @@ func MaterialsItemsTable(acus []types.ACU) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(
-					fmt.Sprintf("/bca/partials/rubros/%s/material/%s", acu.Item.Id.String(), acu.Material.Id.String()))
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/rubros/%s/material/%s", acu.Item.Id.String(), acu.Material.Id.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 35, Col: 108}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 39, Col: 123}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -123,10 +120,9 @@ func MaterialsItemsTable(acus []types.ACU) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/rubros/%s/material/%s",
-					acu.Item.Id.String(), acu.Material.Id.String()))
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/rubros/%s/material/%s", acu.Item.Id.String(), acu.Material.Id.String()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 40, Col: 57}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemtable.templ`, Line: 46, Col: 126}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {

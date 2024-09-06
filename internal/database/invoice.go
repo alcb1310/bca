@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/alcb1310/bca/internal/types"
+	"bca-go-final/internal/types"
 )
 
 func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, error) {

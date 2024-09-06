@@ -3,7 +3,7 @@ package database
 import (
 	"github.com/google/uuid"
 
-	"github.com/alcb1310/bca/internal/types"
+	"bca-go-final/internal/types"
 )
 
 func (s *service) GetAllCategories(companyId uuid.UUID) ([]types.Category, error) {

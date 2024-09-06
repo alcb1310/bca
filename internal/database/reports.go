@@ -1,14 +1,13 @@
 package database
 
 import (
+	"bca-go-final/internal/types"
 	"database/sql"
-	"log/slog"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
-
-	"github.com/alcb1310/bca/internal/types"
 )
 
 func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) types.BalanceResponse {
@@ -24,7 +23,7 @@ func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) typ
 	`
 	rows, err := s.db.Query(query, date.Year(), date.Month(), companyId, projectId)
 	if err != nil {
-		slog.Error("Error in select", "err", err)
+		log.Fatal("Error in select", err)
 		return types.BalanceResponse{}
 	}
 	defer rows.Close()
@@ -50,7 +49,7 @@ func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) typ
 			&i.CompanyId,
 			&i.IsBalanced,
 		); err != nil {
-			slog.Error("Error in select", "err", err)
+			log.Println("Error in scan", err)
 			return types.BalanceResponse{}
 		}
 		invoices = append(invoices, i)
@@ -77,8 +76,9 @@ func (s *service) GetHistoricByProject(companyId, projectId uuid.UUID, date time
 		ORDER BY budget_item_code
 		`
 	rows, err = s.db.Query(query, companyId, projectId, level, date.Year(), date.Month())
+
 	if err != nil {
-		slog.Error("Error in query", "err", err)
+		log.Println("Error in query", err)
 		return nil
 	}
 	defer rows.Close()
@@ -94,7 +94,7 @@ func (s *service) GetHistoricByProject(companyId, projectId uuid.UUID, date time
 			&b.RemainingQuantity, &b.RemainingCost, &b.RemainingTotal,
 			&b.UpdatedBudget, &b.CompanyId,
 		); err != nil {
-			slog.Error("Error in scan", "err", err)
+			log.Println("Error in scan", err)
 			return nil
 		}
 		budgets = append(budgets, b)
@@ -127,7 +127,7 @@ func (s *service) GetDetailsByBudgetItem(companyId, projectId, budgetItemId uuid
 	`
 	row, err := s.db.Query(query, companyId, date.Year(), date.Month(), projectId, pq.Array(ids))
 	if err != nil {
-		slog.Error("Error in query", "err", err)
+		log.Println("Error in query", err)
 		return []types.InvoiceDetails{}
 	}
 	defer row.Close()
@@ -141,7 +141,7 @@ func (s *service) GetDetailsByBudgetItem(companyId, projectId, budgetItemId uuid
 			&i.InvoiceId, &i.InvoiceNumber, &i.InvoiceTotal, &i.InvoiceDate, &i.ProjectId, &i.ProjectName, &i.SupplierId, &i.SupplierNumber,
 			&i.SupplierName, &i.BudgetItemId, &i.BudgetItemName, &i.BudgetItemCode, &i.BudgetItemLevel, &i.Quantity, &i.Cost, &i.Total, &i.CompanyId,
 		); err != nil {
-			slog.Error("Error in scan", "err", err)
+			log.Println("Error in scan", err)
 			return []types.InvoiceDetails{}
 		}
 		returnInvoiceDetails = append(returnInvoiceDetails, i)

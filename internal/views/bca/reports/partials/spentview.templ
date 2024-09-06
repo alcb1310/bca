@@ -1,47 +1,50 @@
 package partials
 
-import (
-"github.com/alcb1310/bca/internal/types"
-"github.com/alcb1310/bca/internal/utils"
-"github.com/alcb1310/bca/internal/views/components/icons"
-)
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/utils"
+import "bca-go-final/internal/views/components/icons"
 
 func displayURL(budgetItemId, projectId, date string) string {
-return "/bca/reportes/gastado/" + projectId + "/" + budgetItemId + "/" + date
+	return "/bca/reportes/gastado/" + projectId + "/" + budgetItemId + "/" + date
 }
 
 templ SpentView(data types.SpentResponse) {
-<table>
-  <thead>
-    <tr>
-      <th width="100px">Código</th>
-      <th width="380px">Nombre</th>
-      <th width="130px">Total</th>
-      <td width="50px"></td>
-    </tr>
-  </thead>
-  <tbody>
-    for _, spent := range data.Spent {
-    <tr>
-      <td>{ spent.BudgetItem.Code }</td>
-      <td>{ spent.BudgetItem.Name }</td>
-      <td align="right">{ utils.PrintFloat(spent.Spent) }</td>
-      <td align="center">
-        <span class="hover:cursor-pointer" hx-get={ displayURL(spent.BudgetItem.ID.String(), data.Project.String(),
-          ctx.Value("date").(string)) } hx-target="#drawer" hx-swap="innerHTML" hx-trigger="click"
-          _="on click openDrawer()">
-          @icons.EyeIcon()
-        </span>
-      </td>
-    </tr>
-    }
-  <tfoot>
-    <tr>
-      <td colspan="2">Total</td>
-      <td align="right" class="text-green-300">{ utils.PrintFloat(data.Total) }</td>
-      <td></td>
-    </tr>
-  </tfoot>
-  </tbody>
-</table>
+	<table>
+		<thead>
+			<tr>
+				<th width="100px">Código</th>
+				<th width="380px">Nombre</th>
+				<th width="130px">Total</th>
+				<td width="50px"></td>
+			</tr>
+		</thead>
+		<tbody>
+			for _, spent := range data.Spent {
+				<tr>
+					<td>{ spent.BudgetItem.Code }</td>
+					<td>{ spent.BudgetItem.Name }</td>
+					<td align="right">{ utils.PrintFloat(spent.Spent) }</td>
+					<td align="center">
+            <span
+              class="hover:cursor-pointer"
+							hx-get={ displayURL(spent.BudgetItem.ID.String(), data.Project.String(), ctx.Value("date").(string)) }
+							hx-target="#drawer"
+							hx-swap="innerHTML"
+							hx-trigger="click"
+							_="on click openDrawer()"
+            >
+              @icons.EyeIcon()
+            </span>
+					</td>
+				</tr>
+			}
+			<tfoot>
+				<tr>
+					<td colspan="2">Total</td>
+					<td align="right" class="text-green-300">{ utils.PrintFloat(data.Total) }</td>
+					<td></td>
+				</tr>
+			</tfoot>
+		</tbody>
+	</table>
 }

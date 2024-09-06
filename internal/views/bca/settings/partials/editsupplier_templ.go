@@ -8,11 +8,9 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"fmt"
-	"github.com/alcb1310/bca/internal/types"
-	"github.com/alcb1310/bca/internal/views/components"
-)
+import "fmt"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
 
 func supplierValidText(supplier *types.Supplier, text string) string {
 	if supplier == nil {
@@ -67,10 +65,9 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(
-				fmt.Sprintf("/bca/partials/suppliers/edit/%s", supplier.ID.String()))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/suppliers/edit/%s", supplier.ID.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/editsupplier.templ`, Line: 31, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/editsupplier.templ`, Line: 34, Col: 83}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -108,18 +105,15 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("text", "Nombre del contacto", "contact_name", "contact_name", supplierValidText(supplier,
-			"contact_name")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("text", "Nombre del contacto", "contact_name", "contact_name", supplierValidText(supplier, "contact_name")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("text", "Email del contacto", "contact_email", "contact_email", supplierValidText(supplier,
-			"contact_email")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("text", "Email del contacto", "contact_email", "contact_email", supplierValidText(supplier, "contact_email")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", supplierValidText(supplier,
-			"contact_phone")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("text", "Teléfono del contacto", "contact_phone", "contact_phone", supplierValidText(supplier, "contact_phone")).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -131,7 +125,7 @@ func EditSupplier(supplier *types.Supplier) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n  function handleHtmxError(event) {\n    document.getElementById(\"error\").innerHTML = \"\"\n    if (event.detail.xhr.status === 200) {\n      resetClose()\n      return\n    }\n    document.getElementById(\"error\").innerHTML = event.detail.xhr.response\n  }\n  function resetClose() {\n    closeDrawer()\n  }\n</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n         function handleHtmxError(event) {\n              document.getElementById(\"error\").innerHTML = \"\"\n              if (event.detail.xhr.status === 200) {\n                   resetClose()\n                   return\n              }\n              document.getElementById(\"error\").innerHTML = event.detail.xhr.response\n         }\n         function resetClose() {\n              closeDrawer()\n         }\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

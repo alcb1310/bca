@@ -8,11 +8,9 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"fmt"
-	"github.com/alcb1310/bca/internal/types"
-	"github.com/alcb1310/bca/internal/views/components"
-)
+import "fmt"
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
 
 func projectValText(project *types.Project, text string) string {
 	if project == nil {
@@ -72,10 +70,9 @@ func EditProject(project *types.Project) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(
-				fmt.Sprintf("/bca/partials/projects/edit/%s", project.ID.String()))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/projects/edit/%s", project.ID.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/editproject.templ`, Line: 36, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/editproject.templ`, Line: 39, Col: 81}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -129,7 +126,7 @@ func EditProject(project *types.Project) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n  function handleHtmxError(event) {\n    document.getElementById(\"error\").innerHTML = \"\"\n    if (event.detail.xhr.status === 200) {\n      resetClose()\n      return\n    }\n    document.getElementById(\"error\").innerHTML = event.detail.xhr.response\n  }\n  function resetClose() {\n    closeDrawer()\n  }\n</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n         function handleHtmxError(event) {\n              document.getElementById(\"error\").innerHTML = \"\"\n              if (event.detail.xhr.status === 200) {\n                   resetClose()\n                   return\n              }\n              document.getElementById(\"error\").innerHTML = event.detail.xhr.response\n         }\n         function resetClose() {\n              closeDrawer()\n         }\n    </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

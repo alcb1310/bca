@@ -8,11 +8,9 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"fmt"
-	"github.com/alcb1310/bca/internal/types"
-	"github.com/alcb1310/bca/internal/views/components"
-)
+import "fmt"
+import "bca-go-final/internal/views/components"
+import "bca-go-final/internal/types"
 
 func EditUser(user *types.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -47,10 +45,9 @@ func EditUser(user *types.User) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(
-				fmt.Sprintf("/bca/partials/users/%s", user.Id.String()))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/users/%s", user.Id.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/partials/edituser.templ`, Line: 11, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/partials/edituser.templ`, Line: 14, Col: 70}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -123,7 +120,7 @@ func EditUser(user *types.User) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n  function resetClose() {\n    const email = document.getElementById(\"email\")\n    const name = document.getElementById(\"name\")\n    const password = document.getElementById(\"password\")\n\n    email.value = \"\"\n    name.value = \"\"\n    if (password) password.value = \"\"\n\n    closeDrawer()\n  }\n</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n    function resetClose(){\n      const email = document.getElementById(\"email\")\n      const name = document.getElementById(\"name\")\n      const password = document.getElementById(\"password\")\n\n      email.value = \"\"\n      name.value = \"\"\n      if (password) password.value = \"\"\n\n      closeDrawer()\n    }\n  </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

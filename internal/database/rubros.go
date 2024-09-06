@@ -1,19 +1,20 @@
 package database
 
 import (
-	"log/slog"
+	"log"
 
 	"github.com/google/uuid"
 
-	"github.com/alcb1310/bca/internal/types"
+	"bca-go-final/internal/types"
 )
 
 func (s *service) GetAllRubros(companyId uuid.UUID) ([]types.Rubro, error) {
+
 	rubros := []types.Rubro{}
 	query := "select id, code, name, unit, company_id from item where company_id = $1 order by name"
 	rows, err := s.db.Query(query, companyId)
 	if err != nil {
-		slog.Error("Error getting rubros: ", "err", err)
+		log.Println("Error getting rubros: ", err)
 		return rubros, err
 	}
 	defer rows.Close()
@@ -21,7 +22,7 @@ func (s *service) GetAllRubros(companyId uuid.UUID) ([]types.Rubro, error) {
 	for rows.Next() {
 		var rubro types.Rubro
 		if err := rows.Scan(&rubro.Id, &rubro.Code, &rubro.Name, &rubro.Unit, &rubro.CompanyId); err != nil {
-			slog.Error("Error getting rubros: ", "err", err)
+			log.Println("Error getting rubros: ", err)
 			return rubros, err
 		}
 		rubros = append(rubros, rubro)
@@ -65,7 +66,7 @@ func (s *service) GetMaterialsByItem(id, companyId uuid.UUID) []types.ACU {
 
 	rows, err := s.db.Query(query, id, companyId)
 	if err != nil {
-		slog.Error("Error getting materials by item: ", "err", err)
+		log.Println("Error getting materials by item: ", err)
 		return acus
 	}
 	defer rows.Close()
@@ -73,7 +74,7 @@ func (s *service) GetMaterialsByItem(id, companyId uuid.UUID) []types.ACU {
 	for rows.Next() {
 		var acu types.ACU
 		if err := rows.Scan(&acu.Item.Id, &acu.Item.Code, &acu.Item.Name, &acu.Item.Unit, &acu.Material.Id, &acu.Material.Code, &acu.Material.Name, &acu.Material.Unit, &acu.Quantity, &acu.CompanyId); err != nil {
-			slog.Error("Error getting materials by item: ", "err", err)
+			log.Println("Error getting materials by item: ", err)
 			return acus
 		}
 		acus = append(acus, acu)

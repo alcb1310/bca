@@ -1,108 +1,114 @@
 package partials
 
-import (
-"fmt"
-"github.com/alcb1310/bca/internal/types"
-"github.com/alcb1310/bca/internal/views/components"
-)
+import "fmt"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
 
 func budgetValText(budget *types.CreateBudget, text string) string {
-if budget == nil {
-if text == "total" {
-return "0.00"
-}
-return ""
-}
+	if budget == nil {
+		if text == "total" {
+			return "0.00"
+		}
+		return ""
+	}
 
-switch text {
-case "project":
-return budget.ProjectId.String()
-case "budgetItem":
-return budget.BudgetItemId.String()
-case "quantity":
-return fmt.Sprintf("%.2f", budget.Quantity)
-case "cost":
-return fmt.Sprintf("%.2f", budget.Cost)
-case "total":
-return fmt.Sprintf("%.2f", budget.Cost*budget.Quantity)
-default:
-return ""
-}
+	switch text {
+	case "project":
+		return budget.ProjectId.String()
+	case "budgetItem":
+		return budget.BudgetItemId.String()
+	case "quantity":
+		return fmt.Sprintf("%.2f", budget.Quantity)
+	case "cost":
+		return fmt.Sprintf("%.2f", budget.Cost)
+	case "total":
+		return fmt.Sprintf("%.2f", budget.Cost*budget.Quantity)
+	default:
+		return ""
+	}
 }
 
 templ EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select) {
-<form id="budget-form" autocomplete="off" if budget==nil { hx-post="/bca/partials/budgets" } else { hx-put={
-  fmt.Sprintf("/bca/partials/budgets/%s/%s", budget.ProjectId.String(), budget.BudgetItemId.String()) } }
-  hx-trigger="submit" hx-target="#budget-table" hx-target-error="#error" hx-swap="innerHTML"
-  hx-on="htmx:afterOnLoad: handleHtmxError(event)">
-  <div class="flex flex-col h-full gap-8">
-    <div>
-      if budget == nil {
-      @components.DrawerTitle("Agregar Presupuesto")
-      } else {
-      @components.DrawerTitle("Editar Presupuesto")
-      }
-      <div id="error" class="text-red-600 text-sm"></div>
-      @components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budgetValText(budget,
-      "project"), "Proyecto")
-      @components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem",
-      budgetValText(budget, "budgetItem"), "Partida")
-      @components.Input("text", "Cantidad", "quantity", "quantity", budgetValText(budget, "quantity"))
-      @components.Input("text", "Unitario", "cost", "cost", budgetValText(budget, "cost"))
-      @components.Input("text", "Total", "total", "total", budgetValText(budget, "total"))
-    </div>
-    @components.ButtonGroup()
-  </div>
-</form>
-<script>
-  var quantity = document.getElementById("quantity")
-  var costo = document.getElementById("cost")
-  var total = document.getElementById("total")
-  var b = document.getElementById("save-button")
+	<form
+		id="budget-form"
+		autocomplete="off"
+		if budget == nil {
+			hx-post="/bca/partials/budgets"
+		} else {
+      hx-put={ fmt.Sprintf("/bca/partials/budgets/%s/%s", budget.ProjectId.String(), budget.BudgetItemId.String()) }
+		}
+		hx-trigger="submit"
+		hx-target="#budget-table"
+		hx-target-error="#error"
+		hx-swap="innerHTML"
+		hx-on="htmx:afterOnLoad: handleHtmxError(event)"
+	>
+		<div class="flex flex-col h-full gap-8">
+			<div>
+				if budget == nil {
+					@components.DrawerTitle("Agregar Presupuesto")
+				} else {
+					@components.DrawerTitle("Editar Presupuesto")
+				}
+				<div id="error" class="text-red-600 text-sm"></div>
+				@components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budgetValText(budget, "project"), "Proyecto")
+				@components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budgetValText(budget, "budgetItem"), "Partida")
+				@components.Input("text", "Cantidad", "quantity", "quantity", budgetValText(budget, "quantity"))
+				@components.Input("text", "Unitario", "cost", "cost", budgetValText(budget, "cost"))
+				@components.Input("text", "Total", "total", "total", budgetValText(budget, "total"))
+			</div>
+			@components.ButtonGroup()
+		</div>
+	</form>
+	<script>
+         var quantity = document.getElementById("quantity")
+         var costo = document.getElementById("cost")
+         var total = document.getElementById("total")
+         var b = document.getElementById("save-button")
 
-  total.disabled = true
+         total.disabled = true
 
-  costo.addEventListener("input", setTotal)
-  quantity.addEventListener("input", setTotal)
+         costo.addEventListener("input", setTotal)
+         quantity.addEventListener("input", setTotal)
 
-  function handleHtmxError(event) {
-    document.getElementById("error").innerHTML = ""
-    if (event.detail.xhr.status === 200) {
-      resetClose()
-      return
-    }
-    document.getElementById("error").innerHTML = event.detail.xhr.response
-  }
+         function handleHtmxError(event) {
+              document.getElementById("error").innerHTML = ""
+              if (event.detail.xhr.status === 200) {
+                   resetClose()
+                   return
+              }
+              document.getElementById("error").innerHTML = event.detail.xhr.response
+         }
 
-  function setTotal() {
-    if (isNaN(quantity.value)) {
-      total.classList.add("error-border")
-      quantity.classList.add("error-border")
-      b.disabled = true
-      total.value = "0.00"
-      return
-    }
+         function setTotal() {
+              if (isNaN(quantity.value)) {
+                   total.classList.add("error-border")
+                   quantity.classList.add("error-border")
+                   b.disabled = true
+                   total.value = "0.00"
+                   return
+              }
 
-    if (isNaN(costo.value)) {
-      total.classList.add("error-border")
-      costo.classList.add("error-border")
-      b.disabled = true
-      total.value = "0.00"
-      return
-    }
+              if (isNaN(costo.value)) {
+                   total.classList.add("error-border")
+                   costo.classList.add("error-border")
+                   b.disabled = true
+                   total.value = "0.00"
+                   return
+              }
 
-    total.classList.remove("error-border")
-    quantity.classList.remove("error-border")
-    costo.classList.remove("error-border")
-    b.disabled = false
-    const q = quantity.value === "" ? 0 : parseFloat(quantity.value)
-    const c = costo.value === "" ? 0 : parseFloat(costo.value)
+              total.classList.remove("error-border")
+              quantity.classList.remove("error-border")
+              costo.classList.remove("error-border")
+              b.disabled = false
+              const q = quantity.value === "" ? 0 : parseFloat(quantity.value)
+              const c = costo.value === "" ? 0 : parseFloat(costo.value)
 
-    total.value = (q * c).toLocaleString()
-  }
+              total.value = (q * c).toLocaleString()
+         }
 
-  function resetClose() {
-    closeDrawer()
-  }
-</script>
+         function resetClose() {
+              closeDrawer()
+         }
+     </script>
 }

@@ -8,11 +8,9 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"fmt"
-	"github.com/alcb1310/bca/internal/types"
-	"github.com/alcb1310/bca/internal/views/components"
-)
+import "fmt"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components"
 
 func budgetValText(budget *types.CreateBudget, text string) string {
 	if budget == nil {
@@ -71,10 +69,9 @@ func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(
-				fmt.Sprintf("/bca/partials/budgets/%s/%s", budget.ProjectId.String(), budget.BudgetItemId.String()))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/budgets/%s/%s", budget.ProjectId.String(), budget.BudgetItemId.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/editbudget.templ`, Line: 35, Col: 101}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/editbudget.templ`, Line: 38, Col: 114}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -104,13 +101,11 @@ func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budgetValText(budget,
-			"project"), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", budgetValText(budget, "project"), "Proyecto").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem",
-			budgetValText(budget, "budgetItem"), "Partida").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.SelectComponent(budgetItems, "Seleccione una Partida", "budgetItem", "budgetItem", budgetValText(budget, "budgetItem"), "Partida").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -134,7 +129,7 @@ func EditBudget(budget *types.CreateBudget, projects, budgetItems []types.Select
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n  var quantity = document.getElementById(\"quantity\")\n  var costo = document.getElementById(\"cost\")\n  var total = document.getElementById(\"total\")\n  var b = document.getElementById(\"save-button\")\n\n  total.disabled = true\n\n  costo.addEventListener(\"input\", setTotal)\n  quantity.addEventListener(\"input\", setTotal)\n\n  function handleHtmxError(event) {\n    document.getElementById(\"error\").innerHTML = \"\"\n    if (event.detail.xhr.status === 200) {\n      resetClose()\n      return\n    }\n    document.getElementById(\"error\").innerHTML = event.detail.xhr.response\n  }\n\n  function setTotal() {\n    if (isNaN(quantity.value)) {\n      total.classList.add(\"error-border\")\n      quantity.classList.add(\"error-border\")\n      b.disabled = true\n      total.value = \"0.00\"\n      return\n    }\n\n    if (isNaN(costo.value)) {\n      total.classList.add(\"error-border\")\n      costo.classList.add(\"error-border\")\n      b.disabled = true\n      total.value = \"0.00\"\n      return\n    }\n\n    total.classList.remove(\"error-border\")\n    quantity.classList.remove(\"error-border\")\n    costo.classList.remove(\"error-border\")\n    b.disabled = false\n    const q = quantity.value === \"\" ? 0 : parseFloat(quantity.value)\n    const c = costo.value === \"\" ? 0 : parseFloat(costo.value)\n\n    total.value = (q * c).toLocaleString()\n  }\n\n  function resetClose() {\n    closeDrawer()\n  }\n</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n         var quantity = document.getElementById(\"quantity\")\n         var costo = document.getElementById(\"cost\")\n         var total = document.getElementById(\"total\")\n         var b = document.getElementById(\"save-button\")\n\n         total.disabled = true\n\n         costo.addEventListener(\"input\", setTotal)\n         quantity.addEventListener(\"input\", setTotal)\n\n         function handleHtmxError(event) {\n              document.getElementById(\"error\").innerHTML = \"\"\n              if (event.detail.xhr.status === 200) {\n                   resetClose()\n                   return\n              }\n              document.getElementById(\"error\").innerHTML = event.detail.xhr.response\n         }\n\n         function setTotal() {\n              if (isNaN(quantity.value)) {\n                   total.classList.add(\"error-border\")\n                   quantity.classList.add(\"error-border\")\n                   b.disabled = true\n                   total.value = \"0.00\"\n                   return\n              }\n\n              if (isNaN(costo.value)) {\n                   total.classList.add(\"error-border\")\n                   costo.classList.add(\"error-border\")\n                   b.disabled = true\n                   total.value = \"0.00\"\n                   return\n              }\n\n              total.classList.remove(\"error-border\")\n              quantity.classList.remove(\"error-border\")\n              costo.classList.remove(\"error-border\")\n              b.disabled = false\n              const q = quantity.value === \"\" ? 0 : parseFloat(quantity.value)\n              const c = costo.value === \"\" ? 0 : parseFloat(costo.value)\n\n              total.value = (q * c).toLocaleString()\n         }\n\n         function resetClose() {\n              closeDrawer()\n         }\n     </script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

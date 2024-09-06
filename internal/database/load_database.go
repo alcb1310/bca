@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"log/slog"
+	"log"
 	"os"
 	"strings"
 )
@@ -10,7 +10,7 @@ import (
 func createTables(d *sql.DB) error {
 	file, err := os.ReadFile("./internal/database/tables.sql")
 	if err != nil {
-		slog.Error("Error reading file", "err", err)
+		log.Println(":Error: Couldn't load sql file:", err.Error())
 	}
 
 	tx, err := d.Begin()
@@ -39,7 +39,7 @@ func loadRoles(d *sql.DB) error {
 	}
 
 	if c == 0 {
-		tx, _ := d.Begin()
+		tx, err := d.Begin()
 		sql = "insert into role (id, name) values ('a', 'admin'), ('u', 'user')"
 		_, err = tx.Exec(sql)
 		if err != nil {

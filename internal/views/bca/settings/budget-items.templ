@@ -1,23 +1,41 @@
 package settings
 
-import (
-"github.com/alcb1310/bca/internal/views/base"
-"github.com/alcb1310/bca/internal/views/components"
-)
+import "bca-go-final/internal/views/base"
+import "bca-go-final/internal/views/components"
 
 templ BudgetItems() {
-@base.AuthenticatedLayout("partida") {
-@components.PageTitle("Partidas")
-<div class="flex justify-between gap-8 items-center">
-  <input hx-trigger="keyup changed delay:500ms" hx-get="/bca/partials/budget-item" hx-target="#budget-items-table"
-    hx-swap="innerHTML" hx-push-url="true" type="text" name="search" placeholder="Buscar..."
-    class="block w-full h-fit rounded-lg border border-blue-gray-700 text-blue-gray-900 py-2 px-4" />
-  <button type="button" class="btn cursor-pointer" id="add-button" hx-get="/bca/partials/budget-item/add"
-    hx-target="#drawer" hx-swap="innerHTML" _="on click openDrawer()">
-    Agregar
-  </button>
-</div>
-<div id="budget-items-table" hx-target="this" hx-swap="innerHTML" hx-trigger="load" hx-get="/bca/partials/budget-item">
-</div>
-}
+	@base.AuthenticatedLayout("partida") {
+		@components.PageTitle("Partidas")
+		<div class="flex justify-between gap-8 items-center">
+			<input
+				hx-trigger="keyup changed delay:500ms"
+				hx-get="/bca/partials/budget-item"
+				hx-target="#budget-items-table"
+				hx-swap="innerHTML"
+				hx-push-url="true"
+				type="text"
+				name="search"
+				placeholder="Buscar..."
+				class="block w-full h-fit rounded-lg border border-blue-gray-700 text-blue-gray-900 py-2 px-4"
+			/>
+			<button
+				type="button"
+				class="btn cursor-pointer"
+				id="add-button"
+				hx-get="/bca/partials/budget-item/add"
+				hx-target="#drawer"
+				hx-swap="innerHTML"
+				_="on click openDrawer()"
+			>
+				Agregar
+			</button>
+		</div>
+		<div
+			id="budget-items-table"
+			hx-target="this"
+			hx-swap="innerHTML"
+			hx-trigger="load"
+			hx-get="/bca/partials/budget-item"
+		></div>
+	}
 }

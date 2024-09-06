@@ -6,33 +6,33 @@ const addButtonEl = document.getElementById("add-button");
 
 let isContextMenuOpen = false;
 
-if (userEl) {
-  userEl.addEventListener("click", (event) => {
-    event.preventDefault();
-    isContextMenuOpen = !isContextMenuOpen;
-    contextEl.classList.toggle("block");
-    contextEl.classList.toggle("hidden");
-  });
-}
+userEl.addEventListener("click", (event) => {
+     event.preventDefault();
+     isContextMenuOpen = !isContextMenuOpen;
+     contextEl.classList.toggle("block");
+     contextEl.classList.toggle("hidden");
+})
 
 window.onkeyup = function(e) {
-  if (isContextMenuOpen && e.keyCode === 27) {
-    isContextMenuOpen = false;
-    contextEl.classList.toggle("block");
-    contextEl.classList.toggle("hidden");
-  }
-};
+     if (isContextMenuOpen && e.keyCode === 27) {
+          isContextMenuOpen = false;
+          contextEl.classList.toggle("block");
+          contextEl.classList.toggle("hidden");
+     }
+}
+
+
 
 if (opaqueEl) {
-  opaqueEl.addEventListener("click", closeDrawer);
+     opaqueEl.addEventListener("click", closeDrawer);
 }
 
 function openDrawer() {
-  opaqueEl.style.display = "block";
-  drawerEl.style.display = "flex";
+     opaqueEl.style.display = "block";
+     drawerEl.style.display = "flex";
 }
 
 function closeDrawer() {
-  opaqueEl.style.display = "none";
-  drawerEl.style.display = "none";
+     opaqueEl.style.display = "none";
+     drawerEl.style.display = "none";
 }

@@ -5,14 +5,12 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/alcb1310/bca/internal/types"
+	"bca-go-final/internal/types"
 )
-
-type ContextKey string
 
 func GetMyPaload(r *http.Request) (types.ContextPayload, error) {
 	ctx := r.Context()
-	val := ctx.Value(ContextKey("token"))
+	val := ctx.Value("token")
 
 	x, ok := val.([]byte)
 	if !ok {

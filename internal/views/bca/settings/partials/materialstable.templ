@@ -1,43 +1,47 @@
 package partials
 
-import (
-"fmt"
-"github.com/alcb1310/bca/internal/types"
-"github.com/alcb1310/bca/internal/views/components/icons"
-)
+import "fmt"
+import "bca-go-final/internal/types"
+import "bca-go-final/internal/views/components/icons"
 
-templ MaterialsTable(materials []types.Material) {
-<table>
-  <thead>
-    <tr>
-      <th width="100px">Código</th>
-      <th width="400px">Nombre</th>
-      <th width="100px">Unidad</th>
-      <th width="400px">Categoría</th>
-      <th width="50px"></th>
-    </tr>
-  </thead>
-  <tbody>
-    if len(materials) == 0 {
-    <tr>
-      <td colspan="5">No existen materiales</td>
-    </tr>
-    } else {
-    for _, material := range materials {
-    <tr>
-      <td align="center">{ material.Code }</td>
-      <td>{ material.Name }</td>
-      <td align="center">{ material.Unit }</td>
-      <td>{ material.Category.Name }</td>
-      <td>
-        <div class="hover:cursor-pointer" hx-get={ fmt.Sprintf("/bca/partials/materiales/%s", material.Id.String()) }
-          hx-target="#drawer" hx-swap="innerHTML" hx-trigger="click" _="on click openDrawer()">
-          @icons.EditIcon()
-        </div>
-      </td>
-    </tr>
-    }
-    }
-  </tbody>
-</table>
+templ MaterialsTable(materials []types.Material){
+  <table>
+    <thead>
+      <tr>
+        <th width="100px">Código</th>
+        <th width="400px">Nombre</th>
+        <th width="100px">Unidad</th>
+        <th width="400px">Categoría</th>
+        <th width="50px"></th>
+      </tr>
+    </thead>
+    <tbody>
+      if len(materials) == 0 {
+        <tr>
+          <td colspan="5">No existen materiales</td>
+        </tr>
+      } else {
+        for _, material := range materials {
+          <tr>
+            <td align="center">{material.Code}</td>
+            <td>{material.Name}</td>
+            <td align="center">{material.Unit}</td>
+            <td>{material.Category.Name}</td>
+            <td>
+              <div
+                class="hover:cursor-pointer"
+                hx-get={ fmt.Sprintf("/bca/partials/materiales/%s", material.Id.String()) }
+                hx-target="#drawer"
+                hx-swap="innerHTML"
+                hx-trigger="click"
+                _="on click openDrawer()"
+              >
+                @icons.EditIcon()
+              </div>
+            </td>
+          </tr>
+        }
+      } 
+    </tbody>
+  </table>
 }
