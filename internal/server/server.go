@@ -169,10 +169,13 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/rubros", func(r chi.Router) {
-				r.HandleFunc("/", s.RubrosTable)                                       // fully tested
-				r.HandleFunc("/{id}", s.MaterialsByItem)                               // convert
-				r.HandleFunc("/{id}/material", s.MaterialByItemForm)                   // convert fully unit tested
-				r.HandleFunc("/{id}/material/{materialId}", s.MaterialItemsOperations) // convert fully unit tested
+				r.Get("/", s.RubrosTable)
+				r.Get("/{id}", s.MaterialsByItem)
+				r.Get("/{id}/material", s.MaterialsByItemFormDisplay)
+				r.Post("/{id}/material", s.MaterialByItemForm)
+				r.Get("/{id}/material/{materialId}", s.MaterialItemsOperationsDisplay)
+				r.Delete("/{id}/material/{materialId}", s.MaterialItemsOperationsDelete)
+				r.Put("/{id}/material/{materialId}", s.MaterialItemsOperationsUpdate)
 			})
 
 			r.Route("/cantidades", func(r chi.Router) {
