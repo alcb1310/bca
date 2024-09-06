@@ -161,9 +161,11 @@ func NewServer(db database.Service, secret string) *Server {
 			})
 
 			r.Route("/materiales", func(r chi.Router) {
-				r.HandleFunc("/", s.MaterialsTable) // fully tested
-				r.HandleFunc("/add", s.MaterialsAdd)
-				r.HandleFunc("/{id}", s.MaterialsEdit) // convert fully tested
+				r.Get("/", s.MaterialsTableDisplay)
+				r.Post("/", s.MaterialsTable)
+				r.Get("/add", s.MaterialsAdd)
+				r.Get("/{id}", s.GetOneMaterial)
+				r.Put("/{id}", s.MaterialsEdit)
 			})
 
 			r.Route("/rubros", func(r chi.Router) {
