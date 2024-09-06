@@ -1,9 +1,9 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
-
 	"github.com/google/uuid"
+
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func (s *service) GetAllProjects(companyId uuid.UUID) ([]types.Project, error) {
@@ -23,7 +23,6 @@ func (s *service) GetAllProjects(companyId uuid.UUID) ([]types.Project, error) {
 		}
 		projects = append(projects, p)
 	}
-
 	return projects, nil
 }
 

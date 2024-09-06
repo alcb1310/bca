@@ -3,8 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
-	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"time"
 
@@ -12,13 +11,13 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 type Service interface {
 	Health() map[string]string
 	CreateCompany(company *types.CompanyCreate) error
-	Login(l *types.Login) (string, error)
+	Login(l *types.Login) (string, *types.User, error)
 	RegenerateToken(token string, user uuid.UUID) error
 	IsLoggedIn(token string, user uuid.UUID) bool
 
@@ -123,28 +122,22 @@ type service struct {
 	db *sql.DB
 }
 
-var (
-	database = os.Getenv("DB_DATABASE")
-	password = os.Getenv("DB_PASSWORD")
-	username = os.Getenv("DB_USERNAME")
-	port     = os.Getenv("DB_PORT")
-	host     = os.Getenv("DB_HOST")
-)
-
-func New() Service {
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, port, database)
+func New(connStr string) Service {
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error(err.Error())
+		os.Exit(1)
 	}
 	s := &service{db: db}
 
 	if err := createTables(db); err != nil {
-		log.Fatalf(fmt.Sprintf("error creating tables. Err: %v", err))
+		slog.Error("Error creating tables", "err", err)
+		os.Exit(1)
 	}
 
 	if err := loadRoles(db); err != nil {
-		log.Fatalf(fmt.Sprintf("error loading roles. Err: %v", err))
+		slog.Error("Error loading roles", "err", err)
+		os.Exit(1)
 	}
 
 	return s
@@ -156,7 +149,8 @@ func (s *service) Health() map[string]string {
 
 	err := s.db.PingContext(ctx)
 	if err != nil {
-		log.Fatalf(fmt.Sprintf("db down: %v", err))
+		slog.Error("db down", "err", err)
+		os.Exit(1)
 	}
 
 	return map[string]string{
@@ -169,7 +163,7 @@ func (s *service) Levels(companyId uuid.UUID) []types.Select {
 	query := "select level from vw_levels where company_id = $1"
 	rows, err := s.db.Query(query, companyId)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error("Levels", "err", err)
 		return levels
 	}
 	defer rows.Close()
@@ -177,7 +171,7 @@ func (s *service) Levels(companyId uuid.UUID) []types.Select {
 	for rows.Next() {
 		var level string
 		if err := rows.Scan(&level); err != nil {
-			log.Fatal(err)
+			slog.Error("Levels", "err", err)
 			return levels
 		}
 		levels = append(levels, types.Select{Key: level, Value: level})

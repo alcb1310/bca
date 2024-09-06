@@ -1,11 +1,11 @@
 package database
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func (s *service) CreateCantidades(projectId, rubroId uuid.UUID, quantity float64, companyId uuid.UUID) error {
@@ -27,7 +27,7 @@ func (s *service) CantidadesTable(companyId uuid.UUID) []types.Quantity {
   `
 	rows, err := s.db.Query(query, companyId)
 	if err != nil {
-		log.Println(err)
+		slog.Error(err.Error())
 		return quantities
 	}
 	defer rows.Close()
@@ -36,7 +36,7 @@ func (s *service) CantidadesTable(companyId uuid.UUID) []types.Quantity {
 		var quantity types.Quantity
 		if err := rows.Scan(&quantity.Id, &quantity.Quantity, &quantity.Project.ID, &quantity.Project.Name,
 			&quantity.Rubro.Id, &quantity.Rubro.Code, &quantity.Rubro.Name, &quantity.Rubro.Unit); err != nil {
-			log.Fatal(err)
+			slog.Error(err.Error())
 			return quantities
 		}
 		quantities = append(quantities, quantity)
@@ -58,7 +58,7 @@ func (s *service) AnalysisReport(project_id, company_id uuid.UUID) map[string][]
 
 	rows, err := s.db.Query(sql, project_id, company_id)
 	if err != nil {
-		log.Println(err)
+		slog.Error(err.Error())
 		return x
 	}
 	defer rows.Close()
@@ -66,7 +66,7 @@ func (s *service) AnalysisReport(project_id, company_id uuid.UUID) map[string][]
 	for rows.Next() {
 		var analysis types.AnalysisReport
 		if err := rows.Scan(&analysis.ProjectName, &analysis.CategoryName, &analysis.MaterialName, &analysis.Quantity); err != nil {
-			log.Fatal(err)
+			slog.Error(err.Error())
 			return x
 		}
 
@@ -86,7 +86,7 @@ func (s *service) GetQuantityByMaterialAndItem(itemId, materialId, companyId uui
 	query := "select quantity from item_materials where item_id = $1 and material_id = $2 and company_id = $3"
 	err := s.db.QueryRow(query, itemId, materialId, companyId).Scan(&itemMaterial.Quantity)
 	if err != nil {
-		log.Println(err)
+		slog.Error(err.Error())
 		return itemMaterial
 	}
 
@@ -108,7 +108,7 @@ func (s *service) GetOneQuantityById(id, companyId uuid.UUID) types.Quantity {
 	err := s.db.QueryRow(query, id, companyId).Scan(&quantity.Id, &quantity.Quantity, &quantity.Project.ID, &quantity.Project.Name,
 		&quantity.Rubro.Id, &quantity.Rubro.Code, &quantity.Rubro.Name, &quantity.Rubro.Unit)
 	if err != nil {
-		log.Println(err)
+		slog.Error(err.Error())
 		return quantity
 	}
 	return quantity

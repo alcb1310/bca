@@ -3,73 +3,51 @@ package server
 import (
 	"net/http"
 
-	"github.com/gorilla/sessions"
-
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-	"bca-go-final/internal/views"
-	"bca-go-final/internal/views/bca"
-	"bca-go-final/internal/views/derrors"
-)
-
-var (
-	key   = []byte("super-secret-key")
-	store = sessions.NewCookieStore(key)
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views"
+	"github.com/alcb1310/bca/internal/views/bca"
 )
 
 func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
-	store.Options.HttpOnly = true
-	store.Options.Secure = true
-	store.Options.SameSite = http.SameSiteStrictMode
-
-	session, _ := store.Get(r, "bca")
 	resp := make(map[string]string)
-	switch r.Method {
-	case http.MethodPost:
-		l := &types.Login{}
-		_ = l
-		err := r.ParseForm()
+	l := &types.Login{}
+	err := r.ParseForm()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		resp["error"] = err.Error()
+		component := views.LoginView(resp)
+		component.Render(r.Context(), w)
+		return
+	}
+
+	l.Email = r.PostFormValue("email")
+	l.Password = r.PostFormValue("password")
+
+	if !utils.IsValidEmail(l.Email) {
+		resp["error"] = "credenciales inválidas"
+	}
+
+	if l.Password == "" {
+		resp["error"] = "credenciales inválidas"
+	}
+
+	if len(resp) == 0 {
+		_, u, err := s.DB.Login(l)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			resp["error"] = err.Error()
-			component := views.LoginView(resp)
-			component.Render(r.Context(), w)
+			resp["error"] = "credenciales inválidas"
+		} else {
+			_, tokenString, _ := s.TokenAuth.Encode(map[string]interface{}{"id": u.Id, "name": u.Name, "email": u.Email, "company_id": u.CompanyId, "role": u.RoleId})
+			http.SetCookie(w, &http.Cookie{
+				Name:  "jwt",
+				Value: tokenString,
+				Path:  "/",
+			})
+
+			resp["token"] = tokenString
+			http.Redirect(w, r, "/bca", http.StatusSeeOther)
 			return
 		}
-
-		l.Email = r.PostFormValue("email")
-		l.Password = r.PostFormValue("password")
-
-		if !utils.IsValidEmail(l.Email) {
-			resp["error"] = "credenciales inválidas"
-		}
-
-		if l.Password == "" {
-			resp["error"] = "credenciales inválidas"
-		}
-
-		if len(resp) == 0 {
-			token, err := s.DB.Login(l)
-			if err != nil {
-				resp["error"] = "credenciales inválidas"
-			} else {
-				session.Values["bca"] = token
-				session.Save(r, w)
-				resp["token"] = token
-				http.Redirect(w, r, "/bca", http.StatusSeeOther)
-				return
-			}
-		}
-
-	case http.MethodGet:
-		resp = nil
-
-	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		resp["method"] = r.Method
-		resp["url"] = r.RequestURI
-		component := derrors.NotImplemented(resp)
-		component.Render(r.Context(), w)
 	}
 
 	if len(resp) == 0 {
@@ -81,10 +59,21 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 	component.Render(r.Context(), w)
 }
 
+func (s *Server) DisplayLogin(w http.ResponseWriter, r *http.Request) {
+	resp := make(map[string]string)
+
+	w.WriteHeader(http.StatusOK)
+	component := views.LoginView(resp)
+	component.Render(r.Context(), w)
+}
+
 func (s *Server) Logout(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "bca")
-	session.Values["bca"] = nil
-	session.Save(r, w)
+	http.SetCookie(w, &http.Cookie{
+		Name:   "jwt",
+		Value:  "",
+		MaxAge: -1,
+		Path:   "/",
+	})
 	w.Header().Set("HX-Redirect", "/")
 	w.WriteHeader(http.StatusOK)
 }

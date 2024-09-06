@@ -8,9 +8,11 @@ package details
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "fmt"
-import "bca-go-final/internal/views/components"
-import "bca-go-final/internal/types"
+import (
+	"fmt"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/views/components"
+)
 
 func EditDetails(budgetItems []types.Select, invoiceId string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -37,7 +39,7 @@ func EditDetails(budgetItems []types.Select, invoiceId string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/invoices/%s/details", invoiceId))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/editdetails.templ`, Line: 9, Col: 73}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/transaction/partials/details/editdetails.templ`, Line: 10, Col: 75}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -75,7 +77,7 @@ func EditDetails(budgetItems []types.Select, invoiceId string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n         var quantity = document.getElementById(\"quantity\")\n         var cost = document.getElementById(\"cost\")\n         var detailTotal = document.getElementById(\"detailtotal\")\n         var b = document.getElementById(\"save-button\")\n\n         detailTotal.disabled = true\n\n         quantity.addEventListener(\"input\", calculateTotal)\n         cost.addEventListener(\"input\", calculateTotal)\n\n         function htmxHandleDetailsError(event) {\n              document.getElementById(\"details-error\").innerHTML = \"\"\n              if (event.detail.xhr.status >= 400) {\n                   document.getElementById(\"details-error\").innerHTML = event.detail.xhr.response\n              }\n         }\n\n         function calculateTotal() {\n              let q = quantity.value === \"\" ? 0 : parseFloat(quantity.value)\n              let c = cost.value === \"\" ? 0 : parseFloat(cost.value)\n              \n              if (isNaN(q)) {\n                   detailTotal.classList.add(\"error-border\")\n                   quantity.classList.add(\"error-border\")\n                   q = 0\n                   detailTotal.value = \"0.00\"\n                   b.disabled = true\n                   return\n              }\n              if (isNaN(c)) {\n                   detailTotal.classList.add(\"error-border\")\n                   cost.classList.add(\"error-border\")\n                   c = 0\n                   detailTotal.value = \"0.00\"\n                   b.disabled = true\n                   return\n              }\n\n\n              detailTotal.classList.remove(\"error-border\")\n              quantity.classList.remove(\"error-border\")\n              cost.classList.remove(\"error-border\")\n              b.disabled = false\n\n              detailTotal.value = (q * c).toLocaleString(2)\n         }\n\n         function resetClose() {\n              closeDrawer()\n         }\n    </script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n  var quantity = document.getElementById(\"quantity\")\n  var cost = document.getElementById(\"cost\")\n  var detailTotal = document.getElementById(\"detailtotal\")\n  var b = document.getElementById(\"save-button\")\n\n  detailTotal.disabled = true\n\n  quantity.addEventListener(\"input\", calculateTotal)\n  cost.addEventListener(\"input\", calculateTotal)\n\n  function htmxHandleDetailsError(event) {\n    document.getElementById(\"details-error\").innerHTML = \"\"\n    if (event.detail.xhr.status >= 400) {\n      document.getElementById(\"details-error\").innerHTML = event.detail.xhr.response\n    }\n  }\n\n  function calculateTotal() {\n    let q = quantity.value === \"\" ? 0 : parseFloat(quantity.value)\n    let c = cost.value === \"\" ? 0 : parseFloat(cost.value)\n\n    if (isNaN(q)) {\n      detailTotal.classList.add(\"error-border\")\n      quantity.classList.add(\"error-border\")\n      q = 0\n      detailTotal.value = \"0.00\"\n      b.disabled = true\n      return\n    }\n    if (isNaN(c)) {\n      detailTotal.classList.add(\"error-border\")\n      cost.classList.add(\"error-border\")\n      c = 0\n      detailTotal.value = \"0.00\"\n      b.disabled = true\n      return\n    }\n\n\n    detailTotal.classList.remove(\"error-border\")\n    quantity.classList.remove(\"error-border\")\n    cost.classList.remove(\"error-border\")\n    b.disabled = false\n\n    detailTotal.value = (q * c).toLocaleString(2)\n  }\n\n  function resetClose() {\n    closeDrawer()\n  }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

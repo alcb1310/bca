@@ -8,11 +8,13 @@ package partials
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "fmt"
-import "github.com/google/uuid"
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/views/components"
-import "bca-go-final/internal/utils"
+import (
+	"fmt"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
+	"github.com/alcb1310/bca/internal/views/components"
+	"github.com/google/uuid"
+)
 
 func displayMaterial(material *types.ItemMaterialType, text string) string {
 	if material == nil {
@@ -62,7 +64,7 @@ func MaterialsItemsForm(itemMaterial *types.ItemMaterialType, itemId uuid.UUID, 
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(IsUpdate(itemMaterial))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemsform.templ`, Line: 33, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemsform.templ`, Line: 35, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -78,9 +80,10 @@ func MaterialsItemsForm(itemMaterial *types.ItemMaterialType, itemId uuid.UUID, 
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/rubros/%s/material", itemId.String()))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(
+				fmt.Sprintf("/bca/partials/rubros/%s/material", itemId.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemsform.templ`, Line: 38, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemsform.templ`, Line: 37, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -96,9 +99,10 @@ func MaterialsItemsForm(itemMaterial *types.ItemMaterialType, itemId uuid.UUID, 
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/bca/partials/rubros/%s/material/%s", itemId.String(), itemMaterial.MaterialId.String()))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(
+				fmt.Sprintf("/bca/partials/rubros/%s/material/%s", itemId.String(), itemMaterial.MaterialId.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemsform.templ`, Line: 40, Col: 116}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/views/bca/settings/partials/materialsitemsform.templ`, Line: 38, Col: 103}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -128,7 +132,8 @@ func MaterialsItemsForm(itemMaterial *types.ItemMaterialType, itemId uuid.UUID, 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.SelectComponent(materials, "Seleccionar Material", "material", "material", displayMaterial(itemMaterial, "material"), "Material").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.SelectComponent(materials, "Seleccionar Material", "material", "material",
+			displayMaterial(itemMaterial, "material"), "Material").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -144,7 +149,7 @@ func MaterialsItemsForm(itemMaterial *types.ItemMaterialType, itemId uuid.UUID, 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n    var hid = document.getElementById(\"update\")\n\n    if (hid.value === \"true\") {\n      document.getElementById(\"material\").disabled = true\n    } else {\n      document.getElementById(\"material\").disabled = false\n    }\n\n    function handleHtmxError(event) {\n      document.getElementById(\"drawer-error\").innerHTML = \"\"\n        if (event.detail.xhr.status === 200) {\n          resetClose()\n            return\n        }\n      document.getElementById(\"drawer-error\").innerHTML = event.detail.xhr.responseText\n    }\n\n    function resetClose() {\n      closeDrawer()\n    }\n  </script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></form><script>\n  var hid = document.getElementById(\"update\")\n\n  if (hid.value === \"true\") {\n    document.getElementById(\"material\").disabled = true\n  } else {\n    document.getElementById(\"material\").disabled = false\n  }\n\n  function handleHtmxError(event) {\n    document.getElementById(\"drawer-error\").innerHTML = \"\"\n    if (event.detail.xhr.status === 200) {\n      resetClose()\n      return\n    }\n    document.getElementById(\"drawer-error\").innerHTML = event.detail.xhr.responseText\n  }\n\n  function resetClose() {\n    closeDrawer()\n  }\n</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
