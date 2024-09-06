@@ -187,7 +187,7 @@ func NewServer(db database.Service, secret string) *Server {
 				r.Get("/{id}", s.CantidadesDisplay)
 			})
 
-			r.HandleFunc("/analisis", s.AnalysisTable)
+			r.Get("/analisis", s.AnalysisTable)
 		})
 	})
 
