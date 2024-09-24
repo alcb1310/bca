@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 
 	_ "github.com/joho/godotenv/autoload"
 
@@ -36,5 +37,47 @@ func main() {
 	slog.Info("Listening on port", "port", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server.Router); err != nil {
 		panic(err)
+	}
+}
+
+func loggerSetup(env string) {
+	handlerOptions := &slog.HandlerOptions{}
+
+	switch strings.ToLower(env) {
+	case "debug":
+		handlerOptions.Level = slog.LevelDebug
+	case "info":
+		handlerOptions.Level = slog.LevelInfo
+	case "warn":
+		handlerOptions.Level = slog.LevelWarn
+	default:
+		handlerOptions.Level = slog.LevelError
+	}
+
+	loggerHandler := slog.NewJSONHandler(os.Stdout, handlerOptions)
+	slog.SetDefault(slog.New(loggerHandler))
+}
+
+func environmentValidation() {
+	if databaseName == "" {
+		panic("DB_DATABASE must be set")
+	}
+	if password == "" {
+		panic("DB_PASSWORD must be set")
+	}
+	if username == "" {
+		panic("DB_USERNAME must be set")
+	}
+	if databasePort == "" {
+		panic("DB_PORT must be set")
+	}
+	if host == "" {
+		panic("DB_HOST must be set")
+	}
+	if port == "" {
+		panic("PORT must be set")
+	}
+	if secretKey == "" || len(secretKey) < 8 {
+		panic("SECRET must be set and of at least 8 characters")
 	}
 }
