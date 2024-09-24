@@ -262,7 +262,7 @@ func (s *service) UpdateBudget(b types.CreateBudget, budget types.Budget) error 
 		RemainingQuantity: q,
 		RemainingCost:     c,
 		RemainingTotal:    total,
-		UpdatedBudget:     updated,
+		UpdatedBudget:     updated + budget.SpentTotal,
 		CompanyId:         budget.CompanyId,
 	}
 

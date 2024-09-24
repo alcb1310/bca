@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strings"
 
 	_ "github.com/joho/godotenv/autoload"
 
@@ -24,6 +25,40 @@ var (
 )
 
 func init() {
+  environmentValidation()
+  loggerSetup(env)
+}
+
+func main() {
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, databasePort, databaseName)
+	db := database.New(connStr)
+	server := server.NewServer(db, secretKey)
+
+	slog.Info("Listening on port", "port", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server.Router); err != nil {
+		panic(err)
+	}
+}
+
+func loggerSetup(env string) {
+	handlerOptions := &slog.HandlerOptions{}
+
+	switch strings.ToLower(env) {
+	case "debug":
+		handlerOptions.Level = slog.LevelDebug
+	case "info":
+		handlerOptions.Level = slog.LevelInfo
+	case "warn":
+		handlerOptions.Level = slog.LevelWarn
+	default:
+		handlerOptions.Level = slog.LevelError
+	}
+
+	loggerHandler := slog.NewJSONHandler(os.Stdout, handlerOptions)
+	slog.SetDefault(slog.New(loggerHandler))
+}
+
+func environmentValidation() {
 	if databaseName == "" {
 		panic("DB_DATABASE must be set")
 	}
@@ -44,33 +79,5 @@ func init() {
 	}
 	if secretKey == "" || len(secretKey) < 8 {
 		panic("SECRET must be set and of at least 8 characters")
-	}
-
-	handlerOptions := &slog.HandlerOptions{}
-
-	switch env {
-	case "debug":
-		handlerOptions.Level = slog.LevelDebug
-	case "info":
-		handlerOptions.Level = slog.LevelInfo
-	case "warn":
-		handlerOptions.Level = slog.LevelWarn
-	default:
-		handlerOptions.Level = slog.LevelError
-	}
-
-	loggerHandler := slog.NewJSONHandler(os.Stdout, handlerOptions)
-	logger := slog.New(loggerHandler)
-	slog.SetDefault(logger)
-}
-
-func main() {
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, databasePort, databaseName)
-	db := database.New(connStr)
-	server := server.NewServer(db, secretKey)
-
-	slog.Info("Listening on port", "port", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server.Router); err != nil {
-		panic(err)
 	}
 }
