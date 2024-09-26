@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"bca-go-final/internal/types"
 	"errors"
 	"fmt"
 	"os"
@@ -9,10 +8,14 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
+
+	"github.com/alcb1310/bca/internal/types"
 )
 
-var ErrExpiredToken = errors.New("token has expired")
-var ErrInvalidToken = errors.New("invalid token")
+var (
+	ErrExpiredToken = errors.New("token has expired")
+	ErrInvalidToken = errors.New("invalid token")
+)
 
 const minSecretKeySize = 8
 

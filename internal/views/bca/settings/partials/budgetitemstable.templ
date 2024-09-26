@@ -1,58 +1,54 @@
 package partials
 
-import "fmt"
-import "bca-go-final/internal/types"
-import "strconv"
-import "bca-go-final/internal/views/components/icons"
+import (
+"fmt"
+"github.com/alcb1310/bca/internal/types"
+"github.com/alcb1310/bca/internal/views/components/icons"
+"strconv"
+)
 
 templ BudgetItemTable(budgetItems []types.BudgetItemResponse) {
-	<table>
-		<thead>
-			<tr>
-				<th width="120px">Código</th>
-				<th width="500px">Nombre</th>
-				<th width="70px">Nivel</th>
-				<th width="100px">Acumula</th>
-				<th width="120px">Padre</th>
-				<th width="70px"></th>
-			</tr>
-		</thead>
-		<tbody>
-			if len(budgetItems) == 0 {
-				<tr>
-					<td colspan="6">No hay Partidas</td>
-				</tr>
-			} else {
-				for _, budgetItem := range budgetItems {
-					<tr>
-						<td>{ budgetItem.Code }</td>
-						<td>{ budgetItem.Name }</td>
-						<td align="center">{ strconv.Itoa(int(budgetItem.Level)) }</td>
-						<td align="center">
-							if budgetItem.Accumulate.Bool {
-                @icons.CheckCircleIcon()
-							} else {
-                @icons.XMarkCircleIcon()
-							}
-						</td>
-						<td>
-							{ budgetItem.ParentCode.String }
-						</td>
-            <td align="center">
-              <div
-                  class="hover:cursor-pointer"
-                  hx-get={ fmt.Sprintf("/bca/partials/budget-item/%s", budgetItem.ID.String()) }
-                  hx-target="#drawer"
-                  hx-swap="innerHTML"
-                  hx-trigger="click"
-                  _="on click openDrawer()"
-              >
-                @icons.EditIcon()
-              </div>
-						</td>
-					</tr>
-				}
-			}
-		</tbody>
-	</table>
+<table>
+  <thead>
+    <tr>
+      <th width="120px">Código</th>
+      <th width="500px">Nombre</th>
+      <th width="70px">Nivel</th>
+      <th width="100px">Acumula</th>
+      <th width="120px">Padre</th>
+      <th width="70px"></th>
+    </tr>
+  </thead>
+  <tbody>
+    if len(budgetItems) == 0 {
+    <tr>
+      <td colspan="6">No hay Partidas</td>
+    </tr>
+    } else {
+    for _, budgetItem := range budgetItems {
+    <tr>
+      <td>{ budgetItem.Code }</td>
+      <td>{ budgetItem.Name }</td>
+      <td align="center">{ strconv.Itoa(int(budgetItem.Level)) }</td>
+      <td align="center">
+        if budgetItem.Accumulate.Bool {
+        @icons.CheckCircleIcon()
+        } else {
+        @icons.XMarkCircleIcon()
+        }
+      </td>
+      <td>
+        { budgetItem.ParentCode.String }
+      </td>
+      <td align="center">
+        <div class="hover:cursor-pointer" hx-get={ fmt.Sprintf("/bca/partials/budget-item/%s", budgetItem.ID.String()) }
+          hx-target="#drawer" hx-swap="innerHTML" hx-trigger="click" _="on click openDrawer()">
+          @icons.EditIcon()
+        </div>
+      </td>
+    </tr>
+    }
+    }
+  </tbody>
+</table>
 }

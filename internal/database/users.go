@@ -1,10 +1,10 @@
 package database
 
 import (
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
-
 	"github.com/google/uuid"
+
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
 )
 
 func (s *service) GetAllUsers(companyId uuid.UUID) ([]types.User, error) {

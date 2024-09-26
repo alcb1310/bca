@@ -2,14 +2,15 @@ package database
 
 import (
 	"errors"
-	"log"
+	"log/slog"
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func (s *service) GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.InvoiceDetailsResponse, error) {
+	slog.Info("GetAllDetails", "companyId", companyId)
 	details := []types.InvoiceDetailsResponse{}
 	query := "select invoice_id, budget_item_id, budget_item_code, budget_item_name, quantity, cost, total, invoice_total  from vw_invoice_details where invoice_id = $1 and company_id = $2"
 
@@ -24,6 +25,7 @@ func (s *service) GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.Invoice
 		if err := rows.Scan(&detail.Id, &detail.BudgetItemId, &detail.BudgetItemCode, &detail.BudgetItemName, &detail.Quantity, &detail.Cost, &detail.Total, &detail.InvoiceTotal); err != nil {
 			return []types.InvoiceDetailsResponse{}, err
 		}
+    detail.CompanyId = companyId
 		details = append(details, detail)
 	}
 
@@ -86,7 +88,7 @@ func (s *service) AddDetail(detail types.InvoiceDetailCreate) error {
 
 	var parentId *uuid.UUID
 	parentId = &detail.BudgetItemId
-	for true {
+	for {
 		query = "select parent_id from budget_item where id = $1 and company_id = $2"
 		if err := tx.QueryRow(query, parentId, detail.CompanyId).Scan(&parentId); err != nil {
 			return err
@@ -114,7 +116,7 @@ func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) err
 	query := "select is_balanced from invoice where id = $1 and company_id = $2"
 	var isBalanced bool
 	if err := s.db.QueryRow(query, invoiceId, companyId).Scan(&isBalanced); err != nil {
-		log.Println("Error en el select: ", err)
+		slog.Error("Error en el select: ", "err", err)
 		return err
 	}
 	if isBalanced {
@@ -124,7 +126,7 @@ func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) err
 	var quantity, cost, total float64
 	query = "select quantity, cost, total from invoice_details where invoice_id = $1 and budget_item_id = $2 and company_id = $3"
 	if err := s.db.QueryRow(query, invoiceId, budgetItemId, companyId).Scan(&quantity, &cost, &total); err != nil {
-		log.Println("Error en el select: ", err)
+		slog.Error("Error en el select: ", "err", err)
 		return err
 	}
 
@@ -136,12 +138,12 @@ func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) err
 
 	query = "delete from invoice_details where invoice_id = $1 and budget_item_id = $2 and company_id = $3"
 	if _, err := tx.Exec(query, invoiceId, budgetItemId, companyId); err != nil {
-		log.Println("Error en el delete: ", err)
+		slog.Error("Error en el delete: ", "err", err)
 		return err
 	}
 	query = "update invoice set invoice_total = invoice_total - $1 where id = $2 and company_id = $3"
 	if _, err := tx.Exec(query, total, invoiceId, companyId); err != nil {
-		log.Println("Error en el update: ", err)
+		slog.Error("Error en el update: ", "err", err)
 		return err
 	}
 	var projectId uuid.UUID
@@ -156,7 +158,7 @@ func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) err
 	where project_id = $4 and budget_item_id = $5 and company_id = $6
 	`
 	if _, err := tx.Exec(query, quantity, total, cost, projectId, budgetItemId, companyId); err != nil {
-		log.Println("Error en el update budget: ", err)
+		slog.Error("Error en el update budget: ", "err", err)
 		return err
 	}
 
@@ -175,7 +177,7 @@ func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) err
 		where project_id = $2 and budget_item_id = $3 and company_id = $4
 		`
 		if _, err := tx.Exec(query, total, projectId, parentId, companyId); err != nil {
-			log.Println("Error en el update budget: ", err)
+			slog.Error("Error en el update budget: ", "err", err)
 			return err
 		}
 

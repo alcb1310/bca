@@ -2,11 +2,11 @@ package database
 
 import (
 	"database/sql"
-	"log"
+	"log/slog"
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
+	"github.com/alcb1310/bca/internal/types"
 )
 
 func (s *service) GetBudgets(companyId, project_id uuid.UUID, search string) ([]types.GetBudget, error) {
@@ -42,7 +42,7 @@ func (s *service) GetBudgets(companyId, project_id uuid.UUID, search string) ([]
 	}
 
 	if err != nil {
-		log.Println("Query Error: ", err.Error())
+		slog.Error("Query Error: ", "err", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -58,7 +58,7 @@ func (s *service) GetBudgets(companyId, project_id uuid.UUID, search string) ([]
 			&b.RemainingQuantity, &b.RemainingCost, &b.RemainingTotal,
 			&b.UpdatedBudget, &b.CompanyId,
 		); err != nil {
-			log.Println("Scan Error: ", err.Error())
+			slog.Error("Scan Error: ", "err", err)
 			return nil, err
 		}
 		budgets = append(budgets, b)
@@ -262,7 +262,7 @@ func (s *service) UpdateBudget(b types.CreateBudget, budget types.Budget) error 
 		RemainingQuantity: q,
 		RemainingCost:     c,
 		RemainingTotal:    total,
-		UpdatedBudget:     updated,
+		UpdatedBudget:     updated + budget.SpentTotal,
 		CompanyId:         budget.CompanyId,
 	}
 

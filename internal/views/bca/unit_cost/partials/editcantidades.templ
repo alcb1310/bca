@@ -1,92 +1,84 @@
 package partials
 
-import "fmt"
-import "bca-go-final/internal/views/components"
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/utils"
+import (
+"fmt"
+"github.com/alcb1310/bca/internal/types"
+"github.com/alcb1310/bca/internal/utils"
+"github.com/alcb1310/bca/internal/views/components"
+)
 
 func quantityValText(quantity *types.Quantity, text string) string {
-  if quantity == nil {
-    return ""
-  }
-  switch text {
-  case "project":
-    return quantity.Project.ID.String()
-  case "item":
-    return quantity.Rubro.Id.String()
-  case "quantity":
-    return utils.PrintFloat(quantity.Quantity)
-  default:
-    return ""
-  }
+if quantity == nil {
+return ""
+}
+switch text {
+case "project":
+return quantity.Project.ID.String()
+case "item":
+return quantity.Rubro.Id.String()
+case "quantity":
+return utils.PrintFloat(quantity.Quantity)
+default:
+return ""
+}
 }
 
 func qExists(q *types.Quantity) string {
-  if q == nil {
-    return "true"
-  }
-  return "false"
+if q == nil {
+return "true"
+}
+return "false"
 }
 
-templ EditCantidades(quantities *types.Quantity, projects, items []types.Select){
-  <input type="hidden" id="hidden" value={ qExists(quantities) } />
-  <form
-    id="edit-quantity"
-    if quantities == nil {
-      hx-post="/bca/partials/cantidades/add"
-    } else {
-      hx-put={ fmt.Sprintf("/bca/partials/cantidades/%s", quantities.Id.String()) }
-    }
-    autocomplete="off"
-    hx-target="#cantidades-table"
-    hx-target-error="#error"
-    hx-swap="innerHTML"
-    hx-trigger="submit"
-    hx-on="htmx:afterOnLoad: handleHtmxError(event)"
-  >
-    <div class="flex h-full flex-col gap-4">
-      <div>
-        if quantities == nil {
-          @components.DrawerTitle("Crear Cantidad")
-        } else {
-          @components.DrawerTitle("Editar Cantidad")
-        }
-
-        <div id="error" class="text-red-600 text-sm"></div>
-        @components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", quantityValText(quantities, "project"), "Proyecto")
-        @components.SelectComponent(items, "Seleccione un Rubro", "item", "item", quantityValText(quantities, "item"), "Rubro")
-        @components.Input("text", "Cantidad", "quantity", "quantity", quantityValText(quantities, "quantity"))  
-      </div>
-      @components.ButtonGroup()
-    </div>
-  </form>
-
-  <script>
-    var h = document.getElementById("hidden")
-    var project = document.getElementById("project")
-    var item = document.getElementById("item")
-
-    if (h.value === "false") {
-      project.disabled = true
-      item.disabled = true
-    } else {
-      project.disabled = false
-      item.disabled = false
-    }
-
-    function handleHtmxError(event) {
-      document.getElementById("error").innerHTML = ""
-
-      if (event.detail.xhr.status === 200) {
-        resetClose()
-        return
+templ EditCantidades(quantities *types.Quantity, projects, items []types.Select) {
+<input type="hidden" id="hidden" value={ qExists(quantities) } />
+<form id="edit-quantity" if quantities==nil { hx-post="/bca/partials/cantidades/add" } else { hx-put={
+  fmt.Sprintf("/bca/partials/cantidades/%s", quantities.Id.String()) } } autocomplete="off"
+  hx-target="#cantidades-table" hx-target-error="#error" hx-swap="innerHTML" hx-trigger="submit"
+  hx-on="htmx:afterOnLoad: handleHtmxError(event)">
+  <div class="flex h-full flex-col gap-4">
+    <div>
+      if quantities == nil {
+      @components.DrawerTitle("Crear Cantidad")
+      } else {
+      @components.DrawerTitle("Editar Cantidad")
       }
+      <div id="error" class="text-red-600 text-sm"></div>
+      @components.SelectComponent(projects, "Seleccione un Proyecto", "project", "project", quantityValText(quantities,
+      "project"), "Proyecto")
+      @components.SelectComponent(items, "Seleccione un Rubro", "item", "item", quantityValText(quantities, "item"),
+      "Rubro")
+      @components.Input("text", "Cantidad", "quantity", "quantity", quantityValText(quantities, "quantity"))
+    </div>
+    @components.ButtonGroup()
+  </div>
+</form>
+<script>
+  var h = document.getElementById("hidden")
+  var project = document.getElementById("project")
+  var item = document.getElementById("item")
 
-      document.getElementById("error").innerHTML = event.detail.xhr.responseText
+  if (h.value === "false") {
+    project.disabled = true
+    item.disabled = true
+  } else {
+    project.disabled = false
+    item.disabled = false
+  }
+
+  function handleHtmxError(event) {
+    document.getElementById("error").innerHTML = ""
+
+    if (event.detail.xhr.status === 200) {
+      resetClose()
+      return
     }
 
-    function resetClose() {
-      closeDrawer()
-    }
-  </script>
+    document.getElementById("error").innerHTML = event.detail.xhr.responseText
+  }
+
+  function resetClose() {
+    closeDrawer()
+  }
+</script>
 }

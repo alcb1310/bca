@@ -3,17 +3,17 @@ package database
 import (
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
 
-	"bca-go-final/internal/types"
-	"bca-go-final/internal/utils"
+	"github.com/alcb1310/bca/internal/types"
+	"github.com/alcb1310/bca/internal/utils"
 )
 
 func (s *service) CreateClosure(companyId, projectId uuid.UUID, date time.Time) error {
-	log.Println(fmt.Sprintf("Procesando el cierre del proyecto: %s para la fecha: %s", projectId, utils.ConvertDate(date)))
+	slog.Info("Procesando el cierre del proyecto", "project_id", projectId, "date", utils.ConvertDate(date))
 	var existingDate time.Time
 
 	query := "select date from historic where company_id = $1 and project_id = $2 and extract(year from date) = $3 and extract(month from date) = $4"
@@ -31,7 +31,7 @@ func (s *service) CreateClosure(companyId, projectId uuid.UUID, date time.Time) 
 	`
 	rows, err := s.db.Query(query, projectId, companyId)
 	if err != nil {
-		log.Println("Error en el Query")
+		slog.Error("Error en el Query", "query", query, "err", err)
 		return err
 	}
 	defer rows.Close()
@@ -45,7 +45,7 @@ func (s *service) CreateClosure(companyId, projectId uuid.UUID, date time.Time) 
 		b := types.Budget{}
 		if err := rows.Scan(&b.ProjectId, &b.BudgetItemId, &b.InitialQuantity, &b.InitialCost, &b.InitialTotal, &b.SpentQuantity, &b.SpentTotal,
 			&b.RemainingQuantity, &b.RemainingCost, &b.RemainingTotal, &b.UpdatedBudget, &b.CompanyId); err != nil {
-			log.Println("Error en el Scan")
+			slog.Error("Error en el Scan", "err", err)
 			return err
 		}
 
@@ -58,24 +58,24 @@ func (s *service) CreateClosure(companyId, projectId uuid.UUID, date time.Time) 
 		`
 		if _, err := tx.Exec(query, b.ProjectId, b.BudgetItemId, b.InitialQuantity, b.InitialCost, b.InitialTotal, b.SpentQuantity, b.SpentTotal,
 			b.RemainingQuantity, b.RemainingCost, b.RemainingTotal, b.UpdatedBudget, b.CompanyId, date); err != nil {
-			log.Println("Error en el insert")
+			slog.Error("Error en el insert", "err", err)
 			return err
 		}
 	}
 
 	query = "update invoice set is_balanced = true where company_id = $1 and project_id = $2 and extract(year from invoice_date) = $3 and extract(month from invoice_date) = $4"
 	if _, err := tx.Exec(query, companyId, projectId, date.Year(), date.Month()); err != nil {
-		log.Println("Error en el update")
+		slog.Error("Error en el update", "err", err)
 		return err
 	}
 
 	query = "update project set last_closure = $1 where id = $2 and company_id = $3"
 	if _, err := tx.Exec(query, date, projectId, companyId); err != nil {
-		log.Println("Error en el update project")
+		slog.Error("Error en el update project", "err", err)
 		return err
 	}
 
 	tx.Commit()
-	log.Println(fmt.Sprintf("Terminado el cierre del proyecto: %s para la fecha: %s", projectId, utils.ConvertDate(date)))
+	slog.Info("Terminado el cierre del proyecto", "project_id", projectId, "date", utils.ConvertDate(date))
 	return nil
 }

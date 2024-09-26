@@ -39,8 +39,8 @@ type CreateBudget struct {
 
 // Structure for reading budgets
 type GetBudget struct {
-	Project    project
-	BudgetItem budgetItem
+	Project    ProjectData
+	BudgetItem BudgetItemData
 
 	InitialQuantity sql.NullFloat64
 	InitialCost     sql.NullFloat64
@@ -58,14 +58,14 @@ type GetBudget struct {
 	CompanyId uuid.UUID
 }
 
-type project struct {
+type ProjectData struct {
 	ID        uuid.UUID
 	Name      string
 	NetArea   float64
 	GrossArea float64
 }
 
-type budgetItem struct {
+type BudgetItemData struct {
 	ID         uuid.UUID
 	Code       string
 	Name       string

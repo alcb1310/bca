@@ -1,20 +1,22 @@
 package users
 
-import "bca-go-final/internal/views/base"
-import "bca-go-final/internal/types"
-import "bca-go-final/internal/views/components"
+import (
+"github.com/alcb1310/bca/internal/types"
+"github.com/alcb1310/bca/internal/views/base"
+"github.com/alcb1310/bca/internal/views/components"
+)
 
 templ ProfileView(user types.User) {
-	@base.AuthenticatedLayout("") {
-		<div>
-			@components.PageTitle("Mi Perfil")
-			<div>
-				<p><span class="text-green-300 font-bold">Nombre: </span>{ user.Name }</p>
-				<p><span class="text-green-300 font-bold">Email: </span>{ user.Email }</p>
-			</div>
-			<div>
-				<p class="mt-12 text-xs">Para modificar el perfil, por favor, contactarse con el administrador.</p>
-			</div>
-		</div>
-	}
+@base.AuthenticatedLayout("") {
+<div>
+  @components.PageTitle("Mi Perfil")
+  <div>
+    <p><span class="text-green-300 font-bold">Nombre: </span>{ user.Name }</p>
+    <p><span class="text-green-300 font-bold">Email: </span>{ user.Email }</p>
+  </div>
+  <div>
+    <p class="mt-12 text-xs">Para modificar el perfil, por favor, contactarse con el administrador.</p>
+  </div>
+</div>
+}
 }
