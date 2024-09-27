@@ -28,7 +28,7 @@ func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {
 	dateVal, _ := time.Parse("2006-01-02", d)
 
 	f := excel.Balance(ctx.CompanyId, parsedProjectId, dateVal, s.DB)
-	fName := "/" + strings.Trim(f.Path, "./public")
+	fName := strings.Trim(f.Path, ".")
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
