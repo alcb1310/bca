@@ -164,7 +164,7 @@ func (s *Server) SpentExcel(w http.ResponseWriter, r *http.Request) {
 
 	project, _ := s.DB.GetProject(parsedProjectId, ctx.CompanyId)
 	f := excel.Spent(project, reportData, dateVal)
-	fName := "/" + strings.Trim(f.Path, "./public")
+	fName := strings.Trim(f.Path, ".")
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
