@@ -105,7 +105,7 @@ func (s *Server) HistoricExcel(w http.ResponseWriter, r *http.Request) {
 	budgets := s.DB.GetHistoricByProject(ctx.CompanyId, parsedProjectId, dateVal, level)
 
 	f := excel.Actual(ctx.CompanyId, parsedProjectId, budgets, &dateVal, s.DB)
-	fName := "/" + strings.Trim(f.Path, "./public")
+	fName := strings.Trim(f.Path, ".")
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
