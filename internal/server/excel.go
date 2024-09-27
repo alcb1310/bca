@@ -65,7 +65,7 @@ func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
 	budgets, _ := s.DB.GetBudgetsByProjectId(ctx.CompanyId, parsedProjectId, &level)
 
 	f := excel.Actual(ctx.CompanyId, parsedProjectId, budgets, nil, s.DB)
-	fName := "/" + strings.Trim(f.Path, "./public")
+	fName := strings.Trim(f.Path, ".")
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
