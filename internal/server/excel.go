@@ -28,7 +28,7 @@ func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {
 	dateVal, _ := time.Parse("2006-01-02", d)
 
 	f := excel.Balance(ctx.CompanyId, parsedProjectId, dateVal, s.DB)
-	fName := "/" + strings.Trim(f.Path, "./public")
+	fName := strings.Trim(f.Path, ".")
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
@@ -65,7 +65,7 @@ func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
 	budgets, _ := s.DB.GetBudgetsByProjectId(ctx.CompanyId, parsedProjectId, &level)
 
 	f := excel.Actual(ctx.CompanyId, parsedProjectId, budgets, nil, s.DB)
-	fName := "/" + strings.Trim(f.Path, "./public")
+	fName := strings.Trim(f.Path, ".")
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
@@ -105,7 +105,7 @@ func (s *Server) HistoricExcel(w http.ResponseWriter, r *http.Request) {
 	budgets := s.DB.GetHistoricByProject(ctx.CompanyId, parsedProjectId, dateVal, level)
 
 	f := excel.Actual(ctx.CompanyId, parsedProjectId, budgets, &dateVal, s.DB)
-	fName := "/" + strings.Trim(f.Path, "./public")
+	fName := strings.Trim(f.Path, ".")
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
@@ -164,7 +164,7 @@ func (s *Server) SpentExcel(w http.ResponseWriter, r *http.Request) {
 
 	project, _ := s.DB.GetProject(parsedProjectId, ctx.CompanyId)
 	f := excel.Spent(project, reportData, dateVal)
-	fName := "/" + strings.Trim(f.Path, "./public")
+	fName := strings.Trim(f.Path, ".")
 
 	w.Header().Set("HX-Redirect", fName)
 	w.WriteHeader(http.StatusOK)
