@@ -32,7 +32,7 @@ func TestInvoiceDetails(t *testing.T) {
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
-				WithStartupTimeout(6*time.Second),
+				WithStartupTimeout(10*time.Second),
 		),
 		postgres.WithInitScripts(filepath.Join("..", "..", "internal", "database", "tables.sql")),
 		postgres.WithInitScripts(filepath.Join("scripts", "u000-company.sql")),
