@@ -22,14 +22,14 @@ import (
 func TestLogin(t *testing.T) {
 	ctx := context.Background()
 	pgContainer, err := postgres.Run(ctx,
-		"postgres:16.4-alpine",
+		"postgres:16-alpine",
 		postgres.WithDatabase("test"),
 		postgres.WithUsername("test"),
 		postgres.WithPassword("test"),
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
-				WithStartupTimeout(5*time.Second),
+				WithStartupTimeout(6*time.Second),
 		),
 		postgres.WithInitScripts(filepath.Join("..", "..", "internal", "database", "tables.sql")),
 		postgres.WithInitScripts(filepath.Join("scripts", "u000-company.sql")),
