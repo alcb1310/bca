@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -23,14 +22,14 @@ import (
 func TestBudgetItem(t *testing.T) {
 	ctx := context.Background()
 	pgContainer, err := postgres.Run(ctx,
-		"postgres:14.1-alpine",
+		"postgres:16-alpine",
 		postgres.WithDatabase("testbudgetitem"),
 		postgres.WithUsername("test"),
 		postgres.WithPassword("test"),
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
-				WithStartupTimeout(5*time.Second),
+				WithStartupTimeout(6*time.Second),
 		),
 		postgres.WithInitScripts(filepath.Join("..", "..", "internal", "database", "tables.sql")),
 		postgres.WithInitScripts(filepath.Join("scripts", "u000-company.sql")),
@@ -147,7 +146,6 @@ func TestBudgetItem(t *testing.T) {
 		t.Run("it should get all budget-items by accumulate", func(t *testing.T) {
 			var parentUUID *uuid.UUID = nil
 			budgetItems := s.DB.GetBudgetItemsByAccumulate(companyId, true)
-			slog.Info("single budget item", "budgetItems", budgetItems)
 			assert.Equal(t, 1, len(budgetItems))
 			assert.Equal(t, budgetItems[0].Name, "Costo Directo")
 			assert.Equal(t, budgetItems[0].Code, "500")
