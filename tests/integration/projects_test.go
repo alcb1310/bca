@@ -20,14 +20,14 @@ import (
 func TestProjects(t *testing.T) {
 	ctx := context.Background()
 	pgContaineer, err := postgres.Run(ctx,
-		"postgres:16.4-alpine",
+		"postgres:16-alpine",
 		postgres.WithDatabase("testproject"),
 		postgres.WithUsername("test"),
 		postgres.WithPassword("test"),
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
-				WithStartupTimeout(5*time.Second),
+				WithStartupTimeout(10*time.Second),
 		),
 		postgres.WithInitScripts(filepath.Join("..", "..", "internal", "database", "tables.sql")),
 		postgres.WithInitScripts(filepath.Join("scripts", "u000-company.sql")),
@@ -105,7 +105,7 @@ func TestProjects(t *testing.T) {
 	})
 
 	t.Run("single project", func(t *testing.T) {
-    companyId := getCompanyId(t, s, cookies)
+		companyId := getCompanyId(t, s, cookies)
 
 		projects, err := s.DB.GetAllProjects(companyId)
 		assert.NoError(t, err)

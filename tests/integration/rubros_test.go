@@ -20,14 +20,14 @@ import (
 func TestRubros(t *testing.T) {
 	ctx := context.Background()
 	pgContainer, err := postgres.Run(ctx,
-		"postgres:14.1-alpine",
+		"postgres:16-alpine",
 		postgres.WithDatabase("testrubros"),
 		postgres.WithUsername("test"),
 		postgres.WithPassword("test"),
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
-				WithStartupTimeout(5*time.Second),
+				WithStartupTimeout(10*time.Second),
 		),
 		postgres.WithInitScripts(filepath.Join("..", "..", "internal", "database", "tables.sql")),
 		postgres.WithInitScripts(filepath.Join("scripts", "u000-company.sql")),
