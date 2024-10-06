@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -20,6 +21,14 @@ type Server struct {
 	TokenAuth *jwtauth.JWTAuth
 }
 
+func commonMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		slog.Debug("common middleware")
+		w.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func NewServer(db database.Service, secret string) *Server {
 	s := &Server{
 		DB:        db,
@@ -35,6 +44,13 @@ func NewServer(db database.Service, secret string) *Server {
 
 	s.Router.Get("/login", s.DisplayLogin)
 	s.Router.Post("/login", s.LoginView)
+
+	s.Router.Route("/api/v1", func(r chi.Router) {
+		r.Use(middleware.AllowContentType("application/json"))
+		r.Use(commonMiddleware)
+
+		r.Post("/login", s.ApiLogin)
+	})
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
