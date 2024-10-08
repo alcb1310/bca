@@ -3,11 +3,11 @@ package server
 import (
 	"context"
 	"encoding/json"
-	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/lestrrat-go/jwx/v2/jwt"
 
@@ -23,7 +23,6 @@ type Server struct {
 
 func commonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		slog.Debug("common middleware")
 		w.Header().Add("Content-Type", "application/json")
 		next.ServeHTTP(w, r)
 	})
@@ -36,6 +35,10 @@ func NewServer(db database.Service, secret string) *Server {
 		TokenAuth: jwtauth.New("HS256", []byte(secret), nil),
 	}
 	s.Router.Use(middleware.Logger)
+	s.Router.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"https://*", "http://*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+	}))
 
 	s.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
 
