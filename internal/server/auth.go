@@ -262,6 +262,9 @@ func (s *Server) ApiLogin(w http.ResponseWriter, r *http.Request) {
 
 	_, token, _ := s.TokenAuth.Encode(map[string]interface{}{"id": user.Id, "name": user.Name, "email": user.Email, "company_id": user.CompanyId, "role": user.RoleId})
 
-	w.Header().Set("BCA-Auth-Token", token)
-	json.NewEncoder(w).Encode(user)
+	resp := make(map[string]interface{})
+	resp["user"] = user
+	resp["token"] = token
+
+	json.NewEncoder(w).Encode(resp)
 }
