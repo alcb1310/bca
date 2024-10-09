@@ -38,6 +38,7 @@ func NewServer(db database.Service, secret string) *Server {
 	s.Router.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"https://*", "http://*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 	}))
 
 	s.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
@@ -53,6 +54,13 @@ func NewServer(db database.Service, secret string) *Server {
 		r.Use(commonMiddleware)
 
 		r.Post("/login", s.ApiLogin)
+
+		r.Route("/users", func(r chi.Router) {
+			r.Use(jwtauth.Verifier(s.TokenAuth))
+			r.Use(authenticator())
+
+			r.Get("/me", s.GetCurrentUser)
+		})
 	})
 
 	s.Router.Route("/bca", func(r chi.Router) {
