@@ -60,6 +60,7 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Use(authenticator())
 
 			r.Get("/me", s.GetCurrentUser)
+			r.Get("/", s.GetAllUsers)
 		})
 	})
 
