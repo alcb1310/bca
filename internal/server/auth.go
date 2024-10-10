@@ -221,3 +221,50 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
+
+func (s *Server) ApiLogin(w http.ResponseWriter, r *http.Request) {
+	if r.Body == http.NoBody || r.Body == nil {
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = "credenciales inválidas"
+
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	var login types.Login
+	if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
+		errorResponse := make(map[string]string)
+		w.WriteHeader(http.StatusBadRequest)
+		if err == io.EOF {
+			errorResponse["error"] = err.Error()
+		}
+		json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	if login.Email == "" || login.Password == "" || !utils.IsValidEmail(login.Email) {
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = "credenciales inválidas"
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	_, user, err := s.DB.Login(&login)
+	if err != nil {
+		errorResponse := make(map[string]string)
+		w.WriteHeader(http.StatusUnauthorized)
+		errorResponse["error"] = "credenciales inválidas"
+		json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	_, token, _ := s.TokenAuth.Encode(map[string]interface{}{"id": user.Id, "name": user.Name, "email": user.Email, "company_id": user.CompanyId, "role": user.RoleId})
+
+	resp := make(map[string]interface{})
+	resp["user"] = user
+	resp["token"] = token
+
+	json.NewEncoder(w).Encode(resp)
+}

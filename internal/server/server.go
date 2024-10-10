@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/lestrrat-go/jwx/v2/jwt"
 
@@ -20,6 +21,13 @@ type Server struct {
 	TokenAuth *jwtauth.JWTAuth
 }
 
+func commonMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func NewServer(db database.Service, secret string) *Server {
 	s := &Server{
 		DB:        db,
@@ -27,6 +35,11 @@ func NewServer(db database.Service, secret string) *Server {
 		TokenAuth: jwtauth.New("HS256", []byte(secret), nil),
 	}
 	s.Router.Use(middleware.Logger)
+	s.Router.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"https://*", "http://*"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+	}))
 
 	s.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
 
@@ -35,6 +48,21 @@ func NewServer(db database.Service, secret string) *Server {
 
 	s.Router.Get("/login", s.DisplayLogin)
 	s.Router.Post("/login", s.LoginView)
+
+	s.Router.Route("/api/v1", func(r chi.Router) {
+		r.Use(middleware.AllowContentType("application/json"))
+		r.Use(commonMiddleware)
+
+		r.Post("/login", s.ApiLogin)
+
+		r.Route("/users", func(r chi.Router) {
+			r.Use(jwtauth.Verifier(s.TokenAuth))
+			r.Use(authenticator())
+
+			r.Get("/me", s.GetCurrentUser)
+			r.Get("/", s.GetAllUsers)
+		})
+	})
 
 	s.Router.Route("/bca", func(r chi.Router) {
 		r.Use(jwtauth.Verifier(s.TokenAuth))
