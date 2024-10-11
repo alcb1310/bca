@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 
 	"github.com/alcb1310/bca/internal/types"
@@ -89,4 +91,22 @@ func (s *Server) ApiCreateUser(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(createdUser)
+}
+
+func (s *Server) ApiDeleteUser(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+	id := chi.URLParam(r, "id")
+	parsedId, _ := uuid.Parse(id)
+
+	if ctx.Id == parsedId {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	if err := s.DB.DeleteUser(parsedId, ctx.CompanyId); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
