@@ -19,7 +19,7 @@ func (s *Server) ApiGetCurrentUser(w http.ResponseWriter, r *http.Request) {
 	user, _ := s.DB.GetUser(ctx.Id, ctx.CompanyId)
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(user)
+	_ = json.NewEncoder(w).Encode(user)
 }
 
 func (s *Server) ApiGetAllUsers(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +28,7 @@ func (s *Server) ApiGetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(users)
+	_ = json.NewEncoder(w).Encode(users)
 }
 
 func (s *Server) ApiCreateUser(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +37,7 @@ func (s *Server) ApiCreateUser(w http.ResponseWriter, r *http.Request) {
 		errorResponse["error"] = "Invalid request body"
 
 		w.WriteHeader(http.StatusNotAcceptable)
-		json.NewEncoder(w).Encode(errorResponse)
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
@@ -48,7 +48,7 @@ func (s *Server) ApiCreateUser(w http.ResponseWriter, r *http.Request) {
 		errorResponse := make(map[string]string)
 		w.WriteHeader(http.StatusInternalServerError)
 		errorResponse["error"] = err.Error()
-		json.NewEncoder(w).Encode(errorResponse)
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 	user.RoleId = "a"
@@ -69,7 +69,7 @@ func (s *Server) ApiCreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if len(userErrors) != 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(userErrors)
+		_ = json.NewEncoder(w).Encode(userErrors)
 		return
 	}
 
@@ -81,7 +81,7 @@ func (s *Server) ApiCreateUser(w http.ResponseWriter, r *http.Request) {
 			errorResponse := make(map[string]string)
 			errorResponse["error"] = "Ya existe un usuario con ese correo"
 			w.WriteHeader(http.StatusConflict)
-			json.NewEncoder(w).Encode(errorResponse)
+			_ = json.NewEncoder(w).Encode(errorResponse)
 			return
 		}
 
@@ -90,7 +90,7 @@ func (s *Server) ApiCreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(createdUser)
+	_ = json.NewEncoder(w).Encode(createdUser)
 }
 
 func (s *Server) ApiDeleteUser(w http.ResponseWriter, r *http.Request) {
