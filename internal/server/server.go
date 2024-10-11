@@ -61,6 +61,7 @@ func NewServer(db database.Service, secret string) *Server {
 
 			r.Get("/me", s.GetCurrentUser)
 			r.Get("/", s.GetAllUsers)
+			r.Post("/", s.CreateUser)
 		})
 	})
 
