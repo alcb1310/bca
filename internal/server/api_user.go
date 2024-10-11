@@ -139,8 +139,6 @@ func (s *Server) ApiUpdateUser(w http.ResponseWriter, r *http.Request) {
 		user.RoleId = userInfo.RoleId
 	}
 
-	slog.Info("ApiUpdateUser", "user", user)
-
 	if _, err = s.DB.UpdateUser(user, parsedId, ctx.CompanyId); err != nil {
 		var e *pgconn.PgError
 
@@ -158,4 +156,18 @@ func (s *Server) ApiUpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(user)
+}
+
+func (s *Server) ApiChangePassword(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+	passwordInfo := map[string]string{}
+
+	_ = json.NewDecoder(r.Body).Decode(&passwordInfo)
+
+	if _, err := s.DB.UpdatePassword(passwordInfo["password"], ctx.Id, ctx.CompanyId); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
