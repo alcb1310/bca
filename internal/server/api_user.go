@@ -11,7 +11,7 @@ import (
 	"github.com/alcb1310/bca/internal/utils"
 )
 
-func (s *Server) GetCurrentUser(w http.ResponseWriter, r *http.Request) {
+func (s *Server) ApiGetCurrentUser(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
 	user, _ := s.DB.GetUser(ctx.Id, ctx.CompanyId)
@@ -20,7 +20,7 @@ func (s *Server) GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user)
 }
 
-func (s *Server) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+func (s *Server) ApiGetAllUsers(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
 	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
@@ -29,7 +29,7 @@ func (s *Server) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
-func (s *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
+func (s *Server) ApiCreateUser(w http.ResponseWriter, r *http.Request) {
 	if r.Body == http.NoBody || r.Body == nil {
 		errorResponse := make(map[string]string)
 		errorResponse["error"] = "Invalid request body"

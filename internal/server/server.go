@@ -59,9 +59,9 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Use(jwtauth.Verifier(s.TokenAuth))
 			r.Use(authenticator())
 
-			r.Get("/me", s.GetCurrentUser)
-			r.Get("/", s.GetAllUsers)
-			r.Post("/", s.CreateUser)
+			r.Get("/me", s.ApiGetCurrentUser)
+			r.Get("/", s.ApiGetAllUsers)
+			r.Post("/", s.ApiCreateUser)
 		})
 	})
 
