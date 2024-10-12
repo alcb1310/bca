@@ -6,6 +6,8 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/google/uuid"
+
 	"github.com/alcb1310/bca/internal/types"
 	"github.com/alcb1310/bca/internal/utils"
 )
@@ -104,6 +106,17 @@ func (s *Server) ApiCreateBudgetItem(w http.ResponseWriter, r *http.Request) {
 
 	if data.Name == "" {
 		errorReseponse["name"] = "El nombre es obligatorio"
+	}
+
+	parsedParentId, err := uuid.Parse(data.Parent)
+	if err != nil {
+		if data.Parent == "" {
+			biToCreate.ParentId = nil
+		} else {
+			errorReseponse["parent"] = "La partida padre no es valida"
+		}
+	} else {
+		biToCreate.ParentId = &parsedParentId
 	}
 
 	if len(errorReseponse) > 0 {
