@@ -7,23 +7,33 @@ import (
 )
 
 type BudgetItem struct {
-	ID         uuid.UUID
-	Code       string
-	Name       string
-	Level      uint8
-	Accumulate sql.NullBool
-	ParentId   *uuid.UUID
-	CompanyId  uuid.UUID
+	ID         uuid.UUID    `json:"id"`
+	Code       string       `json:"code"`
+	Name       string       `json:"name"`
+	Level      uint8        `json:"level"`
+	Accumulate sql.NullBool `json:"accumulate"`
+	ParentId   *uuid.UUID   `json:"parent_id"`
+	CompanyId  uuid.UUID    `json:"company_id"`
 }
 
 type BudgetItemResponse struct {
-	ID         uuid.UUID
-	Code       string
-	Name       string
-	Level      uint8
-	Accumulate sql.NullBool
-	ParentId   uuid.NullUUID
-	ParentCode sql.NullString
-	ParentName sql.NullString
-	CompanyId  uuid.UUID
+	ID         uuid.UUID      `json:"id"`
+	Code       string         `json:"code"`
+	Name       string         `json:"name"`
+	Level      uint8          `json:"level"`
+	Accumulate sql.NullBool   `json:"accumulate"`
+	ParentId   uuid.NullUUID  `json:"parent_id"`
+	ParentCode sql.NullString `json:"parent_code"`
+	ParentName sql.NullString `json:"parent_name"`
+	CompanyId  uuid.UUID      `json:"company_id"`
+}
+
+type BudgetItemJsonResponse struct {
+	ID         uuid.UUID   `json:"id"`
+	Code       string      `json:"code"`
+	Name       string      `json:"name"`
+	Level      uint8       `json:"level"`
+	Accumulate bool        `json:"accumulate"`
+	Parent     *BudgetItem `json:"parent"`
+	CompanyId  uuid.UUID   `json:"company_id"`
 }
