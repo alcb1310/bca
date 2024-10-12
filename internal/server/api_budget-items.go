@@ -3,10 +3,12 @@ package server
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	"github.com/alcb1310/bca/internal/types"
 	"github.com/alcb1310/bca/internal/utils"
@@ -125,6 +127,16 @@ func (s *Server) ApiCreateBudgetItem(w http.ResponseWriter, r *http.Request) {
 	biToCreate.Accumulate = sql.NullBool{Bool: data.Accumulate, Valid: true}
 
 	if err := s.DB.CreateBudgetItem(&biToCreate); err != nil {
+		var e *pgconn.PgError
+
+		if errors.As(err, &e) && e.Code == "23505" {
+			w.WriteHeader(http.StatusConflict)
+			errorResponse := make(map[string]string)
+			errorResponse["error"] = "Ya existe una partida con ese codigo o nombre"
+			_ = json.NewEncoder(w).Encode(errorResponse)
+			return
+		}
+
 		w.WriteHeader(http.StatusInternalServerError)
 		errorResponse := make(map[string]string)
 		errorResponse["error"] = err.Error()
@@ -137,7 +149,6 @@ func (s *Server) ApiCreateBudgetItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ApiUpdateBudgetItem(w http.ResponseWriter, r *http.Request) {
-	// TODO: implemente method
 	ctx, _ := utils.GetMyPaload(r)
 	id := chi.URLParam(r, "id")
 	parsedId, _ := uuid.Parse(id)
@@ -160,21 +171,31 @@ func (s *Server) ApiUpdateBudgetItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-  if data.Code != "" {
-    biToUpdate.Code = data.Code
-  }
-  if data.Name != "" {
-    biToUpdate.Name = data.Name
-  }
-  biToUpdate.Accumulate = sql.NullBool{Bool: data.Accumulate, Valid: true}
+	if data.Code != "" {
+		biToUpdate.Code = data.Code
+	}
+	if data.Name != "" {
+		biToUpdate.Name = data.Name
+	}
+	biToUpdate.Accumulate = sql.NullBool{Bool: data.Accumulate, Valid: true}
 
-  if err := s.DB.UpdateBudgetItem(biToUpdate); err != nil {
-    w.WriteHeader(http.StatusInternalServerError)
-    errorResponse := make(map[string]string)
-    errorResponse["error"] = err.Error()
-    _ = json.NewEncoder(w).Encode(errorResponse)
-    return
-  }
+	if err := s.DB.UpdateBudgetItem(biToUpdate); err != nil {
+		var e *pgconn.PgError
+
+		if errors.As(err, &e) && e.Code == "23505" {
+			w.WriteHeader(http.StatusConflict)
+			errorResponse := make(map[string]string)
+			errorResponse["error"] = "Ya existe una partida con ese codigo o nombre"
+			_ = json.NewEncoder(w).Encode(errorResponse)
+			return
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
 
 	w.WriteHeader(http.StatusNotImplemented)
 }
