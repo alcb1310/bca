@@ -66,6 +66,15 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Delete("/{id}", s.ApiDeleteUser)
 			r.Put("/{id}", s.ApiUpdateUser)
 		})
+
+		r.Route("/parametros", func(r chi.Router) {
+			r.Use(jwtauth.Verifier(s.TokenAuth))
+			r.Use(authenticator())
+
+			r.Route("/partidas", func(r chi.Router) {
+				r.Get("/", s.ApiGetAllBudgetItems)
+			})
+		})
 	})
 
 	s.Router.Route("/bca", func(r chi.Router) {
