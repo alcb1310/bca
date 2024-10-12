@@ -74,6 +74,7 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Route("/partidas", func(r chi.Router) {
 				r.Get("/", s.ApiGetAllBudgetItems)
 				r.Post("/", s.ApiCreateBudgetItem)
+				r.Put("/{id}", s.ApiUpdateBudgetItem)
 			})
 		})
 	})
