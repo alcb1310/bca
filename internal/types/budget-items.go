@@ -37,3 +37,10 @@ type BudgetItemJsonResponse struct {
 	Parent     *BudgetItem `json:"parent"`
 	CompanyId  uuid.UUID   `json:"company_id"`
 }
+
+type BudgetItemCreate struct {
+	Code       string `json:"code"`
+	Name       string `json:"name"`
+	Accumulate bool   `json:"accumulate"`
+	Parent     string `json:"parent_id"`
+}
