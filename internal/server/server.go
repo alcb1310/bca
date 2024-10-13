@@ -85,6 +85,7 @@ func NewServer(db database.Service, secret string) *Server {
 
 			r.Route("/materiales", func(r chi.Router) {
 				r.Get("/", s.ApiGetAllMaterials)
+        r.Post("/", s.ApiCreateMaterial)
 			})
 		})
 	})
