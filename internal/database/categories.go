@@ -34,8 +34,8 @@ func (s *service) CreateCategory(category types.Category) error {
 
 func (s *service) GetCategory(id, companyId uuid.UUID) (types.Category, error) {
 	c := types.Category{}
-	sql := "select id, name from category where id = $1 and company_id = $2"
-	err := s.db.QueryRow(sql, id, companyId).Scan(&c.Id, &c.Name)
+	sql := "select id, name, company_id from category where id = $1 and company_id = $2"
+	err := s.db.QueryRow(sql, id, companyId).Scan(&c.Id, &c.Name, &c.CompanyId)
 	return c, err
 }
 
