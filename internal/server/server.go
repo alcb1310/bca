@@ -79,6 +79,7 @@ func NewServer(db database.Service, secret string) *Server {
 
       r.Route("/categorias", func(r chi.Router) {
         r.Get("/", s.ApiGetAllCategories)
+        r.Post("/", s.ApiCreateCategory)
       })
 		})
 	})
