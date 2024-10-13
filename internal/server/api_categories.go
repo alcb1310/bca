@@ -2,8 +2,12 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
+	"github.com/jackc/pgx/v5/pgconn"
+
+	"github.com/alcb1310/bca/internal/types"
 	"github.com/alcb1310/bca/internal/utils"
 )
 
@@ -14,4 +18,55 @@ func (s *Server) ApiGetAllCategories(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(categories)
+}
+
+func (s *Server) ApiCreateCategory(w http.ResponseWriter, r *http.Request) {
+	if r.Body == http.NoBody || r.Body == nil {
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = "Invalid request body"
+
+		w.WriteHeader(http.StatusNotAcceptable)
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	ctx, _ := utils.GetMyPaload(r)
+
+	mat := types.Category{}
+
+	if err := json.NewDecoder(r.Body).Decode(&mat); err != nil {
+		errorResponse := make(map[string]string)
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	if mat.Name == "" {
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = "El nombre es obligatorio"
+		w.WriteHeader(http.StatusNotAcceptable)
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+	mat.CompanyId = ctx.CompanyId
+
+	if err := s.DB.CreateCategory(mat); err != nil {
+		var e *pgconn.PgError
+		if errors.As(err, &e) && e.Code == "23505" {
+			w.WriteHeader(http.StatusConflict)
+			errorResponse := make(map[string]string)
+			errorResponse["error"] = "Ya existe una categoria con ese nombre"
+			_ = json.NewEncoder(w).Encode(errorResponse)
+			return
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }
