@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 
 	"github.com/alcb1310/bca/internal/types"
@@ -62,4 +64,68 @@ func (s *Server) ApiCreateProject(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusCreated)
 	_ = json.NewEncoder(w).Encode(createdProject)
+}
+
+func (s *Server) ApiUpdateProject(w http.ResponseWriter, r *http.Request) {
+	if r.Body == http.NoBody || r.Body == nil {
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = "Invalid request body"
+
+		w.WriteHeader(http.StatusNotAcceptable)
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	ctx, _ := utils.GetMyPaload(r)
+	id := chi.URLParam(r, "id")
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	projectToUpdate, err := s.DB.GetProject(parsedId, ctx.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	var project types.Project
+	if err = json.NewDecoder(r.Body).Decode(&project); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	projectToUpdate.Name = project.Name
+	projectToUpdate.IsActive = project.IsActive
+	projectToUpdate.GrossArea = project.GrossArea
+	projectToUpdate.NetArea = project.NetArea
+
+	if err = s.DB.UpdateProject(projectToUpdate, parsedId, ctx.CompanyId); err != nil {
+		var e *pgconn.PgError
+		if errors.As(err, &e) && e.Code == "23505" {
+			w.WriteHeader(http.StatusConflict)
+			errorResponse := make(map[string]string)
+			errorResponse["error"] = "Ya existe un proyecto con ese nombre"
+			_ = json.NewEncoder(w).Encode(errorResponse)
+			return
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(projectToUpdate)
 }
