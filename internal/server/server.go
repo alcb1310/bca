@@ -103,6 +103,7 @@ func NewServer(db database.Service, secret string) *Server {
 
 			r.Route("/rubros", func(r chi.Router) {
 				r.Get("/", s.ApiGetAllRubros)
+				r.Get("/{id}", s.ApiGetRubro)
 			})
 		})
 	})
