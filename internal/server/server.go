@@ -98,6 +98,7 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Route("/proveedores", func(r chi.Router) {
 				r.Get("/", s.ApiGetAllSuppliers)
 				r.Post("/", s.ApiCreateSupplier)
+				r.Put("/{id}", s.ApiUpdateSupplier)
 			})
 		})
 	})
