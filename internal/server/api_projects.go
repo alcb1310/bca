@@ -15,8 +15,10 @@ import (
 
 func (s *Server) ApiGetAllProjects(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
+	queryParams := r.URL.Query()
+	search := queryParams.Get("query")
 
-	projects, _ := s.DB.GetAllProjects(ctx.CompanyId)
+	projects, _ := s.DB.GetAllProjects(ctx.CompanyId, search)
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(projects)
 }

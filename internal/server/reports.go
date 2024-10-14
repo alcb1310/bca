@@ -38,7 +38,7 @@ func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
 func (s *Server) GetBalance(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	p, _ := s.DB.GetAllProjects(ctx.CompanyId)
+	p, _ := s.DB.GetAllProjects(ctx.CompanyId, "")
 	projects := []types.Select{}
 	for _, v := range p {
 		x := types.Select{

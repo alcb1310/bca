@@ -1314,7 +1314,7 @@ func (_c *Service_GetAllMaterials_Call) RunAndReturn(run func(uuid.UUID) []types
 }
 
 // GetAllProjects provides a mock function with given fields: companyId
-func (_m *Service) GetAllProjects(companyId uuid.UUID) ([]types.Project, error) {
+func (_m *Service) GetAllProjects(companyId uuid.UUID, search string) ([]types.Project, error) {
 	ret := _m.Called(companyId)
 
 	if len(ret) == 0 {
