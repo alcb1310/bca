@@ -105,6 +105,7 @@ func NewServer(db database.Service, secret string) *Server {
 				r.Get("/", s.ApiGetAllRubros)
 				r.Post("/", s.ApiCreateRubros)
 				r.Get("/{id}", s.ApiGetRubro)
+				r.Put("/{id}", s.ApiUpdateRubro)
 			})
 		})
 	})

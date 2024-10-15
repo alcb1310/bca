@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 
 	"github.com/alcb1310/bca/internal/types"
@@ -36,8 +37,26 @@ func (s *Server) ApiGetRubro(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(&selectedRubro)
 		return
 	}
+	parsedId, err := uuid.Parse(rubroId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
 
-	w.WriteHeader(http.StatusNotImplemented)
+	rubro, err := s.DB.GetOneRubro(parsedId, ctx.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(&rubro)
 }
 
 func (s *Server) ApiCreateRubros(w http.ResponseWriter, r *http.Request) {
@@ -82,4 +101,80 @@ func (s *Server) ApiCreateRubros(w http.ResponseWriter, r *http.Request) {
 	rubro.Id = rubroId
 	w.WriteHeader(http.StatusCreated)
 	_ = json.NewEncoder(w).Encode(rubro)
+}
+
+func (s *Server) ApiUpdateRubro(w http.ResponseWriter, r *http.Request) {
+	if r.Body == http.NoBody || r.Body == nil {
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = "Invalid request body"
+
+		w.WriteHeader(http.StatusNotAcceptable)
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	ctx, _ := utils.GetMyPaload(r)
+	rubroId := chi.URLParam(r, "id")
+	if strings.ToLower(rubroId) == "crear" {
+		selectedRubro := types.Rubro{
+			Code:      "",
+			Name:      "",
+			Unit:      "",
+			CompanyId: ctx.CompanyId,
+		}
+
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(&selectedRubro)
+		return
+	}
+	parsedId, err := uuid.Parse(rubroId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	rubroToUpdate, err := s.DB.GetOneRubro(parsedId, ctx.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	var rubro types.Rubro
+	if err := json.NewDecoder(r.Body).Decode(&rubro); err != nil {
+		errorResponse := make(map[string]string)
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+	rubro.CompanyId = ctx.CompanyId
+	rubroToUpdate.Code = rubro.Code
+	rubroToUpdate.Name = rubro.Name
+	rubroToUpdate.Unit = rubro.Unit
+
+	if err := s.DB.UpdateRubro(rubroToUpdate); err != nil {
+		var e *pgconn.PgError
+		if errors.As(err, &e) && e.Code == "23505" {
+			errorResponse := make(map[string]string)
+			errorResponse["error"] = "Rubro con ese código y/ nombre ya existe"
+			w.WriteHeader(http.StatusConflict)
+			_ = json.NewEncoder(w).Encode(errorResponse)
+			return
+		}
+
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+  w.WriteHeader(http.StatusOK)
+  _ = json.NewEncoder(w).Encode(rubroToUpdate)
 }
