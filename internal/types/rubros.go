@@ -11,8 +11,8 @@ type Rubro struct {
 }
 
 type ACU struct {
-	Item      Rubro
-	Material  Material
-	Quantity  float64
-	CompanyId uuid.UUID
+	Item      Rubro     `json:"item"`
+	Material  Material  `json:"material"`
+	Quantity  float64   `json:"quantity"`
+	CompanyId uuid.UUID `json:"company_id"`
 }
