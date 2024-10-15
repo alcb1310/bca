@@ -8,10 +8,3 @@ type ItemMaterialType struct {
 	Quantity   float64   `json:"quantity"`
 	CompanyId  uuid.UUID `json:"company_id"`
 }
-
-type ItemMaterialTypeResponse struct {
-	Item     Rubro    `json:"item"`
-	Material Material `json:"material"`
-	Quantity   float64   `json:"quantity"`
-	CompanyId  uuid.UUID `json:"company_id"`
-}

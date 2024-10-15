@@ -104,8 +104,13 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Route("/rubros", func(r chi.Router) {
 				r.Get("/", s.ApiGetAllRubros)
 				r.Post("/", s.ApiCreateRubros)
-				r.Get("/{id}", s.ApiGetRubro)
-				r.Put("/{id}", s.ApiUpdateRubro)
+
+				r.Route("/{id}", func(r chi.Router) {
+					r.Get("/", s.ApiGetRubro)
+					r.Put("/", s.ApiUpdateRubro)
+
+					r.Get("/materiales", s.ApiGetAllItemsMaterials)
+				})
 			})
 		})
 	})
