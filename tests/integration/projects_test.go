@@ -107,7 +107,7 @@ func TestProjects(t *testing.T) {
 	t.Run("single project", func(t *testing.T) {
 		companyId := getCompanyId(t, s, cookies)
 
-		projects, err := s.DB.GetAllProjects(companyId)
+		projects, err := s.DB.GetAllProjects(companyId, "")
 		assert.NoError(t, err)
 
 		assert.Equal(t, 2, len(projects))
