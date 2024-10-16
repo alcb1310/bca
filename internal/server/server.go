@@ -109,8 +109,11 @@ func NewServer(db database.Service, secret string) *Server {
 					r.Get("/", s.ApiGetRubro)
 					r.Put("/", s.ApiUpdateRubro)
 
-					r.Get("/materiales", s.ApiGetAllItemsMaterials)
-					r.Post("/materiales", s.ApiCreateItemsMaterials)
+					r.Route("/materiales", func(r chi.Router) {
+						r.Get("/", s.ApiGetAllItemsMaterials)
+						r.Post("/", s.ApiCreateItemsMaterials)
+						r.Delete("/{materialId}", s.ApiDeleteItemsMaterials)
+					})
 				})
 			})
 		})
