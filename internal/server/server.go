@@ -67,6 +67,15 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Put("/{id}", s.ApiUpdateUser)
 		})
 
+    r.Route("/transacciones", func(r chi.Router) {
+      r.Use(jwtauth.Verifier(s.TokenAuth))
+      r.Use(authenticator())
+
+      r.Route("/presupuestos", func(r chi.Router) {
+        r.Get("/", s.ApiGetAllBudgets)
+      })
+    })
+
 		r.Route("/parametros", func(r chi.Router) {
 			r.Use(jwtauth.Verifier(s.TokenAuth))
 			r.Use(authenticator())
