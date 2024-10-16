@@ -28,13 +28,11 @@ type Budget struct {
 
 // Structure for creating budget
 type CreateBudget struct {
-	ProjectId    uuid.UUID
-	BudgetItemId uuid.UUID
-
-	Quantity float64
-	Cost     float64
-
-	CompanyId uuid.UUID
+	ProjectId    uuid.UUID `json:"project_id"`
+	BudgetItemId uuid.UUID `json:"budget_item_id"`
+	Quantity     float64   `json:"quantity"`
+	Cost         float64   `json:"cost"`
+	CompanyId    uuid.UUID `json:"company_id"`
 }
 
 // Structure for reading budgets
