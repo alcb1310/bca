@@ -98,3 +98,33 @@ func (s *Server) ApiCreateItemsMaterials(w http.ResponseWriter, r *http.Request)
 
 	w.WriteHeader(http.StatusCreated)
 }
+
+func (s *Server) ApiDeleteItemsMaterials(w http.ResponseWriter, r *http.Request) {
+	var rubroId, materialId uuid.UUID
+	var err error
+
+	id := chi.URLParam(r, "id")
+	if rubroId, err = uuid.Parse(id); err != nil {
+		w.WriteHeader(http.StatusNotAcceptable)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+	}
+	id = chi.URLParam(r, "materialId")
+	if materialId, err = uuid.Parse(id); err != nil {
+		w.WriteHeader(http.StatusNotAcceptable)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+	}
+	ctx, _ := utils.GetMyPaload(r)
+
+	if err = s.DB.DeleteMaterialsByItem(rubroId, materialId, ctx.CompanyId); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
