@@ -3,6 +3,7 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -124,6 +125,57 @@ func (s *Server) ApiDeleteItemsMaterials(w http.ResponseWriter, r *http.Request)
 		errorResponse := make(map[string]string)
 		errorResponse["error"] = err.Error()
 		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *Server) ApiUpdateItemsMaterials(w http.ResponseWriter, r *http.Request) {
+	var rubroId, materialId uuid.UUID
+	var err error
+
+	id := chi.URLParam(r, "id")
+	if rubroId, err = uuid.Parse(id); err != nil {
+		w.WriteHeader(http.StatusNotAcceptable)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+	}
+	id = chi.URLParam(r, "materialId")
+	if materialId, err = uuid.Parse(id); err != nil {
+		w.WriteHeader(http.StatusNotAcceptable)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+	}
+	ctx, _ := utils.GetMyPaload(r)
+	var material types.ItemMaterialType
+
+	if err := json.NewDecoder(r.Body).Decode(&material); err != nil {
+		errorResponse := make(map[string]string)
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	slog.Debug("ApiUpdateItemMaterials", "rubroId", rubroId, "materialID", materialId, "companyId", ctx.CompanyId)
+	if err := s.DB.UpdateMaterialByItem(rubroId, materialId, material.Quantity, ctx.CompanyId); err != nil {
+		var e *pgconn.PgError
+		if errors.As(err, &e) && e.Code == "23505" {
+			errorResponse := make(map[string]string)
+			errorResponse["error"] = "Rubro con ese código y/ nombre ya existe"
+			w.WriteHeader(http.StatusConflict)
+			_ = json.NewEncoder(w).Encode(errorResponse)
+			return
+		}
+
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
 	}
 
 	w.WriteHeader(http.StatusNoContent)

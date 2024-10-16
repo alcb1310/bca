@@ -113,6 +113,7 @@ func NewServer(db database.Service, secret string) *Server {
 						r.Get("/", s.ApiGetAllItemsMaterials)
 						r.Post("/", s.ApiCreateItemsMaterials)
 						r.Delete("/{materialId}", s.ApiDeleteItemsMaterials)
+						r.Put("/{materialId}", s.ApiUpdateItemsMaterials)
 					})
 				})
 			})
