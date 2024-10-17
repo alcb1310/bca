@@ -17,6 +17,14 @@ func (s *Server) ApiGetAllProjects(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 	queryParams := r.URL.Query()
 	search := queryParams.Get("query")
+	active := queryParams.Get("active")
+
+	if active != "" {
+		projects := s.DB.GetActiveProjects(ctx.CompanyId, active == "true")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(projects)
+		return
+	}
 
 	projects, _ := s.DB.GetAllProjects(ctx.CompanyId, search)
 	w.WriteHeader(http.StatusOK)
