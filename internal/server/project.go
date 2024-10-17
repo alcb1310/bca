@@ -59,7 +59,7 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	projects, _ := s.DB.GetAllProjects(ctxPayload.CompanyId)
+	projects, _ := s.DB.GetAllProjects(ctxPayload.CompanyId, "")
 	component := partials.ProjectsTable(projects)
 	component.Render(r.Context(), w)
 }
@@ -67,7 +67,7 @@ func (s *Server) ProjectsTable(w http.ResponseWriter, r *http.Request) {
 func (s *Server) ProjectsTableDisplay(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	projects, _ := s.DB.GetAllProjects(ctxPayload.CompanyId)
+	projects, _ := s.DB.GetAllProjects(ctxPayload.CompanyId, "")
 	component := partials.ProjectsTable(projects)
 	component.Render(r.Context(), w)
 }
@@ -120,7 +120,7 @@ func (s *Server) ProjectEditSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	projects, _ := s.DB.GetAllProjects(ctx.CompanyId)
+	projects, _ := s.DB.GetAllProjects(ctx.CompanyId, "")
 	component := partials.ProjectsTable(projects)
 	component.Render(r.Context(), w)
 }
