@@ -30,9 +30,8 @@ func (s *Server) ApiGetAllBudgets(w http.ResponseWriter, r *http.Request) {
 			_ = json.NewEncoder(w).Encode(errorResponse)
 			return
 		}
-    projectId = uuid.UUID{}
+		projectId = uuid.UUID{}
 	}
-
 
 	budgets, err := s.DB.GetBudgets(ctx.CompanyId, projectId, search)
 	if err != nil {
@@ -48,13 +47,6 @@ func (s *Server) ApiGetAllBudgets(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ApiCreateBudget(w http.ResponseWriter, r *http.Request) {
-	if r.Body == http.NoBody || r.Body != nil {
-		w.WriteHeader(http.StatusNotAcceptable)
-		errResponse := make(map[string]string)
-		errResponse["error"] = "Invalid request body"
-		_ = json.NewEncoder(w).Encode(errResponse)
-	}
-	slog.Info("ApiCreateBudget")
 	var budget types.CreateBudget
 
 	if err := json.NewDecoder(r.Body).Decode(&budget); err != nil {
@@ -81,4 +73,62 @@ func (s *Server) ApiCreateBudget(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	_ = json.NewEncoder(w).Encode(budget)
+}
+
+func (s *Server) ApiUpdateBudget(w http.ResponseWriter, r *http.Request) {
+	// TODO: Implement
+	ctx, _ := utils.GetMyPaload(r)
+	var budget types.CreateBudget
+
+	if err := json.NewDecoder(r.Body).Decode(&budget); err != nil {
+		w.WriteHeader(http.StatusNotAcceptable)
+		errResponse := make(map[string]string)
+		errResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errResponse)
+	}
+
+	slog.Info("ApiUpdateBudget", "budget", budget)
+
+	b, err := s.DB.GetOneBudget(ctx.CompanyId, budget.ProjectId, budget.BudgetItemId)
+  if err!=nil {
+    w.WriteHeader(http.StatusNotFound)
+    errorResponse := make(map[string]string)
+    errorResponse["error"] = err.Error()
+    _ = json.NewEncoder(w).Encode(errorResponse)
+    return
+  }
+  b.CompanyId = ctx.CompanyId
+  
+  var budgetToUpdate = types.Budget {
+    ProjectId: b.Project.ID,
+    BudgetItemId: b.BudgetItem.ID,
+
+    InitialQuantity: b.InitialQuantity,
+    InitialCost: b.InitialCost,
+    InitialTotal: b.InitialTotal,
+
+    SpentQuantity: b.SpentQuantity,
+    SpentTotal: b.SpentTotal,
+
+    RemainingQuantity: b.RemainingQuantity,
+    RemainingCost: b.RemainingCost,
+    RemainingTotal: b.RemainingTotal,
+
+    UpdatedBudget: b.UpdatedBudget,
+    CompanyId: b.CompanyId,
+  }
+
+  if err := s.DB.UpdateBudget(budget, budgetToUpdate); err != nil {
+		var e *pgconn.PgError
+
+		if errors.As(err, &e) && e.Code == "23505" {
+			w.WriteHeader(http.StatusConflict)
+			errResponse := make(map[string]string)
+			errResponse["error"] = "Ya existe un presupuesto con ese nombre"
+			_ = json.NewEncoder(w).Encode(errResponse)
+			return
+		}
+  }
+
+  w.WriteHeader(http.StatusNoContent)
 }
