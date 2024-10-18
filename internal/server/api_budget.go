@@ -18,8 +18,23 @@ func (s *Server) ApiGetAllBudgets(w http.ResponseWriter, r *http.Request) {
 
 	queryParams := r.URL.Query()
 	search := queryParams.Get("query")
+	project := queryParams.Get("project")
 
-	budgets, err := s.DB.GetBudgets(ctx.CompanyId, uuid.UUID{}, search)
+	projectId, err := uuid.Parse(project)
+	if err != nil {
+		if project != "" {
+			slog.Info("GetAllBudgets: invalid project id", "error", err)
+			w.WriteHeader(http.StatusNotAcceptable)
+			errorResponse := make(map[string]string)
+			errorResponse["error"] = err.Error()
+			_ = json.NewEncoder(w).Encode(errorResponse)
+			return
+		}
+    projectId = uuid.UUID{}
+	}
+
+
+	budgets, err := s.DB.GetBudgets(ctx.CompanyId, projectId, search)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		errResponse := make(map[string]string)
@@ -33,7 +48,6 @@ func (s *Server) ApiGetAllBudgets(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ApiCreateBudget(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement
 	if r.Body == http.NoBody || r.Body != nil {
 		w.WriteHeader(http.StatusNotAcceptable)
 		errResponse := make(map[string]string)
