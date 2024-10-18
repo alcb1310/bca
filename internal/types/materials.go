@@ -3,10 +3,10 @@ package types
 import "github.com/google/uuid"
 
 type Material struct {
-	Id        uuid.UUID
-	Code      string
-	Name      string
-	Unit      string
-	Category  Category
-	CompanyId uuid.UUID
+	Id        uuid.UUID `json:"id"`
+	Code      string    `json:"code"`
+	Name      string    `json:"name"`
+	Unit      string    `json:"unit"`
+	Category  Category  `json:"category"`
+	CompanyId uuid.UUID `json:"company_id"`
 }
