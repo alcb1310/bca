@@ -79,6 +79,7 @@ func NewServer(db database.Service, secret string) *Server {
 
       r.Route("/facturas", func(r chi.Router) {
         r.Get("/", s.ApiGetAllInvoices)
+        r.Get("/{id}", s.ApiGetOneInvoice)
       })
     })
 

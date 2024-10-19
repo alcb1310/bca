@@ -5,6 +5,9 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
+
+	"github.com/alcb1310/bca/internal/types"
 	"github.com/alcb1310/bca/internal/utils"
 )
 
@@ -23,4 +26,17 @@ func (s *Server) ApiGetAllInvoices(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(invoices)
+}
+
+func (s *Server) ApiGetOneInvoice(w http.ResponseWriter, r *http.Request) {
+	// TODO: Implement
+	id := chi.URLParam(r, "id")
+	if id == "crear" {
+		invoice := types.InvoiceCreate{}
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(invoice)
+		return
+	}
+
+	w.WriteHeader(http.StatusNotImplemented)
 }
