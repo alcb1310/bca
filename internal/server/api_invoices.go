@@ -113,7 +113,6 @@ func (s *Server) ApiCreateInvoice(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ApiUpdateInvoice(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implementar
 	id := chi.URLParam(r, "id")
 	parsedInvoiceId, err := uuid.Parse(id)
 	if err != nil {
@@ -170,5 +169,27 @@ func (s *Server) ApiUpdateInvoice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *Server) ApiDeleteInvoice(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		w.WriteHeader(http.StatusNotAcceptable)
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	ctx, _ := utils.GetMyPaload(r)
+	if err := s.DB.DeleteInvoice(parsedId, ctx.CompanyId); err != nil {
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
 	w.WriteHeader(http.StatusNoContent)
 }
