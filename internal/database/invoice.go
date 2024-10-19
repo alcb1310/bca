@@ -51,8 +51,11 @@ func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, err
 		); err != nil {
 			return invoices, err
 		}
+		dt := invoice.InvoiceDate.In(time.Local)
+		dt = dt.Add(time.Duration(-5) * -1 * time.Hour)
 		invoice.CompanyId = companyId
 		invoice.Supplier.CompanyId = companyId
+		invoice.InvoiceDate = dt
 		invoice.Project.CompanyId = companyId
 		invoices = append(invoices, invoice)
 	}
