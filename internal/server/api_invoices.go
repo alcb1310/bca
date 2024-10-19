@@ -59,12 +59,8 @@ func (s *Server) ApiGetOneInvoice(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	slog.Debug("ApiGetOneInvoice", "timezone", time.Local)
-	slog.Debug("ApiGetOneInvoice", "invoiceDate", invoiceResponse.InvoiceDate)
 	dt := invoiceResponse.InvoiceDate.In(time.Local)
 	dt = dt.Add(time.Duration(s.Timezone) * -1 * time.Hour)
-
-	slog.Debug("ApiGetOneInvoice", "invoiceDate", dt)
 
 	errorCreate := types.InvoiceCreate{
 		Id:            &invoiceResponse.Id,
@@ -114,4 +110,65 @@ func (s *Server) ApiCreateInvoice(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	_ = json.NewEncoder(w).Encode(data)
+}
+
+func (s *Server) ApiUpdateInvoice(w http.ResponseWriter, r *http.Request) {
+	// TODO: Implementar
+	id := chi.URLParam(r, "id")
+	parsedInvoiceId, err := uuid.Parse(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotAcceptable)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+	ctx, _ := utils.GetMyPaload(r)
+
+	invoiceToEdit, err := s.DB.GetOneInvoice(parsedInvoiceId, ctx.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = "No se encontro la factura"
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	var data types.InvoiceCreate
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		slog.Error("ApiUpdateInvoice", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	data.Id = &invoiceToEdit.Id
+	data.SupplierId = &invoiceToEdit.Supplier.ID
+	data.ProjectId = &invoiceToEdit.Project.ID
+	data.IsBalanced = invoiceToEdit.IsBalanced
+	data.InvoiceTotal = invoiceToEdit.InvoiceTotal
+	data.IsBalanced = invoiceToEdit.IsBalanced
+	data.CompanyId = ctx.CompanyId
+
+	if err := s.DB.UpdateInvoice(data); err != nil {
+		var e *pgconn.PgError
+		if errors.As(err, &e) && e.Code == "23505" {
+			w.WriteHeader(http.StatusConflict)
+			errorResponse := make(map[string]string)
+			errorResponse["error"] = "Ya existe esa factura"
+			_ = json.NewEncoder(w).Encode(errorResponse)
+			return
+		}
+
+		slog.Error("ApiCreateInvoice", "err", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

@@ -83,6 +83,7 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 				r.Get("/", s.ApiGetAllInvoices)
 				r.Post("/", s.ApiCreateInvoice)
 				r.Get("/{id}", s.ApiGetOneInvoice)
+				r.Put("/{id}", s.ApiUpdateInvoice)
 			})
 		})
 
