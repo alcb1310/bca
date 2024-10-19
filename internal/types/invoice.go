@@ -12,6 +12,7 @@ type InvoiceCreate struct {
 	ProjectId     *uuid.UUID `json:"project_id"`
 	InvoiceNumber *string    `json:"invoice_number"`
 	InvoiceDate   *time.Time `json:"invoice_date"`
+	InvoiceTotal  float64    `json:"invoice_total"`
 	IsBalanced    bool       `json:"is_balanced"`
 	CompanyId     uuid.UUID  `json:"company_id"`
 }

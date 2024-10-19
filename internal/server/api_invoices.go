@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -32,7 +33,6 @@ func (s *Server) ApiGetAllInvoices(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ApiGetOneInvoice(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement
 	id := chi.URLParam(r, "id")
 	if id == "crear" {
 		invoice := types.InvoiceCreate{}
@@ -40,6 +40,45 @@ func (s *Server) ApiGetOneInvoice(w http.ResponseWriter, r *http.Request) {
 		_ = json.NewEncoder(w).Encode(invoice)
 		return
 	}
+	parsedInvoiceId, err := uuid.Parse(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotAcceptable)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+	ctx, _ := utils.GetMyPaload(r)
+
+	invoiceResponse, err := s.DB.GetOneInvoice(parsedInvoiceId, ctx.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	slog.Debug("ApiGetOneInvoice", "timezone", time.Local)
+	slog.Debug("ApiGetOneInvoice", "invoiceDate", invoiceResponse.InvoiceDate)
+	dt := invoiceResponse.InvoiceDate.In(time.Local)
+	dt = dt.Add(time.Duration(s.Timezone) * -1 * time.Hour)
+
+	slog.Debug("ApiGetOneInvoice", "invoiceDate", dt)
+
+	errorCreate := types.InvoiceCreate{
+		Id:            &invoiceResponse.Id,
+		SupplierId:    &invoiceResponse.Supplier.ID,
+		ProjectId:     &invoiceResponse.Project.ID,
+		InvoiceNumber: &invoiceResponse.InvoiceNumber,
+		InvoiceDate:   &dt,
+		InvoiceTotal:  invoiceResponse.InvoiceTotal,
+		IsBalanced:    invoiceResponse.IsBalanced,
+		CompanyId:     invoiceResponse.CompanyId,
+	}
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(errorCreate)
+}
 
 func (s *Server) ApiCreateInvoice(w http.ResponseWriter, r *http.Request) {
 	slog.Debug("ApiCreateInvoice")
