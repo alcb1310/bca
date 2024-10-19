@@ -19,6 +19,7 @@ type Server struct {
 	DB        database.Service
 	Router    *chi.Mux
 	TokenAuth *jwtauth.JWTAuth
+	Timezone  int
 }
 
 func commonMiddleware(next http.Handler) http.Handler {
@@ -28,11 +29,12 @@ func commonMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func NewServer(db database.Service, secret string) *Server {
+func NewServer(db database.Service, secret string, timezone int) *Server {
 	s := &Server{
 		DB:        db,
 		Router:    chi.NewRouter(),
 		TokenAuth: jwtauth.New("HS256", []byte(secret), nil),
+		Timezone:  timezone,
 	}
 	s.Router.Use(middleware.Logger)
 	s.Router.Use(cors.Handler(cors.Options{
