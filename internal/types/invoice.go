@@ -7,13 +7,13 @@ import (
 )
 
 type InvoiceCreate struct {
-	Id            *uuid.UUID
-	SupplierId    *uuid.UUID
-	ProjectId     *uuid.UUID
-	InvoiceNumber *string
-	InvoiceDate   *time.Time
-	IsBalanced    bool
-	CompanyId     uuid.UUID
+	Id            *uuid.UUID `json:"id"`
+	SupplierId    *uuid.UUID `json:"supplier_id"`
+	ProjectId     *uuid.UUID `json:"project_id"`
+	InvoiceNumber *string    `json:"invoice_number"`
+	InvoiceDate   *time.Time `json:"invoice_date"`
+	IsBalanced    bool       `json:"is_balanced"`
+	CompanyId     uuid.UUID  `json:"company_id"`
 }
 
 type InvoiceResponse struct {
