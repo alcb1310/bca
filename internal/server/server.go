@@ -67,21 +67,22 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Put("/{id}", s.ApiUpdateUser)
 		})
 
-    r.Route("/transacciones", func(r chi.Router) {
-      r.Use(jwtauth.Verifier(s.TokenAuth))
-      r.Use(authenticator())
+		r.Route("/transacciones", func(r chi.Router) {
+			r.Use(jwtauth.Verifier(s.TokenAuth))
+			r.Use(authenticator())
 
-      r.Route("/presupuestos", func(r chi.Router) {
-        r.Get("/", s.ApiGetAllBudgets)
-        r.Post("/", s.ApiCreateBudget)
-        r.Put("/{projectId}/{budgetItemId}", s.ApiUpdateBudget)
-      })
+			r.Route("/presupuestos", func(r chi.Router) {
+				r.Get("/", s.ApiGetAllBudgets)
+				r.Post("/", s.ApiCreateBudget)
+				r.Put("/{projectId}/{budgetItemId}", s.ApiUpdateBudget)
+			})
 
-      r.Route("/facturas", func(r chi.Router) {
-        r.Get("/", s.ApiGetAllInvoices)
-        r.Get("/{id}", s.ApiGetOneInvoice)
-      })
-    })
+			r.Route("/facturas", func(r chi.Router) {
+				r.Get("/", s.ApiGetAllInvoices)
+				r.Post("/", s.ApiCreateInvoice)
+				r.Get("/{id}", s.ApiGetOneInvoice)
+			})
+		})
 
 		r.Route("/parametros", func(r chi.Router) {
 			r.Use(jwtauth.Verifier(s.TokenAuth))
