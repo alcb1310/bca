@@ -17,12 +17,12 @@ type InvoiceCreate struct {
 }
 
 type InvoiceResponse struct {
-	Id            uuid.UUID
-	Supplier      Supplier
-	Project       Project
-	InvoiceNumber string
-	InvoiceDate   time.Time
-	InvoiceTotal  float64
-	IsBalanced    bool
-	CompanyId     uuid.UUID
+	Id            uuid.UUID `json:"id"`
+	Supplier      Supplier  `json:"supplier"`
+	Project       Project   `json:"project"`
+	InvoiceNumber string    `json:"invoice_number"`
+	InvoiceDate   time.Time `json:"invoice_date"`
+	InvoiceTotal  float64   `json:"invoice_total"`
+	IsBalanced    bool      `json:"is_balanced"`
+	CompanyId     uuid.UUID `json:"company_id"`
 }
