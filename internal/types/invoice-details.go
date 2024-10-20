@@ -7,15 +7,15 @@ import (
 )
 
 type InvoiceDetailsResponse struct {
-	Id             uuid.UUID
-	BudgetItemId   uuid.UUID
-	BudgetItemCode string
-	BudgetItemName string
-	Quantity       float64
-	Cost           float64
-	Total          float64
-	InvoiceTotal   float64
-	CompanyId      uuid.UUID
+	Id             uuid.UUID `json:"id"`
+	BudgetItemId   uuid.UUID `json:"budget_item_id"`
+	BudgetItemCode string    `json:"budget_item_code"`
+	BudgetItemName string    `json:"budget_item_name"`
+	Quantity       float64   `json:"quantity"`
+	Cost           float64   `json:"cost"`
+	Total          float64   `json:"total"`
+	InvoiceTotal   float64   `json:"invoice_total"`
+	CompanyId      uuid.UUID `json:"company_id"`
 }
 
 type InvoiceDetailCreate struct {
