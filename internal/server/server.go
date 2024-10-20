@@ -82,9 +82,16 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 			r.Route("/facturas", func(r chi.Router) {
 				r.Get("/", s.ApiGetAllInvoices)
 				r.Post("/", s.ApiCreateInvoice)
-				r.Get("/{id}", s.ApiGetOneInvoice)
-				r.Put("/{id}", s.ApiUpdateInvoice)
-				r.Delete("/{id}", s.ApiDeleteInvoice)
+
+				r.Route("/{id}", func(r chi.Router) {
+					r.Get("/", s.ApiGetOneInvoice)
+					r.Put("/", s.ApiUpdateInvoice)
+					r.Delete("/", s.ApiDeleteInvoice)
+
+					r.Route("/detalle", func(r chi.Router) {
+						r.Get("/", s.ApiGetAllInvoiceDetails)
+					})
+				})
 			})
 		})
 
