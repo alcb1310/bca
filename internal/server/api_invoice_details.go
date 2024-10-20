@@ -91,3 +91,35 @@ func (s *Server) ApiCreateInvoiceDetails(w http.ResponseWriter, r *http.Request)
 
 	w.WriteHeader(http.StatusCreated)
 }
+
+func (s *Server) ApiDeleteInvoiceDetails(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+	id := chi.URLParam(r, "id")
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotAcceptable)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+	biId := chi.URLParam(r, "budgetItemId")
+	parsedBudgetItemId, err := uuid.Parse(biId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotAcceptable)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	if err := s.DB.DeleteDetail(parsedId, parsedBudgetItemId, ctx.CompanyId); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
