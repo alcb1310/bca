@@ -19,10 +19,12 @@ type InvoiceDetailsResponse struct {
 }
 
 type InvoiceDetailCreate struct {
-	InvoiceId             uuid.UUID
-	BudgetItemId          uuid.UUID
-	Quantity, Cost, Total float64
-	CompanyId             uuid.UUID
+	InvoiceId    uuid.UUID `json:"invoiceId"`
+	BudgetItemId uuid.UUID `json:"budget_item_id"`
+	Quantity     float64   `json:"quantity"`
+	Cost         float64   `json:"cost"`
+	Total        float64   `json:"total"`
+	CompanyId    uuid.UUID `json:"companyId"`
 }
 
 type InvoiceDetails struct {

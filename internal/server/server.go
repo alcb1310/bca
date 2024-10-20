@@ -90,6 +90,7 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 
 					r.Route("/detalle", func(r chi.Router) {
 						r.Get("/", s.ApiGetAllInvoiceDetails)
+						r.Post("/", s.ApiCreateInvoiceDetails)
 					})
 				})
 			})
