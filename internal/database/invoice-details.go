@@ -10,7 +10,6 @@ import (
 )
 
 func (s *service) GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.InvoiceDetailsResponse, error) {
-	slog.Info("GetAllDetails", "companyId", companyId)
 	details := []types.InvoiceDetailsResponse{}
 	query := "select invoice_id, budget_item_id, budget_item_code, budget_item_name, quantity, cost, total, invoice_total  from vw_invoice_details where invoice_id = $1 and company_id = $2"
 
@@ -25,7 +24,7 @@ func (s *service) GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.Invoice
 		if err := rows.Scan(&detail.Id, &detail.BudgetItemId, &detail.BudgetItemCode, &detail.BudgetItemName, &detail.Quantity, &detail.Cost, &detail.Total, &detail.InvoiceTotal); err != nil {
 			return []types.InvoiceDetailsResponse{}, err
 		}
-    detail.CompanyId = companyId
+		detail.CompanyId = companyId
 		details = append(details, detail)
 	}
 
