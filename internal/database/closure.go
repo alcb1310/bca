@@ -20,7 +20,10 @@ func (s *service) CreateClosure(companyId, projectId uuid.UUID, date time.Time) 
 	row := s.db.QueryRow(query, companyId, projectId, date.Year(), date.Month())
 	row.Scan(&existingDate)
 	if existingDate != (time.Time{}) {
-		return errors.New(fmt.Sprintf("Ya existe un cierre para el proyecto: %s para la fecha: %s", projectId, utils.ConvertDate(date)))
+		query := "select name from project where id = $1 and company_id = $2"
+		var projectName string
+		s.db.QueryRow(query, projectId, companyId).Scan(&projectName)
+		return errors.New(fmt.Sprintf("Ya existe un cierre para el proyecto: %s para la fecha: %s", projectName, utils.ConvertDate(date)))
 	}
 
 	query = `

@@ -72,6 +72,7 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 		r.Route("/transacciones", func(r chi.Router) {
 			r.Use(jwtauth.Verifier(s.TokenAuth))
 			r.Use(authenticator())
+			r.Post("/cierre", s.ApiPostClosure)
 
 			r.Route("/presupuestos", func(r chi.Router) {
 				r.Get("/", s.ApiGetAllBudgets)
