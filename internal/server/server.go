@@ -22,13 +22,6 @@ type Server struct {
 	Timezone  int
 }
 
-func commonMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Content-Type", "application/json")
-		next.ServeHTTP(w, r)
-	})
-}
-
 func NewServer(db database.Service, secret string, timezone int) *Server {
 	s := &Server{
 		DB:        db,
@@ -46,7 +39,7 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 
 	s.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
 
-	// s.Router.Get("/", s.HelloWorldHandler)
+	s.Router.Get("/", s.HelloWorldHandler)
 	s.RegisterRoutes(s.Router)
 
 	s.Router.Get("/login", s.DisplayLogin)

@@ -52,7 +52,7 @@ func TestLogin(t *testing.T) {
 	h := db.Health()
 	assert.Equal(t, "It's healthy", h["message"])
 
-	s := server.NewServer(db, "supersecretpassword")
+	s := server.NewServer(db, "supersecretpassword", -5)
 	assert.NotNil(t, s)
 
 	t.Run("should display the login page", func(t *testing.T) {

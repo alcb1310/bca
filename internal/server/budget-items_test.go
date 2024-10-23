@@ -18,7 +18,7 @@ import (
 
 func TestCreateBudgetItem(t *testing.T) {
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {
@@ -113,7 +113,7 @@ func TestCreateBudgetItem(t *testing.T) {
 func TestUpdateBudgetItem(t *testing.T) {
 	id := uuid.New()
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {

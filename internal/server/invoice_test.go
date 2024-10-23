@@ -18,7 +18,7 @@ import (
 
 func TestCreateInvoice(t *testing.T) {
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	projectId := uuid.New()
@@ -152,7 +152,7 @@ func TestUpdateInvoice(t *testing.T) {
 	truePointer := true
 
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	invoiceNumber := "test"
