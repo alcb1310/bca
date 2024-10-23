@@ -41,11 +41,12 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 		AllowedOrigins: []string{"https://*", "http://*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders: []string{"Content-Type", "Content-Disposition"},
 	}))
 
 	s.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
 
-	s.Router.Get("/", s.HelloWorldHandler)
+	// s.Router.Get("/", s.HelloWorldHandler)
 	s.RegisterRoutes(s.Router)
 
 	s.Router.Get("/login", s.DisplayLogin)
@@ -53,7 +54,7 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 
 	s.Router.Route("/api/v1", func(r chi.Router) {
 		r.Use(middleware.AllowContentType("application/json"))
-		r.Use(commonMiddleware)
+		// r.Use(commonMiddleware)
 
 		r.Post("/login", s.ApiLogin)
 
@@ -95,6 +96,22 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 						r.Delete("/{budgetItemId}", s.ApiDeleteInvoiceDetails)
 					})
 				})
+			})
+		})
+
+		r.Route("/reportes", func(r chi.Router) {
+			r.Use(jwtauth.Verifier(s.TokenAuth))
+			r.Use(authenticator())
+
+			r.Get("/actual", s.ApiActualReport)
+			r.Get("/levels", s.ApiLevels)
+
+			r.Route("/excel", func(r chi.Router) {
+				// r.Use(middleware.AllowContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+				r.Get("/actual", s.ActualExcel)
+				r.Get("/cuadre", s.BalanceExcel)
+				r.Get("/gastado", s.SpentExcel)
+				r.Get("/historico", s.HistoricExcel)
 			})
 		})
 

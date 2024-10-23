@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -47,6 +48,7 @@ func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
+	slog.Debug("ActualExcel")
 	ctx, _ := utils.GetMyPaload(r)
 	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
 	if err != nil {
@@ -66,21 +68,22 @@ func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
 
 	f := excel.Actual(ctx.CompanyId, parsedProjectId, budgets, nil, s.DB)
 	fName := strings.Trim(f.Path, ".")
+	fName = strings.Trim(fName, "/public/")
 
-	w.Header().Set("HX-Redirect", fName)
+	w.Header().Set("HX-Redirect", fmt.Sprintf("/public/%s", fName))
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fName)) // "attachment; filename=actual.xlsx")
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Disposition", "attachment; filename=actual.xlsx")
-	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
 	if err := f.Write(w); err != nil {
 		slog.Error(err.Error())
 	}
 
-	go func() {
-		time.Sleep(1 * time.Second)
-		if err := os.Remove(f.Path); err != nil {
-			slog.Error(err.Error())
-		}
-	}()
+	// go func() {
+	// 	time.Sleep(1 * time.Second)
+	// 	if err := os.Remove(f.Path); err != nil {
+	// 		slog.Error(err.Error())
+	// 	}
+	// }()
 }
 
 func (s *Server) HistoricExcel(w http.ResponseWriter, r *http.Request) {
