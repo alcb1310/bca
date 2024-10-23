@@ -17,7 +17,7 @@ import (
 
 func TestCreateUser(t *testing.T) {
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {
@@ -122,7 +122,7 @@ func TestCreateUser(t *testing.T) {
 
 func TestUpdatePassword(t *testing.T) {
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {
@@ -180,7 +180,7 @@ func TestUpdatePassword(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 	id := uuid.New()
 

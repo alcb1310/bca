@@ -18,7 +18,7 @@ func TestPostClosure(t *testing.T) {
 	testUrl := "/bca/transacciones/cierre"
 
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 	projectId := uuid.New()
 

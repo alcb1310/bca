@@ -48,7 +48,6 @@ func (s *Server) BalanceExcel(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
-	slog.Debug("ActualExcel")
 	ctx, _ := utils.GetMyPaload(r)
 	parsedProjectId, err := uuid.Parse(r.URL.Query().Get("proyecto"))
 	if err != nil {
@@ -78,12 +77,12 @@ func (s *Server) ActualExcel(w http.ResponseWriter, r *http.Request) {
 		slog.Error(err.Error())
 	}
 
-	// go func() {
-	// 	time.Sleep(1 * time.Second)
-	// 	if err := os.Remove(f.Path); err != nil {
-	// 		slog.Error(err.Error())
-	// 	}
-	// }()
+	go func() {
+		time.Sleep(1 * time.Second)
+		if err := os.Remove(f.Path); err != nil {
+			slog.Error(err.Error())
+		}
+	}()
 }
 
 func (s *Server) HistoricExcel(w http.ResponseWriter, r *http.Request) {

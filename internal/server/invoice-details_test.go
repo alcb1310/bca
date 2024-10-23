@@ -19,7 +19,7 @@ func TestCreateInvoiceDetails(t *testing.T) {
 	invoiceId := uuid.New()
 	testUrl := fmt.Sprintf("/bca/partials/invoices/%s/details", invoiceId.String())
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 	itemId := uuid.New()
 

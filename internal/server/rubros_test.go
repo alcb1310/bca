@@ -21,7 +21,7 @@ func TestCreateRubros(t *testing.T) {
 	testUrl := fmt.Sprintf("/bca/partials/rubros/%s/material", rubroId.String())
 
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {
@@ -121,7 +121,7 @@ func TestUpdateRubros(t *testing.T) {
 	testUrl := fmt.Sprintf("/bca/partials/rubros/%s/material/%s", rubroId.String(), materialId.String())
 
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {

@@ -20,7 +20,7 @@ func TestCreateBudget(t *testing.T) {
 	pId := uuid.New()
 	bId := uuid.New()
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 	testURL := "/bca/partials/budgets"
 
@@ -195,7 +195,7 @@ func TestBudgetEdit(t *testing.T) {
 	testURL := fmt.Sprintf("/bca/partials/budgets/%s/%s", projectId.String(), budgetItemId.String())
 
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {

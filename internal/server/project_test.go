@@ -17,7 +17,7 @@ import (
 
 func TestCreateProject(t *testing.T) {
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {
@@ -133,7 +133,7 @@ func TestCreateProject(t *testing.T) {
 
 func TestEditProject(t *testing.T) {
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 	id := uuid.New()
 

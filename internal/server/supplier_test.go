@@ -18,7 +18,7 @@ import (
 
 func TestCreateSupplier(t *testing.T) {
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {
@@ -118,7 +118,7 @@ func TestCreateSupplier(t *testing.T) {
 func TestEditSupplier(t *testing.T) {
 	id := uuid.New()
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 	getOne := db.EXPECT().GetOneSupplier(id, uuid.UUID{}).Return(types.Supplier{
 		ID:           id,

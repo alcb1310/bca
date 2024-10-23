@@ -18,7 +18,7 @@ import (
 func TestLoginView(t *testing.T) {
 	reqUrl := "/login"
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	testData := []struct {
 		name   string
 		form   io.Reader
