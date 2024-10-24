@@ -98,6 +98,7 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 
 			r.Get("/actual", s.ApiActualReport)
 			r.Get("/levels", s.ApiLevels)
+			r.Get("/historico", s.ApiHistoricReport)
 
 			r.Route("/excel", func(r chi.Router) {
 				// r.Use(middleware.AllowContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
