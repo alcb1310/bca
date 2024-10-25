@@ -53,6 +53,9 @@ func (s *service) GetBalance(companyId, projectId uuid.UUID, date time.Time) typ
 			slog.Error("Error in select", "err", err)
 			return types.BalanceResponse{}
 		}
+		dt := i.InvoiceDate.In(time.Local)
+		dt = dt.Add(time.Duration(s.timeZone) * -1 * time.Hour)
+		i.InvoiceDate = dt
 		invoices = append(invoices, i)
 		total += i.InvoiceTotal
 	}
@@ -110,7 +113,7 @@ func (s *service) GetSpentByBudgetItem(companyId, projectId, budgetItemId uuid.U
 		extract(month from invoice_date)=$3 and project_id=$4 and budget_item_id=any($5)
 	`
 	var total *float64
-	s.db.QueryRow(query, companyId, date.Year(), date.Month(), projectId, pq.Array(ids)).Scan(&total)
+	_ = s.db.QueryRow(query, companyId, date.Year(), date.Month(), projectId, pq.Array(ids)).Scan(&total)
 	if total == nil {
 		return 0
 	}

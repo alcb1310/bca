@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 
+	"github.com/alcb1310/bca/internal/types"
 	"github.com/alcb1310/bca/internal/utils"
 )
 
@@ -95,4 +96,43 @@ func (s *Server) ApiHistoricReport(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(hitoricBudgets)
+}
+
+func (s *Server) ApiBalanceReport(w http.ResponseWriter, r *http.Request) {
+	var balanceReport types.BalanceResponse
+	balanceReport.Invoices = []types.InvoiceResponse{}
+	balanceReport.Total = 0
+
+	project_id := r.URL.Query().Get("project_id")
+	d := r.URL.Query().Get("date")
+	if project_id == "" || d == "" {
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(balanceReport)
+		return
+	}
+
+	parsedProjectId, err := uuid.Parse(project_id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	layout := "2006-01-02"
+	selectedDate, err := time.Parse(layout, d)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+	ctx, _ := utils.GetMyPaload(r)
+
+	balanceReport = s.DB.GetBalance(ctx.CompanyId, parsedProjectId, selectedDate)
+	w.WriteHeader(http.StatusOK)
+
+	_ = json.NewEncoder(w).Encode(balanceReport)
 }

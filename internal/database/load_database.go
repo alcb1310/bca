@@ -48,7 +48,7 @@ func loadRoles(d *sql.DB) error {
 		}
 
 		tx.Commit()
-		d.QueryRow(sql).Scan(&c)
+		_ = d.QueryRow(sql).Scan(&c)
 	}
 	return nil
 }

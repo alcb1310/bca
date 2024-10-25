@@ -85,8 +85,7 @@ func (s *service) AddDetail(detail types.InvoiceDetailCreate) error {
 	updatedDiff := newUpdatedBudget - updatedBudget
 	remainingDiff := newToSpendTotal - remainingTotal
 
-	var parentId *uuid.UUID
-	parentId = &detail.BudgetItemId
+	parentId := &detail.BudgetItemId
 	for {
 		query = "select parent_id from budget_item where id = $1 and company_id = $2"
 		if err := tx.QueryRow(query, parentId, detail.CompanyId).Scan(&parentId); err != nil {
@@ -161,9 +160,8 @@ func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) err
 		return err
 	}
 
-	var parentId *uuid.UUID
-	parentId = &budgetItemId
-	for true {
+	parentId := &budgetItemId
+	for {
 		query = "select parent_id from budget_item where id = $1 and company_id = $2"
 		if err := tx.QueryRow(query, parentId, companyId).Scan(&parentId); err != nil {
 			return err

@@ -20,13 +20,13 @@ func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 
 	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
 	if n = r.Form.Get("name"); n == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un nombre de categoría"))
+		_, _ = w.Write([]byte("Ingrese un nombre de categoría"))
 		return
 	}
 
@@ -37,7 +37,7 @@ func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 	if err := s.DB.CreateCategory(c); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("La categoría %s ya existe", c.Name)))
+			_, _ = w.Write([]byte(fmt.Sprintf("La categoría %s ya existe", c.Name)))
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
@@ -48,7 +48,7 @@ func (s *Server) CategoriesTable(w http.ResponseWriter, r *http.Request) {
 	categories, _ := s.DB.GetAllCategories(ctxPayload.CompanyId)
 	component := partials.CategoriesTable(categories)
 
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) CategoriesTableDisplay(w http.ResponseWriter, r *http.Request) {
@@ -57,12 +57,12 @@ func (s *Server) CategoriesTableDisplay(w http.ResponseWriter, r *http.Request) 
 	categories, _ := s.DB.GetAllCategories(ctxPayload.CompanyId)
 	component := partials.CategoriesTable(categories)
 
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) CategoryAdd(w http.ResponseWriter, r *http.Request) {
 	component := partials.EditCategory(nil)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
@@ -72,13 +72,13 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 	c, err := s.DB.GetCategory(parsedId, ctxPayload.CompanyId)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Categoría no encontrada"))
+		_, _ = w.Write([]byte("Categoría no encontrada"))
 		return
 	}
 
 	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -97,7 +97,7 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 	if err := s.DB.UpdateCategory(cat); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("La categoria %s ya existe", cat.Name)))
+			_, _ = w.Write([]byte(fmt.Sprintf("La categoria %s ya existe", cat.Name)))
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
@@ -108,7 +108,7 @@ func (s *Server) EditCategory(w http.ResponseWriter, r *http.Request) {
 	categories, _ := s.DB.GetAllCategories(ctxPayload.CompanyId)
 	component := partials.CategoriesTable(categories)
 
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) GetOneCategory(w http.ResponseWriter, r *http.Request) {
@@ -118,9 +118,9 @@ func (s *Server) GetOneCategory(w http.ResponseWriter, r *http.Request) {
 	c, err := s.DB.GetCategory(parsedId, ctxPayload.CompanyId)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Categoría no encontrada"))
+		_, _ = w.Write([]byte("Categoría no encontrada"))
 		return
 	}
 	component := partials.EditCategory(&c)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
