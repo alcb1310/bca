@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 
 	"github.com/alcb1310/bca/internal/types"
@@ -135,4 +136,36 @@ func (s *Server) ApiBalanceReport(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	_ = json.NewEncoder(w).Encode(balanceReport)
+}
+
+func (s *Server) ApiUpdateBalanceReport(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	parsedId, err := uuid.Parse(id)
+	if err != nil {
+		responseError := make(map[string]string)
+		responseError["error"] = err.Error()
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(responseError)
+		return
+	}
+	ctx, _ := utils.GetMyPaload(r)
+
+	i, err := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
+	if err != nil {
+		responseError := make(map[string]string)
+		responseError["error"] = err.Error()
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(responseError)
+		return
+	}
+
+	if err := s.DB.BalanceInvoice(i); err != nil {
+		responseError := make(map[string]string)
+		responseError["error"] = err.Error()
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(responseError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
