@@ -18,11 +18,11 @@ import (
 func (s *Server) CreateSupplier(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	r.ParseForm()
+	_ = r.ParseForm()
 	e := r.Form.Get("contact_email")
 	if e != "" && !utils.IsValidEmail(e) {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un correo válido"))
+		_, _ = w.Write([]byte("Ingrese un correo válido"))
 		return
 	}
 
@@ -42,13 +42,13 @@ func (s *Server) CreateSupplier(w http.ResponseWriter, r *http.Request) {
 
 	if sup.SupplierId == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para el RUC"))
+		_, _ = w.Write([]byte("Ingrese un valor para el RUC"))
 		return
 	}
 
 	if sup.Name == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para el nombre"))
+		_, _ = w.Write([]byte("Ingrese un valor para el nombre"))
 		return
 	}
 
@@ -56,19 +56,19 @@ func (s *Server) CreateSupplier(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("Proveedor con ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
+			_, _ = w.Write([]byte(fmt.Sprintf("Proveedor con ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
 			return
 		}
 		slog.Error("Error creating supplier", "error", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Sprintf("<p>%s</p>", err.Error())))
+		_, _ = w.Write([]byte(fmt.Sprintf("<p>%s</p>", err.Error())))
 		return
 	}
 
 	search := r.URL.Query().Get("search")
 	suppliers, _ := s.DB.GetAllSuppliers(ctxPayload.CompanyId, search)
 	component := partials.SuppliersTable(suppliers)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) SuppliersTableDisplay(w http.ResponseWriter, r *http.Request) {
@@ -77,12 +77,12 @@ func (s *Server) SuppliersTableDisplay(w http.ResponseWriter, r *http.Request) {
 	search := r.URL.Query().Get("search")
 	suppliers, _ := s.DB.GetAllSuppliers(ctxPayload.CompanyId, search)
 	component := partials.SuppliersTable(suppliers)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) SupplierAdd(w http.ResponseWriter, r *http.Request) {
 	component := partials.EditSupplier(nil)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) GetSupplier(w http.ResponseWriter, r *http.Request) {
@@ -97,12 +97,12 @@ func (s *Server) GetSupplier(w http.ResponseWriter, r *http.Request) {
 	sup, err := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Proveedor no encontrado"))
+		_, _ = w.Write([]byte("Proveedor no encontrado"))
 		return
 	}
 
 	component := partials.EditSupplier(&sup)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) EditSupplier(w http.ResponseWriter, r *http.Request) {
@@ -115,7 +115,7 @@ func (s *Server) EditSupplier(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sup, _ := s.DB.GetOneSupplier(parsedId, ctxPayload.CompanyId)
-	r.ParseForm()
+	_ = r.ParseForm()
 	sp := r.Form.Get("supplier_id")
 	if sp != "" {
 		sup.SupplierId = sp
@@ -129,7 +129,7 @@ func (s *Server) EditSupplier(w http.ResponseWriter, r *http.Request) {
 	e := r.Form.Get("contact_email")
 	if e != "" && !utils.IsValidEmail(e) {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un correo válido"))
+		_, _ = w.Write([]byte("Ingrese un correo válido"))
 		return
 	}
 	email := sql.NullString{Valid: true, String: e}
@@ -147,16 +147,16 @@ func (s *Server) EditSupplier(w http.ResponseWriter, r *http.Request) {
 	if err := s.DB.UpdateSupplier(&sup); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("El ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
+			_, _ = w.Write([]byte(fmt.Sprintf("El ruc %s y/o nombre %s ya existe", sup.SupplierId, sup.Name)))
 			return
 		}
 		slog.Error("Error updating supplier", "error", err)
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(fmt.Sprintf("<p>%s</p>", err.Error())))
+		_, _ = w.Write([]byte(fmt.Sprintf("<p>%s</p>", err.Error())))
 		return
 	}
 
 	suppliers, _ := s.DB.GetAllSuppliers(ctxPayload.CompanyId, "")
 	component := partials.SuppliersTable(suppliers)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }

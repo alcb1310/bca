@@ -17,7 +17,7 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		resp["error"] = err.Error()
 		component := views.LoginView(resp)
-		component.Render(r.Context(), w)
+		_ = component.Render(r.Context(), w)
 		return
 	}
 
@@ -56,7 +56,7 @@ func (s *Server) LoginView(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 	}
 	component := views.LoginView(resp)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) DisplayLogin(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +64,7 @@ func (s *Server) DisplayLogin(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	component := views.LoginView(resp)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) Logout(w http.ResponseWriter, r *http.Request) {
@@ -81,5 +81,5 @@ func (s *Server) Logout(w http.ResponseWriter, r *http.Request) {
 func (s *Server) BcaView(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 	component := bca.LandingPage(ctx.Name)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }

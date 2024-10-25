@@ -17,5 +17,5 @@ func (s *Server) RegisterRoutes(r chi.Router) http.Handler {
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	component := views.WelcomeView()
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
