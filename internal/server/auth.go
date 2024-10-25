@@ -228,7 +228,7 @@ func (s *Server) ApiLogin(w http.ResponseWriter, r *http.Request) {
 		errorResponse["error"] = "credenciales inválidas"
 
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(errorResponse)
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
@@ -239,7 +239,7 @@ func (s *Server) ApiLogin(w http.ResponseWriter, r *http.Request) {
 		if err == io.EOF {
 			errorResponse["error"] = err.Error()
 		}
-		json.NewEncoder(w).Encode(errorResponse)
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
@@ -247,7 +247,7 @@ func (s *Server) ApiLogin(w http.ResponseWriter, r *http.Request) {
 		errorResponse := make(map[string]string)
 		errorResponse["error"] = "credenciales inválidas"
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(errorResponse)
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
@@ -256,7 +256,7 @@ func (s *Server) ApiLogin(w http.ResponseWriter, r *http.Request) {
 		errorResponse := make(map[string]string)
 		w.WriteHeader(http.StatusUnauthorized)
 		errorResponse["error"] = "credenciales inválidas"
-		json.NewEncoder(w).Encode(errorResponse)
+		_ = json.NewEncoder(w).Encode(errorResponse)
 		return
 	}
 
@@ -266,5 +266,5 @@ func (s *Server) ApiLogin(w http.ResponseWriter, r *http.Request) {
 	resp["user"] = user
 	resp["token"] = token
 
-	json.NewEncoder(w).Encode(resp)
+	_ = json.NewEncoder(w).Encode(resp)
 }
