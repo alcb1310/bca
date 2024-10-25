@@ -99,6 +99,7 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 			r.Get("/levels", s.ApiLevels)
 			r.Get("/historico", s.ApiHistoricReport)
 			r.Get("/cuadre", s.ApiBalanceReport)
+			r.Put("/cuadre/{id}", s.ApiUpdateBalanceReport)
 
 			r.Route("/excel", func(r chi.Router) {
 				r.Get("/actual", s.ActualExcel)
