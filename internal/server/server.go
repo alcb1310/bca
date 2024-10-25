@@ -47,7 +47,6 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 
 	s.Router.Route("/api/v1", func(r chi.Router) {
 		r.Use(middleware.AllowContentType("application/json"))
-		// r.Use(commonMiddleware)
 
 		r.Post("/login", s.ApiLogin)
 
@@ -99,9 +98,9 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 			r.Get("/actual", s.ApiActualReport)
 			r.Get("/levels", s.ApiLevels)
 			r.Get("/historico", s.ApiHistoricReport)
+			r.Get("/cuadre", s.ApiBalanceReport)
 
 			r.Route("/excel", func(r chi.Router) {
-				// r.Use(middleware.AllowContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
 				r.Get("/actual", s.ActualExcel)
 				r.Get("/cuadre", s.BalanceExcel)
 				r.Get("/gastado", s.SpentExcel)
