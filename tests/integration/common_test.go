@@ -54,7 +54,7 @@ func createServer(t *testing.T, ctx context.Context, pgContainer *postgres.Postg
 		return nil, nil, err
 	}
 
-	db := database.New(connStr)
+	db := database.New(connStr, -5)
 	if db == nil {
 		return nil, nil, err
 	}

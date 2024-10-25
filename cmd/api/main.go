@@ -35,7 +35,7 @@ func init() {
 
 func main() {
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, databasePort, databaseName)
-	db := database.New(connStr)
+	db := database.New(connStr, intTimezone)
 	server := server.NewServer(db, secretKey, intTimezone)
 
 	slog.Info("Listening on port", "port", port)

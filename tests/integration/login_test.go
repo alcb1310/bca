@@ -46,7 +46,7 @@ func TestLogin(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, connStr)
 
-	db := database.New(connStr)
+	db := database.New(connStr, -5)
 	assert.NotNil(t, db)
 
 	h := db.Health()
