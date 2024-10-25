@@ -27,12 +27,12 @@ func Balance(companyId, projectId uuid.UUID, date time.Time, db database.Service
 		return f
 	}
 	f.SetActiveSheet(index)
-	f.DeleteSheet("Sheet1")
+	_ = f.DeleteSheet("Sheet1")
 
-	f.SetCellValue("cuadre", "A1", "Fecha")
-	f.SetCellValue("cuadre", "B1", "Proveedor")
-	f.SetCellValue("cuadre", "C1", "Factura")
-	f.SetCellValue("cuadre", "D1", "Valor")
+	_ = f.SetCellValue("cuadre", "A1", "Fecha")
+	_ = f.SetCellValue("cuadre", "B1", "Proveedor")
+	_ = f.SetCellValue("cuadre", "C1", "Factura")
+	_ = f.SetCellValue("cuadre", "D1", "Valor")
 
 	balance := db.GetBalance(companyId, projectId, date)
 
@@ -42,20 +42,20 @@ func Balance(companyId, projectId uuid.UUID, date time.Time, db database.Service
 		year := invoice.InvoiceDate.Year()
 		month := int(invoice.InvoiceDate.Month())
 		day := invoice.InvoiceDate.Day()
-		// f.SetCellValue("cuadre", cell, invoice.InvoiceDate.Format("2006-01-02"))
-		f.SetCellFormula("cuadre", cell, fmt.Sprintf("=DATE(%d,%d,%d)", year, month, day))
+		// _=f.SetCellValue("cuadre", cell, invoice.InvoiceDate.Format("2006-01-02"))
+		_ = f.SetCellFormula("cuadre", cell, fmt.Sprintf("=DATE(%d,%d,%d)", year, month, day))
 		cell = fmt.Sprintf("B%d", row)
-		f.SetCellValue("cuadre", cell, invoice.Supplier.Name)
+		_ = f.SetCellValue("cuadre", cell, invoice.Supplier.Name)
 		cell = fmt.Sprintf("C%d", row)
-		f.SetCellValue("cuadre", cell, invoice.InvoiceNumber)
+		_ = f.SetCellValue("cuadre", cell, invoice.InvoiceNumber)
 		cell = fmt.Sprintf("D%d", row)
-		f.SetCellFloat("cuadre", cell, invoice.InvoiceTotal, 2, 64)
+		_ = f.SetCellFloat("cuadre", cell, invoice.InvoiceTotal, 2, 64)
 
 		row++
 	}
 
-	f.MergeCell("cuadre", fmt.Sprintf("A%d", row), fmt.Sprintf("C%d", row))
-	f.SetCellValue("cuadre", fmt.Sprintf("A%d", row), "TOTAL")
+	_ = f.MergeCell("cuadre", fmt.Sprintf("A%d", row), fmt.Sprintf("C%d", row))
+	_ = f.SetCellValue("cuadre", fmt.Sprintf("A%d", row), "TOTAL")
 
 	// styling the data
 	titleStyle, _ := f.NewStyle(&excelize.Style{
@@ -85,14 +85,14 @@ func Balance(companyId, projectId uuid.UUID, date time.Time, db database.Service
 		CustomNumFmt: &exp,
 	})
 
-	f.SetColWidth("cuadre", "B", "B", 33)
-	f.SetColWidth("cuadre", "C", "C", 20)
+	_ = f.SetColWidth("cuadre", "B", "B", 33)
+	_ = f.SetColWidth("cuadre", "C", "C", 20)
 
-	f.SetCellStyle("cuadre", "A1", "D1", titleStyle)
-	f.SetCellStyle("cuadre", "D2", fmt.Sprintf("D%d", row), numberStyle)
-	f.SetCellStyle("cuadre", "A2", fmt.Sprintf("A%d", row), dateStyle)
+	_ = f.SetCellStyle("cuadre", "A1", "D1", titleStyle)
+	_ = f.SetCellStyle("cuadre", "D2", fmt.Sprintf("D%d", row), numberStyle)
+	_ = f.SetCellStyle("cuadre", "A2", fmt.Sprintf("A%d", row), dateStyle)
 
-	f.SetCellFormula("cuadre", fmt.Sprintf("D%d", row), fmt.Sprintf("=SUM(D2:D%d)", row-1))
+	_ = f.SetCellFormula("cuadre", fmt.Sprintf("D%d", row), fmt.Sprintf("=SUM(D2:D%d)", row-1))
 
 	if err := f.SaveAs("./public/" + id.String() + ".xlsx"); err != nil {
 		slog.Error("Failed to export file", "err", err)
@@ -125,7 +125,7 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 	}
 	f.SetActiveSheet(index)
 
-	f.DeleteSheet("Sheet1")
+	_ = f.DeleteSheet("Sheet1")
 
 	pageTitleStyle, _ := f.NewStyle(&excelize.Style{
 		Alignment: &excelize.Alignment{
@@ -161,9 +161,9 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 
 	p, _ := db.GetProject(projectId, companyId)
 
-	f.SetCellValue("actual", "A1", "CONTROL PRESUPUESTARIO")
-	f.MergeCell("actual", "A1", "K1")
-	f.SetCellStyle("actual", "A1", "K1", pageTitleStyle)
+	_ = f.SetCellValue("actual", "A1", "CONTROL PRESUPUESTARIO")
+	_ = f.MergeCell("actual", "A1", "K1")
+	_ = f.SetCellStyle("actual", "A1", "K1", pageTitleStyle)
 
 	exp := "yyyy-mm-dd"
 	dateStyle, _ := f.NewStyle(&excelize.Style{
@@ -173,49 +173,49 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 		CustomNumFmt: &exp,
 	})
 
-	f.SetColWidth("actual", "A", "A", 11.50)
-	f.SetColWidth("actual", "B", "B", 40)
-	f.SetColWidth("actual", "C", "K", 13.50)
+	_ = f.SetColWidth("actual", "A", "A", 11.50)
+	_ = f.SetColWidth("actual", "B", "B", 40)
+	_ = f.SetColWidth("actual", "C", "K", 13.50)
 
-	f.SetCellValue("actual", "A3", "Fecha")
-	f.SetCellFormula("actual", "B3", fmt.Sprintf("=DATE(%d,%d,%d)", d.Year(), int(d.Month()), d.Day()))
-	f.SetCellStyle("actual", "B3", "B3", dateStyle)
-	f.SetCellValue("actual", "A4", "Proyecto")
-	f.SetCellValue("actual", "B4", p.Name)
-	f.SetCellStyle("actual", "A3", "A6", descTitleStyle)
-	f.SetCellValue("actual", "A5", "Area Bruta")
-	f.SetCellFloat("actual", "B5", p.GrossArea, 2, 64)
-	f.SetCellValue("actual", "A6", "Area Util")
-	f.SetCellFloat("actual", "B6", p.NetArea, 2, 64)
-	f.SetCellStyle("actual", "B5", "B6", areaStyle)
+	_ = f.SetCellValue("actual", "A3", "Fecha")
+	_ = f.SetCellFormula("actual", "B3", fmt.Sprintf("=DATE(%d,%d,%d)", d.Year(), int(d.Month()), d.Day()))
+	_ = f.SetCellStyle("actual", "B3", "B3", dateStyle)
+	_ = f.SetCellValue("actual", "A4", "Proyecto")
+	_ = f.SetCellValue("actual", "B4", p.Name)
+	_ = f.SetCellStyle("actual", "A3", "A6", descTitleStyle)
+	_ = f.SetCellValue("actual", "A5", "Area Bruta")
+	_ = f.SetCellFloat("actual", "B5", p.GrossArea, 2, 64)
+	_ = f.SetCellValue("actual", "A6", "Area Util")
+	_ = f.SetCellFloat("actual", "B6", p.NetArea, 2, 64)
+	_ = f.SetCellStyle("actual", "B5", "B6", areaStyle)
 
-	f.SetCellValue("actual", "A8", "Código")
-	f.MergeCell("actual", "A8", "A9")
+	_ = f.SetCellValue("actual", "A8", "Código")
+	_ = f.MergeCell("actual", "A8", "A9")
 
-	f.SetCellValue("actual", "B8", "Partida")
-	f.MergeCell("actual", "B8", "B9")
+	_ = f.SetCellValue("actual", "B8", "Partida")
+	_ = f.MergeCell("actual", "B8", "B9")
 
-	f.SetCellValue("actual", "C8", "Inicial")
-	f.MergeCell("actual", "C8", "E8")
-	f.SetCellValue("actual", "C9", "Cantidad")
-	f.SetCellValue("actual", "D9", "Costo")
-	f.SetCellValue("actual", "E9", "Total")
+	_ = f.SetCellValue("actual", "C8", "Inicial")
+	_ = f.MergeCell("actual", "C8", "E8")
+	_ = f.SetCellValue("actual", "C9", "Cantidad")
+	_ = f.SetCellValue("actual", "D9", "Costo")
+	_ = f.SetCellValue("actual", "E9", "Total")
 
-	f.SetCellValue("actual", "F8", "Rendido")
-	f.MergeCell("actual", "F8", "G8")
-	f.SetCellValue("actual", "F9", "Cantidad")
-	f.SetCellValue("actual", "G9", "Total")
+	_ = f.SetCellValue("actual", "F8", "Rendido")
+	_ = f.MergeCell("actual", "F8", "G8")
+	_ = f.SetCellValue("actual", "F9", "Cantidad")
+	_ = f.SetCellValue("actual", "G9", "Total")
 
-	f.SetCellValue("actual", "H8", "Por Gastar")
-	f.MergeCell("actual", "H8", "J8")
-	f.SetCellValue("actual", "H9", "Cantidad")
-	f.SetCellValue("actual", "I9", "Costo")
-	f.SetCellValue("actual", "J9", "Total")
+	_ = f.SetCellValue("actual", "H8", "Por Gastar")
+	_ = f.MergeCell("actual", "H8", "J8")
+	_ = f.SetCellValue("actual", "H9", "Cantidad")
+	_ = f.SetCellValue("actual", "I9", "Costo")
+	_ = f.SetCellValue("actual", "J9", "Total")
 
-	f.SetCellValue("actual", "K8", "Actualizado")
-	f.MergeCell("actual", "K8", "K9")
+	_ = f.SetCellValue("actual", "K8", "Actualizado")
+	_ = f.MergeCell("actual", "K8", "K9")
 
-	f.SetCellStyle("actual", "A8", "K9", colTitleStyle)
+	_ = f.SetCellStyle("actual", "A8", "K9", colTitleStyle)
 
 	row := 10
 
@@ -267,37 +267,37 @@ func Actual(companyId, projectId uuid.UUID, budgets []types.GetBudget, date *tim
 		switch budget.BudgetItem.Level {
 		case 1:
 			row++
-			f.SetCellStyle("actual", fmt.Sprintf("A%d", row), fmt.Sprintf("K%d", row), level1Style)
+			_ = f.SetCellStyle("actual", fmt.Sprintf("A%d", row), fmt.Sprintf("K%d", row), level1Style)
 		case 2:
 			row++
-			f.SetCellStyle("actual", fmt.Sprintf("A%d", row), fmt.Sprintf("K%d", row), level2Style)
+			_ = f.SetCellStyle("actual", fmt.Sprintf("A%d", row), fmt.Sprintf("K%d", row), level2Style)
 		case 3:
 			row++
-			f.SetCellStyle("actual", fmt.Sprintf("A%d", row), fmt.Sprintf("K%d", row), level3Style)
+			_ = f.SetCellStyle("actual", fmt.Sprintf("A%d", row), fmt.Sprintf("K%d", row), level3Style)
 		default:
-			f.SetCellStyle("actual", fmt.Sprintf("A%d", row), fmt.Sprintf("K%d", row), defaultStyle)
+			_ = f.SetCellStyle("actual", fmt.Sprintf("A%d", row), fmt.Sprintf("K%d", row), defaultStyle)
 		}
 
-		f.SetCellValue("actual", fmt.Sprintf("A%d", row), budget.BudgetItem.Code)
-		f.SetCellValue("actual", fmt.Sprintf("B%d", row), budget.BudgetItem.Name)
+		_ = f.SetCellValue("actual", fmt.Sprintf("A%d", row), budget.BudgetItem.Code)
+		_ = f.SetCellValue("actual", fmt.Sprintf("B%d", row), budget.BudgetItem.Name)
 
 		if budget.InitialQuantity.Valid {
-			f.SetCellFloat("actual", fmt.Sprintf("C%d", row), budget.InitialQuantity.Float64, 2, 64)
-			f.SetCellFloat("actual", fmt.Sprintf("D%d", row), budget.InitialCost.Float64, 2, 64)
+			_ = f.SetCellFloat("actual", fmt.Sprintf("C%d", row), budget.InitialQuantity.Float64, 2, 64)
+			_ = f.SetCellFloat("actual", fmt.Sprintf("D%d", row), budget.InitialCost.Float64, 2, 64)
 		}
-		f.SetCellFloat("actual", fmt.Sprintf("E%d", row), budget.InitialTotal, 2, 64)
+		_ = f.SetCellFloat("actual", fmt.Sprintf("E%d", row), budget.InitialTotal, 2, 64)
 
 		if budget.SpentQuantity.Valid {
-			f.SetCellFloat("actual", fmt.Sprintf("F%d", row), budget.SpentQuantity.Float64, 2, 64)
+			_ = f.SetCellFloat("actual", fmt.Sprintf("F%d", row), budget.SpentQuantity.Float64, 2, 64)
 		}
-		f.SetCellFloat("actual", fmt.Sprintf("G%d", row), budget.SpentTotal, 2, 64)
+		_ = f.SetCellFloat("actual", fmt.Sprintf("G%d", row), budget.SpentTotal, 2, 64)
 
 		if budget.RemainingQuantity.Valid {
-			f.SetCellFloat("actual", fmt.Sprintf("H%d", row), budget.RemainingQuantity.Float64, 2, 64)
-			f.SetCellFloat("actual", fmt.Sprintf("I%d", row), budget.RemainingCost.Float64, 2, 64)
+			_ = f.SetCellFloat("actual", fmt.Sprintf("H%d", row), budget.RemainingQuantity.Float64, 2, 64)
+			_ = f.SetCellFloat("actual", fmt.Sprintf("I%d", row), budget.RemainingCost.Float64, 2, 64)
 		}
-		f.SetCellFloat("actual", fmt.Sprintf("J%d", row), budget.RemainingTotal, 2, 64)
-		f.SetCellFloat("actual", fmt.Sprintf("K%d", row), budget.UpdatedBudget, 2, 64)
+		_ = f.SetCellFloat("actual", fmt.Sprintf("J%d", row), budget.RemainingTotal, 2, 64)
+		_ = f.SetCellFloat("actual", fmt.Sprintf("K%d", row), budget.UpdatedBudget, 2, 64)
 
 		row++
 	}
@@ -323,9 +323,9 @@ func Spent(project types.Project, data []types.Spent, date time.Time) *excelize.
 		return f
 	}
 
-	f.SetColWidth("gastado", "A", "A", 11.50)
-	f.SetColWidth("gastado", "B", "B", 40)
-	f.SetColWidth("gastado", "C", "C", 13.50)
+	_ = f.SetColWidth("gastado", "A", "A", 11.50)
+	_ = f.SetColWidth("gastado", "B", "B", 40)
+	_ = f.SetColWidth("gastado", "C", "C", 13.50)
 
 	pageTitleStyle, _ := f.NewStyle(&excelize.Style{
 		Alignment: &excelize.Alignment{
@@ -370,23 +370,23 @@ func Spent(project types.Project, data []types.Spent, date time.Time) *excelize.
 	})
 
 	f.SetActiveSheet(index)
-	f.DeleteSheet("Sheet1")
+	_ = f.DeleteSheet("Sheet1")
 
-	f.SetCellValue("gastado", "A1", "Gastado Por Partida")
-	f.MergeCell("gastado", "A1", "C1")
-	f.SetCellStyle("gastado", "A1", "C1", pageTitleStyle)
+	_ = f.SetCellValue("gastado", "A1", "Gastado Por Partida")
+	_ = f.MergeCell("gastado", "A1", "C1")
+	_ = f.SetCellStyle("gastado", "A1", "C1", pageTitleStyle)
 
-	f.SetCellValue("gastado", "A3", "Fecha de corte")
-	f.SetCellFormula("gastado", "B3", fmt.Sprintf("=DATE(%d,%d,%d)", date.Year(), int(date.Month()), date.Day()))
-	f.SetCellStyle("gastado", "B3", "B3", dateStyle)
-	f.SetCellValue("gastado", "A4", "Proyecto")
-	f.SetCellValue("gastado", "B4", project.Name)
-	f.SetCellStyle("gastado", "A3", "A4", colTitleStyle)
+	_ = f.SetCellValue("gastado", "A3", "Fecha de corte")
+	_ = f.SetCellFormula("gastado", "B3", fmt.Sprintf("=DATE(%d,%d,%d)", date.Year(), int(date.Month()), date.Day()))
+	_ = f.SetCellStyle("gastado", "B3", "B3", dateStyle)
+	_ = f.SetCellValue("gastado", "A4", "Proyecto")
+	_ = f.SetCellValue("gastado", "B4", project.Name)
+	_ = f.SetCellStyle("gastado", "A3", "A4", colTitleStyle)
 
-	f.SetCellValue("gastado", "A6", "Código")
-	f.SetCellValue("gastado", "B6", "Partida")
-	f.SetCellValue("gastado", "C6", "Total")
-	f.SetCellStyle("gastado", "A6", "C6", titleStyle)
+	_ = f.SetCellValue("gastado", "A6", "Código")
+	_ = f.SetCellValue("gastado", "B6", "Partida")
+	_ = f.SetCellValue("gastado", "C6", "Total")
+	_ = f.SetCellStyle("gastado", "A6", "C6", titleStyle)
 
 	defaultStyle, _ := f.NewStyle(&excelize.Style{
 		Font: &excelize.Font{
@@ -397,11 +397,11 @@ func Spent(project types.Project, data []types.Spent, date time.Time) *excelize.
 
 	row := 7
 	for _, d := range data {
-		f.SetCellValue("gastado", fmt.Sprintf("A%d", row), d.BudgetItem.Code)
-		f.SetCellValue("gastado", fmt.Sprintf("B%d", row), d.BudgetItem.Name)
-		f.SetCellFloat("gastado", fmt.Sprintf("C%d", row), d.Spent, 2, 64)
+		_ = f.SetCellValue("gastado", fmt.Sprintf("A%d", row), d.BudgetItem.Code)
+		_ = f.SetCellValue("gastado", fmt.Sprintf("B%d", row), d.BudgetItem.Name)
+		_ = f.SetCellFloat("gastado", fmt.Sprintf("C%d", row), d.Spent, 2, 64)
 
-		f.SetCellStyle("gastado", fmt.Sprintf("C%d", row), fmt.Sprintf("C%d", row), defaultStyle)
+		_ = f.SetCellStyle("gastado", fmt.Sprintf("C%d", row), fmt.Sprintf("C%d", row), defaultStyle)
 		row++
 	}
 

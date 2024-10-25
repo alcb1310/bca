@@ -1,7 +1,6 @@
 package database
 
 import (
-	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -18,12 +17,12 @@ func (s *service) CreateClosure(companyId, projectId uuid.UUID, date time.Time) 
 
 	query := "select date from historic where company_id = $1 and project_id = $2 and extract(year from date) = $3 and extract(month from date) = $4"
 	row := s.db.QueryRow(query, companyId, projectId, date.Year(), date.Month())
-	row.Scan(&existingDate)
+	_ = row.Scan(&existingDate)
 	if existingDate != (time.Time{}) {
 		query := "select name from project where id = $1 and company_id = $2"
 		var projectName string
-		s.db.QueryRow(query, projectId, companyId).Scan(&projectName)
-		return errors.New(fmt.Sprintf("Ya existe un cierre para el proyecto: %s para la fecha: %s", projectName, utils.ConvertDate(date)))
+		_ = s.db.QueryRow(query, projectId, companyId).Scan(&projectName)
+		return fmt.Errorf("Ya existe un cierre para el proyecto: %s para la fecha: %s", projectName, utils.ConvertDate(date))
 	}
 
 	query = `

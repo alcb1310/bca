@@ -19,7 +19,7 @@ func (s *Server) InvoicesTable(w http.ResponseWriter, r *http.Request) {
 
 	invoices, _ := s.DB.GetInvoices(ctx.CompanyId)
 	components := partials.InvoiceTable(invoices)
-	components.Render(r.Context(), w)
+	_ = components.Render(r.Context(), w)
 }
 
 func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
@@ -56,53 +56,53 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 
 	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	pId := r.Form.Get("project")
 	if pId == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un proyecto"))
+		_, _ = w.Write([]byte("Ingrese un proyecto"))
 		return
 	}
 	projectId, err := uuid.Parse(pId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Código del proyecto inválido"))
+		_, _ = w.Write([]byte("Código del proyecto inválido"))
 		return
 	}
 
 	sId := r.Form.Get("supplier")
 	if sId == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un proveedor"))
+		_, _ = w.Write([]byte("Ingrese un proveedor"))
 		return
 	}
 	supplierId, err := uuid.Parse(sId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Código del proveedor inválido"))
+		_, _ = w.Write([]byte("Código del proveedor inválido"))
 		return
 	}
 
 	iNumber := r.Form.Get("invoiceNumber")
 	if iNumber == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un número de factura"))
+		_, _ = w.Write([]byte("Ingrese un número de factura"))
 		return
 	}
 
 	iD := r.Form.Get("invoiceDate")
 	if iD == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese una fecha"))
+		_, _ = w.Write([]byte("Ingrese una fecha"))
 		return
 	}
 
 	iDate, err := time.Parse("2006-01-02", iD)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese una fecha válida"))
+		_, _ = w.Write([]byte("Ingrese una fecha válida"))
 		return
 	}
 
@@ -118,11 +118,11 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La Factura ya existe"))
+			_, _ = w.Write([]byte("La Factura ya existe"))
 			return
 		}
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	invoice, _ = s.DB.GetOneInvoice(*i.Id, ctx.CompanyId)
@@ -131,7 +131,7 @@ func (s *Server) InvoiceAdd(w http.ResponseWriter, r *http.Request) {
 	components := partials.EditInvoice(&invoice, projects, suppliers)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
-	components.Render(r.Context(), w)
+	_ = components.Render(r.Context(), w)
 }
 
 func (s *Server) InvoiceAddForm(w http.ResponseWriter, r *http.Request) {
@@ -171,7 +171,7 @@ func (s *Server) InvoiceAddForm(w http.ResponseWriter, r *http.Request) {
 	components := partials.EditInvoice(invoice, projects, suppliers)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
-	components.Render(r.Context(), w)
+	_ = components.Render(r.Context(), w)
 }
 
 func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
@@ -202,33 +202,33 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 		suppliers = append(suppliers, x)
 	}
 
-	r.ParseForm()
+	_ = r.ParseForm()
 	pId := invoice.Project.ID
 
 	sId, err := uuid.Parse(r.Form.Get("supplier"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Código del proveedor inválido"))
+		_, _ = w.Write([]byte("Código del proveedor inválido"))
 		return
 	}
 	iNumber := r.Form.Get("invoiceNumber")
 	if iNumber == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un número de factura"))
+		_, _ = w.Write([]byte("Ingrese un número de factura"))
 		return
 	}
 
 	fDate := r.Form.Get("invoiceDate")
 	if fDate == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese una fecha"))
+		_, _ = w.Write([]byte("Ingrese una fecha"))
 		return
 	}
 
 	iDate, err := time.Parse("2006-01-02", fDate)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese una fecha válida"))
+		_, _ = w.Write([]byte("Ingrese una fecha válida"))
 		return
 	}
 
@@ -244,11 +244,11 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	if err := s.DB.UpdateInvoice(i); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La Factura ya existe"))
+			_, _ = w.Write([]byte("La Factura ya existe"))
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		slog.Error("Error updating invoice", "error", err)
 		return
 	}
@@ -259,7 +259,7 @@ func (s *Server) InvoiceEdit(w http.ResponseWriter, r *http.Request) {
 	components := partials.EditInvoice(&invoice, projects, suppliers)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
-	components.Render(r.Context(), w)
+	_ = components.Render(r.Context(), w)
 }
 
 func (s *Server) GetOneInvoice(w http.ResponseWriter, r *http.Request) {
@@ -293,7 +293,7 @@ func (s *Server) GetOneInvoice(w http.ResponseWriter, r *http.Request) {
 	components := partials.EditInvoice(&invoice, projects, suppliers)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
-	components.Render(r.Context(), w)
+	_ = components.Render(r.Context(), w)
 }
 
 func (s *Server) DeleteInvoice(w http.ResponseWriter, r *http.Request) {
@@ -318,7 +318,7 @@ func (s *Server) DeleteInvoice(w http.ResponseWriter, r *http.Request) {
 
 	components := partials.InvoiceTable(invoices)
 	w.WriteHeader(http.StatusOK)
-	components.Render(r.Context(), w)
+	_ = components.Render(r.Context(), w)
 }
 
 func (s *Server) PatchInvoice(w http.ResponseWriter, r *http.Request) {
@@ -336,5 +336,5 @@ func (s *Server) PatchInvoice(w http.ResponseWriter, r *http.Request) {
 	in, _ := s.DB.GetOneInvoice(parsedId, ctx.CompanyId)
 
 	comp := partials.BudgetRow(in)
-	comp.Render(r.Context(), w)
+	_ = comp.Render(r.Context(), w)
 }
