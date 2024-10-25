@@ -32,7 +32,7 @@ func (s *Server) Actual(w http.ResponseWriter, r *http.Request) {
 	levels := s.DB.Levels(ctx.CompanyId)
 
 	component := reports.ActualView(projects, levels)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) GetBalance(w http.ResponseWriter, r *http.Request) {
@@ -49,13 +49,13 @@ func (s *Server) GetBalance(w http.ResponseWriter, r *http.Request) {
 	}
 
 	component := reports.BalanceView(projects)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) RetreiveBalance(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	r.ParseForm()
+	_ = r.ParseForm()
 	pId := r.Form.Get("project")
 	parsedProjectId, _ := uuid.Parse(pId)
 	d := r.Form.Get("date")
@@ -64,7 +64,7 @@ func (s *Server) RetreiveBalance(w http.ResponseWriter, r *http.Request) {
 	invoices := s.DB.GetBalance(ctx.CompanyId, parsedProjectId, date)
 
 	component := partials.BalanceView(invoices)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
@@ -92,12 +92,12 @@ func (s *Server) Historic(w http.ResponseWriter, r *http.Request) {
 
 		budgets := s.DB.GetHistoricByProject(ctx.CompanyId, parsedProjectId, date, nivel)
 		component := partials.BudgetView(budgets)
-		component.Render(r.Context(), w)
+		_ = component.Render(r.Context(), w)
 		return
 	}
 
 	component := reports.HistoricView(projects, levels)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
@@ -146,18 +146,18 @@ func (s *Server) Spent(w http.ResponseWriter, r *http.Request) {
 			Total:   grandTotal,
 			Project: parsedProjectId,
 		})
-		component.Render(nCtx, w)
+		_ = component.Render(nCtx, w)
 		return
 	}
 
 	levels := s.DB.Levels(ctx.CompanyId)
 	component := reports.SpentView(projects, levels)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
-	r.ParseForm()
+	_ = r.ParseForm()
 	p := r.Form.Get("proyecto")
 	projectId, _ := uuid.Parse(p)
 	z := r.Form.Get("nivel")
@@ -182,7 +182,7 @@ func (s *Server) ActualGenerate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	component := partials.BudgetView(budgets)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
@@ -215,5 +215,5 @@ func (s *Server) SpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 	spent := s.DB.GetDetailsByBudgetItem(ctx.CompanyId, parsedProjectId, budgetItemId, date, res)
 
 	component := partials.SpentDetails(spent, *budgetItem)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }

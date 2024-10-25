@@ -19,7 +19,7 @@ func (s *Server) RubrosTable(w http.ResponseWriter, r *http.Request) {
 	rubros, _ := s.DB.GetAllRubros(ctxPayload.CompanyId)
 
 	component := partials.RubrosTable(rubros)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) MaterialsByItem(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +36,7 @@ func (s *Server) MaterialsByItem(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	component := partials.MaterialsItemsTable(acus)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
@@ -49,50 +49,50 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.ParseForm()
+	_ = r.ParseForm()
 
 	materialId := r.Form.Get("material")
 	if materialId == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Seleccione un Material"))
+		_, _ = w.Write([]byte("Seleccione un Material"))
 		return
 	}
 	parsedMaterialId, err := uuid.Parse(materialId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Material Incorrecto"))
+		_, _ = w.Write([]byte("Material Incorrecto"))
 		return
 	}
 
 	quantityText := r.Form.Get("quantity")
 	if quantityText == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese una Cantidad"))
+		_, _ = w.Write([]byte("Ingrese una Cantidad"))
 		return
 	}
 
 	quantity, err := strconv.ParseFloat(quantityText, 64)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Cantidad debe ser un valor numérico"))
+		_, _ = w.Write([]byte("Cantidad debe ser un valor numérico"))
 		return
 	}
 
 	if quantity <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("La Cantidad debe ser mayor a 0"))
+		_, _ = w.Write([]byte("La Cantidad debe ser mayor a 0"))
 		return
 	}
 
 	if err := s.DB.AddMaterialsByItem(parsedId, parsedMaterialId, quantity, ctxPayload.CompanyId); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte("Ya existe un material con ese Código"))
+			_, _ = w.Write([]byte("Ya existe un material con ese Código"))
 			return
 		}
 
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -100,7 +100,7 @@ func (s *Server) MaterialByItemForm(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	component := partials.MaterialsItemsTable(acus)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) MaterialsByItemFormDisplay(w http.ResponseWriter, r *http.Request) {
@@ -121,7 +121,7 @@ func (s *Server) MaterialsByItemFormDisplay(w http.ResponseWriter, r *http.Reque
 
 	w.WriteHeader(http.StatusOK)
 	component := partials.MaterialsItemsForm(nil, parsedId, materialsSelect)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) MaterialItemsOperationsUpdate(w http.ResponseWriter, r *http.Request) {
@@ -141,31 +141,31 @@ func (s *Server) MaterialItemsOperationsUpdate(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	r.ParseForm()
+	_ = r.ParseForm()
 
 	quantityText := r.Form.Get("quantity")
 	if quantityText == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese una Cantidad"))
+		_, _ = w.Write([]byte("Ingrese una Cantidad"))
 		return
 	}
 
 	quantity, err := strconv.ParseFloat(quantityText, 64)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Cantidad debe ser un valor numérico"))
+		_, _ = w.Write([]byte("Cantidad debe ser un valor numérico"))
 		return
 	}
 
 	if quantity <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("La Cantidad debe ser mayor a 0"))
+		_, _ = w.Write([]byte("La Cantidad debe ser mayor a 0"))
 		return
 	}
 
 	if err := s.DB.UpdateMaterialByItem(parsedId, parsedMaterialId, quantity, ctxPayload.CompanyId); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -173,7 +173,7 @@ func (s *Server) MaterialItemsOperationsUpdate(w http.ResponseWriter, r *http.Re
 
 	w.WriteHeader(http.StatusOK)
 	component := partials.MaterialsItemsTable(acus)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) MaterialItemsOperationsDelete(w http.ResponseWriter, r *http.Request) {
@@ -195,7 +195,7 @@ func (s *Server) MaterialItemsOperationsDelete(w http.ResponseWriter, r *http.Re
 
 	if err := s.DB.DeleteMaterialsByItem(parsedId, parsedMaterialId, ctxPayload.CompanyId); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -203,7 +203,7 @@ func (s *Server) MaterialItemsOperationsDelete(w http.ResponseWriter, r *http.Re
 
 	w.WriteHeader(http.StatusOK)
 	component := partials.MaterialsItemsTable(acus)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) MaterialItemsOperationsDisplay(w http.ResponseWriter, r *http.Request) {
@@ -233,5 +233,5 @@ func (s *Server) MaterialItemsOperationsDisplay(w http.ResponseWriter, r *http.R
 
 	w.WriteHeader(http.StatusOK)
 	component := partials.MaterialsItemsForm(&im, parsedId, materialsSelect)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
