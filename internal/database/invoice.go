@@ -2,7 +2,6 @@ package database
 
 import (
 	"errors"
-	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
@@ -173,14 +172,11 @@ func (s *service) BalanceInvoice(invoice types.InvoiceResponse) error {
 
 	newBal := !bal
 
-	slog.Error("balance", "newBal", newBal, "bal", bal, "num", num)
-
 	query = `
 		update invoice
 		set is_balanced = $3 
 		where id = $1 and company_id = $2
 	`
 	_, err = s.db.Exec(query, invoice.Id, invoice.CompanyId, newBal)
-	slog.Error("balance", "err", err)
 	return err
 }
