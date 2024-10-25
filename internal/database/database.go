@@ -119,16 +119,20 @@ type Service interface {
 }
 
 type service struct {
-	db *sql.DB
+	db       *sql.DB
+	timeZone int
 }
 
-func New(connStr string) Service {
+func New(connStr string, timeZone int) Service {
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
 		slog.Error(err.Error())
 		os.Exit(1)
 	}
-	s := &service{db: db}
+	s := &service{
+		db:       db,
+		timeZone: timeZone,
+	}
 
 	if err := createTables(db); err != nil {
 		slog.Error("Error creating tables", "err", err)
