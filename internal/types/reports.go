@@ -8,12 +8,12 @@ type BalanceResponse struct {
 }
 
 type Spent struct {
-	Spent      float64
-	BudgetItem BudgetItem
+	Spent      float64    `json:"spent"`
+	BudgetItem BudgetItem `json:"budget_item"`
 }
 
 type SpentResponse struct {
-	Spent   []Spent
-	Total   float64
-	Project uuid.UUID
+	Spent   []Spent   `json:"spent"`
+	Total   float64   `json:"total"`
+	Project uuid.UUID `json:"project"`
 }

@@ -169,3 +169,73 @@ func (s *Server) ApiUpdateBalanceReport(w http.ResponseWriter, r *http.Request) 
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (s *Server) ApiSpentReport(w http.ResponseWriter, r *http.Request) {
+	project_id := r.URL.Query().Get("project_id")
+	l := r.URL.Query().Get("level")
+	d := r.URL.Query().Get("date")
+
+	if project_id == "" || l == "" || d == "" {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	parsedProjectId, err := uuid.Parse(project_id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+
+	le, err := strconv.Atoi(l)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+	level := uint8(le)
+
+	layout := "2006-01-02"
+	selectedDate, err := time.Parse(layout, d)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		errorResponse := make(map[string]string)
+		errorResponse["error"] = err.Error()
+		_ = json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
+	ctx, _ := utils.GetMyPaload(r)
+
+	budgetItems := s.DB.GetBudgetItemsByLevel(ctx.CompanyId, level)
+	reportData := []types.Spent{}
+	var grandTotal float64 = 0
+
+	for _, bi := range budgetItems {
+		x := []types.BudgetItem{bi}
+		res := []uuid.UUID{}
+		res = s.DB.GetNonAccumulateChildren(&ctx.CompanyId, &parsedProjectId, x, res)
+
+		total := s.DB.GetSpentByBudgetItem(ctx.CompanyId, parsedProjectId, bi.ID, selectedDate, res)
+		// if total == 0 {
+			grandTotal += total
+
+			reportData = append(reportData, types.Spent{
+				Spent:      total,
+				BudgetItem: bi,
+			})
+		// }
+	}
+
+	responseData := types.SpentResponse{
+		Spent:   reportData,
+		Total:   grandTotal,
+		Project: parsedProjectId,
+	}
+
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(responseData)
+}
