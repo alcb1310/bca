@@ -220,14 +220,14 @@ func (s *Server) ApiSpentReport(w http.ResponseWriter, r *http.Request) {
 		res = s.DB.GetNonAccumulateChildren(&ctx.CompanyId, &parsedProjectId, x, res)
 
 		total := s.DB.GetSpentByBudgetItem(ctx.CompanyId, parsedProjectId, bi.ID, selectedDate, res)
-		// if total == 0 {
+		if total != 0 {
 			grandTotal += total
 
 			reportData = append(reportData, types.Spent{
 				Spent:      total,
 				BudgetItem: bi,
 			})
-		// }
+		}
 	}
 
 	responseData := types.SpentResponse{
