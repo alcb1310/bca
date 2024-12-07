@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"time"
@@ -238,4 +239,43 @@ func (s *Server) ApiSpentReport(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(responseData)
+}
+
+func (s *Server) ApiSpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
+	ctx, _ := utils.GetMyPaload(r)
+
+	projectId := chi.URLParam(r, "projectId")
+	parsedProjectId, err := uuid.Parse(projectId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		slog.Error(err.Error())
+		return
+	}
+
+	budgetItemId := chi.URLParam(r, "budgetItemId")
+	parsedBudgetItemId, err := uuid.Parse(budgetItemId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		slog.Error(err.Error())
+		return
+	}
+
+	d := chi.URLParam(r, "date")
+	date, _ := time.Parse("2006-01-02", d)
+
+	budgetItem, err := s.DB.GetOneBudgetItem(parsedBudgetItemId, ctx.CompanyId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		slog.Error(err.Error())
+		return
+	}
+
+	x := []types.BudgetItem{*budgetItem}
+	var res []uuid.UUID
+	res = s.DB.GetNonAccumulateChildren(&ctx.CompanyId, &parsedProjectId, x, res)
+
+	spent := s.DB.GetDetailsByBudgetItem(ctx.CompanyId, parsedProjectId, parsedBudgetItemId, date, res)
+
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(spent)
 }
