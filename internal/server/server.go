@@ -31,10 +31,12 @@ func NewServer(db database.Service, secret string, timezone int) *Server {
 	}
 	s.Router.Use(middleware.Logger)
 	s.Router.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"https://*", "http://*"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-		ExposedHeaders: []string{"Content-Type", "Content-Disposition"},
+		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Content-Type", "Content-Disposition"},
+		AllowCredentials: false,
+		MaxAge:           300,
 	}))
 
 	s.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
