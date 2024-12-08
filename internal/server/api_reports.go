@@ -261,7 +261,12 @@ func (s *Server) ApiSpentByBudgetItem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	d := chi.URLParam(r, "date")
-	date, _ := time.Parse("2006-01-02", d)
+	date, err := time.Parse("2006-01-02", d)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		slog.Error(err.Error())
+		return
+	}
 
 	budgetItem, err := s.DB.GetOneBudgetItem(parsedBudgetItemId, ctx.CompanyId)
 	if err != nil {
