@@ -223,7 +223,6 @@ func (s *Server) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) ApiLogin(w http.ResponseWriter, r *http.Request) {
-	slog.Info("ApiLogin")
 	if r.Body == http.NoBody || r.Body == nil {
 		errorResponse := make(map[string]string)
 		errorResponse["error"] = "credenciales inválidas"
