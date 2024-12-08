@@ -2,7 +2,6 @@ package database
 
 import (
 	"errors"
-	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
@@ -51,8 +50,11 @@ func (s *service) GetInvoices(companyId uuid.UUID) ([]types.InvoiceResponse, err
 		); err != nil {
 			return invoices, err
 		}
+		dt := invoice.InvoiceDate.In(time.Local)
+		dt = dt.Add(time.Duration(s.timeZone) * -1 * time.Hour)
 		invoice.CompanyId = companyId
 		invoice.Supplier.CompanyId = companyId
+		invoice.InvoiceDate = dt
 		invoice.Project.CompanyId = companyId
 		invoices = append(invoices, invoice)
 	}
@@ -170,14 +172,11 @@ func (s *service) BalanceInvoice(invoice types.InvoiceResponse) error {
 
 	newBal := !bal
 
-	slog.Error("balance", "newBal", newBal, "bal", bal, "num", num)
-
 	query = `
 		update invoice
 		set is_balanced = $3 
 		where id = $1 and company_id = $2
 	`
 	_, err = s.db.Exec(query, invoice.Id, invoice.CompanyId, newBal)
-	slog.Error("balance", "err", err)
 	return err
 }

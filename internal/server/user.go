@@ -18,17 +18,17 @@ func (s *Server) Profile(w http.ResponseWriter, r *http.Request) {
 	user, _ := s.DB.GetUser(ctx.Id, ctx.CompanyId)
 
 	component := users.ProfileView(user)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) Admin(w http.ResponseWriter, r *http.Request) {
 	component := users.AdminView()
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	component := users.ChangePasswordView()
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) UpdateUser(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,7 @@ func (s *Server) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	u, _ := s.DB.GetUser(parsedId, ctx.CompanyId)
 
-	r.ParseForm()
+	_ = r.ParseForm()
 	if r.Form.Get("name") != "" {
 		u.Name = r.Form.Get("name")
 	}
@@ -61,7 +61,7 @@ func (s *Server) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
 	component := partials.UsersTable(users, ctx.Id)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -81,7 +81,7 @@ func (s *Server) DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
 	component := partials.UsersTable(users, ctx.Id)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) SingleUserGet(w http.ResponseWriter, r *http.Request) {
@@ -96,13 +96,13 @@ func (s *Server) SingleUserGet(w http.ResponseWriter, r *http.Request) {
 
 	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
 	component := partials.UsersTable(users, ctx.Id)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) UsersChangePassword(w http.ResponseWriter, r *http.Request) {
 	ctx, _ := utils.GetMyPaload(r)
 
-	r.ParseForm()
+	_ = r.ParseForm()
 	pass := r.Form.Get("password")
 
 	if pass == "" {
@@ -158,7 +158,7 @@ func (s *Server) UsersCreate(w http.ResponseWriter, r *http.Request) {
 
 	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
 	component := partials.UsersTable(users, ctx.Id)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) UsersTableDisplay(w http.ResponseWriter, r *http.Request) {
@@ -166,12 +166,12 @@ func (s *Server) UsersTableDisplay(w http.ResponseWriter, r *http.Request) {
 
 	users, _ := s.DB.GetAllUsers(ctx.CompanyId)
 	component := partials.UsersTable(users, ctx.Id)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) UserAdd(w http.ResponseWriter, r *http.Request) {
 	component := partials.EditUser(nil)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) UserEdit(w http.ResponseWriter, r *http.Request) {
@@ -181,5 +181,5 @@ func (s *Server) UserEdit(w http.ResponseWriter, r *http.Request) {
 	u, _ := s.DB.GetUser(parsedId, ctx.CompanyId)
 
 	component := partials.EditUser(&u)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }

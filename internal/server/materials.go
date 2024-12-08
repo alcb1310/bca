@@ -17,25 +17,25 @@ import (
 func (s *Server) MaterialsTable(w http.ResponseWriter, r *http.Request) {
 	ctxPayload, _ := utils.GetMyPaload(r)
 
-	r.ParseForm()
+	_ = r.ParseForm()
 	code := r.Form.Get("code")
 	if code == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para el Código"))
+		_, _ = w.Write([]byte("Ingrese un valor para el Código"))
 		return
 	}
 
 	name := r.Form.Get("name")
 	if name == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para el Nombre"))
+		_, _ = w.Write([]byte("Ingrese un valor para el Nombre"))
 		return
 	}
 
 	unit := r.Form.Get("unit")
 	if unit == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para la Unidad"))
+		_, _ = w.Write([]byte("Ingrese un valor para la Unidad"))
 		return
 	}
 
@@ -43,7 +43,7 @@ func (s *Server) MaterialsTable(w http.ResponseWriter, r *http.Request) {
 	categoryIdParsed, err := uuid.Parse(categoryId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para la Categoría"))
+		_, _ = w.Write([]byte("Ingrese un valor para la Categoría"))
 		return
 	}
 
@@ -58,19 +58,19 @@ func (s *Server) MaterialsTable(w http.ResponseWriter, r *http.Request) {
 	if err := s.DB.CreateMaterial(material); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("El material con código %s y/o nombre %s ya existe", material.Code, material.Name)))
+			_, _ = w.Write([]byte(fmt.Sprintf("El material con código %s y/o nombre %s ya existe", material.Code, material.Name)))
 			return
 		}
 
 		w.WriteHeader(http.StatusInternalServerError)
 		slog.Error("MaterialsTable error", "error", err)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
 	materials := s.DB.GetAllMaterials(ctxPayload.CompanyId)
 	component := partials.MaterialsTable(materials)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) MaterialsTableDisplay(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +78,7 @@ func (s *Server) MaterialsTableDisplay(w http.ResponseWriter, r *http.Request) {
 	materials := s.DB.GetAllMaterials(ctxPayload.CompanyId)
 
 	component := partials.MaterialsTable(materials)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) MaterialsAdd(w http.ResponseWriter, r *http.Request) {
@@ -92,7 +92,7 @@ func (s *Server) MaterialsAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	component := partials.EditMaterial(nil, categoriesSelect)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +106,7 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	material, _ := s.DB.GetMaterial(parsedId, ctxPayload.CompanyId)
-	r.ParseForm()
+	_ = r.ParseForm()
 	updatedMaterial := types.Material{
 		Id:        parsedId,
 		CompanyId: ctxPayload.CompanyId,
@@ -140,7 +140,7 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 		categoryIdParsed, err := uuid.Parse(categoryId)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Ingrese un valor para la Categoría"))
+			_, _ = w.Write([]byte("Ingrese un valor para la Categoría"))
 			return
 		}
 		updatedMaterial.Category = types.Category{Id: categoryIdParsed}
@@ -149,20 +149,20 @@ func (s *Server) MaterialsEdit(w http.ResponseWriter, r *http.Request) {
 	if err := s.DB.UpdateMaterial(updatedMaterial); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("El material con código: %s o nombre: %s ya existe", material.Code, material.Name)))
+			_, _ = w.Write([]byte(fmt.Sprintf("El material con código: %s o nombre: %s ya existe", material.Code, material.Name)))
 			return
 		}
 
 		w.WriteHeader(http.StatusInternalServerError)
 		slog.Error("MaterialsTable error", "error", err)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
 	materials := s.DB.GetAllMaterials(ctxPayload.CompanyId)
 
 	component := partials.MaterialsTable(materials)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) GetOneMaterial(w http.ResponseWriter, r *http.Request) {
@@ -185,5 +185,5 @@ func (s *Server) GetOneMaterial(w http.ResponseWriter, r *http.Request) {
 	}
 
 	component := partials.EditMaterial(&material, categoriesSelect)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }

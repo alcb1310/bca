@@ -21,47 +21,47 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 
 	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
 	projectId := r.Form.Get("project")
 	if projectId == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Seleccione un proyecto"))
+		_, _ = w.Write([]byte("Seleccione un proyecto"))
 		return
 	}
 	pId, err := uuid.Parse(projectId)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Código del proyecto inválido"))
+		_, _ = w.Write([]byte("Código del proyecto inválido"))
 		return
 	}
 
 	bi := r.Form.Get("budgetItem")
 	if bi == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Seleccione una partida"))
+		_, _ = w.Write([]byte("Seleccione una partida"))
 		return
 	}
 	bId, err := uuid.Parse(bi)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Código de la partida inválido"))
+		_, _ = w.Write([]byte("Código de la partida inválido"))
 		return
 	}
 
 	q, err := strconv.ParseFloat(r.Form.Get("quantity"), 64)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("La cantidad debe ser un número"))
+		_, _ = w.Write([]byte("La cantidad debe ser un número"))
 		return
 	}
 
 	c, err := strconv.ParseFloat(r.Form.Get("cost"), 64)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("El costo debe ser un número"))
+		_, _ = w.Write([]byte("El costo debe ser un número"))
 		return
 	}
 
@@ -76,11 +76,11 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 	if _, err := s.DB.CreateBudget(b); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("Ya existe partida %s en el proyecto %s", b.BudgetItemId, b.ProjectId)))
+			_, _ = w.Write([]byte(fmt.Sprintf("Ya existe partida %s en el proyecto %s", b.BudgetItemId, b.ProjectId)))
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		slog.Error(err.Error())
 		return
 	}
@@ -92,7 +92,7 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 		project_id, err = uuid.Parse(p)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			_, _ = w.Write([]byte(err.Error()))
 			slog.Error(err.Error())
 			return
 		}
@@ -102,7 +102,7 @@ func (s *Server) BudgetsTable(w http.ResponseWriter, r *http.Request) {
 
 	budgets, _ := s.DB.GetBudgets(ctx.CompanyId, project_id, se)
 	component := partials.BudgetTable(budgets)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) BudgetsTableDisplay(w http.ResponseWriter, r *http.Request) {
@@ -116,7 +116,7 @@ func (s *Server) BudgetsTableDisplay(w http.ResponseWriter, r *http.Request) {
 		project_id, err = uuid.Parse(p)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			_, _ = w.Write([]byte(err.Error()))
 			slog.Error(err.Error())
 			return
 		}
@@ -126,7 +126,7 @@ func (s *Server) BudgetsTableDisplay(w http.ResponseWriter, r *http.Request) {
 
 	b, _ := s.DB.GetBudgets(ctx.CompanyId, project_id, se)
 	component := partials.BudgetTable(b)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
@@ -153,7 +153,7 @@ func (s *Server) BudgetAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	component := partials.EditBudget(nil, projectMap, budgetItemMap)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
@@ -172,7 +172,7 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 
 	if err := r.ParseForm(); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -181,7 +181,7 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 		q, err = strconv.ParseFloat(fQuan, 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("La cantidad debe ser un número"))
+			_, _ = w.Write([]byte("La cantidad debe ser un número"))
 			return
 		}
 	}
@@ -191,7 +191,7 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 		c, err = strconv.ParseFloat(r.Form.Get("cost"), 64)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("El costo debe ser un número"))
+			_, _ = w.Write([]byte("El costo debe ser un número"))
 			return
 		}
 	}
@@ -222,7 +222,7 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	if err := s.DB.UpdateBudget(budget, bu); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(fmt.Sprintf("Ya existe partida %s en el proyecto %s", budgetItemId, projectId)))
+			_, _ = w.Write([]byte(fmt.Sprintf("Ya existe partida %s en el proyecto %s", budgetItemId, projectId)))
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
@@ -232,7 +232,7 @@ func (s *Server) BudgetEdit(w http.ResponseWriter, r *http.Request) {
 	budgets, _ := s.DB.GetBudgets(ctx.CompanyId, uuid.Nil, "")
 
 	component := partials.BudgetTable(budgets)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) SingleBudget(w http.ResponseWriter, r *http.Request) {
@@ -273,5 +273,5 @@ func (s *Server) SingleBudget(w http.ResponseWriter, r *http.Request) {
 		CompanyId: ctx.CompanyId,
 	}
 	component := partials.EditBudget(budget, projectMap, budgetItemMap)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }

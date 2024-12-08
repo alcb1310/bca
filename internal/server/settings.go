@@ -16,32 +16,32 @@ import (
 
 func (s *Server) BudgetItems(w http.ResponseWriter, r *http.Request) {
 	component := settings.BudgetItems()
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) Suppliers(w http.ResponseWriter, r *http.Request) {
 	component := settings.SupplierView()
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) Projects(w http.ResponseWriter, r *http.Request) {
 	component := settings.ProjectView()
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) Categories(w http.ResponseWriter, r *http.Request) {
 	component := settings.CategoryView()
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) Materiales(w http.ResponseWriter, r *http.Request) {
 	component := settings.MaterialsView()
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) Rubros(w http.ResponseWriter, r *http.Request) {
 	component := settings.RubrosView()
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
@@ -67,26 +67,26 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 		redirectURL = fmt.Sprintf("%s?id=%s", redirectURL, id)
 	}
 
-	r.ParseForm()
+	_ = r.ParseForm()
 
 	code := r.Form.Get("code")
 	if code == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para el Código"))
+		_, _ = w.Write([]byte("Ingrese un valor para el Código"))
 		return
 	}
 
 	name := r.Form.Get("name")
 	if name == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para el Nombre"))
+		_, _ = w.Write([]byte("Ingrese un valor para el Nombre"))
 		return
 	}
 
 	unit := r.Form.Get("unit")
 	if unit == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para la Unidad"))
+		_, _ = w.Write([]byte("Ingrese un valor para la Unidad"))
 		return
 	}
 
@@ -101,13 +101,13 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("El rubro con código %s y/o nombre %s ya existe", rubro.Code, rubro.Name)))
+			_, _ = w.Write([]byte(fmt.Sprintf("El rubro con código %s y/o nombre %s ya existe", rubro.Code, rubro.Name)))
 			return
 		}
 
 		w.WriteHeader(http.StatusInternalServerError)
 		slog.Error(err.Error())
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -117,7 +117,7 @@ func (s *Server) RubrosAdd(w http.ResponseWriter, r *http.Request) {
 	component := partials.EditRubros(&rubro)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) RubrosAddForm(w http.ResponseWriter, r *http.Request) {
@@ -147,7 +147,7 @@ func (s *Server) RubrosAddForm(w http.ResponseWriter, r *http.Request) {
 	component := partials.EditRubros(rubro)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }
 
 func (s *Server) RubrosEdit(w http.ResponseWriter, r *http.Request) {
@@ -173,25 +173,25 @@ func (s *Server) RubrosEdit(w http.ResponseWriter, r *http.Request) {
 		redirectURL = fmt.Sprintf("%s?id=%s", redirectURL, id)
 	}
 
-	r.ParseForm()
+	_ =r.ParseForm()
 	code := r.Form.Get("code")
 	if code == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para el Código"))
+		_, _ = w.Write([]byte("Ingrese un valor para el Código"))
 		return
 	}
 
 	name := r.Form.Get("name")
 	if name == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para el Nombre"))
+		_, _ = w.Write([]byte("Ingrese un valor para el Nombre"))
 		return
 	}
 
 	unit := r.Form.Get("unit")
 	if unit == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Ingrese un valor para la Unidad"))
+		_, _ = w.Write([]byte("Ingrese un valor para la Unidad"))
 		return
 	}
 
@@ -207,18 +207,18 @@ func (s *Server) RubrosEdit(w http.ResponseWriter, r *http.Request) {
 	if err := s.DB.UpdateRubro(rubro); err != nil {
 		if strings.Contains(err.Error(), "duplicate") {
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(fmt.Sprintf("El Código %s ya existe", rubro.Code)))
+			_, _ = w.Write([]byte(fmt.Sprintf("El Código %s ya existe", rubro.Code)))
 			return
 		}
 
 		w.WriteHeader(http.StatusInternalServerError)
 		slog.Error(err.Error())
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 
 	component := partials.EditRubros(&rubro)
 	w.Header().Set("HX-Redirect", redirectURL)
 	w.WriteHeader(http.StatusOK)
-	component.Render(r.Context(), w)
+	_ = component.Render(r.Context(), w)
 }

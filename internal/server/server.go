@@ -19,26 +19,22 @@ type Server struct {
 	DB        database.Service
 	Router    *chi.Mux
 	TokenAuth *jwtauth.JWTAuth
+	Timezone  int
 }
 
-func commonMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Content-Type", "application/json")
-		next.ServeHTTP(w, r)
-	})
-}
-
-func NewServer(db database.Service, secret string) *Server {
+func NewServer(db database.Service, secret string, timezone int) *Server {
 	s := &Server{
 		DB:        db,
 		Router:    chi.NewRouter(),
 		TokenAuth: jwtauth.New("HS256", []byte(secret), nil),
+		Timezone:  timezone,
 	}
 	s.Router.Use(middleware.Logger)
 	s.Router.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"https://*", "http://*"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders: []string{"Content-Type", "Content-Disposition"},
 	}))
 
 	s.Router.Handle("/public/*", http.StripPrefix("/public", http.FileServer(http.Dir("public"))))
@@ -51,7 +47,6 @@ func NewServer(db database.Service, secret string) *Server {
 
 	s.Router.Route("/api/v1", func(r chi.Router) {
 		r.Use(middleware.AllowContentType("application/json"))
-		r.Use(commonMiddleware)
 
 		r.Post("/login", s.ApiLogin)
 
@@ -67,6 +62,55 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Put("/{id}", s.ApiUpdateUser)
 		})
 
+		r.Route("/transacciones", func(r chi.Router) {
+			r.Use(jwtauth.Verifier(s.TokenAuth))
+			r.Use(authenticator())
+			r.Post("/cierre", s.ApiPostClosure)
+
+			r.Route("/presupuestos", func(r chi.Router) {
+				r.Get("/", s.ApiGetAllBudgets)
+				r.Post("/", s.ApiCreateBudget)
+				r.Put("/{projectId}/{budgetItemId}", s.ApiUpdateBudget)
+			})
+
+			r.Route("/facturas", func(r chi.Router) {
+				r.Get("/", s.ApiGetAllInvoices)
+				r.Post("/", s.ApiCreateInvoice)
+
+				r.Route("/{id}", func(r chi.Router) {
+					r.Get("/", s.ApiGetOneInvoice)
+					r.Put("/", s.ApiUpdateInvoice)
+					r.Delete("/", s.ApiDeleteInvoice)
+
+					r.Route("/detalle", func(r chi.Router) {
+						r.Get("/", s.ApiGetAllInvoiceDetails)
+						r.Post("/", s.ApiCreateInvoiceDetails)
+						r.Delete("/{budgetItemId}", s.ApiDeleteInvoiceDetails)
+					})
+				})
+			})
+		})
+
+		r.Route("/reportes", func(r chi.Router) {
+			r.Use(jwtauth.Verifier(s.TokenAuth))
+			r.Use(authenticator())
+
+			r.Get("/actual", s.ApiActualReport)
+			r.Get("/levels", s.ApiLevels)
+			r.Get("/historico", s.ApiHistoricReport)
+			r.Get("/cuadre", s.ApiBalanceReport)
+			r.Put("/cuadre/{id}", s.ApiUpdateBalanceReport)
+			r.Get("/gastado", s.ApiSpentReport)
+			r.Get("/gastado/{projectId}/{budgetItemId}/{date}", s.ApiSpentByBudgetItem)
+
+			r.Route("/excel", func(r chi.Router) {
+				r.Get("/actual", s.ActualExcel)
+				r.Get("/cuadre", s.BalanceExcel)
+				r.Get("/gastado", s.SpentExcel)
+				r.Get("/historico", s.HistoricExcel)
+			})
+		})
+
 		r.Route("/parametros", func(r chi.Router) {
 			r.Use(jwtauth.Verifier(s.TokenAuth))
 			r.Use(authenticator())
@@ -80,7 +124,42 @@ func NewServer(db database.Service, secret string) *Server {
 			r.Route("/categorias", func(r chi.Router) {
 				r.Get("/", s.ApiGetAllCategories)
 				r.Post("/", s.ApiCreateCategory)
-        r.Put("/{id}", s.ApiUpdateCategory)
+				r.Put("/{id}", s.ApiUpdateCategory)
+			})
+
+			r.Route("/materiales", func(r chi.Router) {
+				r.Get("/", s.ApiGetAllMaterials)
+				r.Post("/", s.ApiCreateMaterial)
+				r.Put("/{id}", s.ApiUpdateMaterial)
+			})
+
+			r.Route("/proyectos", func(r chi.Router) {
+				r.Get("/", s.ApiGetAllProjects)
+				r.Post("/", s.ApiCreateProject)
+				r.Put("/{id}", s.ApiUpdateProject)
+			})
+
+			r.Route("/proveedores", func(r chi.Router) {
+				r.Get("/", s.ApiGetAllSuppliers)
+				r.Post("/", s.ApiCreateSupplier)
+				r.Put("/{id}", s.ApiUpdateSupplier)
+			})
+
+			r.Route("/rubros", func(r chi.Router) {
+				r.Get("/", s.ApiGetAllRubros)
+				r.Post("/", s.ApiCreateRubros)
+
+				r.Route("/{id}", func(r chi.Router) {
+					r.Get("/", s.ApiGetRubro)
+					r.Put("/", s.ApiUpdateRubro)
+
+					r.Route("/materiales", func(r chi.Router) {
+						r.Get("/", s.ApiGetAllItemsMaterials)
+						r.Post("/", s.ApiCreateItemsMaterials)
+						r.Delete("/{materialId}", s.ApiDeleteItemsMaterials)
+						r.Put("/{materialId}", s.ApiUpdateItemsMaterials)
+					})
+				})
 			})
 		})
 	})

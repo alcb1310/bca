@@ -6,11 +6,12 @@ import (
 	"github.com/alcb1310/bca/internal/types"
 )
 
-func (s *service) GetAllProjects(companyId uuid.UUID) ([]types.Project, error) {
+func (s *service) GetAllProjects(companyId uuid.UUID, search string) ([]types.Project, error) {
 	projects := []types.Project{}
+	searchTerm := "%" + search + "%"
 
-	sql := "select id, name, is_active, company_id, gross_area, net_area from project where company_id = $1 order by is_active desc, name"
-	rows, err := s.db.Query(sql, companyId)
+	sql := "select id, name, is_active, company_id, gross_area, net_area from project where company_id = $1 and name like $2 order by is_active desc, name"
+	rows, err := s.db.Query(sql, companyId, searchTerm)
 	if err != nil {
 		return projects, err
 	}

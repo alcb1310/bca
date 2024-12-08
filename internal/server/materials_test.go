@@ -19,7 +19,7 @@ func TestCreateMaterial(t *testing.T) {
 	categoryId := uuid.New()
 
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {
@@ -139,7 +139,7 @@ func TestUpdateMaterials(t *testing.T) {
 	testUrl := fmt.Sprintf("/bca/partials/materiales/%s", materialId)
 
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {

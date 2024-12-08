@@ -19,7 +19,7 @@ func TestCreateCantidades(t *testing.T) {
 	testUrl := "/bca/partials/cantidades/add"
 
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	projectId := uuid.New()
@@ -153,7 +153,7 @@ func TestUpdateCantidades(t *testing.T) {
 	testUrl := fmt.Sprintf("/bca/partials/cantidades/%s", unitCostId.String())
 
 	db := mocks.NewService(t)
-	s := server.NewServer(db, "supersecret")
+	s := server.NewServer(db, "supersecret", -5)
 	token := createToken(s.TokenAuth)
 
 	testData := []struct {

@@ -3,10 +3,10 @@ package types
 import "github.com/google/uuid"
 
 type Project struct {
-	ID        uuid.UUID
-	Name      string
-	IsActive  *bool
-	CompanyId uuid.UUID
-	GrossArea float64
-	NetArea   float64
+	ID        uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	IsActive  *bool     `json:"is_active"`
+	CompanyId uuid.UUID `json:"company_id"`
+	GrossArea float64   `json:"gross_area"`
+	NetArea   float64   `json:"net_area"`
 }

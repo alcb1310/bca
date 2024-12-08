@@ -35,7 +35,7 @@ type Service interface {
 	DeleteUser(id, companyId uuid.UUID) error
 
 	// database/projects.go
-	GetAllProjects(companyId uuid.UUID) ([]types.Project, error)
+	GetAllProjects(companyId uuid.UUID, search string) ([]types.Project, error)
 	CreateProject(p types.Project) (types.Project, error)
 	GetProject(id, companyId uuid.UUID) (types.Project, error)
 	UpdateProject(p types.Project, id, companyId uuid.UUID) error
@@ -119,16 +119,20 @@ type Service interface {
 }
 
 type service struct {
-	db *sql.DB
+	db       *sql.DB
+	timeZone int
 }
 
-func New(connStr string) Service {
+func New(connStr string, timeZone int) Service {
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
 		slog.Error(err.Error())
 		os.Exit(1)
 	}
-	s := &service{db: db}
+	s := &service{
+		db:       db,
+		timeZone: timeZone,
+	}
 
 	if err := createTables(db); err != nil {
 		slog.Error("Error creating tables", "err", err)

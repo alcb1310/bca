@@ -10,7 +10,6 @@ import (
 )
 
 func (s *service) GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.InvoiceDetailsResponse, error) {
-	slog.Info("GetAllDetails", "companyId", companyId)
 	details := []types.InvoiceDetailsResponse{}
 	query := "select invoice_id, budget_item_id, budget_item_code, budget_item_name, quantity, cost, total, invoice_total  from vw_invoice_details where invoice_id = $1 and company_id = $2"
 
@@ -25,7 +24,7 @@ func (s *service) GetAllDetails(invoiceId, companyId uuid.UUID) ([]types.Invoice
 		if err := rows.Scan(&detail.Id, &detail.BudgetItemId, &detail.BudgetItemCode, &detail.BudgetItemName, &detail.Quantity, &detail.Cost, &detail.Total, &detail.InvoiceTotal); err != nil {
 			return []types.InvoiceDetailsResponse{}, err
 		}
-    detail.CompanyId = companyId
+		detail.CompanyId = companyId
 		details = append(details, detail)
 	}
 
@@ -86,8 +85,7 @@ func (s *service) AddDetail(detail types.InvoiceDetailCreate) error {
 	updatedDiff := newUpdatedBudget - updatedBudget
 	remainingDiff := newToSpendTotal - remainingTotal
 
-	var parentId *uuid.UUID
-	parentId = &detail.BudgetItemId
+	parentId := &detail.BudgetItemId
 	for {
 		query = "select parent_id from budget_item where id = $1 and company_id = $2"
 		if err := tx.QueryRow(query, parentId, detail.CompanyId).Scan(&parentId); err != nil {
@@ -162,9 +160,8 @@ func (s *service) DeleteDetail(invoiceId, budgetItemId, companyId uuid.UUID) err
 		return err
 	}
 
-	var parentId *uuid.UUID
-	parentId = &budgetItemId
-	for true {
+	parentId := &budgetItemId
+	for {
 		query = "select parent_id from budget_item where id = $1 and company_id = $2"
 		if err := tx.QueryRow(query, parentId, companyId).Scan(&parentId); err != nil {
 			return err

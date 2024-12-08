@@ -3,17 +3,17 @@ package types
 import "github.com/google/uuid"
 
 type BalanceResponse struct {
-	Invoices []InvoiceResponse
-	Total    float64
+	Invoices []InvoiceResponse `json:"invoices"`
+	Total    float64           `json:"total"`
 }
 
 type Spent struct {
-	Spent      float64
-	BudgetItem BudgetItem
+	Spent      float64    `json:"spent"`
+	BudgetItem BudgetItem `json:"budget_item"`
 }
 
 type SpentResponse struct {
-	Spent   []Spent
-	Total   float64
-	Project uuid.UUID
+	Spent   []Spent   `json:"spent"`
+	Total   float64   `json:"total"`
+	Project uuid.UUID `json:"project"`
 }

@@ -19,11 +19,9 @@ func (s *Server) ApiGetAllBudgetItems(w http.ResponseWriter, r *http.Request) {
 
 	queryParams := r.URL.Query()
 	search := queryParams.Get("query")
-	accumulate := queryParams.Get("accumulate")
+	accumulate := queryParams.Get("accum")
 	if accumulate != "" {
-		acc := accumulate == "true"
-
-		budgetItems := s.DB.GetBudgetItemsByAccumulate(ctx.CompanyId, acc)
+		budgetItems := s.DB.GetBudgetItemsByAccumulate(ctx.CompanyId, accumulate == "true")
 
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(budgetItems)

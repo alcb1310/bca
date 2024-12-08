@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -22,17 +23,20 @@ var (
 	port         = os.Getenv("PORT")
 	secretKey    = os.Getenv("SECRET")
 	env          = os.Getenv("APP_ENV")
+	timezone     = os.Getenv("TIMEZONE")
 )
 
+var intTimezone int
+
 func init() {
-  environmentValidation()
-  loggerSetup(env)
+	environmentValidation()
+	loggerSetup(env)
 }
 
 func main() {
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, databasePort, databaseName)
-	db := database.New(connStr)
-	server := server.NewServer(db, secretKey)
+	db := database.New(connStr, intTimezone)
+	server := server.NewServer(db, secretKey, intTimezone)
 
 	slog.Info("Listening on port", "port", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), server.Router); err != nil {
@@ -79,5 +83,18 @@ func environmentValidation() {
 	}
 	if secretKey == "" || len(secretKey) < 8 {
 		panic("SECRET must be set and of at least 8 characters")
+	}
+
+	if timezone == "" {
+		panic("TIMEZONE must be set")
+	}
+
+	var err error
+	intTimezone, err = strconv.Atoi(timezone)
+	if err != nil {
+		panic("TIMEZONE must be an integer")
+	}
+	if intTimezone < -12 || intTimezone > 12 {
+		panic("TIMEZONE must be between -12 and 12")
 	}
 }
